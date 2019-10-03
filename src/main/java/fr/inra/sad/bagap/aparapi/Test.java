@@ -1,5 +1,7 @@
 package fr.inra.sad.bagap.aparapi;
 
+// coucou
+
 import com.aparapi.Kernel;
 import com.aparapi.Range;
 
@@ -25,10 +27,10 @@ public class Test {
 		}
 		System.out.println("fin initialisation");
 		
-		System.out.println("début test classique");
+		System.out.println("dÃ©but test classique");
 		testClassic(inA, inB, result);
 		System.out.println("fin test classique");
-		System.out.println("début test classique");
+		System.out.println("dÃ©but test classique");
 		testClassic(inA, inB, result);
 		System.out.println("fin test classique");
 		
@@ -41,13 +43,13 @@ public class Test {
 		};
 		Range range = Range.create(size);
 		
-		System.out.println("début test aparapi");
+		System.out.println("dÃ©but test aparapi");
 		testAparapi(kernel, range, inA, inB, result);
 		System.out.println("fin test aparapi");
-		System.out.println("début test aparapi");
+		System.out.println("dÃ©but test aparapi");
 		testAparapi(kernel, range, inA, inB, result);
 		System.out.println("fin test aparapi");
-		System.out.println("début test aparapi");
+		System.out.println("dÃ©but test aparapi");
 		testAparapi(kernel, range, inA, inB, result);
 		System.out.println("fin test aparapi");
 		
