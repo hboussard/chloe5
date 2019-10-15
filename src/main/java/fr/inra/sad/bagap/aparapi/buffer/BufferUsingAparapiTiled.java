@@ -30,10 +30,10 @@ public class BufferUsingAparapiTiled {
 			
 			short windowSize = 51;
 			short mid = (short) (windowSize/2);
-			int width = 500;
-			int height = 500;
+			int width = 1000;
+			int height = 1000;
 			short dep = 1;
-			short tile = 1;
+			short tile = 500;
 			
 			/*
 			short[] orderedIndex = getOrderedIndex(windowSize);
@@ -76,8 +76,9 @@ public class BufferUsingAparapiTiled {
 			}
 				*/		
 			
-			file = new File(Buffer.class.getResource("/bretagne.tif").toURI());
-
+			//file = new File(Buffer.class.getResource("/bretagne.tif").toURI());
+			file = new File("C://Hugues/modelisation/chloe/v5/data/bretagne.tif");
+			
 			ImageInputStream stream = ImageIO.createImageInputStream(file);
 
 			// File or input stream
@@ -85,7 +86,7 @@ public class BufferUsingAparapiTiled {
 			reader.setInput(stream);
 
 			ImageReadParam param = reader.getDefaultReadParam();
-			Rectangle sourceRegion = new Rectangle(10000, 10000, width, height); 
+			Rectangle sourceRegion = new Rectangle(11000, 11000, width, height); 
 			param.setSourceRegion(sourceRegion); // Set region
 
 			BufferedImage inputImage = reader.read(0, param); // Will read only the region specified
@@ -95,12 +96,16 @@ public class BufferUsingAparapiTiled {
 			//BufferedImage outputImage = new BufferedImage(width, height, BufferedImage.SCALE_SMOOTH);
 
 			short[] inDatas = ((DataBufferShort) inputImage.getRaster().getDataBuffer()).getData();
-			int[] datas = new int[inDatas.length];
+			/*
+			short[] datas = new short[inDatas.length];
 			for(int s=0; s<inDatas.length; s++){
 				datas[s] = inDatas[s];
-			}
+			}*/
+			
+			System.out.println((((width-1)/dep)+1)*(((height-1)/dep)+1));
 			//float[] outDatas = ((DataBufferFloat) outputImage.getRaster().getDataBuffer()).getData();
-			float[] outDatas = new float[inDatas.length/dep];
+			//float[] outDatas = new float[inDatas.length/dep];
+			float[] outDatas = new float[(((width-1)/dep)+1)*(((height-1)/dep)+1)];
 			
 			/*
 			short[][] shapeFriction = new short[width*height][windowSize*windowSize];
@@ -184,15 +189,17 @@ public class BufferUsingAparapiTiled {
 			
 			for(int c=0; c<(windowSize*windowSize); c++){
 				coeffs[c] = 1;
-			}*/
+			}
+			*/
 			
-			CountValue cv = new CountValue(5, windowSize, shape, coeffs, width, height, dep, datas, outDatas);
+			CountValue cv = new CountValue(5, windowSize, shape, coeffs, width, height, dep, inDatas, outDatas);
 			cv.setExplicit(true);
 			long begin = System.currentTimeMillis();
 			for(int j=0; j<height; j+=tile){
-				System.out.println(j);
+				//System.out.println(j);
 				cv.applySlidingWindow(j, (short) Math.min(tile, (height-j)));
 			}
+			cv.get(outDatas);
 			long end = System.currentTimeMillis();
 			System.out.println("time computing : "+(end - begin));
 			cv.dispose();
@@ -229,16 +236,31 @@ public class BufferUsingAparapiTiled {
 			System.out.println("time computing : "+(end - begin));
 			cv.dispose();
 			*/
-			fw = new FileWriter("C:/Hugues/temp/image_treshold.txt");
+			fw = new FileWriter("C:/Hugues/temp/image_tiled.txt");
 			sb = new StringBuffer();
-			for(int j=0; j<(height/dep); j++){
+			/*
+			for(int j=0; j<(((height-1)/dep))+1; j++){
 				sb.setLength(0);
-				for(int i=0; i<(width/dep); i++){
-					sb.append(outDatas[(j * width) + i]+ " ");
+				for(int i=0; i<(((width-1)/dep))+1; i++){
+					//sb.append(outDatas[(j * width) + i]+ " ");
+					sb.append(outDatas[(j * ((width-1)/dep)) + i]+ " ");
 				}
 				fw.write(sb.toString());
 				fw.append("\n");
+			}*/
+			
+			System.out.println(outDatas.length);
+			int index = 0;
+			for(int j=0; j<(((height-1)/dep))+1; j++){
+				sb.setLength(0);
+				for(int i=0; i<(((width-1)/dep))+1; i++){
+					sb.append(outDatas[index++]+ " ");
+					//sb.append("1 ");
+				}
+				sb.append('\n');
+				fw.write(sb.toString());
 			}
+			
 			fw.close();
 			
 			//((DataBufferFloat) outputImage.getRaster().getDataBuffer()).getData() = outDatas;
@@ -248,10 +270,120 @@ public class BufferUsingAparapiTiled {
 			
 			
 		
-		} catch (URISyntaxException e) {
-			throw new IllegalStateException("could not get map", e);
 		} catch (IOException e1) {
 			e1.printStackTrace();
+		}
+	}
+	
+	final static class CountValue extends Kernel {
+
+		private int width, height;
+		
+		private int dep;
+
+		private short imageIn[];
+		
+		private float imageOut[];
+		
+		private short[] shape;
+		
+		private float[] coeff;
+		
+		private int windowSize;
+		
+		private int value;
+		
+		private int theY;
+		
+		public CountValue(int value, int windowSize, short[] shape, float[] coeff, int width, int height, int dep, short[] imageIn, float[] imageOut){
+			this.value = value;
+			this.windowSize = windowSize;
+			this.shape = shape;
+			this.coeff = coeff;
+			this.width = width;
+			this.height = height;
+			this.dep = dep;
+			this.imageIn = imageIn;
+			this.imageOut = imageOut;
+		}
+ 
+		public void processPixel(int x, int y) {
+			
+			if(x%dep == 0 && y%dep == 0){
+				//System.out.println(x+" "+y+" "+(((y/dep) * (((width-1)/dep)+1) + (x/dep))));
+				float count = 0f;
+				int mid = windowSize / 2;
+				int ic;
+				
+				for (int dy = -mid; dy <= mid; dy += 1) {
+					if(((y + dy) >= 0) && ((y + dy) < height)){
+						for (int dx = -mid; dx <= mid; dx += 1) {
+							if(((x + dx) >= 0) && ((x + dx) < width)){
+								ic = ((dy+mid) * windowSize) + (dx+mid);
+								if(shape[ic] == 1){
+									if(imageIn[((y + dy) * width) + (x + dx)] == value){
+										count += coeff[ic];
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				//System.out.println(((y/dep) * (((width-1)/dep)+1) + (x/dep)));
+				imageOut[((y/dep) * (((width-1)/dep)+1) + (x/dep))] = count;
+				//imageOut[((y * width) + x)/dep] = count;
+				//imageOut[((y * width) + x)/dep] = imageIn[(y * width) + x];
+			}
+			/*
+			float count = 0f;
+			int mid = windowSize / 2;
+			int ic;
+			
+			for (int dy = -mid; dy <= mid; dy += 1) {
+				if(((y + dy) >= 0) && ((y + dy) < height)){
+					for (int dx = -mid; dx <= mid; dx += 1) {
+						if(((x + dx) >= 0) && ((x + dx) < width)){
+							ic = ((dy+mid) * windowSize) + (dx+mid);
+							if(shape[ic] == 1){
+								if(imageIn[((y + dy) * width) + (x + dx)] == value){
+									count += coeff[ic];
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			imageOut[(y * width) + x] = count;
+			*/
+			//imageOut[(y * width) + x] = imageIn[(y * width) + x];
+		}
+
+		public void applySlidingWindow(int theY, short tile) {
+		//public void applySlidingWindow(int[] _imageIn, float[] _imageOut, int theY) {
+
+			//long begin = System.currentTimeMillis();
+			//imageIn = _imageIn;
+			//imageOut = _imageOut;
+			
+			this.theY = theY;
+			
+			//put(imageOut);
+			//execute(width * height);
+			execute(width * tile);
+			//get(imageOut);
+			//long end = System.currentTimeMillis();
+			//System.out.println("time computing : "+(end - begin));
+		}
+
+		@Override
+		public void run() {
+			final int x = getGlobalId(0) % width;
+			final int y = getGlobalId(0) / width;
+			//final int y = 18;
+			processPixel(x, theY + y);
+			//System.out.println();
 		}
 	}
 	
@@ -323,121 +455,6 @@ public class BufferUsingAparapiTiled {
 			final int x = getGlobalId(0) % width;
 			final int y = getGlobalId(0) / width;
 			processPixel(x, y);
-		}
-	}
-
-	final static class CountValue extends Kernel {
-
-		private int width, height;
-		
-		private int dep;
-
-		private int imageIn[];
-		
-		private float imageOut[];
-		
-		private short[] shape;
-		
-		private float[] coeff;
-		
-		private int windowSize;
-		
-		private int value;
-		
-		private int theY;
-		
-		private short tile;
-		
-		public CountValue(int value, int windowSize, short[] shape, float[] coeff, int width, int height, int dep, int[] imageIn, float[] imageOut){
-			this.value = value;
-			this.windowSize = windowSize;
-			this.shape = shape;
-			this.coeff = coeff;
-			this.width = width;
-			this.height = height;
-			this.dep = dep;
-			this.imageIn = imageIn;
-			this.imageOut = imageOut;
-		}
- 
-		public void processPixel(int x, int y) {
-			
-			
-			if(x%dep == 0 && y%dep == 0){
-				
-				float count = 0f;
-				int mid = windowSize / 2;
-				int ic;
-				
-				for (int dy = -mid; dy <= mid; dy += 1) {
-					if(((y + dy) >= 0) && ((y + dy) < height)){
-						for (int dx = -mid; dx <= mid; dx += 1) {
-							if(((x + dx) >= 0) && ((x + dx) < width)){
-								ic = ((dy+mid) * windowSize) + (dx+mid);
-								if(shape[ic] == 1){
-									if(imageIn[((y + dy) * width) + (x + dx)] == value){
-										count += coeff[ic];
-									}
-								}
-							}
-						}
-					}
-				}
-				
-				imageOut[((y * width) + x)/dep] = count;
-				
-				//imageOut[((y * width) + x)/dep] = imageIn[(y * width) + x];
-			}
-			/*
-			float count = 0f;
-			int mid = windowSize / 2;
-			int ic;
-			
-			for (int dy = -mid; dy <= mid; dy += 1) {
-				if(((y + dy) >= 0) && ((y + dy) < height)){
-					for (int dx = -mid; dx <= mid; dx += 1) {
-						if(((x + dx) >= 0) && ((x + dx) < width)){
-							ic = ((dy+mid) * windowSize) + (dx+mid);
-							if(shape[ic] == 1){
-								if(imageIn[((y + dy) * width) + (x + dx)] == value){
-									count += coeff[ic];
-								}
-							}
-						}
-					}
-				}
-			}
-			
-			imageOut[(y * width) + x] = count;
-			*/
-			//imageOut[(y * width) + x] = imageIn[(y * width) + x];
-		}
-
-		public void applySlidingWindow(int theY, short tile) {
-		//public void applySlidingWindow(int[] _imageIn, float[] _imageOut, int theY) {
-
-			//long begin = System.currentTimeMillis();
-			//imageIn = _imageIn;
-			//imageOut = _imageOut;
-			
-			this.theY = theY;
-			this.tile = tile;
-			
-			put(imageOut);
-			//execute(width * height);
-			execute(width * tile);
-			get(imageOut);
-			//long end = System.currentTimeMillis();
-			//System.out.println("time computing : "+(end - begin));
-		}
-
-		@Override
-		public void run() {
-			final int x = getGlobalId(0) % width;
-			final int y = getGlobalId(0) / width;
-			//final int y = 18;
-			processPixel(x, theY + y);
-			//System.out.println();
 		}
 	}
 

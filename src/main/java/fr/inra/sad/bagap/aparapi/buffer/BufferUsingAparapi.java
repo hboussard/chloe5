@@ -37,10 +37,10 @@ public class BufferUsingAparapi {
 		try {
 			System.out.println("buffer using aparapi");
 			
-			short windowSize = 101;
+			short windowSize = 751;
 			short mid = (short) (windowSize/2);
-			int width = 3000;
-			int height = 3000;
+			int width = 1000;
+			int height = 1000;
 			/*
 			short[] orderedIndex = getOrderedIndex(windowSize);
 			
@@ -82,7 +82,8 @@ public class BufferUsingAparapi {
 			}
 				*/		
 			
-			file = new File(Buffer.class.getResource("/bretagne.tif").toURI());
+			//file = new File(Buffer.class.getResource("/bretagne.tif").toURI());
+			file = new File("C://Hugues/modelisation/chloe/v5/data/bretagne.tif");
 
 			ImageInputStream stream = ImageIO.createImageInputStream(file);
 
@@ -101,10 +102,10 @@ public class BufferUsingAparapi {
 			//BufferedImage outputImage = new BufferedImage(width, height, BufferedImage.SCALE_SMOOTH);
 
 			short[] inDatas = ((DataBufferShort) inputImage.getRaster().getDataBuffer()).getData();
-			int[] datas = new int[inDatas.length];
+			/*int[] datas = new int[inDatas.length];
 			for(int s=0; s<inDatas.length; s++){
 				datas[s] = inDatas[s];
-			}
+			}*/
 			//float[] outDatas = ((DataBufferFloat) outputImage.getRaster().getDataBuffer()).getData();
 			float[] outDatas = new float[inDatas.length];
 			
@@ -194,10 +195,13 @@ public class BufferUsingAparapi {
 			}
 			*/
 			
-			CountValue cv = new CountValue(5, windowSize, shape, coeffs, width, height);
+			long begin = System.currentTimeMillis();
+			CountValue cv = new CountValue(5, windowSize, /*shape, coeffs,*/ width, height, inDatas, outDatas);
 			cv.setExplicit(true);
-			cv.applySlidingWindow(datas, outDatas);	
+			cv.applySlidingWindow();	
 			cv.dispose();
+			long end = System.currentTimeMillis();
+			System.out.println("total time computing : "+(end - begin));
 			
 			/*
 			cv = new CountValue(11, windowSize, shape, coeffs, width, height);
@@ -225,10 +229,86 @@ public class BufferUsingAparapi {
 			
 			
 		
-		} catch (URISyntaxException e) {
+		} /*catch (URISyntaxException e) {
 			throw new IllegalStateException("could not get map", e);
-		} catch (IOException e1) {
+		} */catch (IOException e1) {
 			e1.printStackTrace();
+		}
+	}
+	
+	
+	final static class CountValue extends Kernel {
+
+		private int width, height;
+
+		private short imageIn[];
+		
+		private float imageOut[];
+		
+		//private short[] shape;
+		
+		//private float[] coeff;
+		
+		private int windowSize;
+		
+		private int value;
+		
+		public CountValue(int value, int windowSize, /*short[] shape, float[] coeff,*/ int width, int height, short[] _imageIn, float[] _imageOut){
+			this.value = value;
+			this.windowSize = windowSize;
+			//this.shape = shape;
+			//this.coeff = coeff;
+			this.width = width;
+			this.height = height;
+			imageIn = _imageIn;
+			imageOut = _imageOut;
+		}
+
+		public void processPixel(int x, int y) {
+			float count = 0f;
+			int mid = windowSize / 2;
+			//int ic;
+			for (int dy = -mid; dy <= mid; dy += 1) {
+				if(((y + dy) >= 0) && ((y + dy) < height)){
+					for (int dx = -mid; dx <= mid; dx += 1) {
+						if(((x + dx) >= 0) && ((x + dx) < width)){
+							//ic = ((dy+mid) * windowSize) + (dx+mid);
+							/*
+							if(shape[ic] == 1){
+								if(imageIn[((y + dy) * width) + (x + dx)] == value){
+									count += coeff[ic];
+								}
+							}
+							*/
+							if(imageIn[((y + dy) * width) + (x + dx)] == value){
+								count++;
+							}
+						}
+					}
+				}
+			}
+			
+			imageOut[(y * width) + x] = count;
+		}
+
+		public void applySlidingWindow() {
+			long begin = System.currentTimeMillis();
+			//put(imageOut);
+			execute(width * height);
+			//execute(width);
+			//get(imageOut);
+			long end = System.currentTimeMillis();
+			System.out.println("time computing : "+(end - begin));
+		}
+
+		@Override
+		public void run() {
+			final int x = getGlobalId(0) % width;
+			final int y = getGlobalId(0) / width;
+			//final int y = 18;
+			processPixel(x, y);
+
+			//System.out.println(x+" "+y);
 		}
 	}
 	
@@ -301,78 +381,6 @@ public class BufferUsingAparapi {
 			final int x = getGlobalId(0) % width;
 			final int y = getGlobalId(0) / width;
 			processPixel(x, y);
-		}
-	}
-
-	final static class CountValue extends Kernel {
-
-		private int width, height;
-
-		private int imageIn[];
-		
-		private float imageOut[];
-		
-		private short[] shape;
-		
-		private float[] coeff;
-		
-		private int windowSize;
-		
-		private int value;
-		
-		public CountValue(int value, int windowSize, short[] shape, float[] coeff, int width, int height){
-			this.value = value;
-			this.windowSize = windowSize;
-			this.shape = shape;
-			this.coeff = coeff;
-			this.width = width;
-			this.height = height;
-		}
-
-		public void processPixel(int x, int y) {
-			float count = 0f;
-			int mid = windowSize / 2;
-			int ic;
-			for (int dy = -mid; dy <= mid; dy += 1) {
-				if(((y + dy) >= 0) && ((y + dy) < height)){
-					for (int dx = -mid; dx <= mid; dx += 1) {
-						if(((x + dx) >= 0) && ((x + dx) < width)){
-							ic = ((dy+mid) * windowSize) + (dx+mid);
-							if(shape[ic] == 1){
-								if(imageIn[((y + dy) * width) + (x + dx)] == value){
-									count += coeff[ic];
-								}
-							}
-						}
-					}
-				}
-			}
-			
-			imageOut[(y * width) + x] = count;
-		}
-
-		public void applySlidingWindow(int[] _imageIn, float[] _imageOut) {
-
-			long begin = System.currentTimeMillis();
-			imageIn = _imageIn;
-			imageOut = _imageOut;
-			
-			put(imageOut);
-			execute(width * height);
-			//execute(width);
-			get(imageOut);
-			long end = System.currentTimeMillis();
-			System.out.println("time computing : "+(end - begin));
-		}
-
-		@Override
-		public void run() {
-			final int x = getGlobalId(0) % width;
-			final int y = getGlobalId(0) / width;
-			//final int y = 18;
-			processPixel(x, y);
-
-			//System.out.println(x+" "+y);
 		}
 	}
 
