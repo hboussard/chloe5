@@ -1,12 +1,14 @@
-package fr.inra.sad.bagap.chloe;
+package fr.inra.sad.bagap.chloe.metric;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.analysis.Variable;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inra.sad.bagap.chloe.counting.Counting;
+import fr.inra.sad.bagap.chloe.output.MetricObserver;
 
-public abstract class Metric {
+public abstract class Metric implements Comparable<Metric> {
 	
 	/** the refereed variable */
 	private Variable variable;
@@ -19,10 +21,16 @@ public abstract class Metric {
 	
 	/**
 	 * constructor
+	 */
+	public Metric() {
+		observers = new HashSet<MetricObserver>();
+	}
+	
+	/**
+	 * constructor
 	 * @param v the refereed variable
 	 */
 	public Metric(Variable v){
-		//System.out.println("création de la métrique "+v);
 		this.variable = v;
 		observers = new HashSet<MetricObserver>();
 	}
@@ -30,6 +38,10 @@ public abstract class Metric {
 	@Override
 	public String toString(){
 		return variable.getName();
+	}
+	
+	public int compareTo(Metric m) {
+		return this.variable.getName().compareTo(m.variable.getName());
 	}
 	
 	/**
@@ -82,9 +94,9 @@ public abstract class Metric {
 		}
 	}
 	
-	public void close(){
-		for(MetricObserver mo : observers){
-			mo.close();
+	public void closeObservers(){
+		for(MetricObserver o : observers){
+			o.close();
 		}
 	}
 	

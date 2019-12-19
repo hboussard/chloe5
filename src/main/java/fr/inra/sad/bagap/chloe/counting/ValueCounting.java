@@ -1,9 +1,7 @@
-package fr.inra.sad.bagap.chloe;
+package fr.inra.sad.bagap.chloe.counting;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 
 public class ValueCounting extends Counting implements ValueCountingInterface {
 
@@ -14,7 +12,7 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	
 	//private float[] counts;
 	
-	private short theoriticalSize;
+	private int theoriticalSize;
 	
 	private float totalValues;
 	
@@ -24,7 +22,7 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	
 	private short countClass;
 	
-	public ValueCounting(short[] values, short theoriticalSize){
+	public ValueCounting(short[] values, int theoriticalSize){
 		this.values = values;
 		this.countValues = new HashMap<Short, Float>();
 		this.theoriticalSize = theoriticalSize;
@@ -60,7 +58,7 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	}
 	
 	@Override
-	public short theoreticalSize(){
+	public int theoreticalSize(){
 		return theoriticalSize;
 	}
 	

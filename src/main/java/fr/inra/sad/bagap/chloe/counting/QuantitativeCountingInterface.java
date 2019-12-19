@@ -1,12 +1,12 @@
-package fr.inra.sad.bagap.chloe;
+package fr.inra.sad.bagap.chloe.counting;
 
-public interface BasicCountingInterface {
+public interface QuantitativeCountingInterface {
 
 	/**
 	 * the theoretical size of the window if there were no border
 	 * @return the theoretical size
 	 */
-	short theoreticalSize();
+	int theoreticalSize();
 	
 	/**
 	 * the total count of values
@@ -22,10 +22,14 @@ public interface BasicCountingInterface {
 	float validValues();
 	
 	/**
-	 * the count of values
-	 * a value is different to 0 and to Raster.noDataValue()
-	 * @return the count of values
+	 * to get the average value
+	 * @return the average of values
 	 */
-	float countValues();
+	float average();
 	
+	/**
+	 * to get the sum
+	 * @return the sum of values
+	 */
+	double sum();
 }

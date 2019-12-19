@@ -1,6 +1,4 @@
-package fr.inra.sad.bagap.chloe;
-
-import java.util.Set;
+package fr.inra.sad.bagap.chloe.counting;
 
 public interface ValueCountingInterface {
 

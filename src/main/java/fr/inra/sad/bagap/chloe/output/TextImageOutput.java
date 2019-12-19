@@ -1,9 +1,13 @@
-package fr.inra.sad.bagap.chloe;
+package fr.inra.sad.bagap.chloe.output;
 
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class TextImageOutput implements MetricObserver{
+import fr.inra.sad.bagap.chloe.counting.Counting;
+import fr.inra.sad.bagap.chloe.counting.CountingObserver;
+import fr.inra.sad.bagap.chloe.metric.Metric;
+
+public class TextImageOutput implements CountingObserver, MetricObserver{
 
 	private FileWriter writer;
 	
@@ -23,7 +27,6 @@ public class TextImageOutput implements MetricObserver{
 		this.width = width;
 	}
 	
-	@Override
 	public void notify(Metric m, String metric, float value) {
 		
 		sb.append(value+" ");
@@ -41,13 +44,37 @@ public class TextImageOutput implements MetricObserver{
 		}
 	}
 	
-	@Override
-	public void close(){
+	public void close(Counting c){
+		
+	}
+
+	public void init() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void init(Counting c) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void prerun(Counting c) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void postrun(Counting c) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void close() {
 		try {
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+
 
 }
