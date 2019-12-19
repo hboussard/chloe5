@@ -9,60 +9,61 @@ import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
+
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+
 import com.aparapi.Kernel;
 
-public class BufferUsingAparapiTiledNoOut {
-	
+public class ValuesSlidingWindowAnalysis {
+
 	public static void main(final String[] _args) throws IOException {
 		final File file;
 		FileWriter fw;
 		StringBuffer sb;
 		try {
-			System.out.println("buffer using aparapi");
+			System.out.println("sliding window");
 			
 			short windowSize = 51;
 			short mid = (short) (windowSize/2);
 			int width = 1000;
 			int height = 1000;
 			short dep = 5;
-			short tile = 5;
+			short buffer = 5;
 			
-			tile = (short) Math.max(dep, tile);
+			buffer = (short) Math.max(dep, buffer);
 			
 			file = new File("C://Hugues/modelisation/chloe/v5/data/bretagne.tif");
-
 			ImageInputStream stream = ImageIO.createImageInputStream(file);
-
-			// File or input stream
 			ImageReader reader = ImageIO.getImageReaders(stream).next();
 			reader.setInput(stream);
-
 			ImageReadParam param = reader.getDefaultReadParam();
 			Rectangle sourceRegion = new Rectangle(11000, 11000, width, height); 
 			param.setSourceRegion(sourceRegion); // Set region
-
 			BufferedImage inputImage = reader.read(0, param); // Will read only the region specified
-
-			System.out.println(inputImage);
-
-			//BufferedImage outputImage = new BufferedImage(width, height, BufferedImage.SCALE_SMOOTH);
+			//System.out.println(inputImage);
+		
 
 			short[] inDatas = ((DataBufferShort) inputImage.getRaster().getDataBuffer()).getData();
-			int[] datas = new int[inDatas.length];
-			for(int s=0; s<inDatas.length; s++){
-				datas[s] = inDatas[s];
+			Set<Short> inValues = new TreeSet<Short>();
+			for(short s : inDatas){
+				if(s!=-1 && s!=0 && !inValues.contains(s)){
+					inValues.add(s);
+				}
 			}
-			//float[] outDatas = ((DataBufferFloat) outputImage.getRaster().getDataBuffer()).getData();
-			System.out.println(((((width-1)/dep)+1)*(((tile-1)/dep)+1)));
-			float[] outDatas = new float[((((width-1)/dep)+1)*(((tile-1)/dep)+1))];
+			short[] values = new short[inValues.size()];
+			int index = 0;
+			for(Short s : inValues){
+				values[index++] = (short) s;
+			}
 			
-			
-			
+			float[][] outDatas = new float[((((width-1)/dep)+1)*(((buffer-1)/dep)+1))][values.length+2];
+						
 			short[] shape = new short[windowSize*windowSize];
 			float[] coeffs = new float[windowSize*windowSize];
 			
@@ -96,37 +97,50 @@ public class BufferUsingAparapiTiledNoOut {
 			
 			for(int c=0; c<(windowSize*windowSize); c++){
 				coeffs[c] = 1;
-			}*/
+			}
+			*/
 			
-			CountValue cv = new CountValue(5, windowSize, shape, coeffs, width, height, dep, datas, outDatas);
+			CountValue cv = new CountValue(values, windowSize, shape, coeffs, width, height, dep, inDatas, outDatas);
 			cv.setExplicit(true);
-			fw = new FileWriter("C:/Hugues/temp/image_no_out.txt");
+			Map<Integer, FileWriter> writers = new HashMap<Integer, FileWriter>();
+			Map<Integer, Integer> nextJ = new HashMap<Integer, Integer>();
+			index = 0;
+			for(short v : values){
+				fw = new FileWriter("C:/Hugues/temp/image_no_out_"+v+".txt");
+				nextJ.put(index, 0);
+				writers.put(index++, fw);
+			}
 			sb = new StringBuffer();
+			
 			long begin = System.currentTimeMillis();
-			int index;
-			int nextJ = 0;
-			for(int t=0; t<height; t+=tile){
+			for(int b=0; b<height; b+=buffer){
 				
-				cv.applySlidingWindow(t, (short) Math.min(tile, (height-t)));
+				cv.applySlidingWindow(b, (short) Math.min(buffer, (height-b)));
 				cv.get(outDatas);
 				
-				sb.setLength(0);
-				index = 0;
-				for(int j=nextJ%tile; j<Math.min(tile, height-t); j+=dep){
-					nextJ += dep;
-					for(int i=0; i<width; i+=dep){
-						sb.append(outDatas[index++]+ " ");
+				for(Entry<Integer, FileWriter> w : writers.entrySet()){
+					sb.setLength(0);
+					index = 0;
+					for(int j=nextJ.get(w.getKey())%buffer; j<Math.min(buffer, height-b); j+=dep){
+						nextJ.put(w.getKey(), nextJ.get(w.getKey()) + dep);
+						for(int i=0; i<width; i+=dep){
+							sb.append(outDatas[index++][w.getKey()]+ " ");
+						}
+						sb.append('\n');
 					}
-					sb.append('\n');
+					w.getValue().write(sb.toString());
 				}
-				
-				fw.write(sb.toString());
 			}
 			long end = System.currentTimeMillis();
 			System.out.println("time computing : "+(end - begin));
 			cv.dispose();
-			fw.close();
 			
+			for(FileWriter w : writers.values()){
+				w.close();
+			}
+			writers.clear();
+			
+		
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -138,9 +152,9 @@ public class BufferUsingAparapiTiledNoOut {
 		
 		private int dep;
 
-		private int imageIn[];
+		private short imageIn[];
 		
-		private float imageOut[];
+		private float imageOut[][];
 		
 		private short[] shape;
 		
@@ -148,12 +162,12 @@ public class BufferUsingAparapiTiledNoOut {
 		
 		private int windowSize;
 		
-		private int value;
+		private short[] values;
 		
 		private int theY;
 		
-		public CountValue(int value, int windowSize, short[] shape, float[] coeff, int width, int height, int dep, int[] imageIn, float[] imageOut){
-			this.value = value;
+		public CountValue(short[] values, int windowSize, short[] shape, float[] coeff, int width, int height, int dep, short[] imageIn, float[][] imageOut){
+			this.values = values;
 			this.windowSize = windowSize;
 			this.shape = shape;
 			this.coeff = coeff;
@@ -166,26 +180,43 @@ public class BufferUsingAparapiTiledNoOut {
  
 		public void processPixel(int x, int y, int localY) {
 			if(x%dep == 0 && y%dep == 0){
-				float count = 0f;
+				
+				int ind = ((((localY)/dep))*(((width-1)/dep)+1) + (((x)/dep)));
+				
+				for(int i=0; i<values.length+2; i++){
+					imageOut[ind][i] = 0f;
+				}
+				
 				int mid = windowSize / 2;
 				int ic;
+				short v;
+				
 				for (int dy = -mid; dy <= mid; dy += 1) {
 					if(((y + dy) >= 0) && ((y + dy) < height)){
 						for (int dx = -mid; dx <= mid; dx += 1) {
 							if(((x + dx) >= 0) && ((x + dx) < width)){
 								ic = ((dy+mid) * windowSize) + (dx+mid);
 								if(shape[ic] == 1){
-									if(imageIn[((y + dy) * width) + (x + dx)] == value){
-										count += coeff[ic];
+									v = imageIn[((y + dy) * width) + (x + dx)];
+									
+									if(v == -1){
+										imageOut[ind][0] = imageOut[ind][0] + coeff[ic];;
+									}else{
+										if(v == 0){
+											imageOut[ind][1] = imageOut[ind][1] + coeff[ic];;
+										}else{
+											for(int i=0; i<values.length; i++){
+												if(v == values[i+2]){
+												 imageOut[ind][i+2] = imageOut[ind][i+2] + coeff[ic];
+												}
+											}
+										}
 									}
 								}
 							}
 						}
 					}
 				}
-				
-				imageOut[((((localY)/dep))*(((width-1)/dep)+1) + (((x)/dep)))] = count;
-				
 			}
 		}
 
@@ -222,26 +253,5 @@ public class BufferUsingAparapiTiledNoOut {
 		}
 	}
 	
-	private static short[] getOrderedIndex(int windowSize){
-		int mid = windowSize/2;
-		
-		HashMap<Integer, Float> map = new HashMap<Integer, Float>();
-		Comparator<Integer> dComparator = new DistanceComparator(map);
-		Map<Integer, Float> distanceByIndex = new TreeMap<Integer, Float>(dComparator);
-		for(short j=0; j<windowSize; j++){
-			for(short i=0; i<windowSize; i++){
-				map.put((j * windowSize) + i, distance(i, j, mid, mid));
-			}
-		}
-		distanceByIndex.putAll(map);
-		
-		short[] orderedI = new short[windowSize*windowSize];
-		int ind = 0;
-		for(Integer i : distanceByIndex.keySet().toArray(new Integer[windowSize*windowSize])){
-			orderedI[ind++] = (short) ((int) i);
-		}
-		
-		return orderedI;
-	}
 
 }

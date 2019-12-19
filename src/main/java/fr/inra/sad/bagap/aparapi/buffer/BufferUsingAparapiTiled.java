@@ -32,7 +32,7 @@ public class BufferUsingAparapiTiled {
 			short mid = (short) (windowSize/2);
 			int width = 1000;
 			int height = 1000;
-			short dep = 1;
+			short dep = 5;
 			short tile = 500;
 			
 			/*
@@ -102,7 +102,6 @@ public class BufferUsingAparapiTiled {
 				datas[s] = inDatas[s];
 			}*/
 			
-			System.out.println((((width-1)/dep)+1)*(((height-1)/dep)+1));
 			//float[] outDatas = ((DataBufferFloat) outputImage.getRaster().getDataBuffer()).getData();
 			//float[] outDatas = new float[inDatas.length/dep];
 			float[] outDatas = new float[(((width-1)/dep)+1)*(((height-1)/dep)+1)];
@@ -249,7 +248,6 @@ public class BufferUsingAparapiTiled {
 				fw.append("\n");
 			}*/
 			
-			System.out.println(outDatas.length);
 			int index = 0;
 			for(int j=0; j<(((height-1)/dep))+1; j++){
 				sb.setLength(0);
