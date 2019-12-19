@@ -32,7 +32,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/hboussard/appli/apiland/lib/csv.jar"/>
-	<classpathentry kind="lib" path="C:/Users/hboussard/appli/apiland/bin/apiland-1.0.jar"/>
+	<classpathentry kind="lib" path="bin/apiland-1.0.jar"/>
+	<classpathentry kind="lib" path="bin/csv.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
