@@ -3,6 +3,7 @@ package fr.inra.sad.bagap.chloe;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -21,6 +22,10 @@ import fr.inra.sad.bagap.chloe.output.CsvOutput;
 public class ValuesSlidingWindowAnalysis {
 	
 	public static void main(final String[] args) {
+		ResourceBundle bundle = ResourceBundle.getBundle("fr.inra.sad.bagap.chloe.properties.config");
+		String path_input = bundle.getString("path_input");
+		String path_output = bundle.getString("path_output");
+		
 		try {
 			System.out.println("sliding window");
 			
@@ -39,7 +44,7 @@ public class ValuesSlidingWindowAnalysis {
 			
 			buffer = (short) Math.max(dep, buffer);
 			
-			File file = new File("C:/Users/hboussard/data/bretagne.tif");
+			File file = new File(path_input+"bretagne.tif");
 			GeoTiffReader reader = new GeoTiffReader(file);
 			//System.out.println(reader.getCoordinateReferenceSystem());
 			GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
@@ -134,7 +139,7 @@ public class ValuesSlidingWindowAnalysis {
 			
 			metric = new CountValueMetric((short)5);
 			//metric.addObserver(new TextImageOutput("C:/Users/hboussard/modelisation/chloe/chloe5/data/output/image_shdi.txt", outWidth));
-			metric.addObserver(new AsciiGridOutput("C:/Users/hboussard/modelisation/chloe/chloe5/data/output/test.asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
+			metric.addObserver(new AsciiGridOutput(path_output+"test.asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
 			//csvOut.addMetric(metric);
 			vc.addMetric(metric);
 			/*

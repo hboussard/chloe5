@@ -1,0 +1,2 @@
+path_input=C:/Users/hboussard/data/
+path_output=C:/Users/hboussard/modelisation/chloe/chloe5/data/output/
