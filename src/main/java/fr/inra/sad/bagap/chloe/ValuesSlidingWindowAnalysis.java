@@ -29,14 +29,14 @@ public class ValuesSlidingWindowAnalysis {
 		try {
 			System.out.println("sliding window");
 			
-			short windowSize = 31;
+			short windowSize = Short.parseShort(bundle.getString("window_size"));
 			short mid = (short) (windowSize/2);
 			//int roiWidth = 12090;
 			//int roiHeight = 12494;
 			//short roiX = 17000;
 			//short roiY = 700;
-			int roiWidth = 1000;
-			int roiHeight = 1000;
+			int roiWidth = Integer.parseInt(bundle.getString("roi_width"));
+			int roiHeight = Integer.parseInt(bundle.getString("roi_width"));
 			short roiX = 10000;
 			short roiY = 10000;
 			short dep = 1;
@@ -135,18 +135,18 @@ public class ValuesSlidingWindowAnalysis {
 			ValueCounting vc = new ValueCounting(values, theoriticalSize);
 			
 			Metric metric;
-			//CsvOutput csvOut = new CsvOutput("C:/Users/hboussard/modelisation/chloe/chloe5/data/output/image.csv", outMinX, outMaxY, cellSize, outMaxX);
+			//CsvOutput csvOut = new CsvOutput(path_output+"image.csv", outMinX, outMaxY, cellSize, outMaxX);
 			
 			metric = new CountValueMetric((short)5);
-			//metric.addObserver(new TextImageOutput("C:/Users/hboussard/modelisation/chloe/chloe5/data/output/image_shdi.txt", outWidth));
+			//metric.addObserver(new TextImageOutput(path_output+"image_shdi.txt", outWidth));
 			metric.addObserver(new AsciiGridOutput(path_output+"test.asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
 			//csvOut.addMetric(metric);
 			vc.addMetric(metric);
 			/*
 			for(short v : values){
 				metric = new CountValueMetric(v);
-				metric.addObserver(new TextImageOutput("C:/Users/hboussard/modelisation/chloe/chloe5/data/output/image_count_"+v+".txt", (short) (((roiWidth-1)/dep)+1)));
-				metric.addObserver(new AsciiGridOutput("C:/Users/hboussard/modelisation/chloe/chloe5/data/output/image_count_"+v+".asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
+				metric.addObserver(new TextImageOutput(path_output+"image_count_"+v+".txt", (short) (((roiWidth-1)/dep)+1)));
+				metric.addObserver(new AsciiGridOutput(path_output+"image_count_"+v+".asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
 				vc.addMetric(metric);
 			}
 			*/
