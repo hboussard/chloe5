@@ -19,8 +19,7 @@ public class GaussianWeigthedCountValueKernel extends Kernel {
 	private final short[] values;
 	
 	private int theY;
-	private int line;
-	private int vertical;
+
 	private final float[][] buf;
 	private final float[] gauss;
 	
@@ -37,7 +36,7 @@ public class GaussianWeigthedCountValueKernel extends Kernel {
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.values = values;
-		this.rayon = windowSize/2;
+		this.rayon = windowSize/2 + 1;
 		this.width = width;
 		this.height = height;
 		this.dep = dep;
@@ -48,71 +47,84 @@ public class GaussianWeigthedCountValueKernel extends Kernel {
 		this.buf = new float[width][values.length+2];
 		this.gauss = new float[rayon];
 		
-		float r=rayon/2.f;
+		float r=(rayon-1)/2.f;
 		for(int i=0;i<rayon;i++) {
 			float d = i/r; // distance en nombre de rayons
-			gauss[i]=(float) Math.exp(-d*d/2);
+			gauss[i]=(float) Math.exp(-d*d);
+			//gauss[i]=1;
 		}
 	}
 
-	public void processPixel(int x) {
-		if(vertical > 0) {
-			int y = theY + line;
-			// parcours vertical de l'image centré sur ligne theY+line et stocké dans buf
-			for(int i=0;i<values.length+2;i++) buf[x][i]=0;
-			for (int dy = -rayon+1; dy < rayon; dy++) {
-				if(((y + dy) >= 0) && ((y + dy) < height)){
-					
-					int ic = abs(dy);
-					short v = (short) imageIn[((y + dy) * width) + x];
-								
-					if(v == noDataValue){
-						buf[x][0] += gauss[ic];
-					}else{
-						if(v == 0){
-							buf[x][1] += gauss[ic];
-						}else{
-							boolean again = true;
-							for(int i=0; again && i<values.length; i++){
-								if(v == values[i]){
-									buf[x][i+2] += gauss[ic];
-									again = false;
-								}
+	public void processVerticalPixel(int x,int line) {
+		int y = theY + line;
+		int i,dy;
+		// parcours vertical de l'image centré sur ligne theY+line et stocké dans buf
+		for(i=0;i<values.length+2;i++) {
+			buf[x][i]=0;
+		}
+		for (dy = -rayon+1; dy < rayon; dy++) {
+			if(((y + dy) >= 0) && ((y + dy) < height)){
+				
+				int ic = abs(dy);
+				float v = imageIn[((y + dy) * width) + x];
+							
+				if(v == noDataValue){
+					buf[x][0] += gauss[ic];
+				} else {
+					if(v == 0){
+						buf[x][1] += gauss[ic];
+					} else {
+						boolean again = true;
+						for(i=0; again && i<values.length; i++){
+							if(v == values[i]){
+								buf[x][i+2] += gauss[ic];
+								again = false;
 							}
 						}
 					}
 				}
-			}
-		}
-		else {
-			// parcours horizontal de buf: position dans imageOut : (x,line/dep)
-			int x_buf = x*dep;
-			int y=line/dep;
-			int ind = y*((width-1)/dep+1) + x;
-			
-			for(int value=0; value<values.length+2;value++) {
-				float val=0;
-				for(int i=max(x_buf-rayon+1,0);i<min(x_buf+rayon,width);i++)
-					val+=buf[i][value]*gauss[abs(i-x_buf)];
-				imageOut[ind][value] = val;
-			}
 
+			}
 		}
 	}
 
+	public void processHorizontalPixel(int x,int line) {
+
+		// parcours horizontal de buf: position dans imageOut : (x,line/dep)
+		int x_buf = x*dep;
+		int y=line/dep;
+		int ind = y*((width-1)/dep+1) + x;
+		int i;
+		float val;
+		
+		for(int value=0; value<values.length+2;value++) {
+			val=0;
+			for(i=max(x_buf-rayon+1,0);i<min(x_buf+rayon,width);i++) {
+				val+=buf[i][value]*gauss[abs(i-x_buf)];
+			}
+			imageOut[ind][value] = val;
+		}
+
+	}
+
+
 	public void applySlidingWindow(int theY, short buffer) {
 		this.theY = theY;
-		for(line = (dep-theY%dep)%dep;line<buffer;line+=dep) {
-			this.vertical = 1;
-			execute(width);
-			this.vertical = 0;
-//			System.out.println("horizontal : line = "+Integer.toString(line));
-			execute((width-1)/dep+1);
-		}
+		int nlines = (buffer - ((dep-theY%dep)%dep) )/dep;
+		execute(width,2*nlines);
 	}
 
 	@Override
 	public void run() {
-		processPixel(getGlobalId(0));
+		int x = getGlobalId(0);
+		int pass = getPassId();
+		int vertical = pass%2;
+		int line= (dep-theY%dep)%dep + pass/2;
+		if(vertical == 0)
+			processVerticalPixel(getGlobalId(0),line);
+		else {
+			if( x < (width-1)/dep+1 )
+				processHorizontalPixel(x,line);
+		}
 	}
 }
