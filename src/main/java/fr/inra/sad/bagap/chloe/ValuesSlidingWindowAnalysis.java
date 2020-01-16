@@ -14,6 +14,7 @@ import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 //import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inra.sad.bagap.chloe.counting.ValueCounting;
 import fr.inra.sad.bagap.chloe.kernel.DistanceWeigthedCountValueKernel;
+import fr.inra.sad.bagap.chloe.kernel.GaussianWeigthedCountValueKernel;
 import fr.inra.sad.bagap.chloe.metric.Metric;
 import fr.inra.sad.bagap.chloe.metric.value.CountValueMetric;
 import fr.inra.sad.bagap.chloe.output.AsciiGridOutput;
@@ -36,11 +37,11 @@ public class ValuesSlidingWindowAnalysis {
 			//short roiX = 17000;
 			//short roiY = 700;
 			int roiWidth = Integer.parseInt(bundle.getString("roi_width"));
-			int roiHeight = Integer.parseInt(bundle.getString("roi_width"));
-			short roiX = 10000;
-			short roiY = 10000;
-			short dep = 1;
-			short buffer = 500;
+			int roiHeight = Integer.parseInt(bundle.getString("roi_height"));
+			int roiX = Integer.parseInt(bundle.getString("roi_x"));
+			int roiY = Integer.parseInt(bundle.getString("roi_y"));
+			int dep = Integer.parseInt(bundle.getString("deplacement"));
+			int buffer = Integer.parseInt(bundle.getString("buffer_height"));
 			
 			buffer = (short) Math.max(dep, buffer);
 			
@@ -127,9 +128,11 @@ public class ValuesSlidingWindowAnalysis {
 			
 			for(int c=0; c<(windowSize*windowSize); c++){
 				coeffs[c] = 1;
-			}*/
+			}
+			*/
 			
-			DistanceWeigthedCountValueKernel cv = new DistanceWeigthedCountValueKernel(values, windowSize, shape, coeffs, roiWidth, roiHeight, dep, inDatas, outDatas, Raster.getNoDataValue());
+			GaussianWeigthedCountValueKernel cv = new GaussianWeigthedCountValueKernel(values, windowSize, roiWidth, roiHeight, dep, inDatas, outDatas, Raster.getNoDataValue());
+			//DistanceWeigthedCountValueKernel cv = new DistanceWeigthedCountValueKernel(values, windowSize, shape, coeffs, roiWidth, roiHeight, dep, inDatas, outDatas, Raster.getNoDataValue());
 			//ThresholdCountValueKernel cv = new ThresholdCountValueKernel(values, windowSize, shape, roiWidth, roiHeight, dep, inDatas, outDatas);
 			
 			ValueCounting vc = new ValueCounting(values, theoriticalSize);
@@ -139,7 +142,7 @@ public class ValuesSlidingWindowAnalysis {
 			
 			metric = new CountValueMetric((short)5);
 			//metric.addObserver(new TextImageOutput(path_output+"image_shdi.txt", outWidth));
-			metric.addObserver(new AsciiGridOutput(path_output+"test.asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
+			metric.addObserver(new AsciiGridOutput(path_output+"testWG.asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
 			//csvOut.addMetric(metric);
 			vc.addMetric(metric);
 			/*
