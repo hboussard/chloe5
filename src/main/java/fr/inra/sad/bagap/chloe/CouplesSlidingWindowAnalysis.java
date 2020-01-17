@@ -16,6 +16,7 @@ import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inra.sad.bagap.chloe.counting.CoupleCounting;
 import fr.inra.sad.bagap.chloe.counting.ValueCounting;
 import fr.inra.sad.bagap.chloe.kernel.DistanceWeightedCountCoupleKernel;
+import fr.inra.sad.bagap.chloe.kernel.GaussianWeightedCountCoupleKernel;
 import fr.inra.sad.bagap.chloe.kernel.DistanceWeightedCountCoupleKernelBis;
 import fr.inra.sad.bagap.chloe.kernel.ThresholdCountCoupleKernel;
 import fr.inra.sad.bagap.chloe.kernel.ThresholdCountValueKernel;
@@ -28,29 +29,36 @@ import fr.inra.sad.bagap.chloe.output.AsciiGridOutput;
 import fr.inra.sad.bagap.chloe.output.CsvOutput;
 import fr.inra.sad.bagap.chloe.output.TextImageOutput;
 import fr.inra.sad.bagap.chloe.util.Couple;
+import java.util.ResourceBundle;
+
 
 public class CouplesSlidingWindowAnalysis {
 
 	public static void main(final String[] args) {
+		ResourceBundle bundle = ResourceBundle.getBundle("fr.inra.sad.bagap.chloe.properties.config");
+		String path_input = bundle.getString("path_input");
+		String path_output = bundle.getString("path_output");
+
 		try {
 			System.out.println("sliding window");
 			
-			short windowSize = 51;
+			short windowSize = Short.parseShort(bundle.getString("window_size"));
 			short mid = (short) (windowSize/2);
 			//int roiWidth = 12090;
 			//int roiHeight = 12494;
 			//short roiX = 17000;
 			//short roiY = 700;
-			int roiWidth = 1000;
-			int roiHeight = 1000;
-			short roiX = 10000;
-			short roiY = 10000;
-			short dep = 1;
-			short buffer = 500;
+			int roiWidth = Integer.parseInt(bundle.getString("roi_width"));
+			int roiHeight = Integer.parseInt(bundle.getString("roi_height"));
+			int roiX = Integer.parseInt(bundle.getString("roi_x"));
+			int roiY = Integer.parseInt(bundle.getString("roi_y"));
+			int dep = Integer.parseInt(bundle.getString("deplacement"));
+			int buffer = Integer.parseInt(bundle.getString("buffer_height"));
+
 			
 			buffer = (short) Math.max(dep, buffer);
 			
-			File file = new File("C:/Users/hboussard/data/bretagne.tif");
+			File file = new File(path_input + "bretagne.tif");
 			GeoTiffReader reader = new GeoTiffReader(file);
 			//System.out.println(reader.getCoordinateReferenceSystem());
 			GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
@@ -82,6 +90,7 @@ public class CouplesSlidingWindowAnalysis {
 			//System.out.println(pi.getMinX()+" "+pi.getMaxX()+" "+pi.getMinTileX()+" "+pi.getMaxTileX());
 				
 			
+			int nodatavalue = Raster.getNoDataValue();
 			Set<Short> inValues = new TreeSet<Short>();
 			for(float s : inDatas){
 				if(s!=Raster.getNoDataValue() && s!=0 && !inValues.contains((short) s)){
@@ -161,7 +170,7 @@ public class CouplesSlidingWindowAnalysis {
 			for(int c=0; c<(windowSize*windowSize); c++){
 				coeffs[c] = 1;
 			}
-			*/
+			
 			
 			for(int s1=0; s1<windowSize; s1++){
 				for(int s2=0; s2<windowSize; s2++){
@@ -169,16 +178,16 @@ public class CouplesSlidingWindowAnalysis {
 				}
 				System.out.println();
 			}
-			
-			//DistanceWeightedCountCoupleKernel cv = new DistanceWeightedCountCoupleKernel(couples, windowSize, shape, coeffs, roiWidth, roiHeight, dep, inDatas, outDatas);
-			DistanceWeightedCountCoupleKernelBis cv = new DistanceWeightedCountCoupleKernelBis(couples, windowSize, shape, coeffs, roiWidth, roiHeight, dep, inDatas, outDatas);
-			
+			*/
+			DistanceWeightedCountCoupleKernel cv = new DistanceWeightedCountCoupleKernel(couples, (int) windowSize, shape, coeffs, roiWidth, roiHeight, dep, inDatas, outDatas, nodatavalue);
+			//DistanceWeightedCountCoupleKernelBis cv = new DistanceWeightedCountCoupleKernelBis(couples, windowSize, shape, coeffs, roiWidth, roiHeight, dep, inDatas, outDatas, nodatavalue);
+			//GaussianWeightedCountCoupleKernel cv = new GaussianWeightedCountCoupleKernel(couples, windowSize, roiWidth, roiHeight, dep, inDatas, outDatas, nodatavalue);
 			CoupleCounting vc = new CoupleCounting(nValues, couples, theoriticalCoupleSize);
 			
 			Metric metric;
 			
-			metric = new CountCoupleMetric((short) 5, (short) 5);
-			metric.addObserver(new AsciiGridOutput("C:/Users/hboussard/modelisation/chloe/chloe5/data/output/image_count_5-5.asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
+			metric = new CountCoupleMetric((short) 5, (short) 6);
+			metric.addObserver(new AsciiGridOutput(path_output+"image_count_5-6.asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
 			
 			vc.addMetric(metric);
 			/*
