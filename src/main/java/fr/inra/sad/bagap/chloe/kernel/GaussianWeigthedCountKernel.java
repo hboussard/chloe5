@@ -77,7 +77,7 @@ public class GaussianWeigthedCountKernel extends Kernel {
 
 		// parcours horizontal de buf: position dans imageOut : (x,line/dep)
 		int x_buf = x*dep;
-		int y=line/dep;
+		int y=line;
 		int ind = y*((width-1)/dep+1) + x;
 		int i;
 		float val;

@@ -21,7 +21,6 @@ public class SquareCountKernel extends Kernel {
 	private int theY;
 
 	private final float[][] buf;
-	private final float[] gauss;
 	
 	private final int noDataValue;
 	
@@ -45,7 +44,6 @@ public class SquareCountKernel extends Kernel {
 		this.noDataValue = noDataValue;
 		this.enveloppeInterne = enveloppeInterne;
 		this.buf = new float[width][values.length+2];
-		this.gauss = new float[rayon];
 
 	}
 
@@ -71,7 +69,7 @@ public class SquareCountKernel extends Kernel {
 
 		// parcours horizontal de buf: position dans imageOut : (x,line/dep)
 		int x_buf = x*dep;
-		int y=line/dep;
+		int y=line;
 		int ind = y*((width-1)/dep+1) + x;
 		int i;
 		float val;
