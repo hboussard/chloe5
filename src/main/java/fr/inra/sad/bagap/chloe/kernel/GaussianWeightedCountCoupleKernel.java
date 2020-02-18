@@ -1,7 +1,6 @@
 package fr.inra.sad.bagap.chloe.kernel;
 
 import com.aparapi.Kernel;
-import com.aparapi.Range;
 
 
 public class GaussianWeightedCountCoupleKernel extends Kernel {

@@ -1,7 +1,6 @@
 package fr.inra.sad.bagap.chloe.kernel;
 
 import com.aparapi.Kernel;
-import com.aparapi.Range;
 
 
 public class GaussianWeigthedCountValueKernel extends Kernel {
@@ -51,7 +50,7 @@ public class GaussianWeigthedCountValueKernel extends Kernel {
 		for(int i=0;i<rayon;i++) {
 			float d = i/r; // distance en nombre de rayons
 			gauss[i]=(float) Math.exp(-d*d);
-			//gauss[i]=1;
+			gauss[i]=1;
 		}
 	}
 
@@ -90,16 +89,15 @@ public class GaussianWeigthedCountValueKernel extends Kernel {
 
 	public void processHorizontalPixel(int x,int line) {
 
-		// parcours horizontal de buf: position dans imageOut : (x,line/dep)
+		// parcours horizontal de buf: position dans imageOut : (x,y=line/dep)
 		int x_buf = x*dep;
 		int y=line/dep;
 		int ind = y*((width-1)/dep+1) + x;
-		int i;
 		float val;
 		
 		for(int value=0; value<values.length+2;value++) {
 			val=0;
-			for(i=max(x_buf-rayon+1,0);i<min(x_buf+rayon,width);i++) {
+			for(int i=max(x_buf-rayon+1,0);i<min(x_buf+rayon,width);i++) {
 				val+=buf[i][value]*gauss[abs(i-x_buf)];
 			}
 			imageOut[ind][value] = val;
