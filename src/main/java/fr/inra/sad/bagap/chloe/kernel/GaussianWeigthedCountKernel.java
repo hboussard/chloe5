@@ -21,7 +21,7 @@ public class GaussianWeigthedCountKernel extends Kernel {
 	private final float[][] buf;
 	private final float[] gauss;
 	
-	private final int enveloppeInterne; // in pixels
+	private final int xmin,xmax,ymin,ymax; // in pixels
 	
 	public GaussianWeigthedCountKernel(int nValues, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue){
 		this(nValues, windowSize, width, height, dep, imageIn, imageOut, noDataValue, 0);
@@ -29,6 +29,9 @@ public class GaussianWeigthedCountKernel extends Kernel {
 		
 	
 	public GaussianWeigthedCountKernel(int nValues, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue, int enveloppeInterne){
+		this(nValues, windowSize, width, height, dep, imageIn, imageOut, noDataValue, enveloppeInterne, width - enveloppeInterne, enveloppeInterne, height - enveloppeInterne);		
+	}
+	public GaussianWeigthedCountKernel(int nValues, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue, int xmin,int xmax, int ymin, int ymax){
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.nValues = nValues;
@@ -38,7 +41,10 @@ public class GaussianWeigthedCountKernel extends Kernel {
 		this.dep = dep;
 		this.imageIn = imageIn;
 		this.imageOut = imageOut;
-		this.enveloppeInterne = enveloppeInterne;
+		this.xmin = xmin;
+		this.xmax = xmax;
+		this.ymin = ymin;
+		this.ymax = ymax;
 		this.buf = new float[width][nValues];
 		this.gauss = new float[rayon];
 		
@@ -88,12 +94,12 @@ public class GaussianWeigthedCountKernel extends Kernel {
 		int vertical = pass%2;
 		int line= (dep-theY%dep)%dep + pass/2; // ligne dans imageOut
 		int y = theY + line*dep; // y dans imageIn
-		if(y<enveloppeInterne || y>=height-enveloppeInterne)
+		if(y<ymin || y>=ymax)
 			return;
 		if(vertical == 0)
 			processVerticalPixel(x,y);
 		else {
-			if(x>=enveloppeInterne/dep && x < (width-enveloppeInterne-1)/dep+1 )
+			if(x>=xmin/dep && x < (xmax-1)/dep+1 )
 				processHorizontalPixel(x,line);
 		}
 	}
