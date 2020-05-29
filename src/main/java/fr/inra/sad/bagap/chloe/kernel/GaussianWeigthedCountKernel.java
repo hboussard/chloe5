@@ -12,6 +12,8 @@ public class GaussianWeigthedCountKernel extends Kernel {
 	
 	private final float imageOut[][];
 	
+	private final float noCalc[];
+	
 	private final int rayon;
 	
 	private final int nValues;
@@ -29,9 +31,9 @@ public class GaussianWeigthedCountKernel extends Kernel {
 		
 	
 	public GaussianWeigthedCountKernel(int nValues, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue, int enveloppeInterne){
-		this(nValues, windowSize, width, height, dep, imageIn, imageOut, noDataValue, enveloppeInterne, width - enveloppeInterne, enveloppeInterne, height - enveloppeInterne);		
+		this(nValues, windowSize, width, height, dep, imageIn, imageOut, noDataValue, enveloppeInterne, width - enveloppeInterne, enveloppeInterne, height - enveloppeInterne, null);		
 	}
-	public GaussianWeigthedCountKernel(int nValues, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue, int xmin,int xmax, int ymin, int ymax){
+	public GaussianWeigthedCountKernel(int nValues, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue, int xmin,int xmax, int ymin, int ymax, float[] noCalc ){
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.nValues = nValues;
@@ -41,6 +43,7 @@ public class GaussianWeigthedCountKernel extends Kernel {
 		this.dep = dep;
 		this.imageIn = imageIn;
 		this.imageOut = imageOut;
+		this.noCalc = noCalc;
 		this.xmin = xmin;
 		this.xmax = xmax;
 		this.ymin = ymin;
@@ -99,8 +102,14 @@ public class GaussianWeigthedCountKernel extends Kernel {
 		if(vertical == 0)
 			processVerticalPixel(x,y);
 		else {
-			if(x>=xmin/dep && x < (xmax-1)/dep+1 )
+			if(x>=xmin/dep && x < (xmax-1)/dep+1 ) {
+				float val = imageIn[y+x*width];
+				for(float v:noCalc)
+					if(v==val) {
+						return;
+					}
 				processHorizontalPixel(x,line);
+			}
 		}
 	}
 }
