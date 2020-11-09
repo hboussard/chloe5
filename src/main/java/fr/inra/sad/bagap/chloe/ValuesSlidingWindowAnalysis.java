@@ -15,6 +15,7 @@ import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inra.sad.bagap.chloe.counting.ValueCounting;
 import fr.inra.sad.bagap.chloe.kernel.DistanceWeigthedCountValueKernel;
 import fr.inra.sad.bagap.chloe.kernel.GaussianWeigthedCountValueKernel;
+import fr.inra.sad.bagap.chloe.kernel.GaussianWeigthedByteCountKernel;
 import fr.inra.sad.bagap.chloe.metric.Metric;
 import fr.inra.sad.bagap.chloe.metric.value.CountValueMetric;
 import fr.inra.sad.bagap.chloe.output.AsciiGridOutput;
@@ -30,8 +31,8 @@ public class ValuesSlidingWindowAnalysis {
 		try {
 			System.out.println("sliding window");
 			
-			short windowSize = Short.parseShort(bundle.getString("window_size"));
-			short mid = (short) (windowSize/2);
+			int windowSize = Short.parseShort(bundle.getString("window_size"));
+			int mid = windowSize/2;
 			//int roiWidth = 12090;
 			//int roiHeight = 12494;
 			//short roiX = 17000;
@@ -43,9 +44,9 @@ public class ValuesSlidingWindowAnalysis {
 			int dep = Integer.parseInt(bundle.getString("deplacement"));
 			int buffer = Integer.parseInt(bundle.getString("buffer_height"));
 			
-			buffer = (short) Math.max(dep, buffer);
+			buffer = Math.max(dep, buffer);
 			
-			File file = new File(path_input+"bretagne.tif");
+			File file = new File("c:/Users/pmeurice/Documents/Data/GO_2018_routes_eau_bois.tif");
 			GeoTiffReader reader = new GeoTiffReader(file);
 			//System.out.println(reader.getCoordinateReferenceSystem());
 			GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
@@ -62,8 +63,8 @@ public class ValuesSlidingWindowAnalysis {
 			System.out.println(coverage.getEnvelope().getMinimum(0)+" "+coverage.getEnvelope().getMaximum(0)+" "+coverage.getEnvelope().getMinimum(1)+" "+coverage.getEnvelope().getMaximum(1));
 			System.out.println(coverage.getProperties());
 			
-			short outWidth = (short) (((roiWidth-1)/dep)+1);
-			short outHeight = (short) (((roiHeight-1)/dep)+1);
+			int outWidth = (roiWidth-1)/dep+1;
+			int outHeight = (roiHeight-1)/dep+1;
 			double outCellSize = cellSize * dep;
 			double outMinX = imageMinX + roiX*cellSize;
 			double outMaxX = outMinX + outWidth*cellSize;
@@ -72,26 +73,27 @@ public class ValuesSlidingWindowAnalysis {
 			
 			Rectangle roi = new Rectangle(roiX, roiY, roiWidth, roiHeight);
 			
-			float[] inDatas = new float[roiWidth*roiHeight];
-			inDatas = coverage.getRenderedImage().getData(roi).getSamples(roi.x, roi.y, roi.width, roi.height, 0, inDatas);
+			byte[] inDatas = new byte[roiWidth*roiHeight];
+			inDatas = (byte[]) coverage.getRenderedImage().getData(roi).getDataElements(roi.x, roi.y, roi.width, roi.height, inDatas);
 			//System.out.println(pi.getMinX()+" "+pi.getMaxX()+" "+pi.getMinTileX()+" "+pi.getMaxTileX());
 				
 			
-			Set<Short> inValues = new TreeSet<Short>();
-			for(float s : inDatas){
-				if(s!=Raster.getNoDataValue() && s!=0 && !inValues.contains((short) s)){
-					inValues.add((short) s);
-				}
+			Set<Byte> inValues = new TreeSet<Byte>();
+			for(byte s : inDatas){
+				//if(s!=Raster.getNoDataValue() && s!=0 && !inValues.contains(s)){
+					inValues.add(s);
+				//}
 			}
 			System.out.println(inValues);
 			short[] values = new short[inValues.size()];
 			int index = 0;
-			for(Short s : inValues){
-				values[index++] = (short) s;
+			for(byte s : inValues){
+				values[index++] = s;
+				System.out.println(s);
 			}
 			
 			float[][] outDatas = new float[((((roiWidth-1)/dep)+1)*(((buffer-1)/dep)+1))][values.length+2];
-						
+			/*			
 			short[] shape = new short[windowSize*windowSize];
 			float[] coeffs = new float[windowSize*windowSize];
 			
@@ -120,7 +122,7 @@ public class ValuesSlidingWindowAnalysis {
 				}
 				//System.out.println();
 			}
-			
+			*/
 			/*
 			for(int s=0; s<(windowSize*windowSize); s++){
 				shape[s] = 1;
@@ -131,10 +133,12 @@ public class ValuesSlidingWindowAnalysis {
 			}
 			*/
 			
-			GaussianWeigthedCountValueKernel cv = new GaussianWeigthedCountValueKernel(values, windowSize, roiWidth, roiHeight, dep, inDatas, outDatas, Raster.getNoDataValue());
+			GaussianWeigthedByteCountKernel cv = new GaussianWeigthedByteCountKernel(values.length, windowSize, roiWidth, roiHeight, dep, inDatas, outDatas, Raster.getNoDataValue());
+
+			//GaussianWeigthedCountValueKernel cv = new GaussianWeigthedCountValueKernel(values, windowSize, roiWidth, roiHeight, dep, inDatas, outDatas, Raster.getNoDataValue());
 			//DistanceWeigthedCountValueKernel cv = new DistanceWeigthedCountValueKernel(values, windowSize, shape, coeffs, roiWidth, roiHeight, dep, inDatas, outDatas, Raster.getNoDataValue());
 			//ThresholdCountValueKernel cv = new ThresholdCountValueKernel(values, windowSize, shape, roiWidth, roiHeight, dep, inDatas, outDatas);
-			
+			int theoriticalSize = windowSize*windowSize;
 			ValueCounting vc = new ValueCounting(values, theoriticalSize);
 			
 			Metric metric;
@@ -142,7 +146,7 @@ public class ValuesSlidingWindowAnalysis {
 			
 			metric = new CountValueMetric((short)5);
 			//metric.addObserver(new TextImageOutput(path_output+"image_shdi.txt", outWidth));
-			metric.addObserver(new AsciiGridOutput(path_output+"testWG.asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
+			metric.addObserver(new AsciiGridOutput(path_output+"testWG.asc", (short)outWidth, (short)outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
 			//csvOut.addMetric(metric);
 			vc.addMetric(metric);
 			/*
