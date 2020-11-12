@@ -14,7 +14,7 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 		this.theoriticalSize = theoriticalSize;
 	}
 	
-	public void setCounts(double[] counts){
+	public void setCounts(float[] counts){
 		totalValues = 0;
 		validValues = 0;
 		sum = 0;

@@ -1,16 +1,25 @@
-package fr.inra.sad.bagap.chloe.dreal;
+package fr.inra.sad.bagap.chloe.test;
 
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferShort;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.arcgrid.ArcGridReader;
-import org.geotools.gce.geotiff.GeoTiffReader;
+
+import com.aparapi.Kernel;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inra.sad.bagap.apiland.core.space.impl.raster.matrix.MatrixManager;
 import fr.inra.sad.bagap.chloe.Util;
 import fr.inra.sad.bagap.chloe.counting.ValueCounting;
 import fr.inra.sad.bagap.chloe.kernel.DistanceWeigthedCountValueKernel;
@@ -23,58 +32,46 @@ import fr.inra.sad.bagap.chloe.output.AsciiGridOutput;
 import fr.inra.sad.bagap.chloe.output.CsvOutput;
 import fr.inra.sad.bagap.chloe.output.TextImageOutput;
 
-public class DrealComposition {
+public class ValueSlidingWindow {
 
-	public static void main(final String[] args) {
+	private short windowSize;
+	
+	private short delta;
+	
+	private String ascii;
+	
+	private String path;
+	
+	public void setWindowSize(short windowSize) {
+		this.windowSize = windowSize;
+	}
+
+	public void setDelta(short delta) {
+		this.delta = delta;
+	}
+
+	public void setAscii(String ascii) {
+		this.ascii = ascii;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public void run() {
 		try {
 			System.out.println("sliding window");
 			
-			// threshold
-			// windowSize = 41; --> 100m de rayon
-			// windowSize = 101; --> 250m de rayon
-			// windowSize = 201; --> 500m de rayon
-			// windowSize = 401; --> 1000m de rayon
-			// windowSize = 601; --> 1500m de rayon
-			// windowSize = 801; --> 2000m de rayon
-			// windowSize = 1001; --> 2500m de rayon
-			// windowSize = 1201; --> 3000m de rayon
-			// windowSize = 1601; --> 4000m de rayon
-			// windowSize = 2001; --> 5000m de rayon
-			// windowSize = 2401; --> 6000m de rayon
-			
-			// gaussian
-			// windowSize = 81; --> 100m de rayon
-			// windowSize = 201; --> 250m de rayon
-			// windowSize = 401; --> 500m de rayon
-			// windowSize = 801; --> 1000m de rayon
-			// windowSize = 1201; --> 1500m de rayon
-			// windowSize = 1601; --> 2000m de rayon
-			// windowSize = 2001; --> 2500m de rayon
-			// windowSize = 2401; --> 3000m de rayon
-			// windowSize = 3201; --> 4000m de rayon
-			// windowSize = 4001; --> 5000m de rayon
-			// windowSize = 4801; --> 6000m de rayon
-			
-			
-			short windowSize = 4801;
 			short mid = (short) (windowSize/2);
-			//int roiWidth = 12599;
-			//int roiHeight = 13063;
-			//short roiX = 16507;
-			//short roiY = 280;
 			short roiX = 0;
 			short roiY = 0;
-			short dep = 40;
-			short buffer = 80;
+			short buffer = 100;
 			
-			buffer = (short) Math.max(dep, buffer);
+			buffer = (short) Math.max(delta, buffer);
 			
 			System.out.println("lecture de la carte");
-			//File file = new File("C:/Users/hboussard/modelisation/ecopaysage/data/image_dreal.asc");
-			File file = new File("F:/Ecopaysage/emprise_LTC/data/LTC_buffer12km.asc");
-			ArcGridReader reader = new ArcGridReader(file);
-			//File file = new File("F:/Ecopaysage/emprise_LTC/bretagne.tif");
-			//GeoTiffReader reader = new GeoTiffReader(file);
+			ArcGridReader reader = new ArcGridReader(new File(ascii));
+			//GeoTiffReader reader = new GeoTiffReader(new File(tif));
 			//System.out.println(reader.getCoordinateReferenceSystem());
 			GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
 			
@@ -90,9 +87,9 @@ public class DrealComposition {
 			
 			int roiWidth = imageWidth;
 			int roiHeight = imageHeight;
-			short outWidth = (short) (((roiWidth-1)/dep)+1);
-			short outHeight = (short) (((roiHeight-1)/dep)+1);
-			double outCellSize = cellSize * dep;
+			short outWidth = (short) (((roiWidth-1)/delta)+1);
+			short outHeight = (short) (((roiHeight-1)/delta)+1);
+			double outCellSize = cellSize * delta;
 			double outMinX = imageMinX + roiX*cellSize + cellSize/2.0 - outCellSize/2.0;
 			double outMaxX = outMinX + outWidth*outCellSize;
 			double outMaxY = imageMaxY - roiY*outCellSize - cellSize/2.0 + outCellSize/2.0;
@@ -120,7 +117,7 @@ public class DrealComposition {
 				values[index++] = (short) s;
 			}
 			
-			float[][] outDatas = new float[((((roiWidth-1)/dep)+1)*(((buffer-1)/dep)+1))][values.length+2];
+			float[][] outDatas = new float[((((roiWidth-1)/delta)+1)*(((buffer-1)/delta)+1))][values.length+2];
 						
 			short[] shape = new short[windowSize*windowSize];
 			float[] coeffs = new float[windowSize*windowSize];
@@ -134,46 +131,29 @@ public class DrealComposition {
 					if(Util.distance(mid, mid, i, j) <= mid){
 						shape[(j * windowSize) + i] = 1;
 						theoriticalSize++; 
-						//System.out.print(1+" ");
 					}else{
 						shape[(j * windowSize) + i] = 0;
-						//System.out.print(0+" ");
 					}
 					
-					// gestion des distances pondérées (décroissantes)
-					//float d = mid - distance(mid, mid, i, j);
-					//if(d < 0){
-					//	d = 0;
-					//}
-					//coeffs[(j * windowSize) + i] = (float) d / mid;
-					
 					// gestion des distances pondérées (gaussienne centrée à 0)
-					//float d = (float) Math.exp(-1 * Math.pow(distance(mid, mid, i, j)/(mid/3.0), 2));
 					float d = (float) Math.exp(-1 * Math.pow(Util.distance(mid, mid, i, j), 2) / Math.pow(mid/2, 2));
-					//exp(-pow(distance, 2)/pow(dmax/2, 2))
 					coeffs[(j * windowSize) + i] = d;
-					//System.out.print(d+" ");		
-					
-					//System.out.println((float) d / mid);
 				}
-				//System.out.println();
 			}
 		
 			/*
 			for(int s=0; s<(windowSize*windowSize); s++){
 				shape[s] = 1;
 			}
-			
+			*/
 			 
 			for(int c=0; c<(windowSize*windowSize); c++){
 				coeffs[c] = 1;
 			}
-			*/
 			
 			
-			
-			DistanceWeigthedCountValueKernel cv = new DistanceWeigthedCountValueKernel(values, windowSize, shape, coeffs, roiWidth, roiHeight, dep, inDatas, outDatas, Raster.getNoDataValue(), 0);
-			//ThresholdCountValueKernel cv = new ThresholdCountValueKernel(values, windowSize, shape, roiWidth, roiHeight, dep, inDatas, outDatas, Raster.getNoDataValue(), 0);
+			DistanceWeigthedCountValueKernel cv = new DistanceWeigthedCountValueKernel(values, windowSize, shape, coeffs, roiWidth, roiHeight, delta, inDatas, outDatas, Raster.getNoDataValue(), 0);
+			//ThresholdCountValueKernel cv = new ThresholdCountValueKernel(values, windowSize, shape, roiWidth, roiHeight, delta, inDatas, outDatas, Raster.getNoDataValue(), 0);
 			
 			ValueCounting vc = new ValueCounting(values, theoriticalSize);
 			
@@ -184,18 +164,18 @@ public class DrealComposition {
 			//vc.addMetric(metric);
 			
 			for(short v : values){
-				metric = new CountValueMetric(v);
-				vc.addMetric(metric);
+				//metric = new CountValueMetric(v);
+				//vc.addMetric(metric);
 				metric = new RateValueMetric(v);
 				vc.addMetric(metric);
 				
 				//metric.addObserver(new TextImageOutput("C:/Users/hboussard/modelisation/chloe/chloe5/data/output/image_count_"+v+".txt", (short) (((roiWidth-1)/dep)+1)));
-				//metric.addObserver(new AsciiGridOutput("C:/Users/hboussard/modelisation/chloe/chloe5/data/output/image_count_"+v+".asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
+				metric.addObserver(new AsciiGridOutput(path+"rate_"+v+".asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
 				
 			}
 			
-			CsvOutput csvOut = new CsvOutput("F:/Ecopaysage/emprise_LTC/data/sliding/gaussian/6km/LTC_raster_buffer12km_comp_gaussian_6km.csv", outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, (short) Raster.getNoDataValue(), vc.metrics());
-			vc.addObserver(csvOut);
+			//CsvOutput csvOut = new CsvOutput("F:/Ecopaysage/emprise_LTC/data/sliding/gaussian/6km/LTC_raster_buffer12km_comp_gaussian_6km.csv", outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, (short) Raster.getNoDataValue(), vc.metrics());
+			//vc.addObserver(csvOut);
 			
 			vc.init();
 			
@@ -207,10 +187,10 @@ public class DrealComposition {
 				cv.get(outDatas);
 				
 				index = 0;
-				for(int j=nextJ%buffer; j<Math.min(buffer, roiHeight-b); j+=dep){
+				for(int j=nextJ%buffer; j<Math.min(buffer, roiHeight-b); j+=delta){
 					//System.out.println(j);
-					nextJ += dep;
-					for(int i=0; i<roiWidth; i+=dep){
+					nextJ += delta;
+					for(int i=0; i<roiWidth; i+=delta){
 						vc.setCounts(outDatas[index]);
 						vc.calculate();
 						vc.export();
@@ -222,8 +202,17 @@ public class DrealComposition {
 			long end = System.currentTimeMillis();
 			System.out.println("time computing : "+(end - begin));
 			
+			//cv.close();
+			
 			cv.dispose();
 			vc.close();
+			
+			
+			// to check map
+			for(short v : values){
+				MatrixManager.visualize(path+"rate_"+v+".asc");
+			}
+			
 			
 		} catch (IOException e1) {
 			e1.printStackTrace();

@@ -56,22 +56,26 @@
    		 <artifactId>aparapi</artifactId>
    		 <version>1.10.0</version>
 	</dependency>
+	
 	<dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+    
     <dependency>
        <groupId>org.geotools</groupId>
        <artifactId>gt-shapefile</artifactId>
        <version>21.3</version>
     </dependency>
+     
     <dependency>
        <groupId>org.geotools</groupId>
        <artifactId>gt-swing</artifactId>
        <version>21.3</version>
     </dependency>
+  
    <dependency>
        <groupId>org.geotools</groupId>
        <artifactId>gt-geotiff</artifactId>
@@ -87,7 +91,7 @@
        <artifactId>gt-epsg-hsql</artifactId>
        <version>21.3</version>
     </dependency>
-    <!-- 
+     <!-- 
     <dependency>
     	<groupId>fr.inra.sad.bagap</groupId>
     	<artifactId>apiland</artifactId>

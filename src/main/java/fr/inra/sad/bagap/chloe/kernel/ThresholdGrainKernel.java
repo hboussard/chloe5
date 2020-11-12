@@ -2,7 +2,7 @@ package fr.inra.sad.bagap.chloe.kernel;
 
 import com.aparapi.Kernel;
 
-public class ThresholdQuantitativeKernel extends Kernel {
+public class ThresholdGrainKernel extends Kernel {
 
 	private final int width, height;
 	
@@ -22,8 +22,11 @@ public class ThresholdQuantitativeKernel extends Kernel {
 	
 	private int theY;
 	
-	public ThresholdQuantitativeKernel(int windowSize, short[] shape, int width, int height, int dep, float[] imageIn, float[][] imageOut, float noDataValue, int enveloppeInterne){
+	private final float threshold = 100;
+	
+	public ThresholdGrainKernel(int windowSize, short[] shape, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue, int enveloppeInterne){
 		this.setExplicit(true);
+		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.windowSize = windowSize;
 		this.shape = shape;
 		this.width = width;
@@ -64,7 +67,11 @@ public class ThresholdQuantitativeKernel extends Kernel {
 										imageOut[ind][0] = imageOut[ind][0] + 1.0f;
 									}else{
 										nb = nb + 1;
-										sum = sum + v;
+										if(v > threshold){
+											sum = sum + 1;
+										}else{
+											sum = sum + (v/threshold);
+										}
 									}
 								}
 							}

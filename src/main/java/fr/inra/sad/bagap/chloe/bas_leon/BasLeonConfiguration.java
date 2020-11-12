@@ -1,4 +1,4 @@
-package fr.inra.sad.bagap.chloe.dreal;
+package fr.inra.sad.bagap.chloe.bas_leon;
 
 import java.awt.Rectangle;
 import java.io.File;
@@ -27,13 +27,13 @@ import fr.inra.sad.bagap.chloe.metric.value.RateValueMetric;
 import fr.inra.sad.bagap.chloe.output.CsvOutput;
 import fr.inra.sad.bagap.chloe.util.Couple;
 
-public class DrealConfiguration {
+public class BasLeonConfiguration {
 	
 	public static void main(final String[] args) {
 		try {
 			System.out.println("sliding window");
 			
-			short windowSize = 81;
+			short windowSize = 2401;
 			short mid = (short) (windowSize/2);
 			//int roiWidth = 12599;
 			//int roiHeight = 13063;
@@ -42,13 +42,13 @@ public class DrealConfiguration {
 			short roiX = 0;
 			short roiY = 0;
 			short dep = 40;
-			short buffer = 40;
+			short buffer = 80;
 			
 			buffer = (short) Math.max(dep, buffer);
 			
 			System.out.println("lecture de la carte");
 			//File file = new File("C:/Users/hboussard/modelisation/ecopaysage/data/image_dreal.asc");
-			File file = new File("F:/Ecopaysage/emprise_LTC/data/LTC_buffer12km.asc");
+			File file = new File("F:/bas_leon/data/carto/bas_leon_ocsol.asc");
 			ArcGridReader reader = new ArcGridReader(file);
 			//File file = new File("C:/Users/hboussard/data/bretagne.tif");
 			//GeoTiffReader reader = new GeoTiffReader(file);
@@ -184,15 +184,15 @@ public class DrealConfiguration {
 			cc.addMetric(metric);
 			
 			for(float c : couples){
-				metric = new CountCoupleMetric(c);
-				cc.addMetric(metric);
+				//metric = new CountCoupleMetric(c);
+				//cc.addMetric(metric);
 				
 				metric = new RateCoupleMetric(c);
 				cc.addMetric(metric);
 			}
 			
 			//CsvOutput csvOut = new CsvOutput("F:/Ecopaysage/ecopaysages/data/sliding/gaussian/6km/carte_LTC_GPA_conf_gaussian_6km.csv", outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, (short) Raster.getNoDataValue(), cc.metrics());
-			CsvOutput csvOut = new CsvOutput("F:/Ecopaysage/emprise_LTC/data/sliding/gaussian/6km/LTC_raster_buffer12km_conf_gaussian_6km.csv", outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, (short) Raster.getNoDataValue(), cc.metrics());
+			CsvOutput csvOut = new CsvOutput("F:/bas_leon/data/analyse/bas_leon_configuration_3km.csv", outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, (short) Raster.getNoDataValue(), cc.metrics());
 			
 			cc.addObserver(csvOut);
 			

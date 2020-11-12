@@ -25,6 +25,7 @@ public class DistanceWeigthedCountValueKernel2d extends Kernel {
 	
 	public DistanceWeigthedCountValueKernel2d(short[] values, int windowSize, short[] shape, float[] coeff, int width, int height, int dep, float[] imageIn, float[][] imageOut){
 		this.setExplicit(true);
+		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.values = values;
 		this.windowSize = windowSize;
 		this.shape = shape;

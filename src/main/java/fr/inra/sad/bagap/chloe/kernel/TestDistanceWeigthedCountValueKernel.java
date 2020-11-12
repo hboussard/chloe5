@@ -2,7 +2,7 @@ package fr.inra.sad.bagap.chloe.kernel;
 
 import com.aparapi.Kernel;
 
-public class DistanceWeigthedCountValueKernel extends Kernel {
+public class TestDistanceWeigthedCountValueKernel extends Kernel {
 
 	private final int width, height;
 	
@@ -26,11 +26,12 @@ public class DistanceWeigthedCountValueKernel extends Kernel {
 	
 	private final int enveloppeInterne; // in pixels
 	
-	public DistanceWeigthedCountValueKernel(short[] values, int windowSize, short[] shape, float[] coeff, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue){
+	public TestDistanceWeigthedCountValueKernel(short[] values, int windowSize, short[] shape, float[] coeff, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue){
 		this(values, windowSize, shape, coeff, width, height, dep, imageIn, imageOut, noDataValue, 0);
 	}
 		
-	public DistanceWeigthedCountValueKernel(short[] values, int windowSize, short[] shape, float[] coeff, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue, int enveloppeInterne){
+	
+	public TestDistanceWeigthedCountValueKernel(short[] values, int windowSize, short[] shape, float[] coeff, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue, int enveloppeInterne){
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.values = values;
@@ -56,13 +57,13 @@ public class DistanceWeigthedCountValueKernel extends Kernel {
 				imageOut[ind][i] = 0f;
 			}
 			
-			//if(imageIn[(y * width) + x] != -1f) {
+			if(imageIn[(y * width) + x] != 0f) {
 				
 				if(!(x < enveloppeInterne || (width - x) < enveloppeInterne || y <enveloppeInterne || (height - y) < enveloppeInterne)) {
 					final int mid = windowSize / 2;
 					int ic;
 					short v;
-					boolean again;
+					//boolean again;
 					/*
 					imageOut[ind][0] = imageIn[((y) * width) + (x)];
 					imageOut[ind][1] = imageIn[((y) * width) + (x)];
@@ -78,6 +79,8 @@ public class DistanceWeigthedCountValueKernel extends Kernel {
 									if(shape[ic] == 1){
 										v = (short) imageIn[((y + dy) * width) + (x + dx)];
 										
+										imageOut[ind][v] = imageOut[ind][v] + coeff[ic];
+										/*
 										if(v == noDataValue){
 											imageOut[ind][0] = imageOut[ind][0] + coeff[ic];
 										}else{
@@ -93,13 +96,14 @@ public class DistanceWeigthedCountValueKernel extends Kernel {
 												}
 											}
 										}
+										*/
 									}
 								}
 							}
 						}
 					}
 				}
-			//}
+			}
 			//System.out.println(imageOut[ind][2]);
 		}
 	}
@@ -115,11 +119,4 @@ public class DistanceWeigthedCountValueKernel extends Kernel {
 		final int y = getGlobalId(0) / width;
 		processPixel(x, theY + y, y);
 	}
-	
-	/*
-	public void close(){
-		imageIn = null;
-		
-		imageOut = null;
-	}*/
 }

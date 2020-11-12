@@ -49,7 +49,7 @@ public class ThresholdCountCoupleKernel extends Kernel {
 				imageOut[ind][i] = 0f;
 			}
 			
-			if(imageIn[(y * width) + x] != 0f) {
+			//if(imageIn[(y * width) + x] != 0f) {
 				if(!(x < enveloppeInterne || (width - x) < enveloppeInterne || y <enveloppeInterne || (height - y) < enveloppeInterne)) {
 					int mid = windowSize / 2;
 					int ic, ic_V, ic_H;
@@ -117,7 +117,7 @@ public class ThresholdCountCoupleKernel extends Kernel {
 						}
 					}
 				}
-			}
+			//}
 			
 						
 			//System.out.println(imageOut[ind][2]);

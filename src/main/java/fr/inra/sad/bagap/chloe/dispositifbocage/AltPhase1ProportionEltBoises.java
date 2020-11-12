@@ -1,4 +1,4 @@
-package fr.inra.sad.bagap.chloe.dreal;
+package fr.inra.sad.bagap.chloe.dispositifbocage;
 
 import java.awt.Rectangle;
 import java.io.File;
@@ -7,74 +7,38 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffReader;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inra.sad.bagap.chloe.Util;
 import fr.inra.sad.bagap.chloe.counting.ValueCounting;
 import fr.inra.sad.bagap.chloe.kernel.DistanceWeigthedCountValueKernel;
-import fr.inra.sad.bagap.chloe.kernel.ThresholdCountValueKernel;
 import fr.inra.sad.bagap.chloe.metric.Metric;
-import fr.inra.sad.bagap.chloe.metric.value.CountValueMetric;
 import fr.inra.sad.bagap.chloe.metric.value.RateValueMetric;
-import fr.inra.sad.bagap.chloe.metric.value.ShannonDiversityIndex;
-import fr.inra.sad.bagap.chloe.output.AsciiGridOutput;
-import fr.inra.sad.bagap.chloe.output.CsvOutput;
-import fr.inra.sad.bagap.chloe.output.TextImageOutput;
+import fr.inra.sad.bagap.chloe.output.GeoTiffOutput;
 
-public class DrealComposition {
+public class AltPhase1ProportionEltBoises {
 
 	public static void main(final String[] args) {
 		try {
 			System.out.println("sliding window");
 			
-			// threshold
-			// windowSize = 41; --> 100m de rayon
-			// windowSize = 101; --> 250m de rayon
-			// windowSize = 201; --> 500m de rayon
-			// windowSize = 401; --> 1000m de rayon
-			// windowSize = 601; --> 1500m de rayon
-			// windowSize = 801; --> 2000m de rayon
-			// windowSize = 1001; --> 2500m de rayon
-			// windowSize = 1201; --> 3000m de rayon
-			// windowSize = 1601; --> 4000m de rayon
-			// windowSize = 2001; --> 5000m de rayon
-			// windowSize = 2401; --> 6000m de rayon
-			
-			// gaussian
-			// windowSize = 81; --> 100m de rayon
-			// windowSize = 201; --> 250m de rayon
-			// windowSize = 401; --> 500m de rayon
-			// windowSize = 801; --> 1000m de rayon
-			// windowSize = 1201; --> 1500m de rayon
-			// windowSize = 1601; --> 2000m de rayon
-			// windowSize = 2001; --> 2500m de rayon
-			// windowSize = 2401; --> 3000m de rayon
-			// windowSize = 3201; --> 4000m de rayon
-			// windowSize = 4001; --> 5000m de rayon
-			// windowSize = 4801; --> 6000m de rayon
-			
-			
-			short windowSize = 4801;
+			//short windowSize = 1201;
+			short windowSize = 41;
 			short mid = (short) (windowSize/2);
-			//int roiWidth = 12599;
-			//int roiHeight = 13063;
-			//short roiX = 16507;
-			//short roiY = 280;
 			short roiX = 0;
 			short roiY = 0;
-			short dep = 40;
+			//short dep = 120;
+			short dep = 10;
 			short buffer = 80;
 			
 			buffer = (short) Math.max(dep, buffer);
 			
 			System.out.println("lecture de la carte");
-			//File file = new File("C:/Users/hboussard/modelisation/ecopaysage/data/image_dreal.asc");
-			File file = new File("F:/Ecopaysage/emprise_LTC/data/LTC_buffer12km.asc");
-			ArcGridReader reader = new ArcGridReader(file);
-			//File file = new File("F:/Ecopaysage/emprise_LTC/bretagne.tif");
-			//GeoTiffReader reader = new GeoTiffReader(file);
+			//File file = new File("F:/dispositif_bocage/dpt22/carte/elt_boises_22.asc");
+			//ArcGridReader reader = new ArcGridReader(file);
+			File file = new File("F:/dispositif_bocage/dpt22/carte/elt_boises_22.tif");
+			GeoTiffReader reader = new GeoTiffReader(file);
 			//System.out.println(reader.getCoordinateReferenceSystem());
 			GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
 			
@@ -141,22 +105,17 @@ public class DrealComposition {
 					}
 					
 					// gestion des distances pondérées (décroissantes)
-					//float d = mid - distance(mid, mid, i, j);
-					//if(d < 0){
-					//	d = 0;
-					//}
-					//coeffs[(j * windowSize) + i] = (float) d / mid;
+					float d = mid - distance(mid, mid, i, j);
+					if(d < 0){
+						d = 0;
+					}
+					coeffs[(j * windowSize) + i] = (float) d / mid;
 					
 					// gestion des distances pondérées (gaussienne centrée à 0)
-					//float d = (float) Math.exp(-1 * Math.pow(distance(mid, mid, i, j)/(mid/3.0), 2));
-					float d = (float) Math.exp(-1 * Math.pow(Util.distance(mid, mid, i, j), 2) / Math.pow(mid/2, 2));
+					//float d = (float) Math.exp(-1 * Math.pow(Util.distance(mid, mid, i, j), 2) / Math.pow(mid/2, 2));
 					//exp(-pow(distance, 2)/pow(dmax/2, 2))
-					coeffs[(j * windowSize) + i] = d;
-					//System.out.print(d+" ");		
-					
-					//System.out.println((float) d / mid);
+					//coeffs[(j * windowSize) + i] = d;
 				}
-				//System.out.println();
 			}
 		
 			/*
@@ -167,9 +126,7 @@ public class DrealComposition {
 			 
 			for(int c=0; c<(windowSize*windowSize); c++){
 				coeffs[c] = 1;
-			}
-			*/
-			
+			}*/
 			
 			
 			DistanceWeigthedCountValueKernel cv = new DistanceWeigthedCountValueKernel(values, windowSize, shape, coeffs, roiWidth, roiHeight, dep, inDatas, outDatas, Raster.getNoDataValue(), 0);
@@ -183,19 +140,26 @@ public class DrealComposition {
 			//metric.addObserver(new TextImageOutput("C:/Users/hboussard/modelisation/chloe/chloe5/data/output/image_shdi.txt", outWidth));
 			//vc.addMetric(metric);
 			
+			
 			for(short v : values){
-				metric = new CountValueMetric(v);
-				vc.addMetric(metric);
+				//metric = new CountValueMetric(v);
+				//vc.addMetric(metric);
 				metric = new RateValueMetric(v);
 				vc.addMetric(metric);
 				
 				//metric.addObserver(new TextImageOutput("C:/Users/hboussard/modelisation/chloe/chloe5/data/output/image_count_"+v+".txt", (short) (((roiWidth-1)/dep)+1)));
-				//metric.addObserver(new AsciiGridOutput("C:/Users/hboussard/modelisation/chloe/chloe5/data/output/image_count_"+v+".asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
+				//metric.addObserver(new AsciiGridOutput("F:/dispositif_bocage/dpt22/analyse/gaussian/pNV_"+v+".asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
+				metric.addObserver(new GeoTiffOutput("F:/dispositif_bocage/dpt22/grain_alternatif/pNV_"+v+".tif", outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize));
 				
 			}
 			
-			CsvOutput csvOut = new CsvOutput("F:/Ecopaysage/emprise_LTC/data/sliding/gaussian/6km/LTC_raster_buffer12km_comp_gaussian_6km.csv", outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, (short) Raster.getNoDataValue(), vc.metrics());
-			vc.addObserver(csvOut);
+			/*
+			metric = new RateValueMetric((short) 1);
+			vc.addMetric(metric);
+			metric.addObserver(new GeoTiffOutput("F:/dispositif_bocage/dpt22/grain_alternatif/pNV_"+1+".tif", outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize));
+			*/
+			//CsvOutput csvOut = new CsvOutput("F:/Ecopaysage/emprise_LTC/data/sliding/gaussian/6km/LTC_raster_buffer12km_comp_gaussian_6km.csv", outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, (short) Raster.getNoDataValue(), vc.metrics());
+			//vc.addObserver(csvOut);
 			
 			vc.init();
 			
@@ -229,6 +193,9 @@ public class DrealComposition {
 			e1.printStackTrace();
 		}
 	}
-
 	
+	private static float distance(int x1, int y1, int x2, int y2){
+		return (float) Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2)); 
+	}
+
 }

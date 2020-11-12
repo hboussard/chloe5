@@ -26,6 +26,7 @@ public class ThresholdCountValueKernel extends Kernel {
 	
 	public ThresholdCountValueKernel(short[] values, int windowSize, short[] shape, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue, int enveloppeInterne){
 		this.setExplicit(true);
+		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.values = values;
 		this.windowSize = windowSize;
 		this.shape = shape;
@@ -47,7 +48,7 @@ public class ThresholdCountValueKernel extends Kernel {
 				imageOut[ind][i] = 0f;
 			}
 			
-			if(imageIn[(y * width) + x] != 0f) {
+			//if(imageIn[(y * width) + x] != 0f) {
 				
 				
 				if(!(x < enveloppeInterne || (width - x) < enveloppeInterne || y <enveloppeInterne || (height - y) < enveloppeInterne)) {
@@ -88,9 +89,8 @@ public class ThresholdCountValueKernel extends Kernel {
 							}
 						}
 					}
-					
 				}
-			}
+			//}
 			
 			
 			//System.out.println(imageOut[ind][2]);

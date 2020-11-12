@@ -28,7 +28,7 @@ public class DistanceWeightedCountCoupleKernel extends Kernel {
 	
 	public DistanceWeightedCountCoupleKernel(float[] couples, int windowSize, short[] shape, float[] coeff, int width, int height, int dep, float[] imageIn, float[][] imageOut, float noDataValue, int enveloppeInterne){
 		this.setExplicit(true);
-		//this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.GPU);
+		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.couples = couples;
 		this.windowSize = windowSize;
 		this.shape = shape;
@@ -51,7 +51,7 @@ public class DistanceWeightedCountCoupleKernel extends Kernel {
 				imageOut[ind][i] = 0f;
 			}
 			
-			if(imageIn[(y * width) + x] != 0f) {
+			//if(imageIn[(y * width) + x] != -1f) {
 				
 				if(!(x < enveloppeInterne || (width - x) < enveloppeInterne || y <enveloppeInterne || (height - y) < enveloppeInterne)) {
 					
@@ -119,7 +119,7 @@ public class DistanceWeightedCountCoupleKernel extends Kernel {
 						}
 					}
 				}
-			}
+			//}
 					
 			//System.out.println(imageOut[ind][2]);
 		}
