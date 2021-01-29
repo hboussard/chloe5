@@ -19,9 +19,10 @@ import org.opengis.parameter.ParameterValueGroup;
 import com.sun.media.jai.codecimpl.util.RasterFactory;
 
 import fr.inra.sad.bagap.apiland.analysis.matrix.CoverageManager;
-import fr.inra.sad.bagap.chloe.counting.Counting;
-import fr.inra.sad.bagap.chloe.counting.CountingObserver;
 import fr.inra.sad.bagap.chloe.metric.Metric;
+import fr.inrae.act.bagap.chloe.counting.Counting;
+import fr.inrae.act.bagap.chloe.counting.CountingObserver;
+import fr.inrae.act.bagap.chloe.metric.MetricObserver;
 
 public class GeoTiffOutput implements CountingObserver, MetricObserver{
 

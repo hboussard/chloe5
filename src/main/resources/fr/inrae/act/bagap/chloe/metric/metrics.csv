@@ -1,0 +1,11 @@
+name;type;process;class
+NV;value;value;fr.inrae.act.bagap.chloe.metric.value.CountValueMetric
+pNV;value;value;fr.inrae.act.bagap.chloe.metric.value.RateValueMetric
+SHDI;value;;fr.inrae.act.bagap.chloe.metric.value.ShannonDiversityIndex
+NC;couple;couple;fr.inrae.act.bagap.chloe.metric.couple.CountCoupleMetric
+pNC;couple;couple;fr.inrae.act.bagap.chloe.metric.couple.RateCoupleMetric
+HET;couple;;fr.inrae.act.bagap.chloe.metric.couple.HeterogeneityIndex
+HET-frag;couple;;fr.inrae.act.bagap.chloe.metric.couple.HeterogeneityFragmentationIndex
+average;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.AverageMetric
+sum;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.SumMetric
+MD;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.MeanDistanceMetric

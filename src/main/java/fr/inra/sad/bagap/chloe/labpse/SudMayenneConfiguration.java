@@ -11,21 +11,21 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.arcgrid.ArcGridReader;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
-import fr.inra.sad.bagap.chloe.Util;
-import fr.inra.sad.bagap.chloe.counting.CoupleCounting;
-import fr.inra.sad.bagap.chloe.counting.ValueCounting;
-import fr.inra.sad.bagap.chloe.kernel.DistanceWeightedCountCoupleKernel;
 import fr.inra.sad.bagap.chloe.kernel.ThresholdCountCoupleKernel;
 import fr.inra.sad.bagap.chloe.kernel.ThresholdCountValueKernel;
 import fr.inra.sad.bagap.chloe.metric.Metric;
-import fr.inra.sad.bagap.chloe.metric.couple.CountCoupleMetric;
-import fr.inra.sad.bagap.chloe.metric.couple.HeterogeneityFragmentationIndex;
-import fr.inra.sad.bagap.chloe.metric.couple.HeterogeneityIndex;
-import fr.inra.sad.bagap.chloe.metric.couple.RateCoupleMetric;
-import fr.inra.sad.bagap.chloe.metric.value.CountValueMetric;
-import fr.inra.sad.bagap.chloe.metric.value.RateValueMetric;
-import fr.inra.sad.bagap.chloe.output.CsvOutput;
-import fr.inra.sad.bagap.chloe.util.Couple;
+import fr.inrae.act.bagap.chloe.counting.CoupleCounting;
+import fr.inrae.act.bagap.chloe.counting.ValueCounting;
+import fr.inrae.act.bagap.chloe.kernel.DistanceWeightedCountCoupleKernel;
+import fr.inrae.act.bagap.chloe.metric.couple.CountCoupleMetric;
+import fr.inrae.act.bagap.chloe.metric.couple.HeterogeneityFragmentationIndex;
+import fr.inrae.act.bagap.chloe.metric.couple.HeterogeneityIndex;
+import fr.inrae.act.bagap.chloe.metric.couple.RateCoupleMetric;
+import fr.inrae.act.bagap.chloe.metric.value.CountValueMetric;
+import fr.inrae.act.bagap.chloe.metric.value.RateValueMetric;
+import fr.inrae.act.bagap.chloe.output.CsvOutput;
+import fr.inrae.act.bagap.chloe.util.Couple;
+import fr.inrae.act.bagap.chloe.util.Util;
 
 public class SudMayenneConfiguration {
 	
@@ -33,7 +33,7 @@ public class SudMayenneConfiguration {
 		try {
 			System.out.println("sliding window");
 			
-			short windowSize = 2401;
+			short windowSize = 401;
 			short mid = (short) (windowSize/2);
 			//int roiWidth = 12599;
 			//int roiHeight = 13063;
@@ -48,7 +48,7 @@ public class SudMayenneConfiguration {
 			
 			System.out.println("lecture de la carte");
 			//File file = new File("C:/Users/hboussard/modelisation/ecopaysage/data/image_dreal.asc");
-			File file = new File("F:/Requete_SIG_LabPSE/raster/occsol_sm.asc");
+			File file = new File("F:/Requete_SIG_LabPSE/sud_mayenne/raster/occsol_sm.asc");
 			ArcGridReader reader = new ArcGridReader(file);
 			//File file = new File("C:/Users/hboussard/data/bretagne.tif");
 			//GeoTiffReader reader = new GeoTiffReader(file);
@@ -186,7 +186,7 @@ public class SudMayenneConfiguration {
 			}
 			
 			//CsvOutput csvOut = new CsvOutput("F:/Ecopaysage/ecopaysages/data/sliding/gaussian/6km/carte_LTC_GPA_conf_gaussian_6km.csv", outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, (short) Raster.getNoDataValue(), cc.metrics());
-			CsvOutput csvOut = new CsvOutput("F:/Requete_SIG_LabPSE/raster/ecopaysage/sud_mayenne_conf_gaussian_3km.csv", outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, (short) Raster.getNoDataValue(), cc.metrics());
+			CsvOutput csvOut = new CsvOutput("F:/Requete_SIG_LabPSE/sud_mayenne/raster/ecopaysage/sud_mayenne_conf_gaussian_500m.csv", outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, (short) Raster.getNoDataValue(), cc.metrics());
 			
 			cc.addObserver(csvOut);
 			

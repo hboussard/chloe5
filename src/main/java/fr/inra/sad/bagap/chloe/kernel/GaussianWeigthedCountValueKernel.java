@@ -3,7 +3,7 @@ package fr.inra.sad.bagap.chloe.kernel;
 import com.aparapi.Kernel;
 import com.aparapi.Range;
 
-import fr.inra.sad.bagap.chloe.Util;
+import fr.inrae.act.bagap.chloe.util.Util;
 
 
 public class GaussianWeigthedCountValueKernel extends Kernel {

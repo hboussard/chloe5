@@ -11,16 +11,16 @@ import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffReader;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
-import fr.inra.sad.bagap.chloe.Util;
-import fr.inra.sad.bagap.chloe.counting.QuantitativeCounting;
-import fr.inra.sad.bagap.chloe.counting.ValueCounting;
-import fr.inra.sad.bagap.chloe.kernel.DistanceWeigthedCountValueKernel;
 import fr.inra.sad.bagap.chloe.kernel.ThresholdGrainKernel;
 import fr.inra.sad.bagap.chloe.metric.Metric;
-import fr.inra.sad.bagap.chloe.metric.quantitative.AverageMetric;
-import fr.inra.sad.bagap.chloe.metric.value.RateValueMetric;
-import fr.inra.sad.bagap.chloe.output.AsciiGridOutput;
 import fr.inra.sad.bagap.chloe.output.GeoTiffOutput;
+import fr.inrae.act.bagap.chloe.counting.QuantitativeCounting;
+import fr.inrae.act.bagap.chloe.counting.ValueCounting;
+import fr.inrae.act.bagap.chloe.kernel.DistanceWeigthedCountValueKernel;
+import fr.inrae.act.bagap.chloe.metric.quantitative.AverageMetric;
+import fr.inrae.act.bagap.chloe.metric.value.RateValueMetric;
+import fr.inrae.act.bagap.chloe.output.AsciiGridOutput;
+import fr.inrae.act.bagap.chloe.util.Util;
 
 public class CalculGrain {
 
@@ -42,7 +42,7 @@ public class CalculGrain {
 			//File file = new File("F:/temp/roxane/wetransfer-6db38c/distance_elt_bois.asc");
 			//File file = new File("F:/Requete_SIG_LabPSE/vallee_de_la_seiche/data/raster/carto_vallee_seiche.asc");
 			//ArcGridReader reader = new ArcGridReader(file);
-			File file = new File("F:/Requete_SIG_LabPSE/vallee_de_la_seiche/data/raster/distance_bocage.tif");
+			File file = new File("F:/Requete_SIG_LabPSE/sud_mayenne/raster/grain/distance_bocage.tif");
 			GeoTiffReader reader = new GeoTiffReader(file);
 			//System.out.println(reader.getCoordinateReferenceSystem());
 			GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
@@ -139,7 +139,7 @@ public class CalculGrain {
 			Metric metric = new AverageMetric();
 			qc.addMetric(metric);
 			
-			metric.addObserver(new AsciiGridOutput("F:/Requete_SIG_LabPSE/vallee_de_la_seiche/data/raster/grain.asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
+			metric.addObserver(new AsciiGridOutput("F:/Requete_SIG_LabPSE/sud_mayenne/raster/grain/grain_dep1.asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
 			//metric.addObserver(new AsciiGridOutput("F:/temp/roxane/wetransfer-6db38c/grain.asc", outWidth, outHeight, outMinX, outMinY, outCellSize, (short) Raster.getNoDataValue()));
 			//metric.addObserver(new GeoTiffOutput("F:/dispositif_bocage/dpt22/grain/bocage/grain_bocage_dpt22.tif", outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize));
 			

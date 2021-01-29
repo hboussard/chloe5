@@ -11,17 +11,17 @@ import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffReader;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
-import fr.inra.sad.bagap.chloe.Util;
-import fr.inra.sad.bagap.chloe.counting.ValueCounting;
-import fr.inra.sad.bagap.chloe.kernel.DistanceWeigthedCountValueKernel;
 import fr.inra.sad.bagap.chloe.kernel.ThresholdCountValueKernel;
 import fr.inra.sad.bagap.chloe.metric.Metric;
-import fr.inra.sad.bagap.chloe.metric.value.CountValueMetric;
-import fr.inra.sad.bagap.chloe.metric.value.RateValueMetric;
-import fr.inra.sad.bagap.chloe.metric.value.ShannonDiversityIndex;
-import fr.inra.sad.bagap.chloe.output.AsciiGridOutput;
-import fr.inra.sad.bagap.chloe.output.CsvOutput;
 import fr.inra.sad.bagap.chloe.output.TextImageOutput;
+import fr.inrae.act.bagap.chloe.counting.ValueCounting;
+import fr.inrae.act.bagap.chloe.kernel.DistanceWeigthedCountValueKernel;
+import fr.inrae.act.bagap.chloe.metric.value.CountValueMetric;
+import fr.inrae.act.bagap.chloe.metric.value.RateValueMetric;
+import fr.inrae.act.bagap.chloe.metric.value.ShannonDiversityIndex;
+import fr.inrae.act.bagap.chloe.output.AsciiGridOutput;
+import fr.inrae.act.bagap.chloe.output.CsvOutput;
+import fr.inrae.act.bagap.chloe.util.Util;
 
 public class BasLeonComposition {
 
@@ -56,7 +56,7 @@ public class BasLeonComposition {
 			// windowSize = 4801; --> 6000m de rayon
 			
 			
-			short windowSize = 2401;
+			short windowSize = 401;
 			short mid = (short) (windowSize/2);
 			//int roiWidth = 12599;
 			//int roiHeight = 13063;
@@ -64,7 +64,7 @@ public class BasLeonComposition {
 			//short roiY = 280;
 			short roiX = 0;
 			short roiY = 0;
-			short dep = 40;
+			short dep = 1;
 			short buffer = 80;
 			
 			buffer = (short) Math.max(dep, buffer);
@@ -194,7 +194,7 @@ public class BasLeonComposition {
 				
 			}
 			
-			CsvOutput csvOut = new CsvOutput("F:/bas_leon/data/analyse/bas_leon_composition_3km.csv", outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, (short) Raster.getNoDataValue(), vc.metrics());
+			CsvOutput csvOut = new CsvOutput("F:/bas_leon/data/analyse/bas_leon_composition_500m_dep1.csv", outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, (short) Raster.getNoDataValue(), vc.metrics());
 			vc.addObserver(csvOut);
 			
 			vc.init();

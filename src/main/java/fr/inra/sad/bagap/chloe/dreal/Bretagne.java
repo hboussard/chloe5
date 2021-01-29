@@ -10,12 +10,12 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.geotiff.GeoTiffReader;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
-import fr.inra.sad.bagap.chloe.counting.ValueCounting;
-import fr.inra.sad.bagap.chloe.kernel.DistanceWeigthedCountValueKernel;
 import fr.inra.sad.bagap.chloe.metric.Metric;
-import fr.inra.sad.bagap.chloe.metric.value.CountValueMetric;
-import fr.inra.sad.bagap.chloe.output.AsciiGridOutput;
-import fr.inra.sad.bagap.chloe.output.CsvOutput;
+import fr.inrae.act.bagap.chloe.counting.ValueCounting;
+import fr.inrae.act.bagap.chloe.kernel.DistanceWeigthedCountValueKernel;
+import fr.inrae.act.bagap.chloe.metric.value.CountValueMetric;
+import fr.inrae.act.bagap.chloe.output.AsciiGridOutput;
+import fr.inrae.act.bagap.chloe.output.CsvOutput;
 
 public class Bretagne {
 

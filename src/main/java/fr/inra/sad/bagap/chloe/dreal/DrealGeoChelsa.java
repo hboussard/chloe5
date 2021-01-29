@@ -11,16 +11,16 @@ import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffReader;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
-import fr.inra.sad.bagap.chloe.counting.QuantitativeCounting;
-import fr.inra.sad.bagap.chloe.counting.ValueCounting;
 import fr.inra.sad.bagap.chloe.kernel.DistanceWeightedQuantitativeKernel;
 import fr.inra.sad.bagap.chloe.kernel.ThresholdCountValueKernel;
 import fr.inra.sad.bagap.chloe.kernel.ThresholdQuantitativeKernel;
 import fr.inra.sad.bagap.chloe.metric.Metric;
-import fr.inra.sad.bagap.chloe.metric.quantitative.AverageMetric;
-import fr.inra.sad.bagap.chloe.metric.value.CountValueMetric;
-import fr.inra.sad.bagap.chloe.metric.value.RateValueMetric;
-import fr.inra.sad.bagap.chloe.output.CsvOutput;
+import fr.inrae.act.bagap.chloe.counting.QuantitativeCounting;
+import fr.inrae.act.bagap.chloe.counting.ValueCounting;
+import fr.inrae.act.bagap.chloe.metric.quantitative.AverageMetric;
+import fr.inrae.act.bagap.chloe.metric.value.CountValueMetric;
+import fr.inrae.act.bagap.chloe.metric.value.RateValueMetric;
+import fr.inrae.act.bagap.chloe.output.CsvOutput;
 
 public class DrealGeoChelsa {
 

@@ -11,13 +11,13 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.arcgrid.ArcGridReader;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
-import fr.inra.sad.bagap.chloe.Util;
-import fr.inra.sad.bagap.chloe.counting.CoupleCounting;
-import fr.inra.sad.bagap.chloe.kernel.DistanceWeightedCountCoupleKernel;
 import fr.inra.sad.bagap.chloe.metric.Metric;
-import fr.inra.sad.bagap.chloe.metric.couple.RateCoupleMetric;
-import fr.inra.sad.bagap.chloe.output.CsvOutput;
-import fr.inra.sad.bagap.chloe.util.Couple;
+import fr.inrae.act.bagap.chloe.counting.CoupleCounting;
+import fr.inrae.act.bagap.chloe.kernel.DistanceWeightedCountCoupleKernel;
+import fr.inrae.act.bagap.chloe.metric.couple.RateCoupleMetric;
+import fr.inrae.act.bagap.chloe.output.CsvOutput;
+import fr.inrae.act.bagap.chloe.util.Couple;
+import fr.inrae.act.bagap.chloe.util.Util;
 
 public class ValleeSeicheConfiguration {
 

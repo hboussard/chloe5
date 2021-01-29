@@ -14,11 +14,12 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
 import com.aparapi.Kernel;
-import fr.inra.sad.bagap.chloe.counting.ValueCounting;
+
 import fr.inra.sad.bagap.chloe.metric.Metric;
-import fr.inra.sad.bagap.chloe.metric.value.CountValueMetric;
-import fr.inra.sad.bagap.chloe.metric.value.ShannonDiversityIndex;
 import fr.inra.sad.bagap.chloe.output.TextImageOutput;
+import fr.inrae.act.bagap.chloe.counting.ValueCounting;
+import fr.inrae.act.bagap.chloe.metric.value.CountValueMetric;
+import fr.inrae.act.bagap.chloe.metric.value.ShannonDiversityIndex;
 
 public class ValuesSlidingWindowAnalysisOld {
 

@@ -91,6 +91,11 @@
        <artifactId>gt-epsg-hsql</artifactId>
        <version>21.3</version>
     </dependency>
+    <dependency>
+		<groupId>com.csvreader</groupId>
+		<artifactId>csv</artifactId>
+		<version>1.0</version>
+	</dependency>
      <!-- 
     <dependency>
     	<groupId>fr.inra.sad.bagap</groupId>

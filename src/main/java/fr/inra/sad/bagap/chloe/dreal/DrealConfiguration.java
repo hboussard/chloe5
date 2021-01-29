@@ -11,21 +11,21 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.arcgrid.ArcGridReader;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
-import fr.inra.sad.bagap.chloe.Util;
-import fr.inra.sad.bagap.chloe.counting.CoupleCounting;
-import fr.inra.sad.bagap.chloe.counting.ValueCounting;
-import fr.inra.sad.bagap.chloe.kernel.DistanceWeightedCountCoupleKernel;
 import fr.inra.sad.bagap.chloe.kernel.ThresholdCountCoupleKernel;
 import fr.inra.sad.bagap.chloe.kernel.ThresholdCountValueKernel;
 import fr.inra.sad.bagap.chloe.metric.Metric;
-import fr.inra.sad.bagap.chloe.metric.couple.CountCoupleMetric;
-import fr.inra.sad.bagap.chloe.metric.couple.HeterogeneityFragmentationIndex;
-import fr.inra.sad.bagap.chloe.metric.couple.HeterogeneityIndex;
-import fr.inra.sad.bagap.chloe.metric.couple.RateCoupleMetric;
-import fr.inra.sad.bagap.chloe.metric.value.CountValueMetric;
-import fr.inra.sad.bagap.chloe.metric.value.RateValueMetric;
-import fr.inra.sad.bagap.chloe.output.CsvOutput;
-import fr.inra.sad.bagap.chloe.util.Couple;
+import fr.inrae.act.bagap.chloe.counting.CoupleCounting;
+import fr.inrae.act.bagap.chloe.counting.ValueCounting;
+import fr.inrae.act.bagap.chloe.kernel.DistanceWeightedCountCoupleKernel;
+import fr.inrae.act.bagap.chloe.metric.couple.CountCoupleMetric;
+import fr.inrae.act.bagap.chloe.metric.couple.HeterogeneityFragmentationIndex;
+import fr.inrae.act.bagap.chloe.metric.couple.HeterogeneityIndex;
+import fr.inrae.act.bagap.chloe.metric.couple.RateCoupleMetric;
+import fr.inrae.act.bagap.chloe.metric.value.CountValueMetric;
+import fr.inrae.act.bagap.chloe.metric.value.RateValueMetric;
+import fr.inrae.act.bagap.chloe.output.CsvOutput;
+import fr.inrae.act.bagap.chloe.util.Couple;
+import fr.inrae.act.bagap.chloe.util.Util;
 
 public class DrealConfiguration {
 	

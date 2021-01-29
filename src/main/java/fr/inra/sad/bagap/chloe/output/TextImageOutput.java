@@ -3,9 +3,10 @@ package fr.inra.sad.bagap.chloe.output;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import fr.inra.sad.bagap.chloe.counting.Counting;
-import fr.inra.sad.bagap.chloe.counting.CountingObserver;
 import fr.inra.sad.bagap.chloe.metric.Metric;
+import fr.inrae.act.bagap.chloe.counting.Counting;
+import fr.inrae.act.bagap.chloe.counting.CountingObserver;
+import fr.inrae.act.bagap.chloe.metric.MetricObserver;
 
 public class TextImageOutput implements CountingObserver, MetricObserver{
 

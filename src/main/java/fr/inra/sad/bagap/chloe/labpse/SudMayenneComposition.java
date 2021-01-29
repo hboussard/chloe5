@@ -11,17 +11,17 @@ import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffReader;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
-import fr.inra.sad.bagap.chloe.Util;
-import fr.inra.sad.bagap.chloe.counting.ValueCounting;
-import fr.inra.sad.bagap.chloe.kernel.DistanceWeigthedCountValueKernel;
 import fr.inra.sad.bagap.chloe.kernel.ThresholdCountValueKernel;
 import fr.inra.sad.bagap.chloe.metric.Metric;
-import fr.inra.sad.bagap.chloe.metric.value.CountValueMetric;
-import fr.inra.sad.bagap.chloe.metric.value.RateValueMetric;
-import fr.inra.sad.bagap.chloe.metric.value.ShannonDiversityIndex;
-import fr.inra.sad.bagap.chloe.output.AsciiGridOutput;
-import fr.inra.sad.bagap.chloe.output.CsvOutput;
 import fr.inra.sad.bagap.chloe.output.TextImageOutput;
+import fr.inrae.act.bagap.chloe.counting.ValueCounting;
+import fr.inrae.act.bagap.chloe.kernel.DistanceWeigthedCountValueKernel;
+import fr.inrae.act.bagap.chloe.metric.value.CountValueMetric;
+import fr.inrae.act.bagap.chloe.metric.value.RateValueMetric;
+import fr.inrae.act.bagap.chloe.metric.value.ShannonDiversityIndex;
+import fr.inrae.act.bagap.chloe.output.AsciiGridOutput;
+import fr.inrae.act.bagap.chloe.output.CsvOutput;
+import fr.inrae.act.bagap.chloe.util.Util;
 
 public class SudMayenneComposition {
 
@@ -56,7 +56,7 @@ public class SudMayenneComposition {
 			// windowSize = 4801; --> 6000m de rayon
 			
 			
-			short windowSize = 2401;
+			short windowSize = 401;
 			short mid = (short) (windowSize/2);
 			//int roiWidth = 12599;
 			//int roiHeight = 13063;
@@ -70,7 +70,7 @@ public class SudMayenneComposition {
 			buffer = (short) Math.max(dep, buffer);
 			
 			System.out.println("lecture de la carte");
-			File file = new File("F:/Requete_SIG_LabPSE/raster/occsol_sm.asc");
+			File file = new File("F:/Requete_SIG_LabPSE/sud_mayenne/raster/occsol_sm.asc");
 			ArcGridReader reader = new ArcGridReader(file);
 			//File file = new File("F:/Ecopaysage/emprise_LTC/bretagne.tif");
 			//GeoTiffReader reader = new GeoTiffReader(file);
@@ -193,7 +193,7 @@ public class SudMayenneComposition {
 				
 			}
 			
-			CsvOutput csvOut = new CsvOutput("F:/Requete_SIG_LabPSE/raster/ecopaysage/sud_mayenne_comp_gaussian_3km.csv", outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, (short) Raster.getNoDataValue(), vc.metrics());
+			CsvOutput csvOut = new CsvOutput("F:/Requete_SIG_LabPSE/sud_mayenne/raster/ecopaysage/sud_mayenne_comp_gaussian_500m.csv", outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, (short) Raster.getNoDataValue(), vc.metrics());
 			vc.addObserver(csvOut);
 			
 			vc.init();
