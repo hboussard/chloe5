@@ -3,7 +3,7 @@ package fr.inra.sad.bagap.chloe.kernel;
 import com.aparapi.Kernel;
 
 
-public class GaussianWeigthedCountValueKernel extends Kernel {
+public class FastGaussianWeigthedCountValueKernel extends Kernel {
 
 	private final int width, height;
 	
@@ -26,12 +26,12 @@ public class GaussianWeigthedCountValueKernel extends Kernel {
 	
 	private final int enveloppeInterne; // in pixels
 	
-	public GaussianWeigthedCountValueKernel(short[] values, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue){
+	public FastGaussianWeigthedCountValueKernel(short[] values, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue){
 		this(values, windowSize, width, height, dep, imageIn, imageOut, noDataValue, 0);
 	}
 		
 	
-	public GaussianWeigthedCountValueKernel(short[] values, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue, int enveloppeInterne){
+	public FastGaussianWeigthedCountValueKernel(short[] values, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue, int enveloppeInterne){
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.values = values;

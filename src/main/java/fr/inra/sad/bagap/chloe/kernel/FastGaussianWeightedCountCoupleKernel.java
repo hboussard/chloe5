@@ -3,7 +3,7 @@ package fr.inra.sad.bagap.chloe.kernel;
 import com.aparapi.Kernel;
 
 
-public class GaussianWeightedCountCoupleKernel extends Kernel {
+public class FastGaussianWeightedCountCoupleKernel extends Kernel {
 
 	private final int width, height;
 	
@@ -26,12 +26,12 @@ public class GaussianWeightedCountCoupleKernel extends Kernel {
 	
 	private final int enveloppeInterne; // in pixels
 	
-	public GaussianWeightedCountCoupleKernel(float[] couples, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue){
+	public FastGaussianWeightedCountCoupleKernel(float[] couples, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue){
 		this(couples, windowSize, width, height, dep, imageIn, imageOut, noDataValue, 0);
 	}
 		
 	
-	public GaussianWeightedCountCoupleKernel(float[] couples, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue, int enveloppeInterne){
+	public FastGaussianWeightedCountCoupleKernel(float[] couples, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue, int enveloppeInterne){
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.GPU);
 		this.couples = couples;

@@ -14,14 +14,14 @@ import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 //import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inra.sad.bagap.chloe.counting.ValueCounting;
 import fr.inra.sad.bagap.chloe.kernel.DistanceWeigthedCountValueKernel;
-import fr.inra.sad.bagap.chloe.kernel.GaussianWeigthedCountValueKernel;
-import fr.inra.sad.bagap.chloe.kernel.GaussianWeigthedByteCountKernel;
+import fr.inra.sad.bagap.chloe.kernel.FastGaussianWeigthedCountValueKernel;
+import fr.inra.sad.bagap.chloe.kernel.FastGaussianWeigthedByteCountKernel;
 import fr.inra.sad.bagap.chloe.metric.Metric;
 import fr.inra.sad.bagap.chloe.metric.value.CountValueMetric;
 import fr.inra.sad.bagap.chloe.output.AsciiGridOutput;
 import fr.inra.sad.bagap.chloe.output.CsvOutput;
 
-public class ValuesSlidingWindowAnalysis {
+public class FastValuesSlidingWindowAnalysis {
 	
 	public static void main(final String[] args) {
 		ResourceBundle bundle = ResourceBundle.getBundle("fr.inra.sad.bagap.chloe.properties.config");
@@ -133,7 +133,7 @@ public class ValuesSlidingWindowAnalysis {
 			}
 			*/
 			
-			GaussianWeigthedByteCountKernel cv = new GaussianWeigthedByteCountKernel(values.length, windowSize, roiWidth, roiHeight, dep, inDatas, outDatas, Raster.getNoDataValue());
+			FastGaussianWeigthedByteCountKernel cv = new FastGaussianWeigthedByteCountKernel(values.length, windowSize, roiWidth, roiHeight, dep, inDatas, outDatas, Raster.getNoDataValue());
 
 			//GaussianWeigthedCountValueKernel cv = new GaussianWeigthedCountValueKernel(values, windowSize, roiWidth, roiHeight, dep, inDatas, outDatas, Raster.getNoDataValue());
 			//DistanceWeigthedCountValueKernel cv = new DistanceWeigthedCountValueKernel(values, windowSize, shape, coeffs, roiWidth, roiHeight, dep, inDatas, outDatas, Raster.getNoDataValue());

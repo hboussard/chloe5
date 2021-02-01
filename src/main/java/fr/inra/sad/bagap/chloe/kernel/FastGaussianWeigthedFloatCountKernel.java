@@ -2,17 +2,17 @@ package fr.inra.sad.bagap.chloe.kernel;
 
 import com.aparapi.Kernel;
 
-public class GaussianWeigthedByteCountKernel extends Kernel {
+public class FastGaussianWeigthedFloatCountKernel extends Kernel {
 
 	private final int width, height;
 	
 	private final int dep;
 
-	private final byte imageIn[];
+	private final float imageIn[];
 	
 	private final float imageOut[][];
 	
-	private final byte noCalc[];
+	private final float noCalc[];
 	
 	private final int rayon;
 	
@@ -25,15 +25,15 @@ public class GaussianWeigthedByteCountKernel extends Kernel {
 	
 	private final int xmin,xmax,ymin,ymax; // in pixels
 	
-	public GaussianWeigthedByteCountKernel(int nValues, int windowSize, int width, int height, int dep, byte[] imageIn, float[][] imageOut, int noDataValue){
+	public FastGaussianWeigthedFloatCountKernel(int nValues, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue){
 		this(nValues, windowSize, width, height, dep, imageIn, imageOut, noDataValue, 0);
 	}
 		
 	
-	public GaussianWeigthedByteCountKernel(int nValues, int windowSize, int width, int height, int dep, byte[] imageIn, float[][] imageOut, int noDataValue, int enveloppeInterne){
+	public FastGaussianWeigthedFloatCountKernel(int nValues, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue, int enveloppeInterne){
 		this(nValues, windowSize, width, height, dep, imageIn, imageOut, noDataValue, enveloppeInterne, width - enveloppeInterne, enveloppeInterne, height - enveloppeInterne, null);		
 	}
-	public GaussianWeigthedByteCountKernel(int nValues, int windowSize, int width, int height, int dep, byte[] imageIn, float[][] imageOut, int noDataValue, int xmin,int xmax, int ymin, int ymax, byte[] noCalc ){
+	public FastGaussianWeigthedFloatCountKernel(int nValues, int windowSize, int width, int height, int dep, float[] imageIn, float[][] imageOut, int noDataValue, int xmin,int xmax, int ymin, int ymax, float[] noCalc ){
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.nValues = nValues;
@@ -103,11 +103,11 @@ public class GaussianWeigthedByteCountKernel extends Kernel {
 			processVerticalPixel(x,y);
 		else {
 			if(x>=xmin/dep && x < (xmax-1)/dep+1 ) {
-				byte val = imageIn[y+x*width];
-				if(noCalc!=null)
-					for(byte v:noCalc)
-						if(v==val)
-							return;
+				float val = imageIn[y+x*width];
+				for(float v:noCalc)
+					if(v==val) {
+						return;
+					}
 				processHorizontalPixel(x,line);
 			}
 		}

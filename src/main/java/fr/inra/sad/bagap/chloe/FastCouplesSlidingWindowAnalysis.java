@@ -16,7 +16,7 @@ import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inra.sad.bagap.chloe.counting.CoupleCounting;
 import fr.inra.sad.bagap.chloe.counting.ValueCounting;
 import fr.inra.sad.bagap.chloe.kernel.DistanceWeightedCountCoupleKernel;
-import fr.inra.sad.bagap.chloe.kernel.GaussianWeightedCountCoupleKernel;
+import fr.inra.sad.bagap.chloe.kernel.FastGaussianWeightedCountCoupleKernel;
 import fr.inra.sad.bagap.chloe.kernel.DistanceWeightedCountCoupleKernelBis;
 import fr.inra.sad.bagap.chloe.kernel.ThresholdCountCoupleKernel;
 import fr.inra.sad.bagap.chloe.kernel.ThresholdCountValueKernel;
@@ -32,7 +32,7 @@ import fr.inra.sad.bagap.chloe.util.Couple;
 import java.util.ResourceBundle;
 
 
-public class CouplesSlidingWindowAnalysis {
+public class FastCouplesSlidingWindowAnalysis {
 
 	public static void main(final String[] args) {
 		ResourceBundle bundle = ResourceBundle.getBundle("fr.inra.sad.bagap.chloe.properties.config");
