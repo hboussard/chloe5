@@ -6,16 +6,52 @@ public class Script {
 
 	public static void main(String[] args){
 		
-		scriptACE();
+		
+	}
+	
+	private static void scriptHuge(){
+		
+		long begin = System.currentTimeMillis();
+		
+		String path = "F:/chloe/chloe5/data/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRaster(path+"za.asc");
+		builder.addMetric("SHDI");
+		builder.setWindowSize(21);
+		//builder.setBufferROI(100);
+		//builder.setDisplacement(2);
+		//builder.setInternalROI(1);
+		//builder.setInterpolation(true);
+		//builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+		//builder.addCsvOutput(path+"analyse/testi.csv");
+		builder.addAsciiGridOutput("SHDI", path+"analyse/shdi_ex100.asc");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		//analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
 	}
 	
 	private static void scriptACE(){
+		//scriptACE("2000", "composition", "300m");
+		//scriptACE("2009", "composition", "300m");
+		//scriptACE("2015", "composition", "300m");
+		//scriptACE("2000", "configuration", "300m");
+		//scriptACE("2009", "configuration", "300m");
+		//scriptACE("2015", "configuration", "300m");
 		//scriptACE("2000", "composition", "500m");
 		//scriptACE("2009", "composition", "500m");
 		//scriptACE("2015", "composition", "500m");
 		//scriptACE("2000", "configuration", "500m");
 		//scriptACE("2009", "configuration", "500m");
 		//scriptACE("2015", "configuration", "500m");
+		//scriptACE("2000", "composition", "2km");
+		//scriptACE("2009", "composition", "2km");
+		//scriptACE("2015", "composition", "2km");
+		//scriptACE("2000", "configuration", "2km");
+		//scriptACE("2009", "configuration", "2km");
+		//scriptACE("2015", "configuration", "2km");
 		//scriptACE("2000", "composition", "3km");
 		//scriptACE("2009", "composition", "3km");
 		//scriptACE("2015", "composition", "3km");
@@ -28,14 +64,11 @@ public class Script {
 		
 		long begin = System.currentTimeMillis();
 		
-		String path = "F:/aquitaine/ocs/OCS_Dordogne_00_09_15_raster/";
+		String path = "F:/aquitaine/ocs/OCS_Dordogne_00_09_15_raster/carto/";
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
 		builder.setDisplacement(20);
 		builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
 		builder.setRaster(path+"OCS_Dordogne_"+year+".tif");
-		//builder.setRaster(path+"OCS_Dordogne_2000.tif");
-		//builder.setRaster(path+"OCS_Dordogne_2009.tif");
-		//builder.setRaster(path+"OCS_Dordogne_2015.tif");
 		
 		if(compo_config.equalsIgnoreCase("composition")){
 			for(int i=1; i<=7; i++){
@@ -50,8 +83,14 @@ public class Script {
 			}
 		}
 		
+		if(scale.equalsIgnoreCase("300m")){
+			builder.setWindowSize(121); // 300m
+		}
 		if(scale.equalsIgnoreCase("500m")){
 			builder.setWindowSize(201); // 500m
+		}
+		if(scale.equalsIgnoreCase("2km")){
+			builder.setWindowSize(801); // 2km
 		}
 		if(scale.equalsIgnoreCase("3km")){
 			builder.setWindowSize(1201); // 3km
@@ -59,18 +98,6 @@ public class Script {
 		
 		builder.addCsvOutput(path+"ace_"+compo_config+"_"+year+"_"+scale+".csv");
 		
-		//builder.addCsvOutput(path+"ace_compoosition_2000_500m.csv");
-		//builder.addCsvOutput(path+"ace_composition_2009_500m.csv");
-		//builder.addCsvOutput(path+"ace_composition_2015_500m.csv");
-		//builder.addCsvOutput(path+"ace_compoosition_2000_3km.csv");
-		//builder.addCsvOutput(path+"ace_composition_2009_3km.csv");
-		//builder.addCsvOutput(path+"ace_composition_2015_3km.csv");
-		//builder.addCsvOutput(path+"ace_configuration_2000_500m.csv");
-		//builder.addCsvOutput(path+"ace_configuration_2009_500m.csv");
-		//builder.addCsvOutput(path+"ace_configuration_2015_500m.csv");
-		//builder.addCsvOutput(path+"ace_configuration_2000_3km.csv");
-		//builder.addCsvOutput(path+"ace_configuration_2009_3km.csv");
-		//builder.addCsvOutput(path+"ace_configuration_2015_3km.csv");
 		LandscapeMetricAnalysis analysis = builder.build();
 		
 		analysis.allRun();
@@ -79,31 +106,7 @@ public class Script {
 		System.out.println("time computing : "+(end - begin));
 	}
 	
-	private static void script1(){
-		
-		long begin = System.currentTimeMillis();
-		
-		String path = "F:/chloe/chloe5/data/";
-		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setRaster(path+"za.asc");
-		//builder.setRaster(path+"raster2007.asc");
-		builder.addMetric("SHDI");
-		//builder.setWindowRadius(500);
-		builder.setWindowSize(21);
-		builder.setBufferROI(100);
-		//builder.setDisplacement(2);
-		//builder.setInternalROI(1);
-		//builder.setInterpolation(true);
-		//builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
-		//builder.addCsvOutput(path+"analyse/testi.csv");
-		builder.addAsciiGridOutput("SHDI", path+"analyse/shdi_ex100.asc");
-		LandscapeMetricAnalysis analysis = builder.build();
-		
-		analysis.allRun();
-		
-		long end = System.currentTimeMillis();
-		System.out.println("time computing : "+(end - begin));
-	}
+	
 	
 	private static void scriptFDCCA(){
 		
@@ -115,6 +118,7 @@ public class Script {
 		//builder.setRaster(path+"secteur2/carto/secteur2_distance.asc");
 		//builder.setRaster(path+"secteur3/carto/secteur3_distance.asc");
 		//builder.setRaster(path+"secteur4/carto/secteur4_distance.asc");
+		builder.setRaster(path+"secteur4bis/carto/secteur4bis_distance.asc");
 		//builder.setRaster(path+"secteur5/carto/secteur5_distance.asc");
 		builder.addMetric("MD");
 		builder.setWindowSize(141);
@@ -122,6 +126,7 @@ public class Script {
 		//builder.addAsciiGridOutput("MD", path+"secteur2/carto/secteur2_grain.asc");
 		//builder.addAsciiGridOutput("MD", path+"secteur3/carto/secteur3_grain.asc");
 		//builder.addAsciiGridOutput("MD", path+"secteur4/carto/secteur4_grain.asc");
+		builder.addAsciiGridOutput("MD", path+"secteur4/carto/secteur4bis_grain.asc");
 		//builder.addAsciiGridOutput("MD", path+"secteur5/carto/secteur5_grain.asc");
 		LandscapeMetricAnalysis analysis = builder.build();
 		

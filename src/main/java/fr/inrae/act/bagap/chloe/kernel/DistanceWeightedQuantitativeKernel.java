@@ -29,7 +29,8 @@ public class DistanceWeightedQuantitativeKernel extends LandscapeMetricKernel {
 	}
 		
 	public DistanceWeightedQuantitativeKernel(int windowSize, short[] shape, float[] coeff, int width, int height, int dep, float[] imageIn, int noDataValue, float threshold, int internalROI){
-		super(width, height);
+		//super(width, height);
+		super(width + 2*internalROI, height + 2*internalROI, internalROI);
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.windowSize = windowSize;
