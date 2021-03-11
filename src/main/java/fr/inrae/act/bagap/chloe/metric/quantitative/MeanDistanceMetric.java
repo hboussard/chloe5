@@ -11,7 +11,7 @@ public class MeanDistanceMetric extends Metric implements QuantitativeMetric {
 
 	@Override
 	protected void doCalculate(Counting co) {
-		if(co.validValues() > 0){
+		if(co.validValues() > 0){	
 			value = co.average() / 100.0;
 		}
 	}
