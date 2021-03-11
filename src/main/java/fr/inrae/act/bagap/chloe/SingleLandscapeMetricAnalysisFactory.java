@@ -1,8 +1,10 @@
 package fr.inrae.act.bagap.chloe;
 
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -28,7 +30,7 @@ import fr.inrae.act.bagap.chloe.output.InterpolateSplineLinearCsvOutput;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.util.Util;
 
-public class HugeLandscapeMetricAnalysisFactory {
+public class SingleLandscapeMetricAnalysisFactory {
 
 	public static LandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder, GridCoverage2D coverage) throws IOException {
 		
@@ -145,6 +147,7 @@ public class HugeLandscapeMetricAnalysisFactory {
 			if(builder.getCsv() != null){
 				if(builder.getDisplacement() == 1 || builder.getInterpolation() == false){
 					CsvOutput2 csvOutput = new CsvOutput2(builder.getCsv(), outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, Raster.getNoDataValue());
+					//CsvOutput csvOutput = new CsvOutput(builder.getCsv(), outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, Raster.getNoDataValue());
 					observers.add(csvOutput);
 				}else{
 					InterpolateSplineLinearCsvOutput csvOutput = new InterpolateSplineLinearCsvOutput(builder.getCsv(), inMinX + (roiX * inCellSize), inMaxX - ((inWidth - roiX) * inCellSize) + (roiWidth * inCellSize), inMinY + ((inHeight -roiY) * inCellSize) - (roiHeight * inCellSize), inMaxY - (roiY * inCellSize), roiWidth, roiHeight, inCellSize, Raster.getNoDataValue(), displacement);
@@ -191,7 +194,7 @@ public class HugeLandscapeMetricAnalysisFactory {
 				
 				// analysis
 				//return new QuantitativeLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, displacement, kernel, counting);
-				return new HugeLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, 6, displacement, kernel, counting);
+				return new SingleLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, 6, displacement, kernel, counting);
 				
 			}else{ // qualitative
 				// recuperation des valeurs
@@ -206,6 +209,7 @@ public class HugeLandscapeMetricAnalysisFactory {
 				}
 					 */
 				}
+				
 				
 				short[] values = null;
 				if(MetricManager.hasValueMetric(metrics)){
@@ -262,7 +266,7 @@ public class HugeLandscapeMetricAnalysisFactory {
 				}
 				
 				// analysis
-				return new HugeLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+				return new SingleLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 			}
 		}
 		

@@ -4,42 +4,33 @@ import com.aparapi.Kernel;
 
 public class DistanceWeightedCountValueKernel extends LandscapeMetricKernel {
 	
-	private final int dep;
-
-	private final float imageIn[];
-	
-	private final short[] shape;
-	
-	private final float[] coeff;
-	
-	private final int windowSize;
-	
 	private final short[] values;
 	
-	private final int noDataValue;
-	
-	public DistanceWeightedCountValueKernel(short[] values, int windowSize, short[] shape, float[] coeff, int width, int height, int dep, float[] imageIn, int noDataValue){
-		this(values, windowSize, shape, coeff, width, height, dep, imageIn, noDataValue, 0);
-	}
-		
-	public DistanceWeightedCountValueKernel(short[] values, int windowSize, short[] shape, float[] coeff, int width, int height, int dep, float[] imageIn, int noDataValue, int internalROI){
-		super(width + 2*internalROI, height + 2*internalROI, internalROI);
+	public DistanceWeightedCountValueKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, short[] values){		
+		super(windowSize, displacement, shape, coeff, noDataValue);
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.values = values;
-		this.windowSize = windowSize;
-		this.shape = shape;
-		this.coeff = coeff;
-		this.dep = dep;
-		this.imageIn = imageIn;
-		this.noDataValue = noDataValue;
+	}
+	
+	@Override
+	public void run() {
+		final int x = bufferROIXMin() + (getGlobalId(0) % (width() - bufferROIXMin() - bufferROIXMax()));
+		final int y = bufferROIYMin() + (getGlobalId(0) / (width() - bufferROIXMin() - bufferROIXMax()));
+		processPixel(x, theY() + y, y);
 	}
 
 	public void processPixel(int x, int y, int localY) {
 		
-		if(x%dep == 0 && y%dep == 0){
+		if((x-bufferROIXMin())%displacement() == 0 && (y-bufferROIYMin())%displacement() == 0){
 			
-			int ind = ((((localY-internalROI())/dep))*((((width()-2*internalROI())-1)/dep)+1) + (((x-internalROI())/dep)));
+			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
+			
+			/*
+			if(x == bufferROIXMin() && y == bufferROIYMin()){
+				System.out.println(x+" "+y+" "+localY+" "+ind);
+			}
+			*/
 			
 			for(int i=0; i<values.length+2; i++){
 				imageOut()[ind][i] = 0f;
@@ -47,7 +38,7 @@ public class DistanceWeightedCountValueKernel extends LandscapeMetricKernel {
 			
 			//if(imageIn[(y * width) + x] != -1f) { // gestion des filtres a mettre en place 
 				
-			final int mid = windowSize / 2;
+			final int mid = windowSize() / 2;
 			int ic;
 			short v;
 			boolean again;
@@ -56,20 +47,19 @@ public class DistanceWeightedCountValueKernel extends LandscapeMetricKernel {
 				if(((y + dy) >= 0) && ((y + dy) < height())){
 					for (int dx = -mid; dx <= mid; dx += 1) {
 						if(((x + dx) >= 0) && ((x + dx) < width())){
-							ic = ((dy+mid) * windowSize) + (dx+mid);
-							if(shape[ic] == 1){
-								v = (short) imageIn[((y + dy) * width()) + (x + dx)];
-										
-								if(v == noDataValue){
-									imageOut()[ind][0] = imageOut()[ind][0] + coeff[ic];
+							ic = ((dy+mid) * windowSize()) + (dx+mid);
+							if(shape()[ic] == 1){
+								v = (short) imageIn()[((y + dy) * width()) + (x + dx)];		
+								if(v == noDataValue()){
+									imageOut()[ind][0] = imageOut()[ind][0] + coeff()[ic];
 								}else{
 									if(v == 0){
-										imageOut()[ind][1] = imageOut()[ind][1] + coeff[ic];
+										imageOut()[ind][1] = imageOut()[ind][1] + coeff()[ic];
 									}else{
 										again = true;
 										for(int i=0; again && i<values.length; i++){
 											if(v == values[i]){
-												imageOut()[ind][i+2] = imageOut()[ind][i+2] + coeff[ic];
+												imageOut()[ind][i+2] = imageOut()[ind][i+2] + coeff()[ic];
 												again = false;
 											}
 										}
@@ -83,10 +73,4 @@ public class DistanceWeightedCountValueKernel extends LandscapeMetricKernel {
 		}
 	}
 
-	@Override
-	public void run() {
-		final int x = internalROI() + (getGlobalId(0) % (width() - 2 * internalROI()));
-		final int y = internalROI() + (getGlobalId(0) / (width() - 2 * internalROI()));
-		processPixel(x, theY() + y, y);
-	}
 }

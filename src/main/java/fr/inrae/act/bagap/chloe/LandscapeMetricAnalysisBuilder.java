@@ -35,7 +35,11 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	private boolean interpolation;
 	
-	private int bufferROI;
+	private int roiX, roiY, roiWidth, roiHeight;
+	
+	//private int bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax;
+	
+	private short[] values;
 	
 	public LandscapeMetricAnalysisBuilder(){
 		this.metrics = new HashSet<Metric>();
@@ -53,10 +57,18 @@ public class LandscapeMetricAnalysisBuilder {
 		this.interpolation = false;
 		this.windowSize = -1;
 		this.windowRadius = -1;
-		this.bufferROI = 0;
+		this.roiX = 0;
+		this.roiY = 0;
+		this.roiWidth = -1;
+		this.roiHeight = -1;
+		//this.bufferROIXMin = 0;
+		//this.bufferROIXMax = 0;
+		//this.bufferROIYMin = 0;
+		//this.bufferROIYMax = 0;
 		this.csv = null;
 		this.points = null;
 		this.exportWindowPath = null;
+		this.values = null;
 		this.asciiOutputs = new HashMap<String, String>();
 	}
 
@@ -76,6 +88,14 @@ public class LandscapeMetricAnalysisBuilder {
 		this.raster = raster;
 	}
 
+	public void setValues(String sValues){
+		String[] s = sValues.split(",");
+		values = new short[s.length];
+		for(int i = 0; i<s.length; i++){
+			values[i] = Short.parseShort(s[i].replace(" ", ""));
+		}
+	}
+	
 	public void setWindowSize(int windowSize) {
 		this.windowSize = windowSize;
 	}
@@ -133,8 +153,45 @@ public class LandscapeMetricAnalysisBuilder {
 		this.observers = observers;
 	}
 	
+	/*
 	public void setBufferROI(int bufferROI){
-		this.bufferROI = bufferROI;
+		this.bufferROIXMin = bufferROI;
+		this.bufferROIXMax = bufferROI;
+		this.bufferROIYMin = bufferROI;
+		this.bufferROIYMax = bufferROI;
+	}
+	
+	public void setBufferROIXMin(int bufferROI){
+		this.bufferROIXMin = bufferROI;
+	}
+	
+	public void setBufferROIXMax(int bufferROI){
+		this.bufferROIXMax = bufferROI;
+	}
+	
+	public void setBufferROIYMin(int bufferROI){
+		this.bufferROIYMin = bufferROI;
+	}
+	
+	public void setBufferROIYMax(int bufferROI){
+		this.bufferROIYMax = bufferROI;
+	}
+	*/
+	
+	public void setROIX(int roiX){
+		this.roiX = roiX;
+	}
+	
+	public void setROIY(int roiY){
+		this.roiY = roiY;
+	}
+	
+	public void setROIWidth(int roiWidth){
+		this.roiWidth = roiWidth;
+	}
+	
+	public void setROIHeight(int roiHeight){
+		this.roiHeight = roiHeight;
 	}
 	
 	public WindowAnalysisType getAnalysisType() {
@@ -151,6 +208,10 @@ public class LandscapeMetricAnalysisBuilder {
 
 	public String getRaster() {
 		return raster;
+	}
+	
+	public short[] getValues(){
+		return values;
 	}
 
 	public int getWindowSize() {
@@ -185,15 +246,44 @@ public class LandscapeMetricAnalysisBuilder {
 		return asciiOutputs;
 	}
 	
-	public int getBufferROI(){
-		return bufferROI;
+	/*
+	public int getBufferROIXMin(){
+		return bufferROIXMin;
+	}
+	
+	public int getBufferROIXMax(){
+		return bufferROIXMax;
+	}
+	
+	public int getBufferROIYMin(){
+		return bufferROIYMin;
+	}
+	
+	public int getBufferROIYMax(){
+		return bufferROIYMax;
+	}
+	*/
+	
+	public int getROIX(){
+		return this.roiX;
+	}
+	
+	public int getROIY(){
+		return this.roiY;
+	}
+	
+	public int getROIWidth(){
+		return this.roiWidth;
+	}
+	
+	public int getROIHeight(){
+		return this.roiHeight;
 	}
 
 	public LandscapeMetricAnalysis build(){
 		LandscapeMetricAnalysis analysis = null;
 		try{
 			analysis = LandscapeMetricAnalysisFactory.create(this);
-			//analysis = HugeLandscapeMetricAnalysisFactory.create(this);
 		}catch(IOException ex){
 			ex.printStackTrace();
 		}finally{

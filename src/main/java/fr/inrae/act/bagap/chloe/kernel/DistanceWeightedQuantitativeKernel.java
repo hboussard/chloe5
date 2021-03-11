@@ -4,100 +4,70 @@ import com.aparapi.Kernel;
 
 public class DistanceWeightedQuantitativeKernel extends LandscapeMetricKernel {
 	
-	private final int dep;
-
-	private final float imageIn[];
-	
-	private final short[] shape;
-	
-	private final float[] coeff;
-	
-	private final int windowSize;
-	
-	private final int noDataValue;
-	
-	private final int internalROI; // in pixels
-	
 	private final float threshold;
 	
-	public DistanceWeightedQuantitativeKernel(int windowSize, short[] shape, float[] coeff, int width, int height, int dep, float[] imageIn, int noDataValue){
-		this(windowSize, shape, coeff, width, height, dep, imageIn, noDataValue, -1, 0);
-	}
-	
-	public DistanceWeightedQuantitativeKernel(int windowSize, short[] shape, float[] coeff, int width, int height, int dep, float[] imageIn, int noDataValue, float threshold){
-		this(windowSize, shape, coeff, width, height, dep, imageIn, noDataValue, threshold, 0);
+	public DistanceWeightedQuantitativeKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue){
+		this(windowSize, displacement, shape, coeff, noDataValue, -1);
 	}
 		
-	public DistanceWeightedQuantitativeKernel(int windowSize, short[] shape, float[] coeff, int width, int height, int dep, float[] imageIn, int noDataValue, float threshold, int internalROI){
-		//super(width, height);
-		super(width + 2*internalROI, height + 2*internalROI, internalROI);
+	public DistanceWeightedQuantitativeKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, float threshold){
+		super(windowSize, displacement, shape, coeff, noDataValue);
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
-		this.windowSize = windowSize;
-		this.shape = shape;
-		this.coeff = coeff;
-		this.dep = dep;
-		this.imageIn = imageIn;
-		this.noDataValue = noDataValue;
 		this.threshold = threshold;
-		this.internalROI = internalROI;
+	}
+	
+	@Override
+	public void run() {
+		final int x = bufferROIXMin() + (getGlobalId(0) % (width() - bufferROIXMin() - bufferROIXMax()));
+		final int y = bufferROIYMin() + (getGlobalId(0) / (width() - bufferROIXMin() - bufferROIXMax()));
+		processPixel(x, theY() + y, y);
 	}
 
 	public void processPixel(int x, int y, int localY) {
 		
-		if(x%dep == 0 && y%dep == 0){
+		if((x-bufferROIXMin())%displacement() == 0 && (y-bufferROIYMin())%displacement() == 0){
 			
-			int ind = ((((localY)/dep))*(((width()-1)/dep)+1) + (((x)/dep)));
+			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
 			
 			// phase d'initialisation de la structure de données
-			for(int i=0; i<3; i++){
+			for(int i=0; i<6; i++){
 				imageOut()[ind][i] = 0.0f;
 			}
 			
-			
-			if(!(x < internalROI || (width() - x) < internalROI || y <internalROI || (height() - y) < internalROI)) {
-				final int mid = windowSize / 2;
-				int ic;
-				float v;
-				float nb = 0;
-				float sum = 0;
+			final int mid = windowSize() / 2;
+			int ic;
+			float v, c;
+			float nb_nodata = 0;
+			float nb = 0;
+			float sum = 0;
+			float square_sum = 0;
+			float min = Float.MAX_VALUE;
+			float max = Float.MIN_VALUE;
 				
-				if(threshold != -1){
-					for (int dy = -mid; dy <= mid; dy += 1) {
-						if(((y + dy) >= 0) && ((y + dy) < height())){
-							for (int dx = -mid; dx <= mid; dx += 1) {
-								if(((x + dx) >= 0) && ((x + dx) < width())){
-									ic = ((dy+mid) * windowSize) + (dx+mid);
-									if(shape[ic] == 1){
-										v = imageIn[((y + dy) * width()) + (x + dx)];
-										if(v == noDataValue) {
-											imageOut()[ind][0] = imageOut()[ind][0] + coeff[ic];
+			if(threshold != -1){
+				
+				for (int dy = -mid; dy <= mid; dy += 1) {
+					if(((y + dy) >= 0) && ((y + dy) < height())){
+						for (int dx = -mid; dx <= mid; dx += 1) {
+							if(((x + dx) >= 0) && ((x + dx) < width())){
+								ic = ((dy+mid) * windowSize()) + (dx+mid);
+								if(shape()[ic] == 1){
+									v = imageIn()[((y + dy) * width()) + (x + dx)];
+									c = coeff()[ic];
+									
+									if(v == noDataValue()) {
+										nb_nodata = nb_nodata + c;
+									}else{
+										nb = nb + c;
+										if(v > threshold){
+											sum = sum + threshold*c;
+											square_sum = square_sum + threshold*c * threshold*c;
 										}else{
-											nb = nb + coeff[ic];
-											if(v > threshold){
-												sum = sum + threshold*coeff[ic];
-											}else{
-												sum = sum + v*coeff[ic];
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}else{
-					for (int dy = -mid; dy <= mid; dy += 1) {
-						if(((y + dy) >= 0) && ((y + dy) < height())){
-							for (int dx = -mid; dx <= mid; dx += 1) {
-								if(((x + dx) >= 0) && ((x + dx) < width())){
-									ic = ((dy+mid) * windowSize) + (dx+mid);
-									if(shape[ic] == 1){
-										v = imageIn[((y + dy) * width()) + (x + dx)];
-										if(v == noDataValue) {
-											imageOut()[ind][0] = imageOut()[ind][0] + coeff[ic];
-										}else{
-											nb = nb + coeff[ic];
-											sum = sum + v*coeff[ic];
+											sum = sum + v*c;
+											square_sum = square_sum + v*c * v*c;
+											min = Math.min(min, v*c);
+											max = Math.max(max, v*c);
 										}
 									}
 								}
@@ -105,17 +75,41 @@ public class DistanceWeightedQuantitativeKernel extends LandscapeMetricKernel {
 						}
 					}
 				}
-				
-				imageOut()[ind][1] = nb;
-				imageOut()[ind][2] = sum;
+			}else{
+				for (int dy = -mid; dy <= mid; dy += 1) {
+					if(((y + dy) >= 0) && ((y + dy) < height())){
+						for (int dx = -mid; dx <= mid; dx += 1) {
+							if(((x + dx) >= 0) && ((x + dx) < width())){
+								ic = ((dy+mid) * windowSize()) + (dx+mid);
+								if(shape()[ic] == 1){
+									v = imageIn()[((y + dy) * width()) + (x + dx)];
+									c = coeff()[ic];
+									if(v == noDataValue()) {
+										nb_nodata = nb_nodata + c;
+									}else{
+										nb = nb + c;
+										sum = sum + v*c;
+										square_sum = square_sum + v*c * v*c;
+										min = Math.min(min, v*c);
+										max = Math.max(max, v*c);
+									}
+								}
+							}
+						}
+					}
+				}
 			}
+			
+			imageOut()[ind][0] = nb_nodata;
+			imageOut()[ind][1] = nb;
+			imageOut()[ind][2] = sum;
+			imageOut()[ind][3] = square_sum;
+			imageOut()[ind][4] = min;
+			imageOut()[ind][5] = max;
+			
+			//System.out.println(nb_nodata+" "+nb+" "+sum+" "+square_sum+" "+min+" "+max);
 		}
 	}
 
-	@Override
-	public void run() {
-		final int x = getGlobalId(0) % width();
-		final int y = getGlobalId(0) / width();
-		processPixel(x, theY() + y, y);
-	}
+	
 }
