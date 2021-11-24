@@ -11,8 +11,10 @@ public interface CountingObserver {
 	
 	void prerun(Counting c);
 	
-	void postrun(Counting c, int x, int y, Map<Metric, Double> values);
+	void postrun(Counting c, int i, int j, Map<Metric, Double> values);
 	
-	void close(Counting c);
+	void postrun(Counting c, int id, Map<Metric, Double> values);
+	
+	void close(Counting c, Set<Metric> metrics);
 	
 }

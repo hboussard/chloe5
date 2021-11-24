@@ -226,7 +226,7 @@ public class InterpolateSplineLinearCsvOutput implements CountingObserver{
 	}
 
 	@Override
-	public void close(Counting c) {
+	public void close(Counting c, Set<Metric> metrics) {
 		try {
 			bw.close();
 		} catch (IOException e) {
@@ -253,6 +253,11 @@ public class InterpolateSplineLinearCsvOutput implements CountingObserver{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+		// do nothing
 	}
 
 }

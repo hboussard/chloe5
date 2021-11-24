@@ -1,22 +1,18 @@
 package fr.inrae.act.bagap.chloe;
 
 import java.awt.Rectangle;
-
-import javax.media.jai.PlanarImage;
-
-import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.image.util.ImageUtilities;
-
 import fr.inrae.act.bagap.chloe.counting.Counting;
-import fr.inrae.act.bagap.chloe.kernel.LandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.kernel.SlidingLandscapeMetricKernel;
+import fr.inrae.act.bagap.raster.Coverage;
 
-public class SingleLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
+public class SingleLandscapeMetricAnalysis extends SlidingLandscapeMetricAnalysis {
 
 	private int buffer;
 	
-	private float[][] outDatas;
+	private double[][] outDatas;
 	
-	public SingleLandscapeMetricAnalysis(GridCoverage2D coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, LandscapeMetricKernel kernel, Counting counting) {
+	//public SingleLandscapeMetricAnalysis(GridCoverage2D coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {
+	public SingleLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {		
 		super(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 	}
 	
@@ -37,20 +33,25 @@ public class SingleLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
 		// ce bug n'est effectif que sur les coverage issus de fichiers AsciiGrid
 		// pas de problème sur fichier TIF
 		Rectangle roi = new Rectangle(roiX() - bufferROIXMin(), roiY() - bufferROIYMin(), roiWidth() + bufferROIXMin() + bufferROIXMax(), roiHeight() + bufferROIYMin() + bufferROIYMax());
-		float[] inDatas = new float[roi.width * roi.height];
-		inDatas = coverage().getRenderedImage().getData(roi).getSamples(roi.x, roi.y, roi.width, roi.height, 0, inDatas);
-		//coverage.dispose(true); // liberation des ressources, à voir si ça marche comme ça
+		
+		//float[] inDatas = new float[roi.width * roi.height];
+		//inDatas = coverage().getRenderedImage().getData(roi).getSamples(roi.x, roi.y, roi.width, roi.height, 0, inDatas);
+		////coverage.dispose(true); // liberation des ressources, à voir si ça marche comme ça
+		
+		float[] inDatas = coverage().getDatas(roi);
+		
 		kernel().setImageIn(inDatas);
 		
 		// ajustement du buffer de calcul
 		buffer = (short) Math.max(displacement(), LandscapeMetricAnalysisFactory.bufferSize());
 		
 		// gestion des sorties
-		outDatas = new float[((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1))][nbValues()];
+		outDatas = new double[((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1))][nbValues()];
 		kernel().setImageOut(outDatas);
 		
 		// initialisation du comptage
 		counting().init();
+		
 	}
 
 	@Override
@@ -67,9 +68,11 @@ public class SingleLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
 				//System.out.println(j);
 				nextJ += displacement();
 				for(int i=0; i<roiWidth(); i+=displacement()){
+					
 					counting().setCounts(outDatas[index]);
 					counting().calculate();
 					counting().export(i, j+b);
+					
 					index++;
 				}
 			}	
@@ -80,9 +83,10 @@ public class SingleLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
 	protected void doClose() {
 		kernel().dispose();
 		counting().close();
-		PlanarImage planarImage = (PlanarImage) coverage().getRenderedImage();
-		ImageUtilities.disposePlanarImageChain(planarImage);
-		coverage().dispose(true);
+		//PlanarImage planarImage = (PlanarImage) coverage().getRenderedImage();
+		//ImageUtilities.disposePlanarImageChain(planarImage);
+		//coverage().dispose(true);
+		coverage().dispose();
 	}
 
 }

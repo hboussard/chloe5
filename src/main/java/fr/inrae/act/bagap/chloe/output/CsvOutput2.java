@@ -46,9 +46,7 @@ public class CsvOutput2 implements CountingObserver{
 		this.y = maxY - cellSize/2.0;
 		
 		try {
-			//fos = new FileOutputStream(csv);
 			bout = new BufferedOutputStream(new FileOutputStream(csv));
-			
 			
 			bout.write("X;Y".getBytes());
 			for(Metric m : metrics) {
@@ -108,12 +106,17 @@ public class CsvOutput2 implements CountingObserver{
 		}
 	}
 
-	public void close(Counting c) {
+	public void close(Counting c, Set<Metric> metrics) {
 		try {
 			bout.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+		// do nothing
 	}
 
 }

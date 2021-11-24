@@ -2,18 +2,20 @@ package fr.inrae.act.bagap.chloe.kernel;
 
 import com.aparapi.Kernel;
 
-public class DistanceWeightedCountCoupleKernel extends SlidingLandscapeMetricKernel {
+public class DistanceWeightedCountValueAndCoupleKernel extends SlidingLandscapeMetricKernel {
+	
+	private final int nbValues;
 	
 	private final int[][] mapCouples;
 	
 	private final int[] mapValues;
 	
 	@SuppressWarnings("deprecation")
-	public DistanceWeightedCountCoupleKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, short[] values){
+	public DistanceWeightedCountValueAndCoupleKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, short[] values){
 		super(windowSize, displacement, shape, coeff, noDataValue);
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
-		
+		this.nbValues = values.length;
 		int maxV = 0;
 		for(short v : values){
 			maxV = Math.max(v, maxV);
@@ -59,11 +61,11 @@ public class DistanceWeightedCountCoupleKernel extends SlidingLandscapeMetricKer
 			}
 			
 			//if(imageIn[(y * width) + x] != -1f) {
-				
+					
 			final int mid = windowSize() / 2;
 			int ic, ic_V, ic_H;
 			short v, v_H, v_V;
-			int mc;
+			int mv;
 			for (int dy = -mid; dy <= mid; dy += 1) {
 				if(((y + dy) >= 0) && ((y + dy) < height())){
 					for (int dx = -mid; dx <= mid; dx += 1) {
@@ -72,17 +74,31 @@ public class DistanceWeightedCountCoupleKernel extends SlidingLandscapeMetricKer
 							if(shape()[ic] == 1) {
 								v = (short) imageIn()[((y + dy) * width()) + (x + dx)];
 								
+								if(v == -1){
+									imageOut()[ind][0] = imageOut()[ind][0] + coeff()[ic];
+								}else{
+									if(v == 0){
+										imageOut()[ind][1] = imageOut()[ind][1] + coeff()[ic];
+									}else{
+										mv = mapValues[v];
+										imageOut()[ind][mv+2] = imageOut()[ind][mv+2] + coeff()[ic];
+									}
+								}
+								
 								if((dy > -mid) && ((y + dy) > 0)) {
 									ic_V = ((dy+mid-1) * windowSize()) + (dx+mid);
 									if(shape()[ic_V] == 1){
 										v_V = (short) imageIn()[((y + dy - 1) * width()) + (x + dx)];
+										
 										if(v == noDataValue() || v_V == noDataValue()){
-											imageOut()[ind][0] = imageOut()[ind][0] + coeff()[ic];
-										}else if(v == 0 || v_V == 0){
-											imageOut()[ind][1] = imageOut()[ind][1] + coeff()[ic];
+											imageOut()[ind][nbValues+2] = imageOut()[ind][nbValues+2] + coeff()[ic];
 										}else{
-											mc = mapCouples[mapValues[v]][mapValues[v_V]];
-											imageOut()[ind][mc+2] = imageOut()[ind][mc+2] + coeff()[ic];
+											if(v == 0 || v_V == 0){
+												imageOut()[ind][nbValues+3] = imageOut()[ind][nbValues+3] + coeff()[ic];
+											}else{
+												mv = mapCouples[mapValues[v]][mapValues[v_V]];
+												imageOut()[ind][nbValues+mv+4] = imageOut()[ind][nbValues+mv+4] + coeff()[ic];
+											}
 										}
 									}
 								}
@@ -91,13 +107,16 @@ public class DistanceWeightedCountCoupleKernel extends SlidingLandscapeMetricKer
 									ic_H = ((dy+mid) * windowSize()) + (dx+mid-1);
 									if(shape()[ic_H] == 1){
 										v_H = (short) imageIn()[((y + dy) * width()) + (x + dx - 1)];
+										
 										if(v == noDataValue() || v_H == noDataValue()){
-											imageOut()[ind][0] = imageOut()[ind][0] + coeff()[ic];
-										}else if(v == 0 || v_H == 0){
-											imageOut()[ind][1] = imageOut()[ind][1] + coeff()[ic];
+											imageOut()[ind][nbValues+2] = imageOut()[ind][nbValues+2] + coeff()[ic];
 										}else{
-											mc = mapCouples[mapValues[v]][mapValues[v_H]];
-											imageOut()[ind][mc+2] = imageOut()[ind][mc+2] + coeff()[ic];
+											if(v == 0 || v_H == 0){
+												imageOut()[ind][nbValues+3] = imageOut()[ind][nbValues+3] + coeff()[ic];
+											}else{
+												mv = mapCouples[mapValues[v]][mapValues[v_H]];
+												imageOut()[ind][nbValues+mv+4] = imageOut()[ind][nbValues+mv+4] + coeff()[ic];
+											}
 										}
 									}
 								}
@@ -108,5 +127,5 @@ public class DistanceWeightedCountCoupleKernel extends SlidingLandscapeMetricKer
 			}
 		}
 	}
-	
+
 }

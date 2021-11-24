@@ -64,6 +64,7 @@ public class MetricManager {
 			cr.readHeaders();
 			while(cr.readRecord()){
 				if(!cr.get("name").startsWith("#")){
+					
 					metrics.put(cr.get("name"), cr.get("class"));
 					
 					switch(cr.get("type")){
@@ -201,6 +202,14 @@ public class MetricManager {
 			}
 		}
 		throw new IllegalArgumentException();
+	}
+	
+	public static boolean isValueMetric(String m){
+		return valuesMetrics.contains(m) || isProcessValueMetric(m);
+	}
+	
+	public static boolean isCoupleMetric(String m){
+		return couplesMetrics.contains(m) || isProcessCoupleMetric(m);
 	}
 	
 	public static boolean hasValueMetric(Set<Metric> metrics) {

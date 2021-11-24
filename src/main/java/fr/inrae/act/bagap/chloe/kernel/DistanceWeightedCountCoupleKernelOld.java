@@ -1,43 +1,26 @@
 package fr.inrae.act.bagap.chloe.kernel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.aparapi.Kernel;
 
-public class DistanceWeightedCountCoupleKernel extends SlidingLandscapeMetricKernel {
+import fr.inrae.act.bagap.chloe.util.Couple;
+
+public class DistanceWeightedCountCoupleKernelOld extends SlidingLandscapeMetricKernel {
 	
-	private final int[][] mapCouples;
+	private final float[] couples;
 	
-	private final int[] mapValues;
+	private final Map<Float, Integer> mapCouples;
 	
-	@SuppressWarnings("deprecation")
-	public DistanceWeightedCountCoupleKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, short[] values){
+	public DistanceWeightedCountCoupleKernelOld(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, float[] couples){
 		super(windowSize, displacement, shape, coeff, noDataValue);
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
-		
-		int maxV = 0;
-		for(short v : values){
-			maxV = Math.max(v, maxV);
-		}
-		maxV++;
-		mapValues = new int[maxV];
-		for(int i=0; i<values.length; i++){
-			mapValues[values[i]] = i;
-		}
-		mapCouples = new int[values.length][values.length];
-		int index = 0;
-		for(short v : values){
-			mapCouples[mapValues[v]][mapValues[v]] = index;
-			index++;
-		}
-		
-		for(short v1 : values){
-			for(short v2 : values){
-				if(v1 < v2) {
-					mapCouples[mapValues[v1]][mapValues[v2]] = index;
-					mapCouples[mapValues[v2]][mapValues[v1]] = index;
-					index++;
-				}
-			}
+		this.couples = couples;
+		mapCouples = new HashMap<Float, Integer>();
+		for(int i=0; i<couples.length; i++){
+			mapCouples.put(couples[i], i);
 		}
 	}
 	
@@ -54,15 +37,18 @@ public class DistanceWeightedCountCoupleKernel extends SlidingLandscapeMetricKer
 			
 			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
 			
-			for(int i=0; i<imageOut()[0].length; i++){
+			for(int i=0; i<couples.length+2; i++){
 				imageOut()[ind][i] = 0f;
 			}
 			
 			//if(imageIn[(y * width) + x] != -1f) {
 				
+					
 			final int mid = windowSize() / 2;
 			int ic, ic_V, ic_H;
 			short v, v_H, v_V;
+			float c;
+			boolean again;
 			int mc;
 			for (int dy = -mid; dy <= mid; dy += 1) {
 				if(((y + dy) >= 0) && ((y + dy) < height())){
@@ -76,13 +62,27 @@ public class DistanceWeightedCountCoupleKernel extends SlidingLandscapeMetricKer
 									ic_V = ((dy+mid-1) * windowSize()) + (dx+mid);
 									if(shape()[ic_V] == 1){
 										v_V = (short) imageIn()[((y + dy - 1) * width()) + (x + dx)];
-										if(v == noDataValue() || v_V == noDataValue()){
+										c = Couple.getCouple(v, v_V);
+										if(c == noDataValue()){
 											imageOut()[ind][0] = imageOut()[ind][0] + coeff()[ic];
-										}else if(v == 0 || v_V == 0){
-											imageOut()[ind][1] = imageOut()[ind][1] + coeff()[ic];
 										}else{
-											mc = mapCouples[mapValues[v]][mapValues[v_V]];
-											imageOut()[ind][mc+2] = imageOut()[ind][mc+2] + coeff()[ic];
+											if(c == 0){
+												imageOut()[ind][1] = imageOut()[ind][1] + coeff()[ic];
+											}else{
+												/*
+												mc = mapCouples.get(c);
+												imageOut()[ind][mc+2] = imageOut()[ind][mc+2] + coeff()[ic];
+												*/
+												
+												again = true;
+												for(int i=0; again && i<couples.length; i++){
+													if(c == couples[i]){
+														imageOut()[ind][i+2] = imageOut()[ind][i+2] + coeff()[ic];
+														again = false;
+													}
+												}
+												
+											}
 										}
 									}
 								}
@@ -91,13 +91,27 @@ public class DistanceWeightedCountCoupleKernel extends SlidingLandscapeMetricKer
 									ic_H = ((dy+mid) * windowSize()) + (dx+mid-1);
 									if(shape()[ic_H] == 1){
 										v_H = (short) imageIn()[((y + dy) * width()) + (x + dx - 1)];
-										if(v == noDataValue() || v_H == noDataValue()){
+										c = Couple.getCouple(v, v_H);
+										if(c == noDataValue()){
 											imageOut()[ind][0] = imageOut()[ind][0] + coeff()[ic];
-										}else if(v == 0 || v_H == 0){
-											imageOut()[ind][1] = imageOut()[ind][1] + coeff()[ic];
 										}else{
-											mc = mapCouples[mapValues[v]][mapValues[v_H]];
-											imageOut()[ind][mc+2] = imageOut()[ind][mc+2] + coeff()[ic];
+											if(c == 0){
+												imageOut()[ind][1] = imageOut()[ind][1] + coeff()[ic];
+											}else{
+												/*
+												mc = mapCouples.get(c);
+												imageOut()[ind][mc+2] = imageOut()[ind][mc+2] + coeff()[ic];
+												*/
+												
+												again = true;
+												for(int i=0; again && i<couples.length; i++){
+													if(c == couples[i]){
+														imageOut()[ind][i+2] = imageOut()[ind][i+2] + coeff()[ic];
+														again = false;
+													}
+												}
+												
+											}
 										}
 									}
 								}
@@ -108,5 +122,5 @@ public class DistanceWeightedCountCoupleKernel extends SlidingLandscapeMetricKer
 			}
 		}
 	}
-	
+
 }

@@ -8,17 +8,19 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.image.util.ImageUtilities;
 
 import fr.inrae.act.bagap.chloe.counting.Counting;
-import fr.inrae.act.bagap.chloe.kernel.LandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.kernel.SlidingLandscapeMetricKernel;
+import fr.inrae.act.bagap.raster.Coverage;
 
-public class HugeLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
+public class HugeLandscapeMetricAnalysis extends SlidingLandscapeMetricAnalysis {
 	
 	private int buffer;
 	
-	private float[][] outDatas;
+	private double[][] outDatas;
 	
 	private int tileYSize = 500;
 	
-	public HugeLandscapeMetricAnalysis(GridCoverage2D coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, LandscapeMetricKernel kernel, Counting counting) {
+	//public HugeLandscapeMetricAnalysis(GridCoverage2D coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {
+	public HugeLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {	
 		super(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 	}
 	
@@ -62,13 +64,16 @@ public class HugeLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
 			// pas de problème sur fichier TIF
 			//System.out.println((roiX() - bufferROIXMin())+" "+(localROIY - localBufferROIYMin)+" "+(roiWidth() + bufferROIXMin() + bufferROIXMax())+" "+(tYs + localBufferROIYMin + localBufferROIYMax));
 			Rectangle roi = new Rectangle(roiX() - bufferROIXMin(), localROIY - localBufferROIYMin, roiWidth() + bufferROIXMin() + bufferROIXMax(), tYs + localBufferROIYMin + localBufferROIYMax);
-			float[] inDatas = new float[roi.width * roi.height];
-			inDatas = coverage().getRenderedImage().getData(roi).getSamples(roi.x, roi.y, roi.width, roi.height, 0, inDatas);
-			//coverage.dispose(true); // liberation des ressources, à voir si ça marche comme ça
+			
+			//float[] inDatas = new float[roi.width * roi.height];
+			//inDatas = coverage().getRenderedImage().getData(roi).getSamples(roi.x, roi.y, roi.width, roi.height, 0, inDatas);
+			////coverage.dispose(true); // liberation des ressources, à voir si ça marche comme ça
+			float[] inDatas = coverage().getDatas(roi);
+			
 			kernel().setImageIn(inDatas);
 			
 			// gestion des sorties
-			outDatas = new float[((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1))][nbValues()];
+			outDatas = new double[((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1))][nbValues()];
 			kernel().setImageOut(outDatas);
 			
 			int nextJ = 0;
@@ -101,9 +106,10 @@ public class HugeLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
 	@Override
 	protected void doClose() {
 		counting().close();
-		PlanarImage planarImage = (PlanarImage) coverage().getRenderedImage();
-		ImageUtilities.disposePlanarImageChain(planarImage);
-		coverage().dispose(true);
+		//PlanarImage planarImage = (PlanarImage) coverage().getRenderedImage();
+		//ImageUtilities.disposePlanarImageChain(planarImage);
+		//coverage().dispose(true);
+		coverage().dispose();
 	}
 
 }

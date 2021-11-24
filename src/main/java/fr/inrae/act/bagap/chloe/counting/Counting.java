@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import fr.inra.sad.bagap.apiland.analysis.AnalysisObserver;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.chloe.metric.MetricObserver;
@@ -15,13 +16,14 @@ public abstract class Counting implements
 	ValueCountingInterface,
 	CoupleCountingInterface,
 	QuantitativeCountingInterface,
-	MetricObserver{
+	MetricObserver {
 
 	/**
 	 * minimum rate of non missing values
 	 */
 	protected static double minRate = 0;
 	
+	private final int minRange, maxRange;
 	
 	/**
 	 * the metrics and values
@@ -33,12 +35,22 @@ public abstract class Counting implements
 	 */
 	private Set<CountingObserver> observers;
 	
-	public Counting(){
+	public Counting(int minRange, int maxRange){
+		this.minRange = minRange;
+		this.maxRange = maxRange;
 		metrics = new TreeMap<Metric, Double>();
 		observers = new HashSet<CountingObserver>();
 	}
 	
-	public abstract void setCounts(float[] counts);
+	public int minRange(){
+		return this.minRange;
+	}
+	
+	public int maxRange(){
+		return this.maxRange;
+	}
+	
+	public abstract void setCounts(double[] counts);
 	
 	public void addMetric(Metric m){
 		metrics.put(m, (double) Raster.getNoDataValue());
@@ -47,6 +59,10 @@ public abstract class Counting implements
 	
 	public Set<Metric> metrics(){
 		return metrics.keySet();
+	}
+	
+	public Set<CountingObserver> observers(){
+		return observers;
 	}
 	
 	public void init() {
@@ -60,7 +76,7 @@ public abstract class Counting implements
 			m.closeObservers();
 		}
 		for(CountingObserver co : observers) {
-			co.close(this);
+			co.close(this, metrics());
 		}
 	}
 	
@@ -79,13 +95,12 @@ public abstract class Counting implements
 		// do nothing
 	}
 
-	
 	public void addObserver(CountingObserver co) {
 		observers.add(co);
 	}
 	
 	public static void setMinRate(double min){
-		minRate= min;
+		minRate = min;
 	}
 	
 	public static double minRate(){
@@ -106,6 +121,12 @@ public abstract class Counting implements
 	public void export(int x, int y) {
 		for(CountingObserver co : observers) {
 			co.postrun(this, x, y, metrics);
+		}
+	}
+	
+	public void export(int id) {
+		for(CountingObserver co : observers) {
+			co.postrun(this, id, metrics);
 		}
 	}
 	
@@ -198,9 +219,24 @@ public abstract class Counting implements
 	public double average() {
 		throw new UnsupportedOperationException();
 	}
+	
+	@Override
+	public double standardDeviation() {
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
 	public double sum() {
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public double minimum(){
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public double maximum(){
 		throw new UnsupportedOperationException();
 	}
 

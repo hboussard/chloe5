@@ -4,37 +4,42 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.Map.Entry;
 
-import org.geotools.coverage.grid.GridCoverage2D;
-
+import fr.inra.sad.bagap.apiland.analysis.combination.CombinationExpressionFactory;
+import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
 import fr.inra.sad.bagap.apiland.analysis.window.WindowAnalysisType;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.counting.CoupleCounting;
+import fr.inrae.act.bagap.chloe.counting.MultipleCounting;
 import fr.inrae.act.bagap.chloe.counting.QuantitativeCounting;
 import fr.inrae.act.bagap.chloe.counting.ValueCounting;
 import fr.inrae.act.bagap.chloe.kernel.DistanceWeightedCountCoupleKernel;
+import fr.inrae.act.bagap.chloe.kernel.DistanceWeightedCountValueAndCoupleKernel;
 import fr.inrae.act.bagap.chloe.kernel.DistanceWeightedCountValueKernel;
 import fr.inrae.act.bagap.chloe.kernel.DistanceWeightedQuantitativeKernel;
-import fr.inrae.act.bagap.chloe.kernel.LandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.kernel.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.chloe.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.output.AsciiGridOutput;
 import fr.inrae.act.bagap.chloe.output.CsvOutput;
-import fr.inrae.act.bagap.chloe.output.CsvOutput2;
 import fr.inrae.act.bagap.chloe.output.InterpolateSplineLinearAsciiGridOutput;
 import fr.inrae.act.bagap.chloe.output.InterpolateSplineLinearCsvOutput;
+import fr.inrae.act.bagap.chloe.output.InterpolateSplineLinearTabOutput;
+import fr.inrae.act.bagap.chloe.output.TabOutput;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.util.Util;
+import fr.inrae.act.bagap.raster.Coverage;
 
 public class SingleLandscapeMetricAnalysisFactory {
 
-	public static LandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder, GridCoverage2D coverage) throws IOException {
+	//public static SlidingLandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder, GridCoverage2D coverage) throws IOException {
+	public static SlidingLandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder, Coverage coverage) throws IOException {
 		
 		if(builder.getAnalysisType() == WindowAnalysisType.SLIDING){
+			/*
 			int inWidth = (Integer) coverage.getProperty("image_width");
 			int inHeight = (Integer) coverage.getProperty("image_height");
 			double inMinX = coverage.getEnvelope().getMinimum(0);
@@ -42,6 +47,14 @@ public class SingleLandscapeMetricAnalysisFactory {
 			double inMaxX = coverage.getEnvelope().getMaximum(0);
 			double inMaxY = coverage.getEnvelope().getMaximum(1);
 			double inCellSize = ((java.awt.geom.AffineTransform) coverage.getGridGeometry().getGridToCRS2D()).getScaleX();
+			*/
+			int inWidth = coverage.width();
+			int inHeight = coverage.height();
+			double inMinX = coverage.minx();
+			double inMinY = coverage.miny();
+			double inMaxX = coverage.maxx();
+			double inMaxY = coverage.maxy();
+			double inCellSize = coverage.cellsize();
 			
 			// displacement
 			int displacement = builder.getDisplacement();
@@ -104,6 +117,10 @@ public class SingleLandscapeMetricAnalysisFactory {
 					
 			int theoreticalSize = 0;
 			int theoreticalCoupleSize = 0;
+			
+			double dMax = midWindowSize * inCellSize;
+			DistanceFunction function = CombinationExpressionFactory.createDistanceFunction(builder.getWindowDistanceFunction(), dMax);
+									
 			for(int j=0; j<windowSize; j++){
 				for(int i=0; i<windowSize; i++){
 					// gestion en cercle
@@ -122,7 +139,8 @@ public class SingleLandscapeMetricAnalysisFactory {
 							
 					// gestion des distances pondérées (gaussienne centrée à 0)
 					//exp(-pow(distance, 2)/pow(dmax/2, 2))
-					float d = (float) Math.exp(-1 * Math.pow(Util.distance(midWindowSize, midWindowSize, i, j), 2) / Math.pow(midWindowSize/2, 2));
+					//float d = (float) Math.exp(-1 * Math.pow(Util.distance(midWindowSize, midWindowSize, i, j), 2) / Math.pow(midWindowSize/2, 2));
+					float d = (float) function.interprete(Util.distance(midWindowSize, midWindowSize, i, j)*inCellSize);
 					coeffs[(j * windowSize) + i] = d;
 				}
 			}
@@ -146,8 +164,8 @@ public class SingleLandscapeMetricAnalysisFactory {
 			Set<CountingObserver> observers = builder.getObservers();
 			if(builder.getCsv() != null){
 				if(builder.getDisplacement() == 1 || builder.getInterpolation() == false){
-					CsvOutput2 csvOutput = new CsvOutput2(builder.getCsv(), outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, Raster.getNoDataValue());
-					//CsvOutput csvOutput = new CsvOutput(builder.getCsv(), outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, Raster.getNoDataValue());
+					//CsvOutput2 csvOutput = new CsvOutput2(builder.getCsv(), outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, Raster.getNoDataValue());
+					CsvOutput csvOutput = new CsvOutput(builder.getCsv(), outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, Raster.getNoDataValue());
 					observers.add(csvOutput);
 				}else{
 					InterpolateSplineLinearCsvOutput csvOutput = new InterpolateSplineLinearCsvOutput(builder.getCsv(), inMinX + (roiX * inCellSize), inMaxX - ((inWidth - roiX) * inCellSize) + (roiWidth * inCellSize), inMinY + ((inHeight -roiY) * inCellSize) - (roiHeight * inCellSize), inMaxY - (roiY * inCellSize), roiWidth, roiHeight, inCellSize, Raster.getNoDataValue(), displacement);
@@ -170,17 +188,33 @@ public class SingleLandscapeMetricAnalysisFactory {
 					observers.add(asciiOutput);
 				}	
 			}
+			for(Entry<String, float[]> entry : builder.getTabOutputs().entrySet()){
+				Metric metric = null;
+				for(Metric m : metrics){
+					if(m.getName().equalsIgnoreCase(entry.getKey())){
+						metric = m;
+						break;
+					}
+				}
+				if(builder.getDisplacement() == 1 || builder.getInterpolation() == false){
+					TabOutput tabOutput = new TabOutput(entry.getValue(), metric, outWidth);
+					observers.add(tabOutput);
+				}else{
+					InterpolateSplineLinearTabOutput tabOutput = new InterpolateSplineLinearTabOutput(entry.getValue(), metric, roiWidth, displacement);
+					observers.add(tabOutput);
+				}	
+			}
 			
 			// gestion specifiques des analyses quantitatives ou qualitatives
 			if(MetricManager.hasOnlyQuantitativeMetric(metrics)){ // quantitative
 				
-				LandscapeMetricKernel kernel = null;
+				SlidingLandscapeMetricKernel kernel = null;
 				if(metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("MD")){
 					kernel = new DistanceWeightedQuantitativeKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), 100);
 				}else{
 					kernel = new DistanceWeightedQuantitativeKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue());
 				}
-				Counting counting = new QuantitativeCounting(theoreticalSize);
+				Counting counting = new QuantitativeCounting(0, 6, theoreticalSize);
 				
 				// add metrics to counting
 				for(Metric m : metrics){
@@ -198,71 +232,101 @@ public class SingleLandscapeMetricAnalysisFactory {
 				
 			}else{ // qualitative
 				// recuperation des valeurs
-				short[] inValues = builder.getValues();
-				if(inValues == null){
-					// TODO récupération des valeurs
-					/*
-					 * for(float s : inDatas){
-					if(s!=Raster.getNoDataValue() && s!=0 && !inValues.contains((short) s)){
-						inValues.add((short) s);
+				short[] values = builder.getValues();
+				if(values == null){
+					float[] datas = coverage.getDatas(new Rectangle(roiX, roiY, roiWidth, roiHeight));
+					Set<Float> inValues = new HashSet<Float>();
+					for(float d : datas){
+						inValues.add(d);
 					}
-				}
-					 */
-				}
-				
-				
-				short[] values = null;
-				if(MetricManager.hasValueMetric(metrics)){
-					values = new short[inValues.length];
 					int index = 0;
-					for(Short s : inValues){
-						values[index++] = (short) s;
+					values = new short[inValues.size()];
+					for(float d : inValues){
+						values[index++] = (short) d;
 					}
 				}
 				
 				// recuperation des couples
 				float[] couples = null;
 				if(MetricManager.hasCoupleMetric(metrics)){
-					couples = new float[(((inValues.length*inValues.length)-inValues.length)/2) + inValues.length];
+					couples = new float[(((values.length*values.length)-values.length)/2) + values.length];
 					int index = 0;
-					for(Short s1 : inValues){
-						couples[index++] = Couple.getCouple((short) s1, (short) s1);
+					for(short s1 : values){
+						couples[index++] = Couple.getCouple(s1, s1);
 					}
-					Set<Short> ever = new HashSet<Short>();
-					for(Short s1 : inValues){
-						ever.add(s1);
-						for(Short s2 : inValues){
-							if(!ever.contains(s2)) {
-								couples[index++] = Couple.getCouple((short) s1, (short) s2);
+					for(short s1 : values){
+						for(short s2 : values){
+							if(s1 < s2) {
+								couples[index++] = Couple.getCouple(s1, s2);
 							}
 						}
 					}
 				}
 				
 				// kernel et counting
-				LandscapeMetricKernel kernel = null;
-				Counting counting = null;
+				SlidingLandscapeMetricKernel kernel = null;
+				Counting counting;
+				
 				int nbValues = 2;
 				if(MetricManager.hasOnlyValueMetric(metrics)){
 					nbValues += values.length;
-					//kernel = new DistanceWeightedCountValueKernel(values, windowSize, shape, coeffs, roiWidth, roiHeight, displacement, Raster.getNoDataValue(), bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax);
 					kernel = new DistanceWeightedCountValueKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values);
-					counting = new ValueCounting(values, theoreticalSize);
-				}
-				if(MetricManager.hasOnlyCoupleMetric(metrics)){
+					counting = new ValueCounting(0, nbValues, values, theoreticalSize);
+					
+					// add metrics to counting
+					for(Metric m : metrics){
+						counting.addMetric(m);
+					}
+					
+					//observers
+					for(CountingObserver co : observers){
+						counting.addObserver(co);
+					}
+					
+				}else if(MetricManager.hasOnlyCoupleMetric(metrics)){
 					nbValues += couples.length;
-					//kernel = new DistanceWeightedCountCoupleKernel(couples, windowSize, shape, coeffs, roiWidth, roiHeight, displacement, Raster.getNoDataValue(), bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax);
-					kernel = new DistanceWeightedCountCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), couples);
-					counting = new CoupleCounting(inValues.length, couples, theoreticalCoupleSize);
-				}	
-				// add metrics to counting
-				for(Metric m : metrics){
-					counting.addMetric(m);
-				}
+					kernel = new DistanceWeightedCountCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values);
+					counting = new CoupleCounting(0, nbValues, values.length, couples, theoreticalCoupleSize);
+					
+					// add metrics to counting
+					for(Metric m : metrics){
+						counting.addMetric(m);
+					}
+					
+					//observers
+					for(CountingObserver co : observers){
+						counting.addObserver(co);
+					}
+					
+				}else{
+					nbValues += values.length + 2 + couples.length;
+					
+					Counting[] countings = new Counting[2];
+					
+					kernel = new DistanceWeightedCountValueAndCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values);
+					ValueCounting vCounting = new ValueCounting(0, values.length+2, values, theoreticalSize);
+					// add metrics to counting
+					for(Metric m : metrics){
+						if(MetricManager.isValueMetric(m.getName())){
+							vCounting.addMetric(m);
+						}
+					}
+					countings[0] = vCounting;
 				
-				//observers
-				for(CountingObserver co : observers){
-					counting.addObserver(co);
+					CoupleCounting cCounting = new CoupleCounting(values.length+2, nbValues, values.length, couples, theoreticalCoupleSize);
+					// add metrics to counting
+					for(Metric m : metrics){
+						if(MetricManager.isCoupleMetric(m.getName())){
+							cCounting.addMetric(m);
+						}
+					}
+					countings[1] = cCounting;
+					
+					counting = new MultipleCounting(0, nbValues, countings); 
+					//observers
+					for(CountingObserver co : observers){
+						counting.addObserver(co);
+					}
 				}
 				
 				// analysis

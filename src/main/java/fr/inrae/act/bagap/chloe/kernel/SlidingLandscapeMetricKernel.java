@@ -2,7 +2,7 @@ package fr.inrae.act.bagap.chloe.kernel;
 
 import com.aparapi.Kernel;
 
-public abstract class LandscapeMetricKernel extends Kernel {
+public abstract class SlidingLandscapeMetricKernel extends Kernel {
 
 	private final int windowSize;
 	
@@ -16,7 +16,7 @@ public abstract class LandscapeMetricKernel extends Kernel {
 	
 	private float imageIn[];
 	
-	private float[][] imageOut;
+	private double[][] imageOut;
 	
 	private int theY;
 	
@@ -24,7 +24,7 @@ public abstract class LandscapeMetricKernel extends Kernel {
 	
 	private int bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax; // in pixels
 	
-	protected LandscapeMetricKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue){
+	protected SlidingLandscapeMetricKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue){
 		this.windowSize = windowSize;
 		this.displacement = displacement;
 		this.shape = shape;
@@ -84,11 +84,11 @@ public abstract class LandscapeMetricKernel extends Kernel {
 		return imageIn;
 	}
 	
-	public void setImageOut(float[][] imageOut){
+	public void setImageOut(double[][] imageOut){
 		this.imageOut = imageOut;
 	}
 	
-	protected float[][] imageOut(){
+	protected double[][] imageOut(){
 		return imageOut;
 	}
 	

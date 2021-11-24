@@ -2,15 +2,24 @@ package fr.inrae.act.bagap.chloe.kernel;
 
 import com.aparapi.Kernel;
 
-public class DistanceWeightedCountValueKernel extends LandscapeMetricKernel {
+public class DistanceWeightedCountValueKernel extends SlidingLandscapeMetricKernel {
+
+	private final int[] mapValues;
 	
-	private final short[] values;
-	
+	@SuppressWarnings("deprecation")
 	public DistanceWeightedCountValueKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, short[] values){		
 		super(windowSize, displacement, shape, coeff, noDataValue);
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
-		this.values = values;
+		int maxV = 0;
+		for(short v : values){
+			maxV = Math.max(v, maxV);
+		}
+		maxV++;
+		mapValues = new int[maxV];
+		for(int i=0; i<values.length; i++){
+			mapValues[values[i]] = i;
+		}
 	}
 	
 	@Override
@@ -26,13 +35,7 @@ public class DistanceWeightedCountValueKernel extends LandscapeMetricKernel {
 			
 			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
 			
-			/*
-			if(x == bufferROIXMin() && y == bufferROIYMin()){
-				System.out.println(x+" "+y+" "+localY+" "+ind);
-			}
-			*/
-			
-			for(int i=0; i<values.length+2; i++){
+			for(int i=0; i<imageOut()[0].length; i++){
 				imageOut()[ind][i] = 0f;
 			}
 			
@@ -41,8 +44,7 @@ public class DistanceWeightedCountValueKernel extends LandscapeMetricKernel {
 			final int mid = windowSize() / 2;
 			int ic;
 			short v;
-			boolean again;
-									
+			int mv;				
 			for (int dy = -mid; dy <= mid; dy += 1) {
 				if(((y + dy) >= 0) && ((y + dy) < height())){
 					for (int dx = -mid; dx <= mid; dx += 1) {
@@ -52,18 +54,11 @@ public class DistanceWeightedCountValueKernel extends LandscapeMetricKernel {
 								v = (short) imageIn()[((y + dy) * width()) + (x + dx)];		
 								if(v == noDataValue()){
 									imageOut()[ind][0] = imageOut()[ind][0] + coeff()[ic];
+								}else if(v == 0){
+									imageOut()[ind][1] = imageOut()[ind][1] + coeff()[ic];
 								}else{
-									if(v == 0){
-										imageOut()[ind][1] = imageOut()[ind][1] + coeff()[ic];
-									}else{
-										again = true;
-										for(int i=0; again && i<values.length; i++){
-											if(v == values[i]){
-												imageOut()[ind][i+2] = imageOut()[ind][i+2] + coeff()[ic];
-												again = false;
-											}
-										}
-									}
+									mv = mapValues[v];
+									imageOut()[ind][mv+2] = imageOut()[ind][mv+2] + coeff()[ic];	
 								}
 							}
 						}

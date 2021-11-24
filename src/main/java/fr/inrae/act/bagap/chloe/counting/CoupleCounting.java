@@ -8,7 +8,7 @@ import fr.inrae.act.bagap.chloe.metric.Metric;
 public class CoupleCounting extends Counting implements CoupleCountingInterface {
 
 	/** the count of couples */
-	private Map<Float, Float> countCouples;
+	private Map<Float, Double> countCouples;
 	
 	private int nValues;
 	
@@ -28,10 +28,19 @@ public class CoupleCounting extends Counting implements CoupleCountingInterface 
 	
 	private short countCoupleClass;
 	
-	public CoupleCounting(int nValues, float[] couples, int theoreticalCoupleSize){
+	public CoupleCounting(int minRange, int maxRange, int nValues, float[] couples){
+		super(minRange, maxRange);
 		this.nValues = nValues;
 		this.couples = couples;
-		this.countCouples = new HashMap<Float, Float>();
+		this.countCouples = new HashMap<Float, Double>();
+	}
+	
+	public CoupleCounting(int minRange, int maxRange, int nValues, float[] couples, int theoreticalCoupleSize){
+		this(minRange, maxRange, nValues, couples);
+		this.theoreticalCoupleSize = theoreticalCoupleSize;
+	}
+	
+	public void setTheoriticalCoupleSize(int theoreticalCoupleSize){
 		this.theoreticalCoupleSize = theoreticalCoupleSize;
 	}
 	
@@ -49,20 +58,19 @@ public class CoupleCounting extends Counting implements CoupleCountingInterface 
 	}
 	
 	@Override
-	public void setCounts(float[] counts){
+	public void setCounts(double[] counts){
 		totalCouples = 0;
 		validCouples = 0;
 		totalCountCouples = 0;
 		countCoupleClass = 0;
 		homogeneousCouples = 0;
 		heterogeneousCouples = 0;
+		countCouples.clear();
 		
 		totalCouples += counts[0];
 		
 		totalCouples += counts[1];
 		validCouples += counts[1];
-		
-		countCouples.clear();
 		
 		for(int i=2; i<counts.length; i++){
 			totalCouples += counts[i];

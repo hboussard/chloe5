@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
-import fr.inra.sad.bagap.apiland.analysis.matrix.process.WindowMatrixProcess;
 import fr.inra.sad.bagap.apiland.core.element.manager.DynamicLayerFactory;
 import fr.inra.sad.bagap.apiland.core.element.manager.Tool;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
@@ -30,7 +28,7 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 	
 	private int yGlobal;
 	
-	private Double[] values_d;
+	private double[] values_d;
 	
 	private Map<Integer, double[]> values;
 	
@@ -71,7 +69,7 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 		}
 		
 		values = new TreeMap<Integer, double[]>();
-		values_d = new Double[width];
+		values_d = new double[width];
 	}
 
 	@Override
@@ -83,7 +81,7 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 		double v = metrics.get(metric);
 		
 		//System.out.println(x+" "+y+" "+v);
-		if(y == 0){ // on est sur la premiÃ¨re ligne
+		if(y == 0){ // on est sur la premiere ligne
 			if(x == 0){ // on est sur la premiÃ¨re valeur de la ligne
 				values.put(0, new double[width]);
 				// j'affecte la nouvelle valeur
@@ -92,7 +90,7 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 				for(int i=1; i<width; i++){
 					values.get(0)[i] = (double) Raster.getNoDataValue();
 				}
-			}else{ // on n'est pas sur la premiÃ¨re valeur de la ligne
+			}else{ // on n'est pas sur la premiere valeur de la ligne
 				// j'affecte la nouvelle valeur
 				values.get(0)[x] = v;
 				// j'affecte les valeurs horizontales
@@ -100,11 +98,11 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 					values.get(0)[x-delta+xv] = droite(values.get(0)[x-delta], v, xv);
 				}
 			}
-		}else{ // on n'est pas sur la premiÃ¨re ligne
-			if(x == 0){ // on est sur la premiÃ¨re valeur de la ligne
+		}else{ // on n'est pas sur la premiere ligne
+			if(x == 0){ // on est sur la premiere valeur de la ligne
 				
 				if(y > delta){
-					// Ã©criture des valeurs prÃ©cÃ©dentes
+					// ecriture des valeurs precedentes
 					for(int yv=1; yv<=delta; yv++){
 						//System.out.println(index++);
 						for(double d : values.get(y-2*delta+yv)){
@@ -112,7 +110,7 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 						}
 					}
 				}else{
-					// Ã©criture des valeurs prÃ©cÃ©dentes
+					// ecriture des valeurs precedentes
 					//System.out.println(index++);
 					for(double d : values.get(0)){
 						write(d, 0);
@@ -123,7 +121,7 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 				for(int i=0; i<width; i++){
 					values_d[i] = values.get(y-delta)[i];
 				}
-				// remise Ã  zÃ©ro
+				// remise a zero
 				values.clear();
 				for(int yv=1; yv<=delta; yv++){
 					values.put(y-delta+yv, new double[width]);
@@ -137,7 +135,7 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 				for(int yv=1; yv<delta; yv++){
 					values.get(y-delta+yv)[0] = droite(values_d[0], v, yv);
 				}
-			}else{ // on n'est pas sur la premiÃ¨re valeur de la ligne
+			}else{ // on n'est pas sur la premiere valeur de la ligne
 				// j'affecte la nouvelle valeur
 				values.get(y)[x] = v;
 				// j'affecte les valeurs horizontales
@@ -149,20 +147,20 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 				for(int yv=1; yv<delta; yv++){
 					vh = droite(values_d[x], v, yv);
 					values.get(y-delta+yv)[x] = vh;
-					// j'affecte les valeurs intermÃ©diaires
+					// j'affecte les valeurs intermediaires
 					for(int xv=1; xv<delta; xv++){
 						values.get(y-delta+yv)[x-delta+xv] = droite(values.get(y-delta+yv)[x-delta], vh, xv);
 					}
 				}
 				if(y == maxHeight && x == maxWidth){
-					// Ã©criture des valeurs prÃ©cÃ©dentes
+					// ecriture des valeurs precedentes
 					for(int yv=1; yv<=delta; yv++){
 						//System.out.println(index++);
 						for(double d : values.get(y-delta+yv)){
 							write(d, y-delta+yv);
 						}
 					}
-					// Ã©criture des valeurs suivantes
+					// ecriture des valeurs suivantes
 					for(int j=maxHeight+1; j<height; j++){
 						for(int i=0; i<width; i++){
 							write(Raster.getNoDataValue(), j);
@@ -174,7 +172,7 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 	}
 	
 	@Override
-	public void close(Counting c){
+	public void close(Counting c, Set<Metric> metrics){
 		try {
 			writer.newLine();
 			writer.close();
@@ -211,6 +209,11 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+		// do nothing
 	}
 
 }

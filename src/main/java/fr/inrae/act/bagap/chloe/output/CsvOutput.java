@@ -77,15 +77,20 @@ public class CsvOutput implements CountingObserver{
 	}
 	
 	public void prerun(Counting c) {
+		
 		try {
 			bw.write(x+";"+y);
+			//bw.write(new char[]{'x',';','y'});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 	}
 
 	public void postrun(Counting c, int i, int j, Map<Metric, Double> values) {
+		
 		try {
+			
 			for(double v : values.values()){
 				bw.write(";"+v);
 			}
@@ -99,14 +104,20 @@ public class CsvOutput implements CountingObserver{
 		}else {
 			x += cellSize;
 		}
+		
 	}
 
-	public void close(Counting c) {
+	public void close(Counting c, Set<Metric> metrics) {
 		try {
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+		// do nothing
 	}
 
 }

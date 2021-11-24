@@ -13,4 +13,22 @@ public interface QuantitativeCountingInterface {
 	 * @return the sum of values
 	 */
 	double sum();
+	
+	/**
+	 * to get the standard deviation
+	 * @return the standard deviation of values
+	 */
+	double standardDeviation();
+	
+	/**
+	 * to get the minimum
+	 * @return the minimum of values
+	 */
+	double minimum();
+	
+	/**
+	 * to get the maximum
+	 * @return the maximum of values
+	 */
+	double maximum();
 }

@@ -8,10 +8,14 @@ import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffReader;
 
 import fr.inra.sad.bagap.apiland.analysis.window.WindowAnalysisType;
+import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.raster.FileCoverage;
+import fr.inrae.act.bagap.raster.TabCoverage;
 
 public class LandscapeMetricAnalysisFactory {
 	
-	private static int maxTile = 100000000;
+	private static int maxTile = 500000;
 	
 	public static int maxTile(){
 		return maxTile;
@@ -25,29 +29,57 @@ public class LandscapeMetricAnalysisFactory {
 
 	public static LandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder) throws IOException {
 		
-		if(builder.getAnalysisType() == WindowAnalysisType.SLIDING){
-			
-			// coverage et infos associées
+		//GridCoverage2D coverage;
+		Coverage coverage;
+		int inWidth;
+		int inHeight;
+		float inCellSize;
+		
+		if(builder.getRasterFile() != null){
+			// coverage et infos associees
 			GridCoverage2DReader reader;
-			if(builder.getRaster().endsWith(".asc")){
-				File file = new File(builder.getRaster());
+			if(builder.getRasterFile().endsWith(".asc")){
+				File file = new File(builder.getRasterFile());
 				reader = new ArcGridReader(file);
-			}else if(builder.getRaster().endsWith(".tif")){
-				File file = new File(builder.getRaster());
+			}else if(builder.getRasterFile().endsWith(".tif")){
+				File file = new File(builder.getRasterFile());
 				reader = new GeoTiffReader(file);
 			}else{
-				throw new IllegalArgumentException(builder.getRaster()+" is not a recognize raster");
+				throw new IllegalArgumentException(builder.getRasterFile()+" is not a recognize raster");
 			}
-			GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
-			int inWidth = (Integer) coverage.getProperty("image_width");
-			int inHeight = (Integer) coverage.getProperty("image_height");
-			double inCellSize = ((java.awt.geom.AffineTransform) coverage.getGridGeometry().getGridToCRS2D()).getScaleX();
+			GridCoverage2D coverage2D = (GridCoverage2D) reader.read(null);
+			reader.dispose(); // a� tester, ca va peut-etre bloquer la lecture des donnees
 			
-			reader.dispose(); // à tester, ça va peut-être bloquer la lecture des données
+			inWidth = (Integer) coverage2D.getProperty("image_width");
+			inHeight = (Integer) coverage2D.getProperty("image_height");
+			double inMinX = coverage2D.getEnvelope().getMinimum(0);
+			double inMinY = coverage2D.getEnvelope().getMinimum(1);
+			double inMaxX = coverage2D.getEnvelope().getMaximum(0);
+			double inMaxY = coverage2D.getEnvelope().getMaximum(1);
+			inCellSize = (float) ((java.awt.geom.AffineTransform) coverage2D.getGridGeometry().getGridToCRS2D()).getScaleX();
 			
-			int roiWidth = builder.getROIWidth();
-			int roiHeight = builder.getROIHeight();
+			EnteteRaster entete = new EnteteRaster(inWidth, inHeight, inMinX, inMaxX, inMinY, inMaxY, inCellSize, -1);
+			coverage = new FileCoverage(coverage2D, entete);
 			
+		}else if(builder.getRasterTab() != null){
+			
+			inWidth = builder.getEntete().width();
+			inHeight = builder.getEntete().height();
+			inCellSize = builder.getEntete().cellsize();
+			
+			coverage = new TabCoverage(builder.getRasterTab(), builder.getEntete());
+			
+		}else{
+			throw new IllegalArgumentException("no raster declared");
+		}
+		
+		
+					
+		int roiWidth = builder.getROIWidth();
+		int roiHeight = builder.getROIHeight();
+		
+		if(builder.getAnalysisType() == WindowAnalysisType.SLIDING){
+				
 			// windowSize
 			int windowSize = -1;
 			if(builder.getWindowSize() > 0){
@@ -70,14 +102,13 @@ public class LandscapeMetricAnalysisFactory {
 				maxHeight = roiHeight + 2 * midWindowSize;
 			}
 			
-			/*
-			if(maxWidth * maxHeight <= maxTile){
+			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (maxTile/1000.0)){
 				return SingleLandscapeMetricAnalysisFactory.create(builder, coverage);
 			}else{
 				return HugeLandscapeMetricAnalysisFactory.create(builder, coverage);
 			}
-			*/
-			return HugeLandscapeMetricAnalysisFactory.create(builder, coverage);
+			
+			//return HugeLandscapeMetricAnalysisFactory.create(builder, coverage);
 			//return SingleLandscapeMetricAnalysisFactory.create(builder, coverage);
 			
 		}else if(builder.getAnalysisType() == WindowAnalysisType.SELECTED){
@@ -88,6 +119,8 @@ public class LandscapeMetricAnalysisFactory {
 				// TODO
 			}
 			*/
+		}else if(builder.getAnalysisType() == WindowAnalysisType.AREA){
+			return AreaLandscapeMetricAnalysisFactory.create(builder, coverage);
 		}
 		
 		throw new IllegalArgumentException(builder.getAnalysisType()+" is not a recognize analysis type");

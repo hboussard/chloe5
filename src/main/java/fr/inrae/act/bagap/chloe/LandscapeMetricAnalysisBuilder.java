@@ -10,6 +10,7 @@ import fr.inra.sad.bagap.apiland.analysis.window.WindowAnalysisType;
 import fr.inrae.act.bagap.chloe.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.chloe.metric.MetricManager;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class LandscapeMetricAnalysisBuilder {
 
@@ -19,7 +20,13 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	private WindowDistanceType distanceType;
 	
-	private String raster;
+	private String distanceFunction;
+	
+	private String rasterFile, areaRasterFile;
+	
+	private float[] rasterTab, areaRasterTab;
+	
+	private EnteteRaster entete;
 	
 	private int windowSize, displacement;
 	
@@ -29,9 +36,11 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	private Set<CountingObserver> observers;
 
-	private String csv, points, exportWindowPath;
+	private String csv, points, exportWindowPath, asciiGridFolder;
 	
 	private Map<String, String> asciiOutputs;
+	
+	private Map<String, float[]> tabOutputs;
 	
 	private boolean interpolation;
 	
@@ -47,10 +56,11 @@ public class LandscapeMetricAnalysisBuilder {
 		reset();
 	}
 	
-	private void reset(){
+	public void reset(){
 		this.analysisType = WindowAnalysisType.SLIDING;
 		this.shapeType = WindowShapeType.CIRCLE;
 		this.distanceType = WindowDistanceType.THRESHOLD;
+		this.distanceFunction = "exp(-pow(distance, 2)/pow(dmax/2, 2))";
 		this.metrics.clear();
 		this.observers.clear();
 		this.displacement = 1;
@@ -65,11 +75,18 @@ public class LandscapeMetricAnalysisBuilder {
 		//this.bufferROIXMax = 0;
 		//this.bufferROIYMin = 0;
 		//this.bufferROIYMax = 0;
+		this.rasterFile = null;
+		this.rasterTab = null;
+		this.entete = null;
+		this.areaRasterFile = null;
+		this.areaRasterTab = null;
 		this.csv = null;
+		this.asciiGridFolder = null;
 		this.points = null;
 		this.exportWindowPath = null;
 		this.values = null;
 		this.asciiOutputs = new HashMap<String, String>();
+		this.tabOutputs = new HashMap<String, float[]>();
 	}
 
 	public void setAnalysisType(WindowAnalysisType analysisType) {
@@ -83,9 +100,29 @@ public class LandscapeMetricAnalysisBuilder {
 	public void setWindowDistanceType(WindowDistanceType distanceType) {
 		this.distanceType = distanceType;
 	}
+	
+	public void setWindowDistanceFunction(String function) {
+		this.distanceFunction = function;
+	}
 
-	public void setRaster(String raster) {
-		this.raster = raster;
+	public void setRasterFile(String rasterFile) {
+		this.rasterFile = rasterFile;
+	}
+	
+	public void setRasterTab(float[] inputDatas) {
+		this.rasterTab = inputDatas;
+	}
+	
+	public void setEntete(EnteteRaster entete){
+		this.entete = entete;
+	}
+	
+	public void setAreaRasterFile(String areaRasterFile) {
+		this.areaRasterFile = areaRasterFile;
+	}
+	
+	public void setAreaRasterTab(float[] areaRasterTab) {
+		this.areaRasterTab = areaRasterTab;
 	}
 
 	public void setValues(String sValues){
@@ -132,9 +169,17 @@ public class LandscapeMetricAnalysisBuilder {
 		this.csv = csv;
 	}
 	
+	public void addAsciiGridFolderOutput(String asciiGridFolder){
+		this.asciiGridFolder = asciiGridFolder;
+	}
+	
 	public void addAsciiGridOutput(String metric, String ascii){
 		//addMetric(metric);
 		this.asciiOutputs.put(metric, ascii);
+	}
+	
+	public void addTabOutput(String metric, float[] tab){
+		this.tabOutputs.put(metric, tab);
 	}
 	
 	public void setPointFilter(String points) {
@@ -205,9 +250,29 @@ public class LandscapeMetricAnalysisBuilder {
 	public WindowDistanceType getWindowDistanceType() {
 		return distanceType;
 	}
+	
+	public String getWindowDistanceFunction() {
+		return distanceFunction;
+	}
 
-	public String getRaster() {
-		return raster;
+	public String getRasterFile() {
+		return rasterFile;
+	}
+	
+	public float[] getRasterTab() {
+		return rasterTab;
+	}
+	
+	public EnteteRaster getEntete() {
+		return entete;
+	}
+	
+	public String getAreaRasterFile() {
+		return areaRasterFile;
+	}
+	
+	public float[] getAreaRasterTab() {
+		return areaRasterTab;
 	}
 	
 	public short[] getValues(){
@@ -242,8 +307,16 @@ public class LandscapeMetricAnalysisBuilder {
 		return csv;
 	}
 	
+	public String getAsciiGridFolder() {
+		return asciiGridFolder;
+	}
+	
 	public Map<String, String> getAsciiOutputs(){
 		return asciiOutputs;
+	}
+	
+	public Map<String, float[]> getTabOutputs(){
+		return tabOutputs;
 	}
 	
 	/*

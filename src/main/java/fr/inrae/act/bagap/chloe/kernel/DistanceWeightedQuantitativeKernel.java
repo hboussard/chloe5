@@ -2,7 +2,7 @@ package fr.inrae.act.bagap.chloe.kernel;
 
 import com.aparapi.Kernel;
 
-public class DistanceWeightedQuantitativeKernel extends LandscapeMetricKernel {
+public class DistanceWeightedQuantitativeKernel extends SlidingLandscapeMetricKernel {
 	
 	private final float threshold;
 	
@@ -41,7 +41,7 @@ public class DistanceWeightedQuantitativeKernel extends LandscapeMetricKernel {
 			float nb_nodata = 0;
 			float nb = 0;
 			float sum = 0;
-			float square_sum = 0;
+			double square_sum = 0;
 			float min = Float.MAX_VALUE;
 			float max = Float.MIN_VALUE;
 				

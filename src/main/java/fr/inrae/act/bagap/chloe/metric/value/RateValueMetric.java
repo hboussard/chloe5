@@ -16,6 +16,7 @@ public class RateValueMetric extends Metric implements ValueMetric {
 	protected void doCalculate(Counting co) {
 		if(co.validValues() > 0){
 			value = co.countValue(v) / co.validValues();
+			//System.out.println(value);
 		}
 	}
 

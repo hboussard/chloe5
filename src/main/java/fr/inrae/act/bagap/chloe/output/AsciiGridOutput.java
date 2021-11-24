@@ -68,7 +68,10 @@ public class AsciiGridOutput implements CountingObserver{
 
 	@Override
 	public void postrun(Counting c, int x, int y, Map<Metric, Double> values) {
-		sb.append(values.get(metric)+" ");
+		//System.out.println(metric+" "+values.get(metric));
+		//sb.append(values.get(metric)+" ");
+		sb.append(values.get(metric));
+		sb.append(' ');
 		currentWidth++;
 		
 		if(currentWidth == width){
@@ -84,7 +87,7 @@ public class AsciiGridOutput implements CountingObserver{
 	}
 	
 	@Override
-	public void close(Counting c){
+	public void close(Counting c, Set<Metric> metrics){
 		try {
 			writer.close();
 		} catch (IOException e) {
@@ -96,6 +99,11 @@ public class AsciiGridOutput implements CountingObserver{
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@Override
+	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+		// do nothing
 	}
 
 }
