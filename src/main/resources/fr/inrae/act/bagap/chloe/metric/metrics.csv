@@ -3,6 +3,7 @@ N-valid;value;;fr.inrae.act.bagap.chloe.metric.basic.ValidValueMetric
 NC-valid;couple;;fr.inrae.act.bagap.chloe.metric.basic.ValidCoupleMetric
 NV;value;value;fr.inrae.act.bagap.chloe.metric.value.CountValueMetric
 pNV;value;value;fr.inrae.act.bagap.chloe.metric.value.RateValueMetric
+pNMV;value;value;fr.inrae.act.bagap.chloe.metric.value.RateMultipleValueMetric
 SHDI;value;;fr.inrae.act.bagap.chloe.metric.value.ShannonDiversityIndex
 NC;couple;couple;fr.inrae.act.bagap.chloe.metric.couple.CountCoupleMetric
 pNC;couple;couple;fr.inrae.act.bagap.chloe.metric.couple.RateCoupleMetric
@@ -16,3 +17,5 @@ standard_deviation;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.St
 minimum;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.MinimumMetric
 maximum;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.MaximumMetric
 MD;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.MeanDistanceMetric
+distance;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.DistanceMetric
+bocage;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.BocageMetric

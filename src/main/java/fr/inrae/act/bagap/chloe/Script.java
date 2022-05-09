@@ -20,11 +20,409 @@ import fr.inra.sad.bagap.apiland.analysis.matrix.CoverageManager;
 import fr.inra.sad.bagap.apiland.analysis.window.WindowAnalysisType;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.matrix.MatrixManager;
+import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.raster.FileCoverage;
 
 public class Script {
 
 	public static void main(String[] args){
-		scriptTestDistanceFunction();
+		//scriptTestDistanceIGN5();
+		//scriptGrainEloise();
+		//scriptEcopaysageBretagneCGTV();
+		//retileBaieLancieux();
+		//luminanceBaieLancieux();
+		//boisementBaieLancieux();
+		//scriptGrainGers();
+		//scriptGrainPaysdelaLoire();
+		//scriptSHDIClusterGrainPaysdelaLoire();
+		//propClassifGrainPaysdelaLoire();
+		//test2();
+	}
+	
+	private static void test2(){
+		
+		GridCoverage2D cov = CoverageManager.get("F:/IGN/35-2020-0320-6785-LA93-5M-MNHC/35-2020-0320-6785-LA93-5M-MNHC.tif");
+		float[] tileDatas = CoverageManager.getData(cov, 0, 0, 1000, 1000);
+		cov.dispose(true);
+		ImageUtilities.disposePlanarImageChain((PlanarImage) cov.getRenderedImage()); // relache les ressources
+		
+		/*
+		String path = "F:/data/sig/IGN/35_2020/";
+		String prefix = "prepaGrain";
+		String code = "20FD3525"; 
+		int tileSize = 1000;
+		GridCoverage2D cov;
+		float[] tileDatas;
+		
+		File deptFolder = new File(path);
+		int it, jt;
+		int iMin = Integer.MAX_VALUE;
+		int iMax = 0;
+		int jMin = Integer.MAX_VALUE;
+		int jMax = 0;
+		for(String file : deptFolder.list()){
+			if(file.startsWith(prefix+"_"+code) && file.endsWith(".tif")){
+				String[] f = file.replace(prefix+"_"+code+"_", "").replace(".tif", "").split("_");
+				it = Integer.parseInt(f[0]);
+				jt = Integer.parseInt(f[1]);
+				System.out.println(it+" "+jt);
+				
+				// mise a jur emprise
+				iMin = Math.min(iMin, it);
+				iMax = Math.max(iMax, it);
+				jMin = Math.min(jMin, jt);
+				jMax = Math.max(jMax, jt);
+				
+				//float[] data = getData(it, jt);	
+				
+				//test
+				cov = CoverageManager.get(path+file);
+				tileDatas = CoverageManager.getData(cov, 0, 0, tileSize, tileSize);
+				cov.dispose(true);
+				ImageUtilities.disposePlanarImageChain((PlanarImage) cov.getRenderedImage()); // relache les ressources
+			}
+		}
+		System.out.println(iMin+" "+iMax+" "+jMin+" "+jMax);
+		*/
+	}
+	
+ 	private static void propClassifGrainPaysdelaLoire(){
+		long begin = System.currentTimeMillis();
+		
+		String path = "F:/FRC_Pays_de_la_Loire/data/BocagePdlL_V3/test2/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(path+"grain_PdlL_classif.asc");
+		builder.addMetric("pNV_1");
+		builder.setWindowSize(401);
+		builder.setDisplacement(40);
+		builder.addAsciiGridOutput("pNV_1", path+"prop_grain_10km.asc");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+	
+	private static void scriptSHDIClusterGrainPaysdelaLoire(){
+		long begin = System.currentTimeMillis();
+		
+		String path = "F:/FRC_Pays_de_la_Loire/data/BocagePdlL_V3/test2/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(path+"cluster_grain.asc");
+		builder.addMetric("SHDI");
+		builder.setWindowSize(401);
+		builder.setDisplacement(40);
+		builder.addAsciiGridOutput("SHDI", path+"shdi_10km.asc");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+	
+	private static void scriptGrainPaysdelaLoire(){
+		
+		long begin = System.currentTimeMillis();
+		
+		String path = "F:/FRC_Pays_de_la_Loire/data/BocagePdlL_V3/test2/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(path+"distance_bois_2021_2.tif");
+		builder.addMetric("MD");
+		builder.setWindowSize(101); 
+		builder.setDisplacement(10);
+		builder.addAsciiGridOutput("MD", path+"grain_pays_loire_101p_dep10_2.asc");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+	
+	private static void scriptGrainGers(){
+		String path = "F:/gers/data/wetransfer_overlay_dist-1-2-asc_2022-03-03_1538/";
+		
+		long begin = System.currentTimeMillis();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(path+"overlay_dist-[1, 2].asc");
+		builder.addMetric("MD");
+		builder.setWindowSize(101);
+		builder.addAsciiGridOutput("MD", path+"grain.asc");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+	
+	private static void boisementBaieLancieux(){
+		
+		long begin = System.currentTimeMillis();
+		
+		String path = "F://dreal/ophelie/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(path+"cgtv_baie_lancieux.asc");
+		builder.addMetric("pNMV_12-13-14-17-18-19");
+		builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+		builder.setWindowSize(41);
+		builder.addAsciiGridOutput("pNMV_12-13-14-17-18-19", path+"boisement.asc");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+	
+	private static void luminanceBaieLancieux(){
+		
+		long begin = System.currentTimeMillis();
+		
+		String path = "F://dreal/ophelie/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(path+"cgtv_baie_lancieux.asc");
+		//builder.addMetric("pNV_25");
+		//builder.addMetric("pNV_26");
+		builder.addMetric("pNMV_25-26");
+		builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+		builder.setWindowSize(41);
+		//builder.addAsciiGridOutput("pNV_25", path+"eprop_bati_100m.asc");
+		//builder.addAsciiGridOutput("pNV_26", path+"eprop_route_100m.asc");
+		builder.addAsciiGridOutput("pNMV_25-26", path+"elumi_100m.asc");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+
+	private static void retileBaieLancieux(){
+		// selection site
+	
+		double minx = 306091.0;
+		double maxx = 328852.0;
+		double miny = 6831235.0;
+		double maxy = 6853026.0;
+				
+		String fileCGTV = "F://data/sig/CGTV/cgtv.tif";
+		String fileBaie = "F://dreal/ophelie/cgtv_baie_lancieux.asc";
+		
+		CoverageManager.retile(fileCGTV, fileBaie, minx, maxx, miny, maxy);
+	}
+	
+ 	private static void scriptEcopaysageBretagneCGTV(){
+		
+		Raster.setNoDataValue(255);
+		
+		Set<Integer> codes = new TreeSet<Integer>();
+		codes.add(1);
+		codes.add(2);
+		codes.add(3);
+		codes.add(4);
+		codes.add(5);
+		codes.add(6);
+		codes.add(7);
+		codes.add(8);
+		codes.add(9);
+		codes.add(10);
+		codes.add(11);
+		codes.add(12);
+		codes.add(13);
+		codes.add(14);
+		codes.add(15);
+		codes.add(16);
+		codes.add(17);
+		codes.add(18);
+		codes.add(19);
+		codes.add(20);
+		codes.add(21);
+		codes.add(22);
+		codes.add(23);
+		codes.add(24);
+		codes.add(25);
+		codes.add(26);
+		codes.add(27);
+		
+		//scriptEcopaysageBretagneCGTV("composition", "500m", codes);
+		//scriptEcopaysageBretagneCGTV("configuration", "500m", codes);
+		scriptEcopaysageBretagneCGTV("composition", "3km", codes);
+		scriptEcopaysageBretagneCGTV("configuration", "3km", codes);
+	}
+	
+	private static void scriptEcopaysageBretagneCGTV(String compo_config, String scale, Set<Integer> codes){
+		long begin = System.currentTimeMillis();
+		
+		String path = "F:/dreal/ecopaysage/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile("F:/data/sig/CGTV/cgtv.tif");
+		//builder.setRasterFile("F:/dreal/ophelie/cgtv_baie_lancieux.asc");
+		
+		StringBuilder sb = new StringBuilder();
+		for(int c : codes){
+			sb.append(c+",");
+		}
+		sb.deleteCharAt(sb.length()-1);
+		builder.setValues(sb.toString()); // valeurs classées
+		
+		if(compo_config.equalsIgnoreCase("composition")){
+			for(int i : codes){
+				builder.addMetric("pNV_"+i);
+			}
+		}
+		if(compo_config.equalsIgnoreCase("configuration")){
+			for(int i : codes){
+				for(int j : codes){
+					if(j>i){
+						builder.addMetric("pNC_"+i+"-"+j);
+					}
+				}
+			}
+		}
+		
+		if(scale.equalsIgnoreCase("500m")){
+			builder.setWindowSize(401); // 500m
+		}
+		if(scale.equalsIgnoreCase("3km")){
+			builder.setWindowSize(2401); // 3km
+		}
+		
+		builder.setDisplacement(40);
+		builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+		builder.setUnfilters(new int[]{23,255});
+		builder.addCsvOutput(path+"analyse2/bretagne_cgtv_"+compo_config+"_"+scale+".csv");
+		
+		LandscapeMetricAnalysis analysis = builder.build(); 
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+
+	private static void scriptGrainEloise(){
+		
+		long begin = System.currentTimeMillis();
+		
+		String path = "F:/Eloise/data/analyse/distance/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(path+"haie_large_clean_dist-[99].asc");
+		builder.addMetric("MD");
+		builder.setWindowSize(101);
+		builder.addAsciiGridOutput("MD", path+"grain_101.asc");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+	
+	private static void scriptTestDistanceIGN5(){
+		String path = "F:/IGN/35-2020-0320-6785-LA93-5M-MNHC/";
+		
+		long begin = System.currentTimeMillis();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(path+"35-2020-0320-6785-LA93-5M-MNHC.tif");
+		builder.setRasterFile2(path+"local_wood.asc");
+		builder.addMetric("distance");
+		builder.setWindowSize(101);
+		builder.addAsciiGridOutput("distance", path+"test_ign4.asc");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+	
+	private static void scriptTestDistanceIGN4(){
+		String path = "F:/IGN/35-2020-0320-6785-LA93-5M-MNHC/";
+		
+		long begin = System.currentTimeMillis();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(path+"35-2020-0320-6785-LA93-5M-MNHC.tif");
+		builder.addMetric("standard_deviation");
+		builder.setWindowSize(7);
+		builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+		builder.addAsciiGridOutput("standard_deviation", path+"standard_deviation.asc");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+		
+		//MatrixManager.visualize(path+"local_wood.asc");
+	}
+	
+	private static void scriptTestDistanceIGN3(){
+		String path = "F:/IGN/35-2020-0320-6785-LA93-5M-MNHC/";
+		
+		long begin = System.currentTimeMillis();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(path+"35-2020-0320-6785-LA93-5M-MNHC.tif");
+		builder.addMetric("bocage");
+		builder.setWindowSize(13);
+		//builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+		builder.addAsciiGridOutput("bocage", path+"local_wood.asc");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+		
+		//MatrixManager.visualize(path+"local_wood.asc");
+	}
+	
+	private static void scriptTestDistanceIGN2(){
+		String path = "F:/IGN/35-2020-0320-6785-LA93-5M-MNHC/";
+		
+		long begin = System.currentTimeMillis();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(path+"35-2020-0320-6785-LA93-5M-MNHC_max.tif");
+		builder.addMetric("distance");
+		builder.setWindowSize(41);
+		builder.addAsciiGridOutput("distance", path+"test_ign2.asc");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+		
+		//MatrixManager.visualize(path+"test_ign2.asc");
+	}
+	
+	private static void scriptTestDistanceIGN(){
+		String path = "C:/Hugues/data/ascii/aparapi/";
+		
+		long begin = System.currentTimeMillis();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		//builder.setRasterFile(path+"data_test_aparapi.asc");
+		builder.setRasterFile(path+"wood.asc");
+		builder.addMetric("distance");
+		builder.setWindowSize(51);
+		builder.addAsciiGridOutput("distance", path+"result_test_aparapi_2.asc");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+		
+		MatrixManager.visualize(path+"result_test_aparapi_2.asc");
 	}
 	
 	private static void scriptTestDistanceFunction(){
@@ -890,24 +1288,6 @@ public class Script {
 		builder.addMetric("SHDI");
 		builder.setWindowSize(21);
 		builder.addAsciiGridOutput("SHDI", path+"SHDI.asc");
-		LandscapeMetricAnalysis analysis = builder.build();
-		
-		analysis.allRun();
-		
-		long end = System.currentTimeMillis();
-		System.out.println("time computing : "+(end - begin));
-	}
-	
-	private static void scriptGrainGers(){
-		String path = "F:/gers/data/carto/";
-		
-		long begin = System.currentTimeMillis();
-		
-		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setRasterFile(path+"GRAIN_DIST_EUCLI.asc");
-		builder.addMetric("MD");
-		builder.setWindowSize(141);
-		builder.addAsciiGridOutput("MD", path+"grain2.asc");
 		LandscapeMetricAnalysis analysis = builder.build();
 		
 		analysis.allRun();

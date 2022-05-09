@@ -8,9 +8,9 @@ import fr.inrae.act.bagap.chloe.metric.Metric;
 public class ValueCounting extends Counting implements ValueCountingInterface {
 
 	/** the count of values */
-	private Map<Short, Double> countValues;
+	private Map<Integer, Double> countValues;
 	
-	private short[] values;
+	private int[] values;
 	
 	private int theoreticalSize;
 	
@@ -20,15 +20,15 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	
 	private float totalCountValues;
 	
-	private short countClass;
+	private int countClass;
 	
-	public ValueCounting(int minRange, int maxRange, short[] values){
+	public ValueCounting(int minRange, int maxRange, int[] values){
 		super(minRange, maxRange);
 		this.values = values;
-		this.countValues = new HashMap<Short, Double>();
+		this.countValues = new HashMap<Integer, Double>();
 	}
 	
-	public ValueCounting(int minRange, int maxRange, short[] values, int theoreticalSize){
+	public ValueCounting(int minRange, int maxRange, int[] values, int theoreticalSize){
 		this(minRange, maxRange, values);
 		this.theoreticalSize = theoreticalSize;
 	}
@@ -96,17 +96,17 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	}
 	
 	@Override
-	public short[] values(){
+	public int[] values(){
 		return values;
 	}
 	
 	@Override
-	public double countValue(short v){
+	public double countValue(int v){
 		return countValues.get(v);
 	}
 
 	@Override
-	public short countClass() {
+	public int countClass() {
 		return countClass;
 	}
 	

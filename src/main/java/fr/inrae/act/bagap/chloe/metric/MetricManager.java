@@ -3,6 +3,7 @@ package fr.inrae.act.bagap.chloe.metric;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -139,10 +140,24 @@ public class MetricManager {
 			}else if(isProcessValueMetric(m)){
 				
 				String metric = getProcessValueMetric(m);
+				
+				//System.out.println(metric+" "+m);
+				
 				Class<?> c = Class.forName(metrics.get(metric));
 				metric = m.replace(metric+"_", "");
-				short v = new Short(metric);
-				return (Metric) c.getConstructor(short.class).newInstance(v);
+				
+				if(metric.contains("-")){
+					String[] s = metric.split("-");
+					short[] v = new short[s.length];
+					int i=0;
+					for(String ss : s){
+						v[i++] = new Short(ss);
+					}
+					return (Metric) c.getConstructor(short[].class).newInstance(v);
+				}else{
+					short v = new Short(metric);
+					return (Metric) c.getConstructor(short.class).newInstance(v);
+				}
 				
 			}else{
 				

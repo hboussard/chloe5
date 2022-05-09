@@ -75,6 +75,7 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 
 	@Override
 	public double average() {
+		//System.out.println(sum+" "+validValues+" "+(sum / validValues));
 		return (float) (sum / validValues);
 	}
 

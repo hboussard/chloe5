@@ -1,23 +1,33 @@
 package fr.inrae.act.bagap.chloe;
 
 import java.awt.Rectangle;
+
 import fr.inrae.act.bagap.chloe.counting.Counting;
+import fr.inrae.act.bagap.chloe.kernel.EmpriseBocageKernel3;
 import fr.inrae.act.bagap.chloe.kernel.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public class SingleLandscapeMetricAnalysis extends SlidingLandscapeMetricAnalysis {
+public class MultipleLandscapeMetricAnalysis extends SlidingLandscapeMetricAnalysis {
 
 	private int buffer;
 	
 	private double[][] outDatas;
 	
-	//public SingleLandscapeMetricAnalysis(GridCoverage2D coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {
-	public SingleLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {		
+	private final Coverage coverage2;
+	
+	public MultipleLandscapeMetricAnalysis(Coverage coverage, Coverage coverage2, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {		
 		super(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+		this.coverage2 = coverage2;
+	}
+	
+	@Override
+	public EmpriseBocageKernel3 kernel() {
+		return (EmpriseBocageKernel3) super.kernel();
 	}
 	
 	@Override
 	protected void doInit() {
+		
 		// mise en place des infos pour le Kernel
 		kernel().setWidth(roiWidth() + bufferROIXMin() + bufferROIXMax());
 		kernel().setHeight(roiHeight() + bufferROIYMin() + bufferROIYMax());
@@ -25,8 +35,6 @@ public class SingleLandscapeMetricAnalysis extends SlidingLandscapeMetricAnalysi
 		kernel().setBufferROIXMax(bufferROIXMax());
 		kernel().setBufferROIYMin(bufferROIYMin());
 		kernel().setBufferROIYMax(bufferROIYMax());
-		
-		//System.out.println(bufferROIXMin()+" "+bufferROIXMax()+" "+bufferROIYMin()+" "+bufferROIYMax());		
 		
 		// recuperation des donnees depuis le coverage
 		// attention bug de la récupération des données dans le coverage2D si le Y dépasse une certaine valeur
@@ -43,6 +51,10 @@ public class SingleLandscapeMetricAnalysis extends SlidingLandscapeMetricAnalysi
 		
 		kernel().setImageIn(inDatas);
 		
+		float[] inDatas2 = coverage2.getDatas(roi);
+		
+		kernel().setImage2(inDatas2);
+		
 		// ajustement du buffer de calcul
 		buffer = (short) Math.max(displacement(), LandscapeMetricAnalysisFactory.bufferSize());
 		
@@ -54,6 +66,7 @@ public class SingleLandscapeMetricAnalysis extends SlidingLandscapeMetricAnalysi
 		counting().init();
 		
 		//System.out.println(roiWidth() + bufferROIXMin() + bufferROIXMax()+" "+roiHeight() + bufferROIYMin() + bufferROIYMax()+" "+(roiWidth()*roiHeight())+" "+((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1)));
+		
 	}
 
 	@Override

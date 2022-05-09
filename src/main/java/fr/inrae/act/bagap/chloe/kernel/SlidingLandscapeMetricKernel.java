@@ -24,12 +24,29 @@ public abstract class SlidingLandscapeMetricKernel extends Kernel {
 	
 	private int bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax; // in pixels
 	
-	protected SlidingLandscapeMetricKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue){
+	private int[] unfilters;
+	
+	@SuppressWarnings("deprecation")
+	protected SlidingLandscapeMetricKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] unfilters){
+		this.setExplicit(true);
+		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.windowSize = windowSize;
 		this.displacement = displacement;
 		this.shape = shape;
 		this.coeff = coeff;
 		this.noDataValue = noDataValue;
+		this.unfilters = unfilters;
+	}
+	
+	protected boolean filter(int f){
+		if(unfilters != null){
+			for(int uf : unfilters){
+				if(uf == f){
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	public int windowSize(){

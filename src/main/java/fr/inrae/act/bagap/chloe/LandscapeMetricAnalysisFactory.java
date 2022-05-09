@@ -21,7 +21,7 @@ public class LandscapeMetricAnalysisFactory {
 		return maxTile;
 	}
 	
-	private static int bufferSize = 100;
+	private static int bufferSize = 10;
 	
 	public static int bufferSize(){
 		return bufferSize;
@@ -72,9 +72,7 @@ public class LandscapeMetricAnalysisFactory {
 		}else{
 			throw new IllegalArgumentException("no raster declared");
 		}
-		
-		
-					
+				
 		int roiWidth = builder.getROIWidth();
 		int roiHeight = builder.getROIHeight();
 		

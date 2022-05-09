@@ -1,5 +1,5 @@
 # ImageJ 1.37k Preferences
-# Fri Sep 03 13:27:31 CEST 2021
+# Tue Nov 30 11:06:33 CET 2021
 
 fps=7.0
 new.type=0
@@ -9,9 +9,9 @@ gel.options=2
 div-by-zero=Infinity
 pp.options=1
 raw.type=0
-ij.y=32
+ij.y=27
 roicolor=#FFFF00
-ij.x=1124
+ij.x=1254
 noise.sd=25.0
 prefs.options=0
 new.slices=1

@@ -13,10 +13,8 @@ public class DistanceWeightedCountCoupleKernelOld extends SlidingLandscapeMetric
 	
 	private final Map<Float, Integer> mapCouples;
 	
-	public DistanceWeightedCountCoupleKernelOld(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, float[] couples){
-		super(windowSize, displacement, shape, coeff, noDataValue);
-		this.setExplicit(true);
-		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
+	public DistanceWeightedCountCoupleKernelOld(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, float[] couples, int[] unfilters){
+		super(windowSize, displacement, shape, coeff, noDataValue, unfilters);
 		this.couples = couples;
 		mapCouples = new HashMap<Float, Integer>();
 		for(int i=0; i<couples.length; i++){

@@ -15,10 +15,13 @@ public class TabOutput implements CountingObserver{
 	
 	private final int width;
 	
-	public TabOutput(float[] datas, Metric metric, int width){
+	private final int displacement;
+	
+	public TabOutput(float[] datas, Metric metric, int width, int displacement){
 		this.datas = datas;
 		this.metric = metric;
 		this.width = width;
+		this.displacement = displacement;
 	}
 	
 	/*public float[] getDatas(){
@@ -41,7 +44,8 @@ public class TabOutput implements CountingObserver{
 
 	@Override
 	public void postrun(Counting c, int i, int j, Map<Metric, Double> values) {
-		datas[j*width+i] = values.get(metric).floatValue();
+		//System.out.println(i+" "+j);
+		datas[(j/displacement)*width+(i/displacement)] = values.get(metric).floatValue();
 	}
 
 	@Override

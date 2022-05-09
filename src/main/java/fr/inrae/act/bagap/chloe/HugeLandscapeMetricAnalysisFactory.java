@@ -187,14 +187,17 @@ public class HugeLandscapeMetricAnalysisFactory {
 				}	
 			}
 			
+			// les non-filtres
+			int[] unfilters = builder.getUnfilters();
+			
 			// gestion specifiques des analyses quantitatives ou qualitatives
 			if(MetricManager.hasOnlyQuantitativeMetric(metrics)){ // quantitative
 				
 				SlidingLandscapeMetricKernel kernel = null;
 				if(metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("MD")){
-					kernel = new DistanceWeightedQuantitativeKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), 100);
+					kernel = new DistanceWeightedQuantitativeKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), 100, unfilters);
 				}else{
-					kernel = new DistanceWeightedQuantitativeKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue());
+					kernel = new DistanceWeightedQuantitativeKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
 				}
 				Counting counting = new QuantitativeCounting(0, 6, theoreticalSize);
 				
@@ -214,8 +217,8 @@ public class HugeLandscapeMetricAnalysisFactory {
 				
 			}else{ // qualitative
 				// recuperation des valeurs
-				short[] inValues = builder.getValues();
-				if(inValues == null){
+				int[] values = builder.getValues();
+				//if(inValues == null){
 					// TODO récupération des valeurs
 					/*
 					 * for(float s : inDatas){
@@ -224,31 +227,28 @@ public class HugeLandscapeMetricAnalysisFactory {
 					}
 				}
 					 */
-				}
-				
-				short[] values = null;
+				//}
+				/*
 				if(MetricManager.hasValueMetric(metrics)){
-					values = new short[inValues.length];
+					values = new int[inValues.length];
 					int index = 0;
-					for(Short s : inValues){
-						values[index++] = (short) s;
+					for(int s : inValues){
+						values[index++] = s;
 					}
-				}
+				}*/
 				
 				// recuperation des couples
 				float[] couples = null;
 				if(MetricManager.hasCoupleMetric(metrics)){
-					couples = new float[(((inValues.length*inValues.length)-inValues.length)/2) + inValues.length];
+					couples = new float[(((values.length*values.length)-values.length)/2) + values.length];
 					int index = 0;
-					for(Short s1 : inValues){
-						couples[index++] = Couple.getCouple((short) s1, (short) s1);
+					for(int s1 : values){
+						couples[index++] = Couple.getCouple(s1, s1);
 					}
-					Set<Short> ever = new HashSet<Short>();
-					for(Short s1 : inValues){
-						ever.add(s1);
-						for(Short s2 : inValues){
-							if(!ever.contains(s2)) {
-								couples[index++] = Couple.getCouple((short) s1, (short) s2);
+					for(int s1 : values){
+						for(int s2 : values){
+							if(s1 < s2) {
+								couples[index++] = Couple.getCouple(s1, s2);
 							}
 						}
 					}
@@ -261,14 +261,14 @@ public class HugeLandscapeMetricAnalysisFactory {
 				if(MetricManager.hasOnlyValueMetric(metrics)){
 					nbValues += values.length;
 					//kernel = new DistanceWeightedCountValueKernel(values, windowSize, shape, coeffs, roiWidth, roiHeight, displacement, Raster.getNoDataValue(), bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax);
-					kernel = new DistanceWeightedCountValueKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values);
+					kernel = new DistanceWeightedCountValueKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);
 					counting = new ValueCounting(0, nbValues, values, theoreticalSize);
 				}
 				if(MetricManager.hasOnlyCoupleMetric(metrics)){
 					nbValues += couples.length;
 					//kernel = new DistanceWeightedCountCoupleKernel(couples, windowSize, shape, coeffs, roiWidth, roiHeight, displacement, Raster.getNoDataValue(), bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax);
-					kernel = new DistanceWeightedCountCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), inValues);
-					counting = new CoupleCounting(0, nbValues, inValues.length, couples, theoreticalCoupleSize);
+					kernel = new DistanceWeightedCountCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);
+					counting = new CoupleCounting(0, nbValues, values.length, couples, theoreticalCoupleSize);
 				}	
 				// add metrics to counting
 				for(Metric m : metrics){

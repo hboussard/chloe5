@@ -151,17 +151,17 @@ public abstract class Counting implements
 	}
 	
 	@Override
-	public short[] values() {
+	public int[] values() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public double countValue(short v) {
+	public double countValue(int v) {
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public short countClass() {
+	public int countClass() {
 		throw new UnsupportedOperationException();
 	}
 

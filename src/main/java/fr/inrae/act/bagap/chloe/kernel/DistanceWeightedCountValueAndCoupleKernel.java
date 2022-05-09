@@ -1,7 +1,5 @@
 package fr.inrae.act.bagap.chloe.kernel;
 
-import com.aparapi.Kernel;
-
 public class DistanceWeightedCountValueAndCoupleKernel extends SlidingLandscapeMetricKernel {
 	
 	private final int nbValues;
@@ -11,13 +9,11 @@ public class DistanceWeightedCountValueAndCoupleKernel extends SlidingLandscapeM
 	private final int[] mapValues;
 	
 	@SuppressWarnings("deprecation")
-	public DistanceWeightedCountValueAndCoupleKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, short[] values){
-		super(windowSize, displacement, shape, coeff, noDataValue);
-		this.setExplicit(true);
-		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
+	public DistanceWeightedCountValueAndCoupleKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] values, int[] unfilters){
+		super(windowSize, displacement, shape, coeff, noDataValue, unfilters);
 		this.nbValues = values.length;
 		int maxV = 0;
-		for(short v : values){
+		for(int v : values){
 			maxV = Math.max(v, maxV);
 		}
 		maxV++;
@@ -27,13 +23,13 @@ public class DistanceWeightedCountValueAndCoupleKernel extends SlidingLandscapeM
 		}
 		mapCouples = new int[values.length][values.length];
 		int index = 0;
-		for(short v : values){
+		for(int v : values){
 			mapCouples[mapValues[v]][mapValues[v]] = index;
 			index++;
 		}
 		
-		for(short v1 : values){
-			for(short v2 : values){
+		for(int v1 : values){
+			for(int v2 : values){
 				if(v1 < v2) {
 					mapCouples[mapValues[v1]][mapValues[v2]] = index;
 					mapCouples[mapValues[v2]][mapValues[v1]] = index;

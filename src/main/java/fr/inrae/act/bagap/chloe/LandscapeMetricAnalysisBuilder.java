@@ -22,9 +22,9 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	private String distanceFunction;
 	
-	private String rasterFile, areaRasterFile;
+	private String rasterFile, rasterFile2, areaRasterFile;
 	
-	private float[] rasterTab, areaRasterTab;
+	private float[] rasterTab, rasterTab2, areaRasterTab;
 	
 	private EnteteRaster entete;
 	
@@ -40,6 +40,8 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	private Map<String, String> asciiOutputs;
 	
+	private Map<String, String> geotiffOutputs;
+	
 	private Map<String, float[]> tabOutputs;
 	
 	private boolean interpolation;
@@ -48,7 +50,7 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	//private int bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax;
 	
-	private short[] values;
+	private int[] values, unfilters;
 	
 	public LandscapeMetricAnalysisBuilder(){
 		this.metrics = new HashSet<Metric>();
@@ -76,7 +78,9 @@ public class LandscapeMetricAnalysisBuilder {
 		//this.bufferROIYMin = 0;
 		//this.bufferROIYMax = 0;
 		this.rasterFile = null;
+		this.rasterFile2 = null;
 		this.rasterTab = null;
+		this.rasterTab2 = null;
 		this.entete = null;
 		this.areaRasterFile = null;
 		this.areaRasterTab = null;
@@ -86,7 +90,9 @@ public class LandscapeMetricAnalysisBuilder {
 		this.exportWindowPath = null;
 		this.values = null;
 		this.asciiOutputs = new HashMap<String, String>();
+		this.geotiffOutputs = new HashMap<String, String>();
 		this.tabOutputs = new HashMap<String, float[]>();
+		this.unfilters = null;
 	}
 
 	public void setAnalysisType(WindowAnalysisType analysisType) {
@@ -109,8 +115,16 @@ public class LandscapeMetricAnalysisBuilder {
 		this.rasterFile = rasterFile;
 	}
 	
+	public void setRasterFile2(String rasterFile2) {
+		this.rasterFile2 = rasterFile2;
+	}
+	
 	public void setRasterTab(float[] inputDatas) {
 		this.rasterTab = inputDatas;
+	}
+	
+	public void setRasterTab2(float[] inputDatas) {
+		this.rasterTab2 = inputDatas;
 	}
 	
 	public void setEntete(EnteteRaster entete){
@@ -127,9 +141,9 @@ public class LandscapeMetricAnalysisBuilder {
 
 	public void setValues(String sValues){
 		String[] s = sValues.split(",");
-		values = new short[s.length];
+		values = new int[s.length];
 		for(int i = 0; i<s.length; i++){
-			values[i] = Short.parseShort(s[i].replace(" ", ""));
+			values[i] = Integer.parseInt(s[i].replace(" ", ""));
 		}
 	}
 	
@@ -149,6 +163,10 @@ public class LandscapeMetricAnalysisBuilder {
 		this.interpolation = interpolation;
 	}
 
+	public void setUnfilters(int[] unfilters){
+		this.unfilters = unfilters;
+	}
+	
 	public void addMetric(Metric metric){
 		this.metrics.add(metric);
 	}
@@ -180,6 +198,10 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	public void addTabOutput(String metric, float[] tab){
 		this.tabOutputs.put(metric, tab);
+	}
+	
+	public void addGeoTiffOutput(String metric, String geotiff){
+		this.geotiffOutputs.put(metric, geotiff);
 	}
 	
 	public void setPointFilter(String points) {
@@ -259,8 +281,16 @@ public class LandscapeMetricAnalysisBuilder {
 		return rasterFile;
 	}
 	
+	public String getRasterFile2() {
+		return rasterFile2;
+	}
+	
 	public float[] getRasterTab() {
 		return rasterTab;
+	}
+	
+	public float[] getRasterTab2() {
+		return rasterTab2;
 	}
 	
 	public EnteteRaster getEntete() {
@@ -275,7 +305,7 @@ public class LandscapeMetricAnalysisBuilder {
 		return areaRasterTab;
 	}
 	
-	public short[] getValues(){
+	public int[] getValues(){
 		return values;
 	}
 
@@ -313,6 +343,10 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	public Map<String, String> getAsciiOutputs(){
 		return asciiOutputs;
+	}
+	
+	public Map<String, String> getGeoTiffOutputs(){
+		return geotiffOutputs;
 	}
 	
 	public Map<String, float[]> getTabOutputs(){
@@ -353,6 +387,10 @@ public class LandscapeMetricAnalysisBuilder {
 		return this.roiHeight;
 	}
 
+	public int[] getUnfilters(){
+		return unfilters;
+	}
+	
 	public LandscapeMetricAnalysis build(){
 		LandscapeMetricAnalysis analysis = null;
 		try{

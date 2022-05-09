@@ -1,4 +1,4 @@
-package fr.inra.sad.bagap.chloe.output;
+package fr.inrae.act.bagap.chloe.output;
 
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
@@ -7,6 +7,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Map;
+import java.util.Set;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
@@ -16,36 +20,30 @@ import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
-import com.sun.media.jai.codecimpl.util.RasterFactory;
-
 import fr.inra.sad.bagap.apiland.analysis.matrix.CoverageManager;
-import fr.inra.sad.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.counting.CountingObserver;
-import fr.inrae.act.bagap.chloe.metric.MetricObserver;
+import fr.inrae.act.bagap.chloe.metric.Metric;
 
-public class GeoTiffOutput implements CountingObserver, MetricObserver{
+public class GeoTiffOutput implements CountingObserver{
 
-	private String file;
+	private final DecimalFormat format;
 	
-	//private WritableRaster raster;
+	private final String file;
 	
-	private float[][] datas;
+	private final Metric metric;
+
+	private final float[] datas;
 	
-	private short width;
+	private final int width, height, noDataValue;
 	
-	private short height;
+	private final double outMinX, outMaxX, outMinY, outMaxY, cellSize;
 	
-	private double outMinX, outMaxX, outMinY, outMaxY;
+	private int ind;
 	
-	private double cellSize;
-	
-	private short X;
-	
-	private short Y;
-	
-	public GeoTiffOutput(String file, short width, short height, double outMinX, double outMaxX, double outMinY, double outMaxY, double cellSize){
+	public GeoTiffOutput(String file, Metric metric, int width, int height, double outMinX, double outMaxX, double outMinY, double outMaxY, double cellSize, int noDataValue){
 		this.file = file;
+		this.metric = metric;
 		this.width = width;
 		this.height = height;
 		this.outMinX = outMinX;
@@ -53,39 +51,44 @@ public class GeoTiffOutput implements CountingObserver, MetricObserver{
 		this.outMinY = outMinY;
 		this.outMaxY = outMaxY;
 		this.cellSize = cellSize;
-		this.datas = new float[height][width];
+		this.noDataValue = noDataValue;
+		this.datas = new float[height*width];
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		symbols.setDecimalSeparator('.');
+		format = new DecimalFormat("0.00000", symbols);
 	}
 	
-	public void notify(Metric m, String metric, float value) {
-		
-		//System.out.println(value);
-		//raster.setSample(X, Y, 0, value);
-		
-		datas[Y][X] = value;
-		
-		X++;
-		if(X == width){
-			X = 0;
-			Y++;
-		}
+	@Override
+	public void init(Counting c, Set<Metric> metrics) {
+		ind = 0;
 	}
 	
-	public void init() {
-		X = 0;
-		Y = 0;
+	@Override
+	public void prerun(Counting c) {
 	}
 	
-	public void close() {
+	@Override
+	public void postrun(Counting c, int i, int j, Map<Metric, Double> values) {
+		datas[ind++] = Float.parseFloat(format(values.get(metric)));
+	}
+	
+	@Override
+	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public void close(Counting c, Set<Metric> metrics) {
 		//raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_FLOAT, width, height, 1, null);
 		//GridCoverage2D outC = CoverageManager.getCoverageUsingRaster(raster, width, height, outMinX, outMaxX, outMinY, outMaxY, cellSize);
-		
+				
 		//GridCoverage2D outC = CoverageManager.getEmptyCoverage(width, height, outMinX, outMaxX, outMinY, outMaxY, cellSize);
 		//((WritableRenderedImage) outC.getRenderedImage()).setData(raster);
-		
-		GridCoverage2D outC = CoverageManager.getCoverageFromData2D(datas, width, height, outMinX, outMinY, cellSize);
-		
-		System.out.println("écriture sur fichier");
+				
+		GridCoverage2D outC = CoverageManager.getCoverageFromData(datas, width, height, outMinX, outMinY, cellSize);
+				
+		//System.out.println("ecriture sur fichier");
 		try {
 			GeoTiffWriteParams wp = new GeoTiffWriteParams();
 			wp.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
@@ -99,17 +102,13 @@ public class GeoTiffOutput implements CountingObserver, MetricObserver{
 			throw new RuntimeException(e);
 		}
 	}
-
-	public void init(Counting c) {
-	}
-
-	public void prerun(Counting c) {
-	}
-
-	public void postrun(Counting c) {
-	}
 	
-	public void close(Counting c){
+	protected String format(double v){
+		int f = new Double(Math.floor(v)).intValue();
+		if(v == f){
+			return f+"";
+		}
+		return format.format(v);
 	}
 
 }

@@ -1,12 +1,6 @@
 package fr.inrae.act.bagap.chloe;
 
 import java.awt.Rectangle;
-
-import javax.media.jai.PlanarImage;
-
-import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.image.util.ImageUtilities;
-
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.kernel.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
@@ -17,7 +11,7 @@ public class HugeLandscapeMetricAnalysis extends SlidingLandscapeMetricAnalysis 
 	
 	private double[][] outDatas;
 	
-	private int tileYSize = 500;
+	private int tileYSize = 1000;
 	
 	//public HugeLandscapeMetricAnalysis(GridCoverage2D coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {
 	public HugeLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {	

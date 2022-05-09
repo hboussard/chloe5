@@ -1,18 +1,14 @@
 package fr.inrae.act.bagap.chloe.kernel;
 
-import com.aparapi.Kernel;
-
 public class DistanceWeightedCountValueKernel extends SlidingLandscapeMetricKernel {
 
 	private final int[] mapValues;
 	
 	@SuppressWarnings("deprecation")
-	public DistanceWeightedCountValueKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, short[] values){		
-		super(windowSize, displacement, shape, coeff, noDataValue);
-		this.setExplicit(true);
-		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
+	public DistanceWeightedCountValueKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] values, int[] unfilters){		
+		super(windowSize, displacement, shape, coeff, noDataValue, unfilters);
 		int maxV = 0;
-		for(short v : values){
+		for(int v : values){
 			maxV = Math.max(v, maxV);
 		}
 		maxV++;
@@ -40,25 +36,27 @@ public class DistanceWeightedCountValueKernel extends SlidingLandscapeMetricKern
 			}
 			
 			//if(imageIn[(y * width) + x] != -1f) { // gestion des filtres a mettre en place 
-				
-			final int mid = windowSize() / 2;
-			int ic;
-			short v;
-			int mv;				
-			for (int dy = -mid; dy <= mid; dy += 1) {
-				if(((y + dy) >= 0) && ((y + dy) < height())){
-					for (int dx = -mid; dx <= mid; dx += 1) {
-						if(((x + dx) >= 0) && ((x + dx) < width())){
-							ic = ((dy+mid) * windowSize()) + (dx+mid);
-							if(shape()[ic] == 1){
-								v = (short) imageIn()[((y + dy) * width()) + (x + dx)];		
-								if(v == noDataValue()){
-									imageOut()[ind][0] = imageOut()[ind][0] + coeff()[ic];
-								}else if(v == 0){
-									imageOut()[ind][1] = imageOut()[ind][1] + coeff()[ic];
-								}else{
-									mv = mapValues[v];
-									imageOut()[ind][mv+2] = imageOut()[ind][mv+2] + coeff()[ic];	
+			// gestion des filtres
+			if(filter((int) imageIn()[(y * width()) + x])){
+				final int mid = windowSize() / 2;
+				int ic;
+				int v;
+				int mv;				
+				for (int dy = -mid; dy <= mid; dy += 1) {
+					if(((y + dy) >= 0) && ((y + dy) < height())){
+						for (int dx = -mid; dx <= mid; dx += 1) {
+							if(((x + dx) >= 0) && ((x + dx) < width())){
+								ic = ((dy+mid) * windowSize()) + (dx+mid);
+								if(shape()[ic] == 1){
+									v = (int) imageIn()[((y + dy) * width()) + (x + dx)];		
+									if(v == noDataValue()){
+										imageOut()[ind][0] = imageOut()[ind][0] + coeff()[ic];
+									}else if(v == 0){
+										imageOut()[ind][1] = imageOut()[ind][1] + coeff()[ic];
+									}else{
+										mv = mapValues[v];
+										imageOut()[ind][mv+2] = imageOut()[ind][mv+2] + coeff()[ic];	
+									}
 								}
 							}
 						}

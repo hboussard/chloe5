@@ -3,14 +3,19 @@ package fr.inrae.act.bagap.chloe.output;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Map;
 import java.util.Set;
 
+import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 
 public class CsvOutput implements CountingObserver{
+	
+	private final DecimalFormat format;
 
 	private BufferedWriter bw;
 	
@@ -33,6 +38,10 @@ public class CsvOutput implements CountingObserver{
 		this.height = height;
 		this.cellSize = cellSize;
 		this.noDataValue = noDataValue;
+		
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		symbols.setDecimalSeparator('.');
+		format = new DecimalFormat("0.00000", symbols);
 	}
 	
 	public void init(Counting c, Set<Metric> metrics) {
@@ -77,24 +86,45 @@ public class CsvOutput implements CountingObserver{
 	}
 	
 	public void prerun(Counting c) {
-		
+		/*
 		try {
 			bw.write(x+";"+y);
 			//bw.write(new char[]{'x',';','y'});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+		*/
+		// do nothing
 	}
 
 	public void postrun(Counting c, int i, int j, Map<Metric, Double> values) {
 		
 		try {
-			
+			boolean export = true;
+			StringBuffer sb = new StringBuffer(x+";"+y);
 			for(double v : values.values()){
+				if(v == Raster.getNoDataValue()){
+					export = false;
+					break;
+				}
+				sb.append(';');
+				sb.append(format(v));
+			}
+			if(export){
+				bw.write(sb.toString());
+				bw.newLine();
+			}
+			
+			
+			/*
+			for(double v : values.values()){
+				if(v == Raster.getNoDataValue()){
+					System.out.println(x+" "+y);
+				}
 				bw.write(";"+v);
 			}
 			bw.newLine();
+			*/
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -118,6 +148,14 @@ public class CsvOutput implements CountingObserver{
 	@Override
 	public void postrun(Counting c, int id, Map<Metric, Double> values) {
 		// do nothing
+	}
+	
+	protected String format(double v){
+		int f = new Double(Math.floor(v)).intValue();
+		if(v == f){
+			return f+"";
+		}
+		return format.format(v);
 	}
 
 }

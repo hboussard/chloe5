@@ -1,17 +1,13 @@
 package fr.inrae.act.bagap.chloe.kernel;
 
-import com.aparapi.Kernel;
-
 public class DistanceWeightedCountValueAndCoupleKernelOld extends SlidingLandscapeMetricKernel {
 	
 	private final short[] values;
 	
 	private final float[] couples;
 	
-	public DistanceWeightedCountValueAndCoupleKernelOld(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, short[] values, float[] couples){
-		super(windowSize, displacement, shape, coeff, noDataValue);
-		this.setExplicit(true);
-		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
+	public DistanceWeightedCountValueAndCoupleKernelOld(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, short[] values, float[] couples, int[] unfilters){
+		super(windowSize, displacement, shape, coeff, noDataValue, unfilters);
 		this.values = values;
 		this.couples = couples;
 	}

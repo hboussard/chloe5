@@ -3,6 +3,8 @@ package fr.inrae.act.bagap.chloe.output;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,6 +17,8 @@ import fr.inrae.act.bagap.chloe.metric.Metric;
 
 public class AsciiGridOutput implements CountingObserver{
 
+	private final DecimalFormat format;
+	
 	private final String file;
 	
 	private final Metric metric;
@@ -38,6 +42,9 @@ public class AsciiGridOutput implements CountingObserver{
 		this.yllCorner = yllCorner;
 		this.cellSize = cellSize;
 		this.noDataValue = noDataValue;
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		symbols.setDecimalSeparator('.');
+		format = new DecimalFormat("0.00000", symbols);
 	}
 
 	@Override
@@ -70,7 +77,7 @@ public class AsciiGridOutput implements CountingObserver{
 	public void postrun(Counting c, int x, int y, Map<Metric, Double> values) {
 		//System.out.println(metric+" "+values.get(metric));
 		//sb.append(values.get(metric)+" ");
-		sb.append(values.get(metric));
+		sb.append(format(values.get(metric)));
 		sb.append(' ');
 		currentWidth++;
 		
@@ -87,6 +94,11 @@ public class AsciiGridOutput implements CountingObserver{
 	}
 	
 	@Override
+	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+		// do nothing
+	}
+	
+	@Override
 	public void close(Counting c, Set<Metric> metrics){
 		try {
 			writer.close();
@@ -100,10 +112,13 @@ public class AsciiGridOutput implements CountingObserver{
 			}
 		}
 	}
-
-	@Override
-	public void postrun(Counting c, int id, Map<Metric, Double> values) {
-		// do nothing
+	
+	protected String format(double v){
+		int f = new Double(Math.floor(v)).intValue();
+		if(v == f){
+			return f+"";
+		}
+		return format.format(v);
 	}
 
 }
