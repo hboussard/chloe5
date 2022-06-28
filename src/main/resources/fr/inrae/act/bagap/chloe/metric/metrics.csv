@@ -19,3 +19,4 @@ maximum;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.MaximumMetric
 MD;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.MeanDistanceMetric
 distance;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.DistanceMetric
 bocage;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.BocageMetric
+prop;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.ProportionMetric

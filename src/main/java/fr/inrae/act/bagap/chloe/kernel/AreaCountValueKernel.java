@@ -4,10 +4,10 @@ public class AreaCountValueKernel extends AreaLandscapeMetricKernel{
 
 	private final int[] mapValues;
 
-	public AreaCountValueKernel(int noDataValue, short[] values){
+	public AreaCountValueKernel(int noDataValue, int[] values){
 		super(noDataValue);
 		int maxV = 0;
-		for(short v : values){
+		for(int v : values){
 			maxV = Math.max(v, maxV);
 		}
 		maxV++;

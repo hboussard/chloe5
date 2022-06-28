@@ -1,9 +1,0 @@
-path_input=C:/Users/hboussard/data/
-path_output=C:/Users/hboussard/modelisation/chloe/chloe5/data/output/
-roi_width=1000
-roi_height=1000
-roi_x=10000
-roi_y=10000
-window_size=101
-buffer_height=500
-deplacement=1

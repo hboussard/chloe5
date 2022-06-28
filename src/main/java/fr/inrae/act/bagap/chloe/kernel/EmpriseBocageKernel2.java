@@ -2,7 +2,7 @@ package fr.inrae.act.bagap.chloe.kernel;
 
 public class EmpriseBocageKernel2 extends SlidingLandscapeMetricKernel {
 
-	private float coeffH = 10; // le bocage à un effet jusque'a coeffH fois sa hauteur
+	private float coeffH = 10; // le bocage a un effet jusque'a coeffH fois sa hauteur
 	
 	private float cellSize = 5; // la taille du pixel en metre (IGN)
 	

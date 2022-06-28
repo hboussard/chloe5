@@ -29,6 +29,7 @@ import fr.inrae.act.bagap.chloe.kernel.DistanceWeightedQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.kernel.EmpriseBocageKernel2;
 import fr.inrae.act.bagap.chloe.kernel.EmpriseBocageKernel3;
 import fr.inrae.act.bagap.chloe.kernel.LocalBocageKernel;
+import fr.inrae.act.bagap.chloe.kernel.ProportionKernel;
 import fr.inrae.act.bagap.chloe.kernel.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.chloe.metric.MetricManager;
@@ -245,9 +246,9 @@ public class SingleLandscapeMetricAnalysisFactory {
 					kernel = new DistanceWeightedQuantitativeKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), 100, unfilters);
 				}else if(metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("distance")){
 					//kernel = new EmpriseBocageKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
-					kernel = new EmpriseBocageKernel2(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
-					//kernel = new EmpriseBocageKernel3(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
-					/*
+					//kernel = new EmpriseBocageKernel2(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
+					kernel = new EmpriseBocageKernel3(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
+					
 					Coverage coverage2 = null;
 					
 					if(builder.getRasterFile2() != null){
@@ -272,7 +273,7 @@ public class SingleLandscapeMetricAnalysisFactory {
 					}else{
 						throw new IllegalArgumentException("no raster2 declared");
 					}
-					*/
+					
 					
 					Counting counting = new QuantitativeCounting(0, 6, theoreticalSize);
 					
@@ -287,11 +288,13 @@ public class SingleLandscapeMetricAnalysisFactory {
 					}
 					
 					// analysis
-					//return new MultipleLandscapeMetricAnalysis(coverage, coverage2, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, 6, displacement, kernel, counting);
-					return new SingleLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, 6, displacement, kernel, counting);
+					return new MultipleLandscapeMetricAnalysis(coverage, coverage2, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, 6, displacement, kernel, counting);
+					//return new SingleLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, 6, displacement, kernel, counting);
 					
 				}else if(metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("bocage")){
 					kernel = new LocalBocageKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
+				}else if(metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("prop")){
+					kernel = new ProportionKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
 				}else{
 					kernel = new DistanceWeightedQuantitativeKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
 				}

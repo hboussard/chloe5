@@ -11,10 +11,9 @@
   <url>http://maven.apache.org</url>
 
   <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <geotools.version>21.3</geotools.version>
     </properties>
-
 <repositories>
         <repository>
             <id>maven2-repository.dev.java.net</id>
@@ -45,6 +44,7 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <encoding>ISO-8859-1</encoding>
                 </configuration>
             </plugin>
         </plugins>
@@ -96,13 +96,13 @@
 		<artifactId>csv</artifactId>
 		<version>1.0</version>
 	</dependency>
-     <!-- 
+    
     <dependency>
     	<groupId>fr.inra.sad.bagap</groupId>
     	<artifactId>apiland</artifactId>
     	<version>1.0</version>
     </dependency>
-     -->
+    
   </dependencies>
   
   

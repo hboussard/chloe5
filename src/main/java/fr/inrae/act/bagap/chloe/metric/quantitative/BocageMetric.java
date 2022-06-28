@@ -17,9 +17,9 @@ public class BocageMetric extends Metric implements QuantitativeMetric {
 		}
 		value /= co.validValues();
 		
-		if(value > 0.40){
+		if(value > 0.75){
 			value = 5; // 5 fois la hauteur des arbres en forets
-		}else if(value <0.10){
+		}else if(value < 0.20){
 			value = 1; // 1 fois la hauteur des arbres isoles
 		}else{
 			value = 10; // 10 fois la hauteur des arbres en haie 

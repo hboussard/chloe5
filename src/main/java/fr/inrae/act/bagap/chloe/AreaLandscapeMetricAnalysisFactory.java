@@ -69,7 +69,7 @@ public class AreaLandscapeMetricAnalysisFactory  {
 				throw new IllegalArgumentException(builder.getRasterFile()+" is not a recognize raster");
 			}
 			GridCoverage2D areaCoverage2D = (GridCoverage2D) reader.read(null);
-			reader.dispose(); // a  tester, ca va peut-etre bloquer la lecture des donnees
+			reader.dispose(); 
 			
 			areaCoverage = new FileCoverage(areaCoverage2D, coverage.getEntete());
 			
@@ -134,7 +134,7 @@ public class AreaLandscapeMetricAnalysisFactory  {
 						
 		}else{ // qualitative
 			// recuperation des valeurs
-			short[] values = builder.getValues();
+			int[] values = builder.getValues();
 			if(values == null){
 				float[] datas = coverage.getDatas(new Rectangle(roiX, roiY, roiWidth, roiHeight));
 				Set<Float> inValues = new HashSet<Float>();
@@ -142,7 +142,7 @@ public class AreaLandscapeMetricAnalysisFactory  {
 					inValues.add(d);
 				}
 				int index = 0;
-				values = new short[inValues.size()];
+				values = new int[inValues.size()];
 				for(float d : inValues){
 					values[index++] = (short) d;
 				}
@@ -153,11 +153,11 @@ public class AreaLandscapeMetricAnalysisFactory  {
 			if(MetricManager.hasCoupleMetric(metrics)){
 				couples = new float[(((values.length*values.length)-values.length)/2) + values.length];
 				int index = 0;
-				for(short s1 : values){
+				for(int s1 : values){
 					couples[index++] = Couple.getCouple(s1, s1);
 				}
-				for(short s1 : values){
-					for(short s2 : values){
+				for(int s1 : values){
+					for(int s2 : values){
 						if(s1 < s2) {
 							couples[index++] = Couple.getCouple(s1, s2);
 						}

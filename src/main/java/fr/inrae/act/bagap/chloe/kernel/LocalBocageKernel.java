@@ -2,7 +2,7 @@ package fr.inrae.act.bagap.chloe.kernel;
 
 public class LocalBocageKernel extends SlidingLandscapeMetricKernel {
 
-	private float minHauteur = 5; // hauteur en metres minimum de l'element boise pour etre pris en compte
+	private float minHauteur = 1; // hauteur en metres minimum de l'element boise pour etre pris en compte
 	
 	public LocalBocageKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] unfilters) {
 		super(windowSize, displacement, shape, coeff, noDataValue, unfilters);

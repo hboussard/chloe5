@@ -48,7 +48,7 @@ public class LandscapeMetricAnalysisFactory {
 				throw new IllegalArgumentException(builder.getRasterFile()+" is not a recognize raster");
 			}
 			GridCoverage2D coverage2D = (GridCoverage2D) reader.read(null);
-			reader.dispose(); // a  tester, ca va peut-etre bloquer la lecture des donnees
+			reader.dispose(); 
 			
 			inWidth = (Integer) coverage2D.getProperty("image_width");
 			inHeight = (Integer) coverage2D.getProperty("image_height");

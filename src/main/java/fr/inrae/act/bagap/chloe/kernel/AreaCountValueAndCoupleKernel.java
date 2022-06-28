@@ -8,11 +8,11 @@ public class AreaCountValueAndCoupleKernel extends AreaLandscapeMetricKernel{
 	
 	private final int[] mapValues;
 
-	public AreaCountValueAndCoupleKernel(int noDataValue, short[] values){
+	public AreaCountValueAndCoupleKernel(int noDataValue, int[] values){
 		super(noDataValue);
 		this.nbValues = values.length;
 		int maxV = 0;
-		for(short v : values){
+		for(int v : values){
 			maxV = Math.max(v, maxV);
 		}
 		maxV++;
@@ -22,13 +22,13 @@ public class AreaCountValueAndCoupleKernel extends AreaLandscapeMetricKernel{
 		}
 		mapCouples = new int[values.length][values.length];
 		int index = 0;
-		for(short v : values){
+		for(int v : values){
 			mapCouples[mapValues[v]][mapValues[v]] = index;
 			index++;
 		}
 		
-		for(short v1 : values){
-			for(short v2 : values){
+		for(int v1 : values){
+			for(int v2 : values){
 				if(v1 < v2) {
 					mapCouples[mapValues[v1]][mapValues[v2]] = index;
 					mapCouples[mapValues[v2]][mapValues[v1]] = index;
