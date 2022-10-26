@@ -29,7 +29,7 @@ import fr.inrae.act.bagap.chloe.kernel.DistanceWeightedQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.kernel.EmpriseBocageKernel2;
 import fr.inrae.act.bagap.chloe.kernel.EmpriseBocageKernel3;
 import fr.inrae.act.bagap.chloe.kernel.LocalBocageKernel;
-import fr.inrae.act.bagap.chloe.kernel.ProportionKernel;
+//import fr.inrae.act.bagap.chloe.kernel.ProportionKernel;
 import fr.inrae.act.bagap.chloe.kernel.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.chloe.metric.MetricManager;
@@ -263,7 +263,7 @@ public class SingleLandscapeMetricAnalysisFactory {
 							throw new IllegalArgumentException(builder.getRasterFile()+" is not a recognize raster");
 						}
 						GridCoverage2D coverage2D = (GridCoverage2D) reader.read(null);
-						reader.dispose(); // a  tester, ca va peut-etre bloquer la lecture des donnees
+						reader.dispose(); // aï¿½ tester, ca va peut-etre bloquer la lecture des donnees
 						
 						coverage2 = new FileCoverage(coverage2D, coverage.getEntete());
 						
@@ -293,8 +293,8 @@ public class SingleLandscapeMetricAnalysisFactory {
 					
 				}else if(metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("bocage")){
 					kernel = new LocalBocageKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
-				}else if(metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("prop")){
-					kernel = new ProportionKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
+			//	}else if(metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("prop")){
+			//		kernel = new ProportionKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
 				}else{
 					kernel = new DistanceWeightedQuantitativeKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
 				}

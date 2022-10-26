@@ -12,9 +12,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import com.csvreader.CsvReader;
-import com.csvreader.CsvReader.CatastrophicException;
-import com.csvreader.CsvReader.FinalizedException;
+import org.jumpmind.symmetric.csv.CsvReader;
 
 import fr.inrae.act.bagap.chloe.metric.couple.CoupleMetric;
 import fr.inrae.act.bagap.chloe.metric.quantitative.QuantitativeMetric;
@@ -104,10 +102,6 @@ public class MetricManager {
 				}
 			}
 			buf.close();
-		}catch(FinalizedException ex){
-			ex.printStackTrace();
-		}catch(CatastrophicException ex){
-			ex.printStackTrace();
 		}catch(IOException ex){
 			ex.printStackTrace();
 		}finally{
