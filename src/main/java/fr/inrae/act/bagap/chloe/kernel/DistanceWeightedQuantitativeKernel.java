@@ -31,10 +31,11 @@ public class DistanceWeightedQuantitativeKernel extends SlidingLandscapeMetricKe
 			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
 			
 			// phase d'initialisation de la structure de données
-			for(int i=0; i<6; i++){
+			for(int i=0; i<imageOut()[0].length; i++){
 				imageOut()[ind][i] = 0.0f;
 			}
 			
+			imageOut()[ind][6] = imageIn()[(y * width()) + x]; // affectation de la valeur du pixel central
 			
 			if(filter((short) imageIn()[(y * width()) + x])){
 				final int mid = windowSize() / 2;

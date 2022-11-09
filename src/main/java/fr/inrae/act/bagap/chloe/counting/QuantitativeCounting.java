@@ -12,6 +12,8 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 	
 	private double sum, squareSum, minimum, maximum;
 	
+	private float centralValue;
+	
 	public QuantitativeCounting(int minRange, int maxRange) {	
 		super(minRange, maxRange);
 	}
@@ -56,6 +58,8 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 		minimum = counts[4];
 		
 		maximum = counts[5];
+		
+		centralValue = (float) counts[6];
 	}
 	
 	@Override
@@ -113,5 +117,9 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 		return maximum;
 	}
 
+	@Override 
+	public float centralValue(){
+		return centralValue;
+	}
 
 }

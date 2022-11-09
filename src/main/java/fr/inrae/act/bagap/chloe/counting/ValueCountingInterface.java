@@ -21,4 +21,11 @@ public interface ValueCountingInterface {
 	 */
 	int countClass();
 	
+	
+	/**
+	 * the central value
+	 * @return the central value
+	 */
+	float centralValue();
+	
 }

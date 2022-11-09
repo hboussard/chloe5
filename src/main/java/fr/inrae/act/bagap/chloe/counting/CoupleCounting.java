@@ -132,7 +132,10 @@ public class CoupleCounting extends Counting implements CoupleCountingInterface 
 	
 	@Override
 	public double countCouple(float c){
-		return countCouples.get(c);
+		if(countCouples.containsKey(c)){
+			return countCouples.get(c);
+		}
+		return 0;
 	}
 
 	@Override

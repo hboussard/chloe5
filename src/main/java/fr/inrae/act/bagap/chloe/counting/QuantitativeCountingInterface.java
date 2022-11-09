@@ -31,4 +31,10 @@ public interface QuantitativeCountingInterface {
 	 * @return the maximum of values
 	 */
 	double maximum();
+	
+	/**
+	 * to get the central value
+	 * @return the central value
+	 */
+	float centralValue();
 }

@@ -33,9 +33,4 @@ public class MultipleCounting extends Counting {
 		}
 	}
 
-	
-	
-	
-	
-
 }
