@@ -27,19 +27,42 @@ import fr.inrae.act.bagap.raster.FileCoverage;
 public class Script {
 
 	public static void main(String[] args){
-		//scriptTestDistanceIGN5();
-		//scriptGrainEloise();
-		//scriptEcopaysageBretagneCGTV();
-		//retileBaieLancieux();
-		//luminanceBaieLancieux();
-		//boisementBaieLancieux();
-		//scriptGrainGers();
-		//scriptGrainPaysdelaLoire();
-		//scriptSHDIClusterGrainPaysdelaLoire();
-		//propClassifGrainPaysdelaLoire();
-		//test2();
+		scriptTestMPS();
 	}
 	
+	private static void scriptTestMPS(){
+		
+		long begin = System.currentTimeMillis();
+		
+		String path = "G:/PREPARE/toulouse/model/test_MPS/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(path+"s1_cover_2020.asc");
+		builder.addMetric("Central");
+		builder.addMetric("pCentral");
+		builder.addMetric("pNV_6");
+		builder.addMetric("N-valid");
+		builder.addMetric("pNC_6-24");
+		builder.setDisplacement(10);
+		builder.setWindowSize(401);
+		builder.addAsciiGridOutput("Central", path+"chloe5/data.asc");
+		builder.addAsciiGridOutput("pCentral", path+"chloe5/data1.asc");
+		builder.addAsciiGridOutput("pNV_6", path+"chloe5/data2.asc");
+		builder.addAsciiGridOutput("N-valid", path+"chloe5/data3.asc");
+		builder.addAsciiGridOutput("pNC_6-24", path+"chloe5/data4.asc");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+		
+		MatrixManager.visualize(path+"chloe5/data.asc");
+		MatrixManager.visualize(path+"chloe5/data1.asc");
+		MatrixManager.visualize(path+"chloe5/data2.asc");
+		MatrixManager.visualize(path+"chloe5/data3.asc");
+		MatrixManager.visualize(path+"chloe5/data4.asc");
+	}
+
 	private static void test2(){
 		
 		GridCoverage2D cov = CoverageManager.get("F:/IGN/35-2020-0320-6785-LA93-5M-MNHC/35-2020-0320-6785-LA93-5M-MNHC.tif");

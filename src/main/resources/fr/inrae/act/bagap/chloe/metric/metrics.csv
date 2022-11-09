@@ -20,3 +20,10 @@ MD;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.MeanDistanceMetric
 distance;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.DistanceMetric
 bocage;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.BocageMetric
 prop;quantitative;;fr.inrae.act.bagap.chloe.metric.quantitative.ProportionMetric
+MPS;patch;;fr.inrae.act.bagap.chloe.metric.patch.MeanPatchSizeIndex
+NP;patch;;fr.inrae.act.bagap.chloe.metric.patch.PatchNumberIndex
+AREA;patch;;fr.inrae.act.bagap.chloe.metric.patch.SurfaceIndex
+Nclass;value;;fr.inrae.act.bagap.chloe.metric.value.CountClassMetric
+Central;value;;fr.inrae.act.bagap.chloe.metric.value.CentralValue
+pCentral;value;;fr.inrae.act.bagap.chloe.metric.value.RateCentralValue
+vCentral;value;;fr.inrae.act.bagap.chloe.metric.quantitative.VCentralValue

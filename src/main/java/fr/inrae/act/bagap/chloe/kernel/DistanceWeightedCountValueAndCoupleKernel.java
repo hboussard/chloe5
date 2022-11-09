@@ -56,6 +56,9 @@ public class DistanceWeightedCountValueAndCoupleKernel extends SlidingLandscapeM
 				imageOut()[ind][i] = 0f;
 			}
 			
+			
+			imageOut()[ind][2] = imageIn()[(y * width()) + x]; // affectation de la valeur du pixel central
+			
 			//if(imageIn[(y * width) + x] != -1f) {
 					
 			final int mid = windowSize() / 2;
@@ -77,7 +80,7 @@ public class DistanceWeightedCountValueAndCoupleKernel extends SlidingLandscapeM
 										imageOut()[ind][1] = imageOut()[ind][1] + coeff()[ic];
 									}else{
 										mv = mapValues[v];
-										imageOut()[ind][mv+2] = imageOut()[ind][mv+2] + coeff()[ic];
+										imageOut()[ind][mv+3] = imageOut()[ind][mv+3] + coeff()[ic];
 									}
 								}
 								
@@ -87,13 +90,13 @@ public class DistanceWeightedCountValueAndCoupleKernel extends SlidingLandscapeM
 										v_V = (short) imageIn()[((y + dy - 1) * width()) + (x + dx)];
 										
 										if(v == noDataValue() || v_V == noDataValue()){
-											imageOut()[ind][nbValues+2] = imageOut()[ind][nbValues+2] + coeff()[ic];
+											imageOut()[ind][nbValues+3] = imageOut()[ind][nbValues+3] + coeff()[ic];
 										}else{
 											if(v == 0 || v_V == 0){
-												imageOut()[ind][nbValues+3] = imageOut()[ind][nbValues+3] + coeff()[ic];
+												imageOut()[ind][nbValues+4] = imageOut()[ind][nbValues+4] + coeff()[ic];
 											}else{
 												mv = mapCouples[mapValues[v]][mapValues[v_V]];
-												imageOut()[ind][nbValues+mv+4] = imageOut()[ind][nbValues+mv+4] + coeff()[ic];
+												imageOut()[ind][nbValues+mv+5] = imageOut()[ind][nbValues+mv+5] + coeff()[ic];
 											}
 										}
 									}
@@ -105,13 +108,13 @@ public class DistanceWeightedCountValueAndCoupleKernel extends SlidingLandscapeM
 										v_H = (short) imageIn()[((y + dy) * width()) + (x + dx - 1)];
 										
 										if(v == noDataValue() || v_H == noDataValue()){
-											imageOut()[ind][nbValues+2] = imageOut()[ind][nbValues+2] + coeff()[ic];
+											imageOut()[ind][nbValues+3] = imageOut()[ind][nbValues+3] + coeff()[ic];
 										}else{
 											if(v == 0 || v_H == 0){
-												imageOut()[ind][nbValues+3] = imageOut()[ind][nbValues+3] + coeff()[ic];
+												imageOut()[ind][nbValues+4] = imageOut()[ind][nbValues+4] + coeff()[ic];
 											}else{
 												mv = mapCouples[mapValues[v]][mapValues[v_H]];
-												imageOut()[ind][nbValues+mv+4] = imageOut()[ind][nbValues+mv+4] + coeff()[ic];
+												imageOut()[ind][nbValues+mv+5] = imageOut()[ind][nbValues+mv+5] + coeff()[ic];
 											}
 										}
 									}

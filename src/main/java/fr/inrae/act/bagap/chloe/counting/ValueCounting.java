@@ -14,6 +14,8 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	
 	private int theoreticalSize;
 	
+	private float centralValue;
+	
 	private float totalValues;
 	
 	private float validValues;
@@ -62,16 +64,18 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 		totalValues += counts[1];
 		validValues += counts[1];
 		
+		centralValue = (float) counts[2];
+		
 		countValues.clear();
 		
-		for(int i=2; i<counts.length; i++){
+		for(int i=3; i<counts.length; i++){
 			totalValues += counts[i];
 			validValues += counts[i];
 			totalCountValues += counts[i];
 			if(counts[i] > 0){
 				countClass++;
 			}
-			countValues.put(values[i-2], counts[i]);
+			countValues.put(values[i-3], counts[i]);
 		}
 	}
 	
@@ -102,7 +106,13 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	
 	@Override
 	public double countValue(int v){
-		return countValues.get(v);
+		return countValues.get(v);	
+		/*
+		if(countValues.containsKey(v)){
+			return countValues.get(v);	
+		}
+		return 0;
+		*/
 	}
 
 	@Override
@@ -110,4 +120,8 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 		return countClass;
 	}
 	
+	@Override
+	public float centralValue(){
+		return centralValue;
+	}
 }

@@ -61,7 +61,7 @@ public class SingleLandscapeMetricAnalysis extends SlidingLandscapeMetricAnalysi
 		int nextJ = 0;
 		int index;
 		for(int b=0; b<roiHeight(); b+=buffer){
-			System.out.println(b);
+			//System.out.println(b);
 			kernel().applySlidingWindow(b, Math.min(buffer, (roiHeight()-b)));
 			kernel().get(outDatas);
 			

@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import org.jumpmind.symmetric.csv.CsvReader;
 
 import fr.inrae.act.bagap.chloe.metric.couple.CoupleMetric;
+import fr.inrae.act.bagap.chloe.metric.patch.PatchMetric;
 import fr.inrae.act.bagap.chloe.metric.quantitative.QuantitativeMetric;
 import fr.inrae.act.bagap.chloe.metric.value.ValueMetric;
 
@@ -273,6 +274,24 @@ public class MetricManager {
 	public static boolean hasOnlyQuantitativeMetric(Set<Metric> metrics) {
 		for(Metric m : metrics){
 			if(!(m instanceof QuantitativeMetric)){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean hasOnlyQualitativeMetric(Set<Metric> metrics) {
+		for(Metric m : metrics){
+			if(!(m instanceof QualitativeMetric)){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean hasOnlyPatchMetric(Set<Metric> metrics) {
+		for(Metric m : metrics){
+			if(!(m instanceof PatchMetric)){
 				return false;
 			}
 		}

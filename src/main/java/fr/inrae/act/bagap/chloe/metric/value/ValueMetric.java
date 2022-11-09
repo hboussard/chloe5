@@ -1,5 +1,7 @@
 package fr.inrae.act.bagap.chloe.metric.value;
 
-public interface ValueMetric {
+import fr.inrae.act.bagap.chloe.metric.QualitativeMetric;
+
+public interface ValueMetric extends QualitativeMetric {
 
 }

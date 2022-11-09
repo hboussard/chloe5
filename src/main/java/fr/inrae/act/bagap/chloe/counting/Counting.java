@@ -16,6 +16,7 @@ public abstract class Counting implements
 	ValueCountingInterface,
 	CoupleCountingInterface,
 	QuantitativeCountingInterface,
+	PatchCountingInterface,
 	MetricObserver {
 
 	/**
@@ -34,6 +35,10 @@ public abstract class Counting implements
 	 * the observers
 	 */
 	private Set<CountingObserver> observers;
+	
+	public Counting(){
+		this(0 ,0);
+	}
 	
 	public Counting(int minRange, int maxRange){
 		this.minRange = minRange;
@@ -240,5 +245,18 @@ public abstract class Counting implements
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public int getNbPatches(){
+		throw new UnsupportedOperationException();
+	}
 	
+	@Override
+	public double getTotalSurface(){
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public float centralValue(){
+		throw new UnsupportedOperationException();
+	}
 }
