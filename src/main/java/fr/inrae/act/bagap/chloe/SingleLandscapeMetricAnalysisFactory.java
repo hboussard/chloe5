@@ -27,6 +27,9 @@ import fr.inrae.act.bagap.chloe.kernel.DistanceWeightedCountCoupleKernel;
 import fr.inrae.act.bagap.chloe.kernel.DistanceWeightedCountValueAndCoupleKernel;
 import fr.inrae.act.bagap.chloe.kernel.DistanceWeightedCountValueKernel;
 import fr.inrae.act.bagap.chloe.kernel.DistanceWeightedQuantitativeKernel;
+import fr.inrae.act.bagap.chloe.kernel.FastGaussianWeightedCountValueKernel;
+import fr.inrae.act.bagap.chloe.kernel.FastGaussianWeightedCountCoupleKernel;
+import fr.inrae.act.bagap.chloe.kernel.FastGaussianWeightedCountValueAndCoupleKernel;
 import fr.inrae.act.bagap.chloe.kernel.EmpriseBocageKernel2;
 import fr.inrae.act.bagap.chloe.kernel.EmpriseBocageKernel3;
 import fr.inrae.act.bagap.chloe.kernel.LocalBocageKernel;
@@ -262,7 +265,7 @@ public class SingleLandscapeMetricAnalysisFactory {
 							File file = new File(builder.getRasterFile2());
 							reader = new GeoTiffReader(file);
 						}else{
-							throw new IllegalArgumentException(builder.getRasterFile()+" is not a recognize raster");
+							throw new IllegalArgumentException(builder.getRasterFile()+" is not a recognized raster");
 						}
 						GridCoverage2D coverage2D = (GridCoverage2D) reader.read(null);
 						reader.dispose(); // a  tester, ca va peut-etre bloquer la lecture des donnees
@@ -359,7 +362,10 @@ public class SingleLandscapeMetricAnalysisFactory {
 				if(MetricManager.hasOnlyValueMetric(metrics)){
 					nbValues += 1 + values.length;
 					
-					kernel = new DistanceWeightedCountValueKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);
+					if( builder.getWindowDistanceType()==WindowDistanceType.FAST_WEIGHTED)
+						kernel = new FastGaussianWeightedCountValueKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);						
+					else
+						kernel = new DistanceWeightedCountValueKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);
 					counting = new ValueCounting(0, nbValues, values, theoreticalSize);
 					
 					// add metrics to counting
@@ -374,7 +380,10 @@ public class SingleLandscapeMetricAnalysisFactory {
 					
 				}else if(MetricManager.hasOnlyCoupleMetric(metrics)){
 					nbValues += couples.length;
-					kernel = new DistanceWeightedCountCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);
+					if( builder.getWindowDistanceType()==WindowDistanceType.FAST_WEIGHTED)
+						kernel = new FastGaussianWeightedCountCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);						
+					else
+						kernel = new DistanceWeightedCountCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);
 					counting = new CoupleCounting(0, nbValues, values.length, couples, theoreticalCoupleSize);
 					
 					// add metrics to counting
@@ -392,7 +401,10 @@ public class SingleLandscapeMetricAnalysisFactory {
 					
 					Counting[] countings = new Counting[2];
 					
-					kernel = new DistanceWeightedCountValueAndCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);
+					if( builder.getWindowDistanceType()==WindowDistanceType.FAST_WEIGHTED)
+						kernel = new FastGaussianWeightedCountValueAndCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);						
+					else
+						kernel = new DistanceWeightedCountValueAndCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);
 					ValueCounting vCounting = new ValueCounting(0, values.length+3, values, theoreticalSize);
 					// add metrics to counting
 					for(Metric m : metrics){
