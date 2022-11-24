@@ -13,7 +13,6 @@ import fr.inrae.act.bagap.raster.Coverage;
 
 public class SingleAreaLandscapeMetricAnalysis extends AreaLandscapeMetricAnalysis {
 	
-	//public SingleAreaLandscapeMetricAnalysis(GridCoverage2D coverage, GridCoverage2D areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, short[] values, int nbValues, AreaLandscapeMetricKernel kernel, Counting counting) {
 	public SingleAreaLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, short[] values, int nbValues, AreaLandscapeMetricKernel kernel, Counting counting) {	
 		super(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, /*values,*/ nbValues, kernel, counting);
 	}

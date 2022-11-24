@@ -32,7 +32,7 @@ public class AreaCountValueKernel extends AreaLandscapeMetricKernel{
 						outDatas().get(va)[1] = outDatas().get(va)[1] + 1;
 					}else{
 						mv = mapValues[v];
-						outDatas().get(va)[mv+2] = outDatas().get(va)[mv+2] + 1;
+						outDatas().get(va)[mv+3] = outDatas().get(va)[mv+3] + 1;
 					}
 				}
 			}

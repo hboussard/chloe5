@@ -1,19 +1,21 @@
 package fr.inrae.act.bagap.chloe;
 
 import java.awt.Rectangle;
+import java.util.Set;
+
+import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inrae.act.bagap.chloe.counting.Counting;
-import fr.inrae.act.bagap.chloe.kernel.SlidingLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.kernel.SelectedLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public class SingleLandscapeMetricAnalysis extends SlidingLandscapeMetricAnalysis {
+public class SingleSelectedLandscapeMetricAnalysis extends SelectedLandscapeMetricAnalysis {
 
 	private int buffer;
 	
 	private double[][] outDatas;
 	
-	//public SingleLandscapeMetricAnalysis(GridCoverage2D coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {
-	public SingleLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {		
-		super(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+	public SingleSelectedLandscapeMetricAnalysis(Coverage coverage, Set<Pixel> pixels, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, SelectedLandscapeMetricKernel kernel, Counting counting) {		
+		super(coverage, pixels, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
 	}
 	
 	@Override
@@ -44,10 +46,10 @@ public class SingleLandscapeMetricAnalysis extends SlidingLandscapeMetricAnalysi
 		kernel().setImageIn(inDatas);
 		
 		// ajustement du buffer de calcul
-		buffer = (short) Math.max(displacement(), LandscapeMetricAnalysisFactory.bufferSize());
+		buffer = LandscapeMetricAnalysisFactory.bufferSize();
 		
 		// gestion des sorties
-		outDatas = new double[((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1))][nbValues()];
+		outDatas = new double[(((roiWidth()-1)+1)*((buffer-1)+1))][nbValues()];
 		kernel().setImageOut(outDatas);
 		
 		// initialisation du comptage
@@ -62,18 +64,23 @@ public class SingleLandscapeMetricAnalysis extends SlidingLandscapeMetricAnalysi
 		int index;
 		for(int b=0; b<roiHeight(); b+=buffer){
 			//System.out.println(b);
-			kernel().applySlidingWindow(b, Math.min(buffer, (roiHeight()-b)));
+			kernel().applySelectedWindow(b, Math.min(buffer, (roiHeight()-b)));
 			kernel().get(outDatas);
 			
 			index = 0;
-			for(int j=nextJ%buffer; j<Math.min(buffer, roiHeight()-b); j+=displacement()){
+			for(int j=nextJ%buffer; j<Math.min(buffer, roiHeight()-b); j++){
 				//System.out.println(j);
-				nextJ += displacement();
-				for(int i=0; i<roiWidth(); i+=displacement()){
+				nextJ++;
+				for(int i=0; i<roiWidth(); i++){
 					
-					counting().setCounts(outDatas[index]);
-					counting().calculate();
-					counting().export(i, j+b);
+					Pixel p = new Pixel(i, j+b);
+					if(pixels().contains(p)){
+						//System.out.println("ici "+i+" "+(j+b));
+						
+						counting().setCounts(outDatas[index]);
+						counting().calculate();
+						counting().export(i, j+b);
+					}
 					
 					index++;
 				}

@@ -1,11 +1,10 @@
 package fr.inrae.act.bagap.chloe.kernel;
 
-public class DistanceWeightedCountValueKernel extends SlidingLandscapeMetricKernel {
+public class SlidingDistanceWeightedCountValueKernel extends SlidingLandscapeMetricKernel {
 
 	private final int[] mapValues;
 	
-	@SuppressWarnings("deprecation")
-	public DistanceWeightedCountValueKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] values, int[] unfilters){		
+	public SlidingDistanceWeightedCountValueKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] values, int[] unfilters){		
 		super(windowSize, displacement, shape, coeff, noDataValue, unfilters);
 		int maxV = 0;
 		for(int v : values){

@@ -978,7 +978,6 @@ public class Script {
 		System.out.println("time computing : "+(end - begin));
 	}
 	
-	
 	private static void scriptGrainBretagne(){
 		
 		long begin = System.currentTimeMillis();
@@ -1268,7 +1267,6 @@ public class Script {
 		
 	}
 	
-	
 	private static void scriptFeature(){
 		String path = "F:/chloe/chloe5/data/";
 		
@@ -1289,7 +1287,6 @@ public class Script {
 		long end = System.currentTimeMillis();
 		System.out.println("time computing : "+(end - begin));
 	}
-	
 	
 	private static void scriptTest(String singleOrHuge){
 		String path = "";
@@ -1791,7 +1788,7 @@ public class Script {
 		builder.setAnalysisType(WindowAnalysisType.SELECTED);
 		builder.setRasterFile(path+"PF.asc");
 		builder.setWindowSize(151);
-		builder.setPointFilter(path+"points.csv");
+		builder.setPointsFilter(path+"points.csv");
 		builder.addAscExportWindowOutput(path+"filters");
 		LandscapeMetricAnalysis analysis = builder.build();
 		

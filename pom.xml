@@ -113,8 +113,13 @@
 	    <artifactId>symmetric-csv</artifactId>
 	    <version>3.5.19</version>
 	</dependency>
-
-    
+    <!-- 
+    <dependency>
+    	<groupId>fr.inra.sad.bagap</groupId>
+    	<artifactId>apiland</artifactId>
+    	<version>1.0</version>
+    </dependency>
+     -->
   </dependencies>
   
   

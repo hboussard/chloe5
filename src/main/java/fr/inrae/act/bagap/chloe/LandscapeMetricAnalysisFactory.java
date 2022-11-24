@@ -27,7 +27,11 @@ public class LandscapeMetricAnalysisFactory {
 		return bufferSize;
 	}
 
-	public static LandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder) throws IOException {
+	public static void setBufferSize(int buff){
+		bufferSize = buff;
+	}
+	
+ 	public static LandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder) throws IOException {
 		
 		//GridCoverage2D coverage;
 		Coverage coverage;
@@ -101,22 +105,18 @@ public class LandscapeMetricAnalysisFactory {
 			}
 			
 			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (maxTile/1000.0)){
-				return SingleLandscapeMetricAnalysisFactory.create(builder, coverage);
+				return SingleSlidingLandscapeMetricAnalysisFactory.create(builder, coverage);
 			}else{
-				return HugeLandscapeMetricAnalysisFactory.create(builder, coverage);
+				return HugeSlidingLandscapeMetricAnalysisFactory.create(builder, coverage);
 			}
 			
 			//return HugeLandscapeMetricAnalysisFactory.create(builder, coverage);
 			//return SingleLandscapeMetricAnalysisFactory.create(builder, coverage);
 			
 		}else if(builder.getAnalysisType() == WindowAnalysisType.SELECTED){
-			/*
-			// gestion du selected
-			if(builder.getAnalysisType() == WindowAnalysisType.SELECTED){
-				Set<Pixel> pixels = new TreeSet<Pixel>();
-				// TODO
-			}
-			*/
+			//Set<Pixel> pixels = new TreeSet<Pixel>();
+			return SingleSelectedLandscapeMetricAnalysisFactory.create(builder, coverage);
+			
 		}else if(builder.getAnalysisType() == WindowAnalysisType.AREA){
 			return AreaLandscapeMetricAnalysisFactory.create(builder, coverage);
 		}

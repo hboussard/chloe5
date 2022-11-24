@@ -14,7 +14,6 @@ public class HugeAreaLandscapeMetricAnalysis extends AreaLandscapeMetricAnalysis
 	
 	private int tileYSize = 10000;
 
-	//public HugeAreaLandscapeMetricAnalysis(GridCoverage2D coverage, GridCoverage2D areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, /*short[] values,*/ int nbValues, AreaLandscapeMetricKernel kernel, Counting counting) {
 	public HugeAreaLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, /*short[] values,*/ int nbValues, AreaLandscapeMetricKernel kernel, Counting counting) {	
 		super(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, nbValues, kernel, counting);
 	}

@@ -5,7 +5,7 @@ import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.kernel.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public class HugeLandscapeMetricAnalysis extends SlidingLandscapeMetricAnalysis {
+public class HugeSlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAnalysis {
 	
 	private int buffer;
 	
@@ -14,7 +14,7 @@ public class HugeLandscapeMetricAnalysis extends SlidingLandscapeMetricAnalysis 
 	private int tileYSize = 1000;
 	
 	//public HugeLandscapeMetricAnalysis(GridCoverage2D coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {
-	public HugeLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {	
+	public HugeSlidingLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {	
 		super(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 	}
 	

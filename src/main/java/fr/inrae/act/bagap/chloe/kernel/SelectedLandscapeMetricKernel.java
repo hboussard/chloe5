@@ -1,12 +1,14 @@
 package fr.inrae.act.bagap.chloe.kernel;
 
+import java.util.Set;
+
 import com.aparapi.Kernel;
 
-public abstract class SlidingLandscapeMetricKernel extends Kernel {
+import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+
+public abstract class SelectedLandscapeMetricKernel extends Kernel {
 
 	private final int windowSize;
-	
-	private final int displacement;
 	
 	private final short[] shape;
 	
@@ -24,37 +26,21 @@ public abstract class SlidingLandscapeMetricKernel extends Kernel {
 	
 	private int bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax; // in pixels
 	
-	private int[] unfilters;
+	private Set<Pixel> pixels;
 	
 	@SuppressWarnings("deprecation")
-	protected SlidingLandscapeMetricKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] unfilters){
+	protected SelectedLandscapeMetricKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue){
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.windowSize = windowSize;
-		this.displacement = displacement;
+		this.pixels = pixels;
 		this.shape = shape;
 		this.coeff = coeff;
 		this.noDataValue = noDataValue;
-		this.unfilters = unfilters;
-	}
-	
-	protected boolean filter(int f){
-		if(unfilters != null){
-			for(int uf : unfilters){
-				if(uf == f){
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 	
 	public int windowSize(){
 		return this.windowSize;
-	}
-	
-	protected int displacement(){
-		return this.displacement;
 	}
 	
 	protected short[] shape(){
@@ -97,10 +83,6 @@ public abstract class SlidingLandscapeMetricKernel extends Kernel {
 		this.imageIn = imageIn;
 	}
 	
-	public void setTheY(int theY){
-		this.theY = theY;
-	}
-
 	protected float[] imageIn(){
 		return imageIn;
 	}
@@ -113,7 +95,7 @@ public abstract class SlidingLandscapeMetricKernel extends Kernel {
 		return imageOut;
 	}
 	
-	public void applySlidingWindow(int theY, int buffer) {
+	public void applySelectedWindow(int theY, int buffer) {
 		this.theY = theY;
 		//execute(width * buffer);
 		execute((width - bufferROIXMin - bufferROIXMax) * buffer);
@@ -145,5 +127,9 @@ public abstract class SlidingLandscapeMetricKernel extends Kernel {
 	
 	public int bufferROIYMax(){
 		return this.bufferROIYMax;
+	}
+
+	public Set<Pixel> pixels(){
+		return pixels;
 	}
 }

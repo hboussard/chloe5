@@ -36,7 +36,7 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	private Set<CountingObserver> observers;
 
-	private String csv, points, exportWindowPath, asciiGridFolder;
+	private String csv, points, pixels, exportWindowPath, asciiGridFolder;
 	
 	private Map<String, String> asciiOutputs;
 	
@@ -87,6 +87,7 @@ public class LandscapeMetricAnalysisBuilder {
 		this.csv = null;
 		this.asciiGridFolder = null;
 		this.points = null;
+		this.pixels = null;
 		this.exportWindowPath = null;
 		this.values = null;
 		this.asciiOutputs = new HashMap<String, String>();
@@ -204,8 +205,12 @@ public class LandscapeMetricAnalysisBuilder {
 		this.geotiffOutputs.put(metric, geotiff);
 	}
 	
-	public void setPointFilter(String points) {
+	public void setPointsFilter(String points) {
 		this.points = points;
+	}
+	
+	public void setPixelsFilter(String pixels) {
+		this.pixels = pixels;
 	}
 
 	public void addAscExportWindowOutput(String windowPath) {
@@ -245,6 +250,10 @@ public class LandscapeMetricAnalysisBuilder {
 	}
 	*/
 	
+	public void setBufferSize(int buffSize){
+		LandscapeMetricAnalysisFactory.setBufferSize(buffSize);
+	}
+	 
 	public void setROIX(int roiX){
 		this.roiX = roiX;
 	}
@@ -389,6 +398,14 @@ public class LandscapeMetricAnalysisBuilder {
 
 	public int[] getUnfilters(){
 		return unfilters;
+	}
+	
+	public String getPixelsFilter(){
+		return pixels;
+	}
+	
+	public String getPointsFilter(){
+		return points;
 	}
 	
 	public LandscapeMetricAnalysis build(){

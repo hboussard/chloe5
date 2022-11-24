@@ -1,6 +1,10 @@
 package fr.inrae.act.bagap.chloe.kernel;
 
-public class DistanceWeightedCountValueAndCoupleKernel extends SlidingLandscapeMetricKernel {
+import java.util.Set;
+
+import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+
+public class SelectedDistanceWeightedCountValueAndCoupleKernel extends SelectedLandscapeMetricKernel {
 	
 	private final int nbValues;
 	
@@ -9,8 +13,8 @@ public class DistanceWeightedCountValueAndCoupleKernel extends SlidingLandscapeM
 	private final int[] mapValues;
 	
 	@SuppressWarnings("deprecation")
-	public DistanceWeightedCountValueAndCoupleKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] values, int[] unfilters){
-		super(windowSize, displacement, shape, coeff, noDataValue, unfilters);
+	public SelectedDistanceWeightedCountValueAndCoupleKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue, int[] values){
+		super(windowSize, pixels, shape, coeff, noDataValue);
 		this.nbValues = values.length;
 		int maxV = 0;
 		for(int v : values){
@@ -48,18 +52,18 @@ public class DistanceWeightedCountValueAndCoupleKernel extends SlidingLandscapeM
 
 	public void processPixel(int x, int y, int localY) {
 		
-		if((x-bufferROIXMin())%displacement() == 0 && (y-bufferROIYMin())%displacement() == 0){
+		Pixel p = new Pixel(x, y);
+		if(pixels().contains(p)){
 			
-			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
+			//System.out.println(p);
+			
+			int ind = ((localY-bufferROIYMin())*(((width() - bufferROIXMin() - bufferROIXMax())-1)+1) + (x-bufferROIXMin()));
 			
 			for(int i=0; i<imageOut()[0].length; i++){
 				imageOut()[ind][i] = 0f;
 			}
 			
-			
 			imageOut()[ind][2] = imageIn()[(y * width()) + x]; // affectation de la valeur du pixel central
-			
-			//if(imageIn[(y * width) + x] != -1f) {
 					
 			final int mid = windowSize() / 2;
 			int ic, ic_V, ic_H;
@@ -73,7 +77,7 @@ public class DistanceWeightedCountValueAndCoupleKernel extends SlidingLandscapeM
 							if(shape()[ic] == 1) {
 								v = (short) imageIn()[((y + dy) * width()) + (x + dx)];
 								
-								if(v == noDataValue()){
+								if(v == -1){
 									imageOut()[ind][0] = imageOut()[ind][0] + coeff()[ic];
 								}else{
 									if(v == 0){

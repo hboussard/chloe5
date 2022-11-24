@@ -1,8 +1,9 @@
 # ImageJ 1.37k Preferences
-# Tue Nov 30 11:06:33 CET 2021
+# Wed Jul 06 17:52:02 CEST 2022
 
 fps=7.0
 new.type=0
+dir.image=G:\\PREPARE\\toulouse\\model\\outputs\\scenario_1\\
 new.width=400
 fcolor=#000000
 gel.options=2
