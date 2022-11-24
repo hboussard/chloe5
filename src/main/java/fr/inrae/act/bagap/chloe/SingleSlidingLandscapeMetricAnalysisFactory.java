@@ -86,12 +86,12 @@ public class SingleSlidingLandscapeMetricAnalysisFactory {
 			double outMaxY = inMaxY - roiY*inCellSize - inCellSize/2.0 + outCellSize/2.0;
 			double outMinY = outMaxY - outHeight*outCellSize;
 			
-			// recuperation des donnees à déléguer à l'analyse elle-même
+			// recuperation des donnees Ã  dÃ©lÃ©guer Ã  l'analyse elle-mÃªme
 			/*
 			Rectangle roi = new Rectangle(0, 0, inWidth, inHeight);
 			float[] inDatas = new float[(inWidth)*(inHeight)];
 			inDatas = coverage.getRenderedImage().getData(roi).getSamples(roi.x, roi.y, roi.width, roi.height, 0, inDatas);
-			coverage.dispose(true); // liberation des ressources, à voir si ça marche comme ça
+			coverage.dispose(true); // liberation des ressources, Ã  voir si Ã§a marche comme Ã§a
 			*/
 			
 			// windowSize
@@ -145,7 +145,7 @@ public class SingleSlidingLandscapeMetricAnalysisFactory {
 						shape[(j * windowSize) + i] = 0;
 					}
 							
-					// gestion des distances pondérées (gaussienne centrée à 0)
+					// gestion des distances pondÃ©rÃ©es (gaussienne centrÃ©e Ã  0)
 					//exp(-pow(distance, 2)/pow(dmax/2, 2))
 					//float d = (float) Math.exp(-1 * Math.pow(Util.distance(midWindowSize, midWindowSize, i, j), 2) / Math.pow(midWindowSize/2, 2));
 					float d = (float) function.interprete(Util.distance(midWindowSize, midWindowSize, i, j)*inCellSize);
@@ -253,10 +253,10 @@ public class SingleSlidingLandscapeMetricAnalysisFactory {
 							File file = new File(builder.getRasterFile2());
 							reader = new GeoTiffReader(file);
 						}else{
-							throw new IllegalArgumentException(builder.getRasterFile()+" is not a recognize raster");
+							throw new IllegalArgumentException(builder.getRasterFile()+" is not a recognized raster");
 						}
 						GridCoverage2D coverage2D = (GridCoverage2D) reader.read(null);
-						reader.dispose(); // a� tester, ca va peut-etre bloquer la lecture des donnees
+						reader.dispose(); // a  tester, ca va peut-etre bloquer la lecture des donnees
 						
 						coverage2 = new FileCoverage(coverage2D, coverage.getEntete());
 						
@@ -286,8 +286,8 @@ public class SingleSlidingLandscapeMetricAnalysisFactory {
 					
 				}else if(metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("bocage")){
 					kernel = new LocalBocageKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
-				}else if(metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("prop")){
-					kernel = new ProportionKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
+			//	}else if(metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("prop")){
+			//		kernel = new ProportionKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
 				}else{
 					kernel = new SlidingDistanceWeightedQuantitativeKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
 				}

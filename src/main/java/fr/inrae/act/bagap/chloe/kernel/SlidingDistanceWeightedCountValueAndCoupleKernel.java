@@ -72,7 +72,7 @@ public class SlidingDistanceWeightedCountValueAndCoupleKernel extends SlidingLan
 							if(shape()[ic] == 1) {
 								v = (short) imageIn()[((y + dy) * width()) + (x + dx)];
 								
-								if(v == -1){
+								if(v == noDataValue()){
 									imageOut()[ind][0] = imageOut()[ind][0] + coeff()[ic];
 								}else{
 									if(v == 0){

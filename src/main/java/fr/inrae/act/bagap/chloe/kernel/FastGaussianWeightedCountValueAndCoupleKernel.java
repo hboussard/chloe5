@@ -4,22 +4,23 @@ import com.aparapi.Kernel;
 import fr.inrae.act.bagap.chloe.kernel.SlidingLandscapeMetricKernel;
 
 
-public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetricKernel {
+public class FastGaussianWeightedCountValueAndCoupleKernel extends SlidingLandscapeMetricKernel {
 
 	
 
 	
 	private final int[] values;
-	private final int nbValues;
 	private final int[] mapValues;
-	
+	private final int[][] mapCouples;
+	private final int nValues;
+	private final int nValuesTot;
 
 	private float[][] buf;
 	private final float[] gauss;
 	
 	
 	
-	public FastGaussianWeightedCountValueKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] values, int[] unfilters){
+	public FastGaussianWeightedCountValueAndCoupleKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] values, int[] unfilters){
 		super( windowSize, displacement, shape, coeff, noDataValue, unfilters);
 
 		this.setExplicit(true);
@@ -27,7 +28,7 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 		//this.setExecutionMode(Kernel.EXECUTION_MODE.SEQ);
 		
 		this.values = values;
-		this.nbValues = values.length;
+		this.nValues = values.length;
 		int maxV = 0;
 		for(int v : values){
 			maxV = Math.max(v, maxV);
@@ -37,9 +38,24 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 		for(int i=0; i<values.length; i++){
 			mapValues[values[i]] = i;
 		}
-
+		mapCouples = new int[values.length][values.length];
+		int index = 0;
+		for(int v : values){
+			mapCouples[mapValues[v]][mapValues[v]] = index;
+			index++;
+		}
+		
+		for(int v1 : values){
+			for(int v2 : values){
+				if(v1 < v2) {
+					mapCouples[mapValues[v1]][mapValues[v2]] = index;
+					mapCouples[mapValues[v2]][mapValues[v1]] = index;
+					index++;
+				}
+			}
+		}
+		nValuesTot = 2+nValues+index+3;
 		this.gauss = new float[windowSize()];
-		this.buf = new float[width()][values.length+2];
 		
 		float r=(windowSize-1)/2.f;
 		for(int i=0;i<windowSize;i++) {
@@ -56,7 +72,7 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 		int y = theY() + line;
 		int i,dy;
 		// parcours vertical de l'image centré sur ligne theY+line et stocké dans buf
-		for(i=0;i<values.length+2;i++) {
+		for(i=0;i<buf[0].length;i++) {
 			buf[x][i]=0;
 		}
 		for (dy = -windowSize()+1; dy < windowSize(); dy++) {
@@ -72,6 +88,27 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 				else
 					mv = mapValues[v]+3;
 				buf[x][mv] += gauss[ic];
+				int mc;
+				if(y+dy>0) {
+					int v_V=(int)imageIn()[((y + dy - 1) * width()) + x];
+					if(v == noDataValue() || v_V == noDataValue())
+						mc=nValues+3;
+					else if (v==0 || v_V == 0)
+						mc=nValues+4;
+					else
+						mc = nValues+5+mapCouples[mapValues[v]][mapValues[v_V]];
+					buf[x][mc] += gauss[ic];
+				}
+				if(x>0) {
+					int v_H=(int)imageIn()[((y + dy) * width()) + x - 1];
+					if(v == noDataValue() || v_H == noDataValue())
+						mc=nValues+3;
+					else if (v==0 || v_H == 0)
+						mc=nValues+4;
+					else
+						mc = nValues+5+mapCouples[mapValues[v]][mapValues[v_H]];
+					buf[x][mc] += gauss[ic];
+				}
 
 			}
 		}
@@ -86,7 +123,7 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 		imageOut()[ind][2] = (int)imageIn()[((theY() + line)* width()) + x];
 		float val;
 		
-		for(int value=0; value<values.length+2;value++) {
+		for(int value=0; value<nValuesTot;value++) {
 			val=0;
 			for(int i=max(x_buf-windowSize()+1,0);i<min(x_buf+windowSize(),width());i++) {
 				val+=buf[i][value]*gauss[abs(i-x_buf)];
@@ -100,7 +137,8 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 	@Override
 	public void setWidth(int width) {
 		super.setWidth(width);
-		this.buf = new float[width()][values.length+3];
+		this.buf = new float[width()][nValuesTot];
+
 	}
 	
 	@Override
