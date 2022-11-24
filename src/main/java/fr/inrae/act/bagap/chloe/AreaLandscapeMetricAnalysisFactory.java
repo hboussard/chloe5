@@ -115,7 +115,7 @@ public class AreaLandscapeMetricAnalysisFactory  {
 		// gestion specifiques des analyses quantitatives ou qualitatives
 		if(MetricManager.hasOnlyQuantitativeMetric(metrics)){ // quantitative
 			
-			Counting counting = new QuantitativeCounting(0, 6);
+			Counting counting = new QuantitativeCounting(0, 7);
 			
 			// add metrics to counting
 			for(Metric m : metrics){
@@ -130,7 +130,7 @@ public class AreaLandscapeMetricAnalysisFactory  {
 			AreaLandscapeMetricKernel kernel = new AreaQuantitativeKernel(Raster.getNoDataValue());
 						
 			// analysis
-			return new HugeAreaLandscapeMetricAnalysis(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, 6, kernel, counting);
+			return new HugeAreaLandscapeMetricAnalysis(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, 7, kernel, counting);
 						
 		}else{ // qualitative
 			// recuperation des valeurs
@@ -170,7 +170,7 @@ public class AreaLandscapeMetricAnalysisFactory  {
 			Counting counting = null;
 			int nbValues = 2;
 			if(MetricManager.hasOnlyValueMetric(metrics)){
-				nbValues += values.length;
+				nbValues += 1 + values.length;
 				kernel = new AreaCountValueKernel(Raster.getNoDataValue(), values);
 				counting = new ValueCounting(0, nbValues, values);
 				
@@ -200,7 +200,7 @@ public class AreaLandscapeMetricAnalysisFactory  {
 				}
 			
 			}else{
-				nbValues += values.length + 2 + couples.length;
+				nbValues += 1 + values.length + 2 + couples.length;
 				
 				Counting[] countings = new Counting[2];
 				

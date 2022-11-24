@@ -106,6 +106,7 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	
 	@Override
 	public double countValue(int v){
+		
 		return countValues.get(v);	
 		/*
 		if(countValues.containsKey(v)){

@@ -12,7 +12,7 @@ public class RateMultipleValueMetric extends Metric implements ValueMetric {
 		StringBuffer name = new StringBuffer("pNMV_");
 		for(short vv : v){
 			name.append(vv);
-			name.append('-');
+			name.append('&');
 		}
 		name.deleteCharAt(name.length()-1);
 		setName(name.toString());

@@ -7,10 +7,8 @@ import fr.inrae.act.bagap.raster.Coverage;
 
 public abstract class AreaLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
 
-	//private final GridCoverage2D coverage;
 	private final Coverage coverage;
 	
-	//private final GridCoverage2D areaCoverage;
 	private final Coverage areaCoverage;
 	
 	private final int roiX, roiY;
@@ -27,7 +25,6 @@ public abstract class AreaLandscapeMetricAnalysis extends LandscapeMetricAnalysi
 	
 	private Map<Integer, double[]> outDatas;
 	
-	//public AreaLandscapeMetricAnalysis(GridCoverage2D coverage, GridCoverage2D areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, int nbValues, AreaLandscapeMetricKernel kernel, Counting counting) {
 	public AreaLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, int nbValues, AreaLandscapeMetricKernel kernel, Counting counting) {
 		this.coverage = coverage;
 		this.areaCoverage = areaCoverage;
@@ -40,12 +37,10 @@ public abstract class AreaLandscapeMetricAnalysis extends LandscapeMetricAnalysi
 		this.counting = counting;
 	}
 
-	//public GridCoverage2D coverage() {
 	public Coverage coverage() {
 		return coverage;
 	}
 
-	//public GridCoverage2D areaCoverage() {
 	public Coverage areaCoverage() {
 		return areaCoverage;
 	}

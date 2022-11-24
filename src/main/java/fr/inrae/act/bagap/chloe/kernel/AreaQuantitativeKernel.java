@@ -15,7 +15,6 @@ public class AreaQuantitativeKernel extends AreaLandscapeMetricKernel{
 				if(va != 0 && va != noDataValue()){
 					float v = inDatas()[y*roiWidth() + x];
 					
-					
 					if(v == noDataValue()) {
 						outDatas().get(va)[0] = outDatas().get(va)[0] + 1;
 					}else{
@@ -25,6 +24,7 @@ public class AreaQuantitativeKernel extends AreaLandscapeMetricKernel{
 						outDatas().get(va)[4] = Math.min(outDatas().get(va)[4], v);
 						outDatas().get(va)[5] = Math.max(outDatas().get(va)[5], v);
 					}
+					outDatas().get(va)[6] = -1;
 				}
 			}
 		}
