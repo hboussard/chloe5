@@ -39,7 +39,7 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 		}
 
 		this.gauss = new float[windowSize()];
-		this.buf = new float[width()][values.length+2];
+		this.buf = new float[width()][values.length+3];
 		
 		float r=(windowSize-1)/2.f;
 		for(int i=0;i<windowSize;i++) {
@@ -56,7 +56,7 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 		int y = theY() + line;
 		int i,dy;
 		// parcours vertical de l'image centré sur ligne theY+line et stocké dans buf
-		for(i=0;i<values.length+2;i++) {
+		for(i=0;i<values.length+3;i++) {
 			buf[x][i]=0;
 		}
 		for (dy = -windowSize()+1; dy < windowSize(); dy++) {
@@ -86,7 +86,8 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 		imageOut()[ind][2] = (int)imageIn()[((theY() + line)* width()) + x];
 		float val;
 		
-		for(int value=0; value<values.length+2;value++) {
+		for(int value=0; value<values.length+3;value++) {
+			if(value==2) continue;
 			val=0;
 			for(int i=max(x_buf-windowSize()+1,0);i<min(x_buf+windowSize(),width());i++) {
 				val+=buf[i][value]*gauss[abs(i-x_buf)];

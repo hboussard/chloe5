@@ -6,9 +6,6 @@ import fr.inrae.act.bagap.chloe.kernel.SlidingLandscapeMetricKernel;
 
 public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetricKernel {
 
-	
-
-	
 	private final int[] values;
 	private final int[] mapValues;
 	private final int[][] mapCouples;
@@ -16,7 +13,6 @@ public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetri
 
 	private float[][] buf;
 	private final float[] gauss;
-	
 	
 	
 	public FastGaussianWeightedCountCoupleKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] values, int[] unfilters){
@@ -37,7 +33,7 @@ public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetri
 			mapValues[values[i]] = i;
 		}
 		mapCouples = new int[values.length][values.length];
-		int index = 0;
+		int index = 3;
 		for(int v : values){
 			mapCouples[mapValues[v]][mapValues[v]] = index;
 			index++;
@@ -52,7 +48,7 @@ public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetri
 				}
 			}
 		}
-		nCouplesValues = index+2;
+		nCouplesValues = index;
 		this.gauss = new float[windowSize()];
 		
 		float r=(windowSize-1)/2.f;
@@ -86,7 +82,7 @@ public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetri
 					else if (v==0 || v_V == 0)
 						mc=1;
 					else
-						mc = 2+mapCouples[mapValues[v]][mapValues[v_V]];
+						mc = mapCouples[mapValues[v]][mapValues[v_V]];
 					buf[x][mc] += gauss[ic];
 				}
 				if(x>0) {
@@ -96,24 +92,14 @@ public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetri
 					else if (v==0 || v_H == 0)
 						mc=1;
 					else
-						mc = 2+mapCouples[mapValues[v]][mapValues[v_H]];
+						mc = mapCouples[mapValues[v]][mapValues[v_H]];
 					buf[x][mc] += gauss[ic];
 				}
-/*				int mv;			
-				if(v == noDataValue())
-					mv = 0;
-				else if(v==0)
-					mv = 1;
-				else
-					mv = mapValues[v]+3;
-				buf[x][mv] += gauss[ic];
-*/
 			}
 		}
 	}
 
 	public void processHorizontalPixel(int x,int line) {
-
 		// parcours horizontal de buf: position dans imageOut : (x,y=line/dep)
 		int x_buf = x*displacement();
 		int y=line/displacement();
