@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.matrix.CoordinateManager;
+import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.metric.Metric;
