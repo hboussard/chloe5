@@ -28,6 +28,8 @@ import fr.inrae.act.bagap.chloe.kernel.SlidingDistanceWeightedCountValueAndCoupl
 import fr.inrae.act.bagap.chloe.kernel.SlidingDistanceWeightedCountValueKernel;
 import fr.inrae.act.bagap.chloe.kernel.SlidingDistanceWeightedQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.kernel.EmpriseBocageKernel3;
+import fr.inrae.act.bagap.chloe.kernel.FastGaussianWeightedCountCoupleKernel;
+import fr.inrae.act.bagap.chloe.kernel.FastGaussianWeightedCountValueAndCoupleKernel;
 import fr.inrae.act.bagap.chloe.kernel.FastGaussianWeightedCountValueKernel;
 import fr.inrae.act.bagap.chloe.kernel.LocalBocageKernel;
 import fr.inrae.act.bagap.chloe.kernel.PatchKernel;
@@ -350,7 +352,7 @@ public class SingleSlidingLandscapeMetricAnalysisFactory {
 				if(MetricManager.hasOnlyValueMetric(metrics)){
 					nbValues += 1 + values.length;
 					
-					if( builder.getWindowDistanceType()==WindowDistanceType.FAST_WEIGHTED)
+					if( builder.getWindowDistanceType()==WindowDistanceType.FAST_GAUSSIAN)
 						kernel = new FastGaussianWeightedCountValueKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);						
 					else{
 						kernel = new SlidingDistanceWeightedCountValueKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);
@@ -369,7 +371,12 @@ public class SingleSlidingLandscapeMetricAnalysisFactory {
 					
 				}else if(MetricManager.hasOnlyCoupleMetric(metrics)){
 					nbValues += couples.length;
-					kernel = new SlidingDistanceWeightedCountCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);
+					
+					if( builder.getWindowDistanceType()==WindowDistanceType.FAST_GAUSSIAN)
+						kernel = new FastGaussianWeightedCountCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);						
+					else{
+						kernel = new SlidingDistanceWeightedCountCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);
+					}
 					counting = new CoupleCounting(0, nbValues, values.length, couples, theoreticalCoupleSize);
 					
 					// add metrics to counting
@@ -387,7 +394,11 @@ public class SingleSlidingLandscapeMetricAnalysisFactory {
 					
 					Counting[] countings = new Counting[2];
 					
-					kernel = new SlidingDistanceWeightedCountValueAndCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);
+					if( builder.getWindowDistanceType()==WindowDistanceType.FAST_GAUSSIAN)
+						kernel = new FastGaussianWeightedCountValueAndCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);						
+					else{
+						kernel = new SlidingDistanceWeightedCountValueAndCoupleKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), values, unfilters);
+					}
 					ValueCounting vCounting = new ValueCounting(0, values.length+3, values, theoreticalSize);
 					// add metrics to counting
 					for(Metric m : metrics){
