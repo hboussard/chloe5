@@ -122,9 +122,6 @@ public abstract class SlidingLandscapeMetricKernel extends Kernel {
 	protected int theY(){
 		return this.theY;
 	}
-	protected void setTheY(int theY) {
-		this.theY = theY;
-	}
 	
 	protected int width(){
 		return this.width;
