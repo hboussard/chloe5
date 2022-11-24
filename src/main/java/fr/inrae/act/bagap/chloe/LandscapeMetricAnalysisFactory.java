@@ -27,7 +27,11 @@ public class LandscapeMetricAnalysisFactory {
 		return bufferSize;
 	}
 
-	public static LandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder) throws IOException {
+	public static void setBufferSize(int buff){
+		bufferSize = buff;
+	}
+	
+ 	public static LandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder) throws IOException {
 		
 		//GridCoverage2D coverage;
 		Coverage coverage;

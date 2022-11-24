@@ -250,6 +250,10 @@ public class LandscapeMetricAnalysisBuilder {
 	}
 	*/
 	
+	public void setBufferSize(int buffSize){
+		LandscapeMetricAnalysisFactory.setBufferSize(buffSize);
+	}
+	 
 	public void setROIX(int roiX){
 		this.roiX = roiX;
 	}
