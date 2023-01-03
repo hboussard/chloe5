@@ -109,7 +109,7 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 		this.setTheY(theY); // indique position de la première ligne du buffer dans imageIn
 		//execute(width * buffer);
 		//execute((width - bufferROIXMin - bufferROIXMax) * buffer);
-		final int nlines = (buffer - (displacement()-theY()%displacement())%displacement() )/displacement();
+		final int nlines = ((buffer-1) - (displacement()-theY()%displacement())%displacement() )/displacement()+1;
 		execute(width(),2*nlines);
 
 	}
