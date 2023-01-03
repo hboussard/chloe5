@@ -143,10 +143,8 @@ public class FastGaussianWeightedCountValueAndCoupleKernel extends SlidingLandsc
 	
 	@Override
 	public void applySlidingWindow(int theY, int buffer) {
-		this.setTheY(theY); // indique position de la première ligne du buffer dans imageIn
-		//execute(width * buffer);
-		//execute((width - bufferROIXMin - bufferROIXMax) * buffer);
-		final int nlines = (buffer - (displacement()-theY()%displacement())%displacement() )/displacement();
+		this.setTheY(theY); // indique position de la premiere ligne du buffer dans imageIn
+		final int nlines = ((buffer-1) - (displacement()-theY()%displacement())%displacement() )/displacement()+1;
 		execute(width(),2*nlines);
 
 	}
