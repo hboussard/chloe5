@@ -3,7 +3,6 @@ package fr.inrae.act.bagap.chloe.metric;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,14 +10,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
-
 import org.jumpmind.symmetric.csv.CsvReader;
-
 import fr.inrae.act.bagap.chloe.metric.couple.CoupleMetric;
 import fr.inrae.act.bagap.chloe.metric.patch.PatchMetric;
 import fr.inrae.act.bagap.chloe.metric.quantitative.QuantitativeMetric;
 import fr.inrae.act.bagap.chloe.metric.value.ValueMetric;
-
 
 public class MetricManager {
 
@@ -149,6 +145,14 @@ public class MetricManager {
 						v[i++] = new Short(ss);
 					}
 					return (Metric) c.getConstructor(short[].class).newInstance(v);
+				}if(metric.contains("&")){
+					String[] s = metric.split("&");
+					short[] v = new short[s.length];
+					int i=0;
+					for(String ss : s){
+						v[i++] = new Short(ss);
+					}
+					return (Metric) c.getConstructor(short[].class).newInstance(v);
 				}else{
 					short v = new Short(metric);
 					return (Metric) c.getConstructor(short.class).newInstance(v);
@@ -237,13 +241,20 @@ public class MetricManager {
 	
 	public static boolean hasOnlyValueMetric(Set<Metric> metrics){
 		for(Metric m : metrics){
-			if(!(m instanceof ValueMetric)){
+			if(!(isOnlyValueMetric(m))){
 				return false;
 			}
+			//if(!(m instanceof ValueMetric)){
+			//	return false;
+			//}
 		}
 		return true;
 	}
 	
+	private static boolean isOnlyValueMetric(Metric m) {
+		return (m instanceof ValueMetric) && !(m instanceof CoupleMetric);
+	}
+
 	public static boolean hasCoupleMetric(Set<Metric> metrics) {
 		for(Metric m : metrics){
 			if(m instanceof CoupleMetric){
@@ -255,11 +266,18 @@ public class MetricManager {
 	
 	public static boolean hasOnlyCoupleMetric(Set<Metric> metrics) {
 		for(Metric m : metrics){
-			if(!(m instanceof CoupleMetric)){
+			if(!(isOnlyCoupleMetric(m))){
 				return false;
 			}
+			//if(!(m instanceof CoupleMetric)){
+			//	return false;
+			//}
 		}
 		return true;
+	}
+	
+	private static boolean isOnlyCoupleMetric(Metric m) {
+		return (m instanceof CoupleMetric) && !(m instanceof ValueMetric);
 	}
 	
 	public static boolean hasQuantitativeMetric(Set<Metric> metrics) {

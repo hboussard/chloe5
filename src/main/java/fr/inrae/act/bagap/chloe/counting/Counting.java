@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
-import fr.inra.sad.bagap.apiland.analysis.AnalysisObserver;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.chloe.metric.MetricObserver;
@@ -256,7 +254,27 @@ public abstract class Counting implements
 	}
 	
 	@Override
+	public double getMaxSurface(){
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
 	public float centralValue(){
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int getNbPatches(int v){
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public double getTotalSurface(int v){
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public double getMaxSurface(int v){
 		throw new UnsupportedOperationException();
 	}
 }

@@ -20,14 +20,280 @@ import fr.inra.sad.bagap.apiland.analysis.matrix.CoverageManager;
 import fr.inra.sad.bagap.apiland.analysis.window.WindowAnalysisType;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.matrix.MatrixManager;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.FileCoverage;
+import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysis;
+import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysisBuilder;
 
 public class Script {
 
 	public static void main(String[] args){
-		scriptTestMPS();
+		scriptTestArea();
+	}
+	
+	private static void scriptTestArea(){
+
+		String path = "G:/chloe/winterschool/data/start/";
+		
+		long begin = System.currentTimeMillis();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(WindowAnalysisType.AREA);
+		builder.setRasterFile(path+"za.tif");
+		builder.setAreaRasterFile(path+"communes_za.asc");
+		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); // doivent etre classees
+		
+		builder.addMetric("pNV_1");
+		builder.addMetric("pNC_1-1");
+		
+		//builder.addAsciiGridOutput("pNV_1", path+"area/pnv1.asc"); // marche pas...
+		
+		//builder.addAsciiGridFolderOutput(path+"communes/");
+		builder.addAsciiGridFolderOutput(path+"communes/double/");
+		//builder.addCsvOutput(path+"area/analyse_communes_za.csv");
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+	
+	private static void scriptTestComptageValueAndCouple(){
+		
+		long begin = System.currentTimeMillis();
+		
+		String path = "G:/chloe/winterschool/data/start/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(path+"za.tif");
+		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); // doivent etre classees
+		builder.setWindowSize(21);
+		builder.setDisplacement(20);
+		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		//builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+		
+		builder.addMetric("pNV_1");
+		builder.addAsciiGridOutput("pNV_1", path+"test3/pNV_1_21p_dep20.asc");
+		
+		//builder.addMetric("HET-frag");
+		//builder.addAsciiGridOutput("HET-frag", path+"test3/HET-frag_201p_dep202.asc");
+		
+		//builder.addMetric("AI");
+		//builder.addAsciiGridOutput("AI", path+"test3/ai_201p_dep204.asc");
+		
+		//builder.setRasterFile2(path+"test3/friction2.asc");
+		//builder.setWindowShapeType(WindowShapeType.FUNCTIONAL);
+	
+		
+		//builder.addAsciiGridOutput("pNV_1", path+"test3/pNV_1_201p_dep20_functional2.asc");
+	
+		//builder.addMetric("N-valid");
+		//builder.addAsciiGridOutput("N-valid", path+"test3/N-valid_201p_dep20_circle.asc");
+		//builder.addAsciiGridOutput("N-valid", path+"test3/N-valid_201p_dep20_functional.asc");
+		//builder.addAsciiGridOutput("N-valid", path+"test3/N-valid_101p_dep10_functional_gaussian2.asc");
+		
+		/*
+		builder.addMetric("AI");
+		builder.addAsciiGridOutput("AI", path+"test2/ai_201p_dep20.asc");
+		
+		builder.addMetric("HET-frag");
+		builder.addAsciiGridOutput("HET-frag", path+"test2/HET-frag_201p_dep20.asc");
+		*/
+		/*
+		builder.addMetric("LPI");
+		builder.addAsciiGridOutput("LPI", path+"test2/lpi_201p_dep20.asc");
+		
+		builder.addMetric("MPS");
+		builder.addAsciiGridOutput("MPS", path+"test2/mps_201p_dep20.asc");
+		*/
+		/*
+		 * builder.addMetric("pNV_2");
+		builder.addAsciiGridOutput("pNV_2", path+"test2/pNV_2_201p_dep20.asc");
+		builder.addMetric("pNV_3");
+		builder.addAsciiGridOutput("pNV_3", path+"test2/pNV_3_201p_dep20.asc");
+		builder.addMetric("pNV_4");
+		builder.addAsciiGridOutput("pNV_4", path+"test2/pNV_4_201p_dep20.asc");
+		builder.addMetric("pNV_5");
+		builder.addAsciiGridOutput("pNV_5", path+"test2/pNV_5_201p_dep20.asc");
+		builder.addMetric("pNV_6");
+		builder.addAsciiGridOutput("pNV_6", path+"test2/pNV_6_201p_dep20.asc");
+		builder.addMetric("pNV_7");
+		builder.addAsciiGridOutput("pNV_7", path+"test2/pNV_7_201p_dep20.asc");
+		builder.addMetric("pNV_8");
+		builder.addAsciiGridOutput("pNV_8", path+"test2/pNV_8_201p_dep20.asc");
+		builder.addMetric("pNV_9");
+		builder.addAsciiGridOutput("pNV_9", path+"test2/pNV_9_201p_dep20.asc");
+		builder.addMetric("pNV_10");
+		builder.addAsciiGridOutput("pNV_10", path+"test2/pNV_10_201p_dep20.asc");
+		builder.addMetric("pNV_11");
+		builder.addAsciiGridOutput("pNV_11", path+"test2/pNV_11_201p_dep20.asc");
+		builder.addMetric("pNV_12");
+		builder.addAsciiGridOutput("pNV_12", path+"test2/pNV_12_201p_dep20.asc");
+		 */
+		
+		//builder.addMetric("SHDI");
+		//builder.addAsciiGridOutput("SHDI", path+"test/shdi_201p_dep20.asc");
+		//builder.addMetric("HET");
+		//builder.addAsciiGridOutput("HET", path+"test/het2.asc");
+		//builder.addMetric("AI_4");
+		//builder.addAsciiGridOutput("AI_4", path+"test/ai_4.asc");
+		//builder.addMetric("AI-class_2");
+		//builder.addAsciiGridOutput("AI-class_2", path+"test/ai_2_dep20.asc");
+		//builder.addMetric("AIm_1&2");
+		//builder.addAsciiGridOutput("AIm_1&2", path+"test/ai_culture_201p_dep20.asc");
+		//builder.addMetric("AI2m_1&2");
+		//builder.addAsciiGridOutput("AI2m_1&2", path+"test/ai2_culture_201p_dep20.asc");
+		//builder.addMetric("pNVm_1&2");
+		//builder.addAsciiGridOutput("pNVm_1&2", path+"test/pNV_culture_201p_dep20.asc");
+		//builder.addMetric("AIm_4&5&6");
+		//builder.addAsciiGridOutput("AIm_4&5&6", path+"test/ai_boisement_201p_dep20.asc");
+		//builder.addMetric("AI2m_4&5&6");
+		//builder.addAsciiGridOutput("AI2m_4&5&6", path+"test/ai2_boisement_201p_dep20.asc");
+		//builder.addMetric("SHDI");
+		//builder.addAsciiGridOutput("SHDI", path+"test/shdi_dep20.asc");
+		//builder.addMetric("LPI");
+		//builder.addAsciiGridOutput("LPI", path+"test/lpi_201p_dep20.asc");
+		//builder.addMetric("MPS");
+		//builder.addAsciiGridOutput("MPS", path+"test/mps_201p_dep20.asc");
+		//builder.addMetric("NP");
+		//builder.addAsciiGridOutput("np", path+"test/np_201p_dep20.asc");
+		//builder.addMetric("MPS-class_4");
+		//builder.addAsciiGridOutput("MPS-class_4", path+"test/mps_haie_201p_dep20.asc");
+		//builder.addMetric("NP-class_4");
+		//builder.addAsciiGridOutput("NP-class_4", path+"test/np_haie_201p_dep20.asc");
+		//builder.addMetric("LPI-class_4");
+		//builder.addAsciiGridOutput("LPI-class_4", path+"test/lpi_haie_201p_dep20.asc");
+		//builder.addMetric("EMS");
+		//builder.addAsciiGridOutput("EMS", path+"test/ems2_201p_dep20.asc");
+		//builder.addMetric("EMS-class_4");
+		//builder.addAsciiGridOutput("EMS-class_4", path+"test/ems_haie_201p_dep20.asc");
+		//builder.addMetric("pNV_4");
+		//builder.addAsciiGridOutput("pNV_4", path+"test/prop2_haie_201p_dep20.asc");
+		//builder.addMetric("AI");
+		//builder.addAsciiGridOutput("AI", path+"test/ai_201p_dep20.asc");
+		//builder.setWindowSize(3);
+		//builder.addMetric("minimum");
+		//builder.addAsciiGridOutput("minimum", path+"test/minimum_3p.asc");
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+	
+	private static void scriptEcopaysageAmazonie(){
+		Set<Integer> codes = new TreeSet<Integer>();
+		codes.add(3);
+		codes.add(4);
+		codes.add(5);
+		codes.add(9);
+		codes.add(11);
+		codes.add(12);
+		codes.add(15);
+		codes.add(20);
+		codes.add(21);
+		codes.add(23);
+		codes.add(24);
+		codes.add(25);
+		codes.add(30);
+		codes.add(32);
+		codes.add(33);
+		codes.add(39);
+		codes.add(41);
+		codes.add(48);
+		codes.add(63);
+		
+		//scriptEcopaysageAmazonie("composition", "5km", codes);
+		//scriptEcopaysageAmazonie("configuration", "5km", codes);
+		
+		//scriptEcopaysageAmazonie("composition", "10km", codes);
+		//scriptEcopaysageAmazonie("configuration", "10km", codes);
+		
+		scriptEcopaysageAmazonie("composition", "25km", codes);
+		//scriptEcopaysageAmazonie("configuration", "25km", codes);
+		
+		//scriptEcopaysageAmazonie("composition", "50km", codes);
+		//scriptEcopaysageAmazonie("configuration", "50km", codes);
+	}
+	
+	private static void scriptEcopaysageAmazonie(String compo_config, String scale, Set<Integer> codes){
+		long begin = System.currentTimeMillis();
+		
+		String path = "H:/amazonie/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(path+"data/mapbiomas-brazil-collection-70-amazonia-2019.tif");
+		
+		StringBuilder sb = new StringBuilder();
+		for(int c : codes){
+			sb.append(c+",");
+		}
+		sb.deleteCharAt(sb.length()-1);
+		builder.setValues(sb.toString()); // valeurs classees
+		
+		if(compo_config.equalsIgnoreCase("composition")){
+			for(int i : codes){
+				builder.addMetric("pNV_"+i);
+			}
+		}
+		if(compo_config.equalsIgnoreCase("configuration")){
+			for(int i : codes){
+				for(int j : codes){
+					if(j>i){
+						builder.addMetric("pNC_"+i+"-"+j);
+					}
+				}
+			}
+		}
+		//builder.addMetric("HET-frag");
+		
+		if(scale.equalsIgnoreCase("5km")){
+			builder.setWindowSize(333); // 5km, 333 = diametre en pixels, doit etre impaire
+			builder.setDisplacement(33); // 10% de la taille de la fenetre
+		}
+		if(scale.equalsIgnoreCase("10km")){
+			builder.setWindowSize(667); // 10km
+			builder.setDisplacement(66);
+		}
+		if(scale.equalsIgnoreCase("25km")){
+			builder.setWindowSize(1667); // 25km
+			builder.setDisplacement(160);
+		}
+		if(scale.equalsIgnoreCase("50km")){
+			builder.setWindowSize(3333); // 50km
+			builder.setDisplacement(330);
+		}
+		
+		builder.setUnfilters(new int[]{0}); // on filtre pour ignorer le calcul sur les fenetres dont le pixel central est "0"
+		builder.setWindowDistanceType(WindowDistanceType.WEIGHTED); // fenetre circulaire gaussienne
+		builder.addCsvOutput(path+"analyse/test_amazonie_"+compo_config+"_"+scale+".csv");
+		
+		LandscapeMetricAnalysis analysis = builder.build(); 
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+	
+	private static void scriptAmazonieTest(){
+		long begin = System.currentTimeMillis();
+	
+		String path = "H:/amazonie/data/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(path+"mapbiomas-brazil-collection-70-amazonia-2019.tif");
+		builder.setValues("3, 4, 5, 9, 11, 12, 15, 20, 21, 23, 24 ,25, 30, 32, 33, 39, 41, 48, 63"); // doivent etre classees
+		builder.addMetric("SHDI");
+		builder.setWindowSize(333);
+		builder.setDisplacement(30);
+		builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+		builder.addAsciiGridOutput("SHDI", path+"amazonie_shdi.asc");
+		LandscapeMetricAnalysis analysis = builder.build();
+	
+		analysis.allRun();
+	
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
 	}
 	
 	private static void scriptTestMPS(){
