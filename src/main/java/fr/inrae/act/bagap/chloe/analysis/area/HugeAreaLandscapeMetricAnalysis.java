@@ -29,7 +29,7 @@ public class HugeAreaLandscapeMetricAnalysis extends AreaLandscapeMetricAnalysis
 	@Override
 	protected void doRun() {
 		
-		Set<Integer> areaNumbers = new TreeSet<Integer>();
+		Set<Integer> areaIds = new TreeSet<Integer>();
 		
 		// gestion des sorties
 		setOutDatas(new HashMap<Integer, double[]>());
@@ -37,6 +37,8 @@ public class HugeAreaLandscapeMetricAnalysis extends AreaLandscapeMetricAnalysis
 		int tYs;
 		Rectangle roi;
 		for(int localROIY=roiY(); localROIY<roiY()+roiHeight(); localROIY+=LandscapeMetricAnalysis.tileYSize()){
+			
+			//System.out.println("pass "+localROIY);
 			
 			tYs = Math.min(LandscapeMetricAnalysis.tileYSize(), roiHeight() + roiY() - localROIY );
 			
@@ -51,28 +53,26 @@ public class HugeAreaLandscapeMetricAnalysis extends AreaLandscapeMetricAnalysis
 			
 			for(float f : inAreaDatas()){
 				if(f != 0 && f != Raster.getNoDataValue()){
-					areaNumbers.add((int) f);
+					areaIds.add((int) f);
 				}
 			}
 			
 			// gestion des sorties
-			for(int an : areaNumbers){
-				if(!outDatas().containsKey(an)){
-					outDatas().put(an, new double[nbValues()]);
+			for(int aId : areaIds){
+				if(!outDatas().containsKey(aId)){
+					outDatas().put(aId, new double[nbValues()]);
 				}
 			}
 			kernel().setOutDatas(outDatas());
 			
-			kernel().applyAreaWindow();
+			kernel().applyAreaWindow();	
 		}
-		
 		
 		for(Entry<Integer, double[]> e : outDatas().entrySet()){
 			counting().setCounts(e.getValue());
 			counting().calculate();
 			counting().export(e.getKey());
 		}
-		
 	}
 
 	@Override

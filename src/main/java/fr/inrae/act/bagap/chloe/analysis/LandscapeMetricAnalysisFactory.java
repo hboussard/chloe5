@@ -9,6 +9,7 @@ import org.geotools.gce.geotiff.GeoTiffReader;
 
 import fr.inra.sad.bagap.apiland.analysis.window.WindowAnalysisType;
 import fr.inrae.act.bagap.chloe.analysis.area.AreaLandscapeMetricAnalysisFactory;
+import fr.inrae.act.bagap.chloe.analysis.grid.TinyGridLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.selected.SelectedLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.sliding.HugeSlidingLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.sliding.TinySlidingLandscapeMetricAnalysisFactory;
@@ -102,10 +103,27 @@ public class LandscapeMetricAnalysisFactory {
 			}
 			
 		}else if(builder.getAnalysisType() == WindowAnalysisType.SELECTED){
+			
 			return SelectedLandscapeMetricAnalysisFactory.create(builder, coverage);
 			
 		}else if(builder.getAnalysisType() == WindowAnalysisType.AREA){
+			
 			return AreaLandscapeMetricAnalysisFactory.create(builder, coverage);
+			
+		}else if(builder.getAnalysisType() == WindowAnalysisType.GRID){
+		
+			int maxWidth = inWidth;
+			int maxHeight = inHeight;
+			
+			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
+				
+				return TinyGridLandscapeMetricAnalysisFactory.create(builder, coverage);
+				
+			}else{
+				
+				//return HugeGridLandscapeMetricAnalysisFactory.create(builder, coverage);
+				
+			}
 		}
 		
 		throw new IllegalArgumentException(builder.getAnalysisType()+" is not a recognize analysis type");

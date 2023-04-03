@@ -15,7 +15,6 @@ import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.counting.CoupleCounting;
-import fr.inrae.act.bagap.chloe.counting.MultipleCounting;
 import fr.inrae.act.bagap.chloe.counting.QuantitativeCounting;
 import fr.inrae.act.bagap.chloe.counting.ValueAndCoupleCounting;
 import fr.inrae.act.bagap.chloe.counting.ValueCounting;

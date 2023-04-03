@@ -34,7 +34,7 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	private EnteteRaster entete;
 	
-	private int windowSize, displacement;
+	private int windowSize, displacement, gridSize;
 	
 	private double windowRadius;
 	
@@ -80,6 +80,7 @@ public class LandscapeMetricAnalysisBuilder {
 		this.displacement = 1;
 		this.interpolation = false;
 		this.windowSize = -1;
+		this.gridSize = -1;
 		this.windowRadius = -1;
 		this.roiX = 0;
 		this.roiY = 0;
@@ -165,6 +166,10 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	public void setWindowSize(int windowSize) {
 		this.windowSize = windowSize;
+	}
+	
+	public void setGridSize(int gridSize) {
+		this.gridSize = gridSize;
 	}
 
 	public void setWindowRadius(double radius){
@@ -351,6 +356,10 @@ public class LandscapeMetricAnalysisBuilder {
 
 	public int getWindowSize() {
 		return windowSize;
+	}
+	
+	public int getGridSize() {
+		return gridSize;
 	}
 
 	public double getWindowRadius() {

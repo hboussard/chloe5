@@ -78,11 +78,11 @@ public class SlidingDistanceWeightedQuantitativeKernel extends SlidingLandscapeM
 										v = imageIn()[((y + dy) * width()) + (x + dx)];
 										c = coeff()[ic];
 										if(v == noDataValue()) {
-											nb_nodata = nb_nodata + c;
+											nb_nodata += c;
 										}else{
-											nb = nb + c;
-											sum = sum + v*c;
-											square_sum = square_sum + v*c * v*c;
+											nb += c;
+											sum += v*c;
+											square_sum += v*c * v*c;
 											min = Math.min(min, v*c);
 											max = Math.max(max, v*c);
 										}

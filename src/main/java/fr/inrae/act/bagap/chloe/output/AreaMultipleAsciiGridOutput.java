@@ -22,7 +22,6 @@ public class AreaMultipleAsciiGridOutput implements CountingObserver{
 
 	private final String folder;
 	
-	//private final GridCoverage2D areaCoverage;
 	private final Coverage areaCoverage;
 	
 	private final int width, height, noDataValue;
@@ -31,7 +30,6 @@ public class AreaMultipleAsciiGridOutput implements CountingObserver{
 	
 	private Map<Integer, Map<Metric, Double>> datas;
 	
-	//public AreaMultipleAsciiGridOutput(String folder, GridCoverage2D areaCoverage, int width, int height, double xllCorner, double yllCorner, double cellSize, int noDataValue){
 	public AreaMultipleAsciiGridOutput(String folder, Coverage areaCoverage, int width, int height, double xllCorner, double yllCorner, double cellSize, int noDataValue){
 		this.folder = folder;
 		this.areaCoverage = areaCoverage;
@@ -94,9 +92,8 @@ public class AreaMultipleAsciiGridOutput implements CountingObserver{
 			
 			Rectangle roi = new Rectangle(0, 0, width, height);
 			
-			//int[] inDatas = new int[roi.width * roi.height];
-			//inDatas = areaCoverage.getRenderedImage().getData(roi).getSamples(roi.x, roi.y, roi.width, roi.height, 0, inDatas);
 			float[] inDatas = areaCoverage.getDatas(roi);
+			// areaCoverage.dispose();
 			
 			int index = 0;
 			for(float d : inDatas){

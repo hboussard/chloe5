@@ -33,7 +33,7 @@ public class SlidingDistanceWeightedCountValueKernel extends SlidingLandscapeMet
 			if(filter((int) imageIn()[(y * width()) + x])){ // gestion des filtres
 				final int mid = windowSize() / 2;
 				int ic;
-				int v;
+				short v;
 				int mv;				
 				for (int dy = -mid; dy <= mid; dy += 1) {
 					if(((y + dy) >= 0) && ((y + dy) < height())){
@@ -41,7 +41,7 @@ public class SlidingDistanceWeightedCountValueKernel extends SlidingLandscapeMet
 							if(((x + dx) >= 0) && ((x + dx) < width())){
 								ic = ((dy+mid) * windowSize()) + (dx+mid);
 								if(shape()[ic] == 1){
-									v = (int) imageIn()[((y + dy) * width()) + (x + dx)];		
+									v = (short) imageIn()[((y + dy) * width()) + (x + dx)];		
 									if(v == noDataValue()){
 										imageOut()[ind][0] += coeff()[ic];
 									}else if(v == 0){

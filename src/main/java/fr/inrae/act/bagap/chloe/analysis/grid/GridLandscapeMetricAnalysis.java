@@ -1,11 +1,11 @@
-package fr.inrae.act.bagap.chloe.analysis.sliding;
+package fr.inrae.act.bagap.chloe.analysis.grid;
 
 import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.counting.Counting;
-import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.kernel.grid.GridLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public abstract class SlidingLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
+public abstract class GridLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
 	
 	private final Coverage coverage;
 	
@@ -17,14 +17,11 @@ public abstract class SlidingLandscapeMetricAnalysis extends LandscapeMetricAnal
 	
 	private final int nbValues;
 	
-	private final int displacement;
-	
 	private final Counting counting;
 	
-	private final SlidingLandscapeMetricKernel kernel;
+	private final GridLandscapeMetricKernel kernel;
 	
-	//public SlidingLandscapeMetricAnalysis(GridCoverage2D coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting){
-	public SlidingLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting){
+	public GridLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, GridLandscapeMetricKernel kernel, Counting counting){
 			
 		this.coverage = coverage;
 		this.roiX = roiX;
@@ -36,19 +33,13 @@ public abstract class SlidingLandscapeMetricAnalysis extends LandscapeMetricAnal
 		this.bufferROIYMin = bufferROIYMin;
 		this.bufferROIYMax = bufferROIYMax;
 		this.nbValues = nbValues;
-		this.displacement = displacement;
 		this.kernel = kernel;
 		this.counting = counting;
 	}
 	
-	//protected GridCoverage2D coverage(){
 	protected Coverage coverage(){
 		return coverage;
 	}
-	
-	//protected void setCoverage(Coverage cov){
-	//	this.coverage = cov;
-	//}
 	
 	public int roiX() {
 		return roiX;
@@ -86,18 +77,13 @@ public abstract class SlidingLandscapeMetricAnalysis extends LandscapeMetricAnal
 		return nbValues;
 	}
 
-	public int displacement() {
-		return displacement;
-	}
-
 	@Override
 	public Counting counting() {
 		return counting;
 	}
 
-	public SlidingLandscapeMetricKernel kernel() {
+	public GridLandscapeMetricKernel kernel() {
 		return kernel;
 	}
-	
 
 }
