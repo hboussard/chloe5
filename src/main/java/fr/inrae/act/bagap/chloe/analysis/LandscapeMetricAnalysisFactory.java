@@ -96,8 +96,8 @@ public class LandscapeMetricAnalysisFactory {
 			
 			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
 				//System.out.println("single creator");
-				//return TinySlidingLandscapeMetricAnalysisFactory.create(builder, coverage);
-				return HugeSlidingLandscapeMetricAnalysisFactory.create(builder, coverage);
+				return TinySlidingLandscapeMetricAnalysisFactory.create(builder, coverage);
+				//return HugeSlidingLandscapeMetricAnalysisFactory.create(builder, coverage);
 			}else{
 				//System.out.println("huge creator");
 				return HugeSlidingLandscapeMetricAnalysisFactory.create(builder, coverage);
@@ -118,12 +118,11 @@ public class LandscapeMetricAnalysisFactory {
 			
 			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
 				
-				//return TinyGridLandscapeMetricAnalysisFactory.create(builder, coverage);
-				return HugeGridLandscapeMetricAnalysisFactory.create(builder, coverage);
+				return TinyGridLandscapeMetricAnalysisFactory.create(builder, coverage);
 				
 			}else{
 				
-				
+				return HugeGridLandscapeMetricAnalysisFactory.create(builder, coverage);
 			}
 		}
 		
