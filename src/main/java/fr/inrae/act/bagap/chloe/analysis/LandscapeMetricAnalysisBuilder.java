@@ -28,9 +28,9 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	private String distanceFunction;
 	
-	private String rasterFile, rasterFile2, areaRasterFile;
+	private String rasterFile, rasterFile2, entityRasterFile;
 	
-	private float[] rasterTab, rasterTab2, areaRasterTab;
+	private float[] rasterTab, rasterTab2, entityRasterTab;
 	
 	private EnteteRaster entete;
 	
@@ -95,8 +95,8 @@ public class LandscapeMetricAnalysisBuilder {
 		this.rasterTab = null;
 		this.rasterTab2 = null;
 		this.entete = null;
-		this.areaRasterFile = null;
-		this.areaRasterTab = null;
+		this.entityRasterFile = null;
+		this.entityRasterTab = null;
 		this.csv = null;
 		this.asciiGridFolder = null;
 		this.points = null;
@@ -148,12 +148,12 @@ public class LandscapeMetricAnalysisBuilder {
 		this.entete = entete;
 	}
 	
-	public void setAreaRasterFile(String areaRasterFile) {
-		this.areaRasterFile = areaRasterFile;
+	public void setEntityRasterFile(String entityRasterFile) {
+		this.entityRasterFile = entityRasterFile;
 	}
 	
-	public void setAreaRasterTab(float[] areaRasterTab) {
-		this.areaRasterTab = areaRasterTab;
+	public void setEntityRasterTab(float[] entityRasterTab) {
+		this.entityRasterTab = entityRasterTab;
 	}
 
 	public void setValues(String sValues){
@@ -342,12 +342,12 @@ public class LandscapeMetricAnalysisBuilder {
 		return entete;
 	}
 	
-	public String getAreaRasterFile() {
-		return areaRasterFile;
+	public String getEntityRasterFile() {
+		return entityRasterFile;
 	}
 	
-	public float[] getAreaRasterTab() {
-		return areaRasterTab;
+	public float[] getEntityRasterTab() {
+		return entityRasterTab;
 	}
 	
 	public int[] getValues(){

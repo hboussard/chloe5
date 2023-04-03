@@ -8,12 +8,12 @@ import java.util.TreeSet;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.counting.Counting;
-import fr.inrae.act.bagap.chloe.kernel.area.AreaLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.kernel.entity.EntityLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
 public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnalysis {
 	
-	public TinyEntityLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, short[] values, int nbValues, AreaLandscapeMetricKernel kernel, Counting counting) {	
+	public TinyEntityLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, short[] values, int nbValues, EntityLandscapeMetricKernel kernel, Counting counting) {	
 		super(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, /*values,*/ nbValues, kernel, counting);
 	}
 

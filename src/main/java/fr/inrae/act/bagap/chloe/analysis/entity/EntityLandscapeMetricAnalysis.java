@@ -4,7 +4,7 @@ import java.util.Map;
 
 import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.counting.Counting;
-import fr.inrae.act.bagap.chloe.kernel.area.AreaLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.kernel.entity.EntityLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
 public abstract class EntityLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
@@ -19,7 +19,7 @@ public abstract class EntityLandscapeMetricAnalysis extends LandscapeMetricAnaly
 	
 	private final int nbValues;
 	
-	private final AreaLandscapeMetricKernel kernel;
+	private final EntityLandscapeMetricKernel kernel;
 	
 	private final Counting counting;
 	
@@ -27,7 +27,7 @@ public abstract class EntityLandscapeMetricAnalysis extends LandscapeMetricAnaly
 	
 	private Map<Integer, double[]> outDatas;
 	
-	public EntityLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, int nbValues, AreaLandscapeMetricKernel kernel, Counting counting) {
+	public EntityLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, int nbValues, EntityLandscapeMetricKernel kernel, Counting counting) {
 		this.coverage = coverage;
 		this.areaCoverage = areaCoverage;
 		this.roiX = roiX;
@@ -67,7 +67,7 @@ public abstract class EntityLandscapeMetricAnalysis extends LandscapeMetricAnaly
 		return nbValues;
 	}
 
-	public AreaLandscapeMetricKernel kernel() {
+	public EntityLandscapeMetricKernel kernel() {
 		return kernel;
 	}
 

@@ -1,8 +1,8 @@
-package fr.inrae.act.bagap.chloe.kernel.area;
+package fr.inrae.act.bagap.chloe.kernel.entity;
 
-public class AreaQuantitativeKernel extends AreaLandscapeMetricKernel{
+public class EntityQuantitativeKernel extends EntityLandscapeMetricKernel{
 	
-	public AreaQuantitativeKernel(int noDataValue){
+	public EntityQuantitativeKernel(int noDataValue){
 		super(noDataValue);
 	}	
 	

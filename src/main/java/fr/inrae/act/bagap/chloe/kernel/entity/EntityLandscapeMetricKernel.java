@@ -1,8 +1,8 @@
-package fr.inrae.act.bagap.chloe.kernel.area;
+package fr.inrae.act.bagap.chloe.kernel.entity;
 
 import java.util.Map;
 
-public abstract class AreaLandscapeMetricKernel {
+public abstract class EntityLandscapeMetricKernel {
 
 	private int roiWidth;
 
@@ -14,7 +14,7 @@ public abstract class AreaLandscapeMetricKernel {
 
 	private Map<Integer, double[]> outDatas;
 	
-	public AreaLandscapeMetricKernel(int noDataValue){
+	public EntityLandscapeMetricKernel(int noDataValue){
 		this.noDataValue = noDataValue;
 	}
 	

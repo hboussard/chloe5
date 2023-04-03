@@ -1,10 +1,10 @@
-package fr.inrae.act.bagap.chloe.kernel.area;
+package fr.inrae.act.bagap.chloe.kernel.entity;
 
-public class AreaCountValueKernel extends AreaLandscapeMetricKernel{
+public class EntityCountValueKernel extends EntityLandscapeMetricKernel{
 
 	private final int[] mapValues;
 
-	public AreaCountValueKernel(int noDataValue, int[] values){
+	public EntityCountValueKernel(int noDataValue, int[] values){
 		super(noDataValue);
 		int maxV = 0;
 		for(int v : values){

@@ -18,11 +18,11 @@ import fr.inrae.act.bagap.chloe.counting.CoupleCounting;
 import fr.inrae.act.bagap.chloe.counting.QuantitativeCounting;
 import fr.inrae.act.bagap.chloe.counting.ValueAndCoupleCounting;
 import fr.inrae.act.bagap.chloe.counting.ValueCounting;
-import fr.inrae.act.bagap.chloe.kernel.area.AreaCountCoupleKernel;
-import fr.inrae.act.bagap.chloe.kernel.area.AreaCountValueAndCoupleKernel;
-import fr.inrae.act.bagap.chloe.kernel.area.AreaCountValueKernel;
-import fr.inrae.act.bagap.chloe.kernel.area.AreaLandscapeMetricKernel;
-import fr.inrae.act.bagap.chloe.kernel.area.AreaQuantitativeKernel;
+import fr.inrae.act.bagap.chloe.kernel.entity.EntityCountCoupleKernel;
+import fr.inrae.act.bagap.chloe.kernel.entity.EntityCountValueAndCoupleKernel;
+import fr.inrae.act.bagap.chloe.kernel.entity.EntityCountValueKernel;
+import fr.inrae.act.bagap.chloe.kernel.entity.EntityLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.kernel.entity.EntityQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.chloe.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.output.AreaCsvOutput;
@@ -47,14 +47,14 @@ public class EntityLandscapeMetricAnalysisFactory  {
 		
 		Coverage areaCoverage;
 		
-		if(builder.getAreaRasterFile() != null){
+		if(builder.getEntityRasterFile() != null){
 			// area coverage 
 			GridCoverage2DReader reader;
-			if(builder.getAreaRasterFile().endsWith(".asc")){
-				File file = new File(builder.getAreaRasterFile());
+			if(builder.getEntityRasterFile().endsWith(".asc")){
+				File file = new File(builder.getEntityRasterFile());
 				reader = new ArcGridReader(file);
-			}else if(builder.getAreaRasterFile().endsWith(".tif")){
-				File file = new File(builder.getAreaRasterFile());
+			}else if(builder.getEntityRasterFile().endsWith(".tif")){
+				File file = new File(builder.getEntityRasterFile());
 				reader = new GeoTiffReader(file);
 			}else{
 				throw new IllegalArgumentException(builder.getRasterFile()+" is not a recognize raster");
@@ -64,9 +64,9 @@ public class EntityLandscapeMetricAnalysisFactory  {
 			
 			areaCoverage = new FileCoverage(areaCoverage2D, coverage.getEntete());
 			
-		}else if(builder.getAreaRasterTab() != null){
+		}else if(builder.getEntityRasterTab() != null){
 			
-			areaCoverage = new TabCoverage(builder.getAreaRasterTab(), coverage.getEntete());
+			areaCoverage = new TabCoverage(builder.getEntityRasterTab(), coverage.getEntete());
 		}else{
 			throw new IllegalArgumentException("no area raster declared");
 		}
@@ -118,7 +118,7 @@ public class EntityLandscapeMetricAnalysisFactory  {
 				counting.addObserver(co);
 			}
 			
-			AreaLandscapeMetricKernel kernel = new AreaQuantitativeKernel(Raster.getNoDataValue());
+			EntityLandscapeMetricKernel kernel = new EntityQuantitativeKernel(Raster.getNoDataValue());
 						
 			// analysis
 			return new HugeEntityLandscapeMetricAnalysis(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, 7, kernel, counting);
@@ -157,7 +157,7 @@ public class EntityLandscapeMetricAnalysisFactory  {
 			}
 						
 			// kernel and counting
-			AreaLandscapeMetricKernel kernel = null; 
+			EntityLandscapeMetricKernel kernel = null; 
 			Counting counting = null;
 			int nbValues = 2;
 			if(MetricManager.hasOnlyValueMetric(metrics)){
@@ -166,7 +166,7 @@ public class EntityLandscapeMetricAnalysisFactory  {
 				
 				nbValues += 1 + values.length;
 				
-				kernel = new AreaCountValueKernel(Raster.getNoDataValue(), values);
+				kernel = new EntityCountValueKernel(Raster.getNoDataValue(), values);
 				counting = new ValueCounting(0, nbValues, values);
 				
 				// add metrics to counting
@@ -185,7 +185,7 @@ public class EntityLandscapeMetricAnalysisFactory  {
 				
 				nbValues += couples.length;
 				
-				kernel = new AreaCountCoupleKernel(Raster.getNoDataValue(), values);
+				kernel = new EntityCountCoupleKernel(Raster.getNoDataValue(), values);
 				counting = new CoupleCounting(0, nbValues, values.length, couples);
 				
 				// add metrics to counting
@@ -204,7 +204,7 @@ public class EntityLandscapeMetricAnalysisFactory  {
 				
 				nbValues += 1 + values.length + 2 + couples.length;
 				
-				kernel = new AreaCountValueAndCoupleKernel(Raster.getNoDataValue(), values);
+				kernel = new EntityCountValueAndCoupleKernel(Raster.getNoDataValue(), values);
 				
 				counting = new ValueAndCoupleCounting(values, couples);
 				
