@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Map.Entry;
+
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.counting.Counting;
@@ -28,11 +29,11 @@ import fr.inrae.act.bagap.chloe.output.GeoTiffOutput;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public class TinyGridLandscapeMetricAnalysisFactory {
+public class HugeGridLandscapeMetricAnalysisFactory {
 
-	public static GridLandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder, Coverage coverage) throws IOException {
+public static GridLandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder, Coverage coverage) throws IOException {
 		
-		System.out.println("tiny grid");
+		System.out.println("huge grid");
 		
 		int inWidth = coverage.width();
 		int inHeight = coverage.height();
@@ -62,9 +63,9 @@ public class TinyGridLandscapeMetricAnalysisFactory {
 		int outWidth = (int) (((roiWidth-1)/gridSize)+1);
 		int outHeight = (int) (((roiHeight-1)/gridSize)+1);
 		double outCellSize = gridSize*inCellSize;
-		double outMinX = inMinX + roiX*inCellSize; //+ inCellSize/2.0 - outCellSize/2.0;
+		double outMinX = inMinX + roiX*inCellSize; 
 		double outMaxX = outMinX + outWidth*outCellSize;
-		double outMaxY = inMaxY - roiY*inCellSize; //- inCellSize/2.0 + outCellSize/2.0;
+		double outMaxY = inMaxY - roiY*inCellSize;
 		double outMinY = outMaxY - outHeight*outCellSize;
 			
 		// buffer ROI
@@ -154,25 +155,11 @@ public class TinyGridLandscapeMetricAnalysisFactory {
 			}
 				
 			// analysis
-			return new TinyGridLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, 7, kernel, counting);
+			return new HugeGridLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, 7, kernel, counting);
 				
 		}else if(MetricManager.hasOnlyQualitativeMetric(metrics)){ // qualitative
 			// recuperation des valeurs
 			int[] values = builder.getValues();
-			if(values == null){
-				float[] datas = coverage.getDatas(new Rectangle(roiX, roiY, roiWidth, roiHeight));
-				Set<Float> inValues = new HashSet<Float>();
-				for(float d : datas){
-					if(d != 0 && d != Raster.getNoDataValue()){
-						inValues.add(d);
-					}
-				}
-				int index = 0;
-				values = new int[inValues.size()];
-				for(float d : inValues){
-					values[index++] = (int) d;
-				}
-			}
 				
 			// recuperation des couples
 			float[] couples = null;
@@ -217,7 +204,7 @@ public class TinyGridLandscapeMetricAnalysisFactory {
 				}
 						
 				// analysis
-				return new TinyGridLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
+				return new HugeGridLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
 					
 					
 			}else if(MetricManager.hasOnlyCoupleMetric(metrics)){
@@ -241,7 +228,7 @@ public class TinyGridLandscapeMetricAnalysisFactory {
 				}
 					
 				// analysis
-				return new TinyGridLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
+				return new HugeGridLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
 				
 			}else{
 				
@@ -264,7 +251,7 @@ public class TinyGridLandscapeMetricAnalysisFactory {
 				}
 					
 				// analysis
-				return new TinyGridLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
+				return new HugeGridLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
 				
 			}
 				
@@ -303,7 +290,7 @@ public class TinyGridLandscapeMetricAnalysisFactory {
 			}
 				
 			// analysis
-			return new TinyGridLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
+			return new HugeGridLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
 			
 		}
 		return null;

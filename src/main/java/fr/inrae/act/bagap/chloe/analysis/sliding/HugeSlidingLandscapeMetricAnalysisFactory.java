@@ -44,14 +44,13 @@ import fr.inrae.act.bagap.chloe.output.TabOutput;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.FileCoverage;
 import fr.inrae.act.bagap.raster.TabCoverage;
 
 public class HugeSlidingLandscapeMetricAnalysisFactory {
 
 	public static SlidingLandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder, Coverage coverage) throws IOException {
 		
-		System.out.println("huge");
+		System.out.println("huge sliding");
 		
 		if(builder.getAnalysisType() == WindowAnalysisType.SLIDING){
 					
@@ -250,7 +249,6 @@ public class HugeSlidingLandscapeMetricAnalysisFactory {
 					}
 					
 					// analysis
-					// gestion d'un huge multiple ?
 					return new DoubleHugeSlidingLandscapeMetricAnalysis(coverage, coverageBocage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, 7, displacement, kernel, counting);
 					
 				}else if(metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("bocage")){
@@ -271,7 +269,6 @@ public class HugeSlidingLandscapeMetricAnalysisFactory {
 				}
 				
 				// analysis
-				//return new QuantitativeLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, displacement, kernel, counting);
 				return new HugeSlidingLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, 7, displacement, kernel, counting);
 				
 			}else if(MetricManager.hasOnlyQualitativeMetric(metrics)){ // qualitative

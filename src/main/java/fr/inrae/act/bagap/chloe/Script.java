@@ -40,30 +40,26 @@ public class Script {
 		builder.setRasterFile(path+"za.tif");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); // doivent etre classees
 		
+		builder.setAnalysisType(WindowAnalysisType.GRID);
+		builder.setGridSize(10);
 		/*
 		builder.setAnalysisType(WindowAnalysisType.SLIDING);
 		builder.setWindowSize(11);
-		
-		builder.addAsciiGridOutput("NV_1", path+"grid/roi_nv1_sliding_11p.asc");
 		*/
-	
 		builder.setROIX(100);
 		builder.setROIY(100);
 		builder.setROIWidth(1000);
 		builder.setROIHeight(1000);
 		
-		
-		builder.setAnalysisType(WindowAnalysisType.GRID);
-		builder.setGridSize(10);
-		
-		//builder.addMetric("NV_1");
-		//builder.addAsciiGridOutput("NV_1", path+"grid/roi_nv1_grid_10p.asc");
+		builder.addMetric("NV_1");
+		builder.addAsciiGridOutput("NV_1", path+"grid/huge_roi_nv1_grid_10p.asc");
+		//builder.addAsciiGridOutput("NV_1", path+"grid/huge_roi_nv1_sliding_11p.asc");
 		
 		//builder.addMetric("SHDI");
 		//builder.addAsciiGridOutput("SHDI", path+"grid/roi_shdi_10p.asc");
 		
-		builder.addMetric("HET-frag");
-		builder.addAsciiGridOutput("HET-frag", path+"grid/roi_het_grid_10p.asc");
+		//builder.addMetric("HET-frag");
+		//builder.addAsciiGridOutput("HET-frag", path+"grid/roi_het_grid_10p.asc");
 		//builder.addAsciiGridOutput("SHDI", path+"grid/shdi_sliding_201p.asc");
 		
 		//builder.addMetric("NP");
