@@ -33,20 +33,7 @@ public abstract class GridLandscapeMetricKernel extends Kernel {
 	
 	@Override
 	public void run() {
-		
-		if(getGlobalId(0) == 2){
-			int x = bufferROIXMin() + (getGlobalId(0) % (width() - bufferROIXMin() - bufferROIXMax()));
-			int y = bufferROIYMin() + (getGlobalId(0) / (width() - bufferROIXMin() - bufferROIXMax()));
-			System.out.println(bufferROIXMin()+" "+bufferROIXMax()+" "+width()+" "+x+" "+y);
-		}
-		
-		
-		//final int x = bufferROIXMin() + (getGlobalId(0) % (width() - bufferROIXMin() - bufferROIXMax()));
-		/*final int y = bufferROIYMin() + (getGlobalId(0) / (width() - bufferROIXMin() - bufferROIXMax()));
-		processPixel(x, theY() + y, y);
-		*/
 		processGrid(getGlobalId(0), theY());
-		//processGrid(x, theY());
 	}
 	
 	protected void processGrid(int x, int theY) {

@@ -15,13 +15,15 @@ public class TinyGridLandscapeMetricAnalysis extends GridLandscapeMetricAnalysis
 	
 	public TinyGridLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, GridLandscapeMetricKernel kernel, Counting counting) {		
 		super(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
+		//System.out.println("cretor "+roiX+" "+roiY+" "+roiWidth+" "+roiHeight);
 	}
 	
 	@Override
 	protected void doInit() {
 		// mise en place des infos pour le Kernel
-		kernel().setWidth(roiWidth() + bufferROIXMin() + bufferROIXMax());
-		kernel().setHeight(roiHeight() + bufferROIYMin() + bufferROIYMax());
+		
+		kernel().setWidth(roiWidth());
+		kernel().setHeight(roiHeight());
 		kernel().setBufferROIXMin(bufferROIXMin());
 		kernel().setBufferROIXMax(bufferROIXMax());
 		kernel().setBufferROIYMin(bufferROIYMin());
@@ -34,7 +36,10 @@ public class TinyGridLandscapeMetricAnalysis extends GridLandscapeMetricAnalysis
 		// bizarement ce bug influence les données en X
 		// ce bug n'est effectif que sur les coverage issus de fichiers AsciiGrid
 		// pas de problème sur fichier TIF
-		Rectangle roi = new Rectangle(roiX() - bufferROIXMin(), roiY() - bufferROIYMin(), roiWidth() + bufferROIXMin() + bufferROIXMax(), roiHeight() + bufferROIYMin() + bufferROIYMax());
+		//Rectangle roi = new Rectangle(roiX() - bufferROIXMin(), roiY() - bufferROIYMin(), roiWidth() + bufferROIXMin() + bufferROIXMax(), roiHeight() + bufferROIYMin() + bufferROIYMax());
+		Rectangle roi = new Rectangle(roiX(), roiY(), roiWidth(), roiHeight());
+		
+		//System.out.println("recup des donnees sur : "+roi.x+" "+roi.y+" "+roi.width+" "+roi.height);
 		
 		// gestion des entrees
 		kernel().setImageIn(coverage().getDatas(roi));

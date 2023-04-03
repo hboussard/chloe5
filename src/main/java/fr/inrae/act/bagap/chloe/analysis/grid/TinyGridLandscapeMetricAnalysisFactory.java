@@ -72,7 +72,9 @@ public class TinyGridLandscapeMetricAnalysisFactory {
 		int bufferROIXMax = inWidth-(roiX+roiWidth);
 		int bufferROIYMin = roiY;
 		int bufferROIYMax = inHeight-(roiY+roiHeight);
-									
+		
+		//System.out.println(bufferROIXMin+" "+bufferROIXMax+" "+bufferROIYMin+" "+bufferROIYMax);
+		
 		// tailles theoriques
 		int theoreticalSize = 0;
 		int theoreticalCoupleSize = 0;

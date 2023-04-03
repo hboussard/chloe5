@@ -35,7 +35,7 @@ public class TinySlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 		// ce bug n'est effectif que sur les coverage issus de fichiers AsciiGrid
 		// pas de problème sur fichier TIF
 		Rectangle roi = new Rectangle(roiX() - bufferROIXMin(), roiY() - bufferROIYMin(), roiWidth() + bufferROIXMin() + bufferROIXMax(), roiHeight() + bufferROIYMin() + bufferROIYMax());
-		
+	
 		// gestion des entrees
 		kernel().setImageIn(coverage().getDatas(roi));
 		coverage().dispose();
