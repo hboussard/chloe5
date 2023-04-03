@@ -1,4 +1,4 @@
-package fr.inrae.act.bagap.chloe.analysis.area;
+package fr.inrae.act.bagap.chloe.analysis.entity;
 
 import java.util.Map;
 
@@ -7,7 +7,7 @@ import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.kernel.area.AreaLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public abstract class AreaLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
+public abstract class EntityLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
 
 	private final Coverage coverage;
 	
@@ -27,7 +27,7 @@ public abstract class AreaLandscapeMetricAnalysis extends LandscapeMetricAnalysi
 	
 	private Map<Integer, double[]> outDatas;
 	
-	public AreaLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, int nbValues, AreaLandscapeMetricKernel kernel, Counting counting) {
+	public EntityLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, int nbValues, AreaLandscapeMetricKernel kernel, Counting counting) {
 		this.coverage = coverage;
 		this.areaCoverage = areaCoverage;
 		this.roiX = roiX;

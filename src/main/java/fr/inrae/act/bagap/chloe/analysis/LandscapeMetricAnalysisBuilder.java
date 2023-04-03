@@ -6,10 +6,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import fr.inra.sad.bagap.apiland.analysis.window.WindowAnalysisType;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.PixelWithID;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.RefPoint;
+import fr.inrae.act.bagap.chloe.WindowAnalysisType;
 import fr.inrae.act.bagap.chloe.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.WindowShapeType;
 import fr.inrae.act.bagap.chloe.counting.CountingObserver;

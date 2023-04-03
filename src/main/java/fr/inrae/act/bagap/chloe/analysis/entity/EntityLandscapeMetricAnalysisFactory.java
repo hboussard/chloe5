@@ -1,4 +1,4 @@
-package fr.inrae.act.bagap.chloe.analysis.area;
+package fr.inrae.act.bagap.chloe.analysis.entity;
 
 import java.awt.Rectangle;
 import java.io.File;
@@ -33,9 +33,9 @@ import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.FileCoverage;
 import fr.inrae.act.bagap.raster.TabCoverage;
 
-public class AreaLandscapeMetricAnalysisFactory  {
+public class EntityLandscapeMetricAnalysisFactory  {
 
-	public static AreaLandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder, Coverage coverage) throws IOException {
+	public static EntityLandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder, Coverage coverage) throws IOException {
 			
 		int inWidth = coverage.width();
 		int inHeight = coverage.height();
@@ -121,7 +121,7 @@ public class AreaLandscapeMetricAnalysisFactory  {
 			AreaLandscapeMetricKernel kernel = new AreaQuantitativeKernel(Raster.getNoDataValue());
 						
 			// analysis
-			return new HugeAreaLandscapeMetricAnalysis(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, 7, kernel, counting);
+			return new HugeEntityLandscapeMetricAnalysis(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, 7, kernel, counting);
 						
 		}else{ // qualitative
 			// recuperation des valeurs
@@ -220,8 +220,7 @@ public class AreaLandscapeMetricAnalysisFactory  {
 			}
 						
 			// analysis
-			//return new AreaLandscapeMetricAnalysis(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, nbValues, kernel, counting);
-			return new HugeAreaLandscapeMetricAnalysis(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, nbValues, kernel, counting);
+			return new HugeEntityLandscapeMetricAnalysis(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, nbValues, kernel, counting);
 		}
 	}
 

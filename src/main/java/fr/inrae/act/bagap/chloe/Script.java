@@ -17,7 +17,6 @@ import org.geotools.gce.geotiff.GeoTiffReader;
 import org.geotools.image.util.ImageUtilities;
 
 import fr.inra.sad.bagap.apiland.analysis.matrix.CoverageManager;
-import fr.inra.sad.bagap.apiland.analysis.window.WindowAnalysisType;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.matrix.MatrixManager;
 import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysis;
@@ -83,7 +82,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.AREA);
+		builder.setAnalysisType(WindowAnalysisType.ENTITY);
 		builder.setRasterFile(path+"za.tif");
 		builder.setAreaRasterFile(path+"communes_za.asc");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); // doivent etre classees
@@ -1026,7 +1025,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.AREA);
+		builder.setAnalysisType(WindowAnalysisType.ENTITY);
 		builder.setRasterFile(path+"mnt_standard_deviation_5p.asc");
 		builder.setAreaRasterFile(path+"parcellaire_toulouse_5m.asc");
 		//builder.addMetric("average");
@@ -1048,7 +1047,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.AREA);
+		builder.setAnalysisType(WindowAnalysisType.ENTITY);
 		builder.setRasterFile(path+"T01alti25m.tif");
 		builder.setAreaRasterFile(path+"parcellaire_toulouse.asc");
 		builder.addMetric("standard_deviation");
@@ -1068,7 +1067,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.AREA);
+		builder.setAnalysisType(WindowAnalysisType.ENTITY);
 		builder.setRasterFile(path+"MNT5mT01.tif");
 		builder.setAreaRasterFile(path+"parcellaire_toulouse_5m.asc");
 		builder.addMetric("average");
@@ -1108,7 +1107,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.AREA);
+		builder.setAnalysisType(WindowAnalysisType.ENTITY);
 		builder.setRasterFile(path+"occsol_sitesecofriche1.tif");
 		builder.setAreaRasterFile(path+"unites_gestion_sites_ecofriche1.tif");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); 
@@ -1169,7 +1168,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.AREA);
+		builder.setAnalysisType(WindowAnalysisType.ENTITY);
 		builder.setRasterFile("F:/data/sig/CGTV/cgtv_humide.tif");
 		builder.setAreaRasterFile(path+"rpg/select/"+period+".tif");
 		builder.setValues("1, 2"); 
@@ -1191,7 +1190,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.AREA);
+		builder.setAnalysisType(WindowAnalysisType.ENTITY);
 		builder.setRasterFile("F:/data/sig/CGTV/cgtv.tif");
 		builder.setAreaRasterFile(path+"rpg/select/"+period+".tif");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ,14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27"); 
@@ -1216,7 +1215,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.AREA);
+		builder.setAnalysisType(WindowAnalysisType.ENTITY);
 		builder.setRasterFile("F:/data/sig/CGTV/cgtv.tif");
 		builder.setAreaRasterFile(path+"rpg/select/"+period+".tif");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ,14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27"); 
@@ -1245,7 +1244,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.AREA);
+		builder.setAnalysisType(WindowAnalysisType.ENTITY);
 		builder.setRasterFile("F:/data/sig/bretagne/Bretagne_2018_dispositif_bocage_reb_4.tif");
 		builder.setAreaRasterFile(path+"rpg/select/"+period+".tif");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); 
@@ -1270,7 +1269,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.AREA);
+		builder.setAnalysisType(WindowAnalysisType.ENTITY);
 		builder.setRasterFile("F:/data/sig/bretagne/Bretagne_2018_dispositif_bocage_reb_4.tif");
 		builder.setAreaRasterFile(path+"rpg/select/"+period+".tif");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); 
@@ -1588,7 +1587,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.AREA);
+		builder.setAnalysisType(WindowAnalysisType.ENTITY);
 		builder.setRasterFile(path+"za.asc");
 		builder.setAreaRasterFile(path+"feature/feature_za.asc");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); 

@@ -1,4 +1,4 @@
-package fr.inrae.act.bagap.chloe.analysis.area;
+package fr.inrae.act.bagap.chloe.analysis.entity;
 
 import java.awt.Rectangle;
 import java.util.HashMap;
@@ -11,9 +11,9 @@ import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.kernel.area.AreaLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public class HugeAreaLandscapeMetricAnalysis extends AreaLandscapeMetricAnalysis {
+public class HugeEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnalysis {
 
-	public HugeAreaLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, int nbValues, AreaLandscapeMetricKernel kernel, Counting counting) {	
+	public HugeEntityLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, int nbValues, AreaLandscapeMetricKernel kernel, Counting counting) {	
 		super(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, nbValues, kernel, counting);
 	}
 

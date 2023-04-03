@@ -7,8 +7,8 @@ import org.geotools.coverage.grid.io.GridCoverage2DReader;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffReader;
 
-import fr.inra.sad.bagap.apiland.analysis.window.WindowAnalysisType;
-import fr.inrae.act.bagap.chloe.analysis.area.AreaLandscapeMetricAnalysisFactory;
+import fr.inrae.act.bagap.chloe.WindowAnalysisType;
+import fr.inrae.act.bagap.chloe.analysis.entity.EntityLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.grid.HugeGridLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.grid.TinyGridLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.selected.SelectedLandscapeMetricAnalysisFactory;
@@ -107,9 +107,9 @@ public class LandscapeMetricAnalysisFactory {
 			
 			return SelectedLandscapeMetricAnalysisFactory.create(builder, coverage);
 			
-		}else if(builder.getAnalysisType() == WindowAnalysisType.AREA){
+		}else if(builder.getAnalysisType() == WindowAnalysisType.ENTITY){
 			
-			return AreaLandscapeMetricAnalysisFactory.create(builder, coverage);
+			return EntityLandscapeMetricAnalysisFactory.create(builder, coverage);
 			
 		}else if(builder.getAnalysisType() == WindowAnalysisType.GRID){
 		
