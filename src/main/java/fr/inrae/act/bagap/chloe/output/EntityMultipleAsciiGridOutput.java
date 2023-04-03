@@ -18,11 +18,11 @@ import fr.inrae.act.bagap.chloe.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public class AreaMultipleAsciiGridOutput implements CountingObserver{
+public class EntityMultipleAsciiGridOutput implements CountingObserver{
 
 	private final String folder;
 	
-	private final Coverage areaCoverage;
+	private final Coverage entityCoverage;
 	
 	private final int width, height, noDataValue;
 	
@@ -30,9 +30,9 @@ public class AreaMultipleAsciiGridOutput implements CountingObserver{
 	
 	private Map<Integer, Map<Metric, Double>> datas;
 	
-	public AreaMultipleAsciiGridOutput(String folder, Coverage areaCoverage, int width, int height, double xllCorner, double yllCorner, double cellSize, int noDataValue){
+	public EntityMultipleAsciiGridOutput(String folder, Coverage entityCoverage, int width, int height, double xllCorner, double yllCorner, double cellSize, int noDataValue){
 		this.folder = folder;
-		this.areaCoverage = areaCoverage;
+		this.entityCoverage = entityCoverage;
 		this.width = width;
 		this.height = height;
 		this.xllCorner = xllCorner;
@@ -92,8 +92,7 @@ public class AreaMultipleAsciiGridOutput implements CountingObserver{
 			
 			Rectangle roi = new Rectangle(0, 0, width, height);
 			
-			float[] inDatas = areaCoverage.getDatas(roi);
-			// areaCoverage.dispose();
+			float[] inDatas = entityCoverage.getDatas(roi);
 			
 			int index = 0;
 			for(float d : inDatas){

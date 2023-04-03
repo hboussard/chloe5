@@ -25,8 +25,8 @@ import fr.inrae.act.bagap.chloe.kernel.entity.EntityLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.kernel.entity.EntityQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.chloe.metric.MetricManager;
-import fr.inrae.act.bagap.chloe.output.AreaCsvOutput;
-import fr.inrae.act.bagap.chloe.output.AreaMultipleAsciiGridOutput;
+import fr.inrae.act.bagap.chloe.output.EntityCsvOutput;
+import fr.inrae.act.bagap.chloe.output.EntityMultipleAsciiGridOutput;
 import fr.inrae.act.bagap.chloe.output.AreaTabOutput;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.raster.Coverage;
@@ -45,7 +45,7 @@ public class EntityLandscapeMetricAnalysisFactory  {
 		//double inMaxY = coverage.maxy();
 		double inCellSize = coverage.cellsize();
 		
-		Coverage areaCoverage;
+		Coverage entityCoverage;
 		
 		if(builder.getEntityRasterFile() != null){
 			// area coverage 
@@ -59,14 +59,14 @@ public class EntityLandscapeMetricAnalysisFactory  {
 			}else{
 				throw new IllegalArgumentException(builder.getRasterFile()+" is not a recognize raster");
 			}
-			GridCoverage2D areaCoverage2D = (GridCoverage2D) reader.read(null);
+			GridCoverage2D entityCoverage2D = (GridCoverage2D) reader.read(null);
 			reader.dispose(); 
 			
-			areaCoverage = new FileCoverage(areaCoverage2D, coverage.getEntete());
+			entityCoverage = new FileCoverage(entityCoverage2D, coverage.getEntete());
 			
 		}else if(builder.getEntityRasterTab() != null){
 			
-			areaCoverage = new TabCoverage(builder.getEntityRasterTab(), coverage.getEntete());
+			entityCoverage = new TabCoverage(builder.getEntityRasterTab(), coverage.getEntete());
 		}else{
 			throw new IllegalArgumentException("no area raster declared");
 		}
@@ -89,16 +89,16 @@ public class EntityLandscapeMetricAnalysisFactory  {
 		// observers
 		Set<CountingObserver> observers = builder.getObservers();
 		if(builder.getCsv() != null){
-			AreaCsvOutput csvOutput = new AreaCsvOutput(builder.getCsv());
+			EntityCsvOutput csvOutput = new EntityCsvOutput(builder.getCsv());
 			observers.add(csvOutput);
 		}
 		if(builder.getAsciiGridFolder() != null){
-			AreaMultipleAsciiGridOutput asciiOutput = new AreaMultipleAsciiGridOutput(builder.getAsciiGridFolder(), areaCoverage, roiWidth, roiHeight, inMinX, inMinY, inCellSize, Raster.getNoDataValue());
+			EntityMultipleAsciiGridOutput asciiOutput = new EntityMultipleAsciiGridOutput(builder.getAsciiGridFolder(), entityCoverage, roiWidth, roiHeight, inMinX, inMinY, inCellSize, Raster.getNoDataValue());
 			observers.add(asciiOutput);
 		}
 		if(builder.getTabOutputs().size() > 0){
 			for(Entry<String, float[]> e : builder.getTabOutputs().entrySet()){
-				AreaTabOutput tabOutput = new AreaTabOutput(e.getValue(), areaCoverage, MetricManager.get(e.getKey()), roiWidth, roiHeight, Raster.getNoDataValue());
+				AreaTabOutput tabOutput = new AreaTabOutput(e.getValue(), entityCoverage, MetricManager.get(e.getKey()), roiWidth, roiHeight, Raster.getNoDataValue());
 				observers.add(tabOutput);
 			}
 		}
@@ -121,7 +121,7 @@ public class EntityLandscapeMetricAnalysisFactory  {
 			EntityLandscapeMetricKernel kernel = new EntityQuantitativeKernel(Raster.getNoDataValue());
 						
 			// analysis
-			return new HugeEntityLandscapeMetricAnalysis(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, 7, kernel, counting);
+			return new HugeEntityLandscapeMetricAnalysis(coverage, entityCoverage, roiX, roiY, roiWidth, roiHeight, 7, kernel, counting);
 						
 		}else{ // qualitative
 			// recuperation des valeurs
@@ -220,7 +220,7 @@ public class EntityLandscapeMetricAnalysisFactory  {
 			}
 						
 			// analysis
-			return new HugeEntityLandscapeMetricAnalysis(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, nbValues, kernel, counting);
+			return new HugeEntityLandscapeMetricAnalysis(coverage, entityCoverage, roiX, roiY, roiWidth, roiHeight, nbValues, kernel, counting);
 		}
 	}
 

@@ -10,13 +10,13 @@ import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 
-public class AreaCsvOutput implements CountingObserver{
+public class EntityCsvOutput implements CountingObserver{
 
 	private BufferedWriter bw;
 	
 	private String csv;
 	
-	public AreaCsvOutput(String csv) {
+	public EntityCsvOutput(String csv) {
 		this.csv = csv;
 	}
 	
