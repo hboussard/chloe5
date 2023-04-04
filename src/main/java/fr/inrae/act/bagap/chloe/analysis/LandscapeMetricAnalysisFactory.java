@@ -8,7 +8,8 @@ import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffReader;
 
 import fr.inrae.act.bagap.chloe.WindowAnalysisType;
-import fr.inrae.act.bagap.chloe.analysis.entity.EntityLandscapeMetricAnalysisFactory;
+import fr.inrae.act.bagap.chloe.analysis.entity.HugeEntityLandscapeMetricAnalysisFactory;
+import fr.inrae.act.bagap.chloe.analysis.entity.TinyEntityLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.grid.HugeGridLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.grid.TinyGridLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.selected.SelectedLandscapeMetricAnalysisFactory;
@@ -109,7 +110,17 @@ public class LandscapeMetricAnalysisFactory {
 			
 		}else if(builder.getAnalysisType() == WindowAnalysisType.ENTITY){
 			
-			return EntityLandscapeMetricAnalysisFactory.create(builder, coverage);
+			int maxWidth = inWidth;
+			int maxHeight = inHeight;
+			
+			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
+				
+				return TinyEntityLandscapeMetricAnalysisFactory.create(builder, coverage);
+				
+			}else{
+				
+				return HugeEntityLandscapeMetricAnalysisFactory.create(builder, coverage);
+			}
 			
 		}else if(builder.getAnalysisType() == WindowAnalysisType.GRID){
 		

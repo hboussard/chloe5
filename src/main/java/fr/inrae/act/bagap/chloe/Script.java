@@ -25,7 +25,38 @@ import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysisBuilder;
 public class Script {
 
 	public static void main(String[] args){
-		scriptTestGrid();
+		scriptTestArea();
+	}
+	
+	private static void scriptTestArea(){
+
+		String path = "G:/chloe/winterschool/data/start/";
+		
+		long begin = System.currentTimeMillis();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setRasterFile(path+"za.tif");
+		builder.setEntityRasterFile(path+"communes_za.asc");
+		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); // doivent etre classees
+		
+		//builder.addMetric("SHDI");
+		builder.addMetric("NV_5");
+		builder.addMetric("NC_4-5");
+		builder.addMetric("pNC_4-5");
+		
+		//builder.addAsciiGridOutput("pNV_1", path+"area/pnv1.asc"); // marche pas...
+		
+		builder.addAsciiGridFolderOutput(path+"communes4/");
+		//builder.addAsciiGridFolderOutput(path+"communes/double/");
+		//builder.addCsvOutput(path+"area/analyse_communes_za.csv");
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
 	}
 	
 	private static void scriptTestGrid(){
@@ -66,37 +97,6 @@ public class Script {
 		
 		//builder.addMetric("average");
 		//builder.addAsciiGridOutput("average", path+"grid/average_grid_11p.asc");
-		
-		LandscapeMetricAnalysis analysis = builder.build();
-		
-		analysis.allRun();
-		
-		long end = System.currentTimeMillis();
-		System.out.println("time computing : "+(end - begin));
-	}
-	
-	private static void scriptTestArea(){
-
-		String path = "G:/chloe/winterschool/data/start/";
-		
-		long begin = System.currentTimeMillis();
-		
-		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
-		builder.setRasterFile(path+"za.tif");
-		builder.setEntityRasterFile(path+"communes_za.asc");
-		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); // doivent etre classees
-		
-		builder.addMetric("SHDI");
-		//builder.addMetric("NV_1");
-		//builder.addMetric("NC_1-1");
-		//builder.addMetric("pNC_1-1");
-		
-		//builder.addAsciiGridOutput("pNV_1", path+"area/pnv1.asc"); // marche pas...
-		
-		builder.addAsciiGridFolderOutput(path+"communes/");
-		//builder.addAsciiGridFolderOutput(path+"communes/double/");
-		//builder.addCsvOutput(path+"area/analyse_communes_za.csv");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 		

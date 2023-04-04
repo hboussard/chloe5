@@ -1,15 +1,12 @@
 package fr.inrae.act.bagap.chloe.analysis.entity;
 
 import java.awt.Rectangle;
-import java.io.File;
 import java.io.IOException;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.Map.Entry;
-import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.coverage.grid.io.GridCoverage2DReader;
-import org.geotools.gce.arcgrid.ArcGridReader;
-import org.geotools.gce.geotiff.GeoTiffReader;
+
+import fr.inra.sad.bagap.apiland.analysis.matrix.CoverageManager;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.counting.Counting;
@@ -25,18 +22,19 @@ import fr.inrae.act.bagap.chloe.kernel.entity.EntityLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.kernel.entity.EntityQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.chloe.metric.MetricManager;
+import fr.inrae.act.bagap.chloe.output.EntityTabOutput;
 import fr.inrae.act.bagap.chloe.output.EntityCsvOutput;
 import fr.inrae.act.bagap.chloe.output.EntityMultipleAsciiGridOutput;
-import fr.inrae.act.bagap.chloe.output.AreaTabOutput;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.FileCoverage;
 import fr.inrae.act.bagap.raster.TabCoverage;
 
-public class EntityLandscapeMetricAnalysisFactory  {
-
+public class TinyEntityLandscapeMetricAnalysisFactory {
+	
 	public static EntityLandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder, Coverage coverage) throws IOException {
-			
+		
+		System.out.println("tiny entity");
+		
 		int inWidth = coverage.width();
 		int inHeight = coverage.height();
 		double inMinX = coverage.minx();
@@ -46,29 +44,12 @@ public class EntityLandscapeMetricAnalysisFactory  {
 		double inCellSize = coverage.cellsize();
 		
 		Coverage entityCoverage;
-		
-		if(builder.getEntityRasterFile() != null){
-			// area coverage 
-			GridCoverage2DReader reader;
-			if(builder.getEntityRasterFile().endsWith(".asc")){
-				File file = new File(builder.getEntityRasterFile());
-				reader = new ArcGridReader(file);
-			}else if(builder.getEntityRasterFile().endsWith(".tif")){
-				File file = new File(builder.getEntityRasterFile());
-				reader = new GeoTiffReader(file);
-			}else{
-				throw new IllegalArgumentException(builder.getRasterFile()+" is not a recognize raster");
-			}
-			GridCoverage2D entityCoverage2D = (GridCoverage2D) reader.read(null);
-			reader.dispose(); 
-			
-			entityCoverage = new FileCoverage(entityCoverage2D, coverage.getEntete());
-			
-		}else if(builder.getEntityRasterTab() != null){
-			
+		if (builder.getEntityRasterFile() != null) {
+			entityCoverage = CoverageManager.getCoverage(builder.getEntityRasterFile());
+		} else if (builder.getEntityRasterTab() != null) {
 			entityCoverage = new TabCoverage(builder.getEntityRasterTab(), coverage.getEntete());
-		}else{
-			throw new IllegalArgumentException("no area raster declared");
+		} else {
+			throw new IllegalArgumentException("no entity raster declared");
 		}
 		
 		// ROI
@@ -98,7 +79,7 @@ public class EntityLandscapeMetricAnalysisFactory  {
 		}
 		if(builder.getTabOutputs().size() > 0){
 			for(Entry<String, float[]> e : builder.getTabOutputs().entrySet()){
-				AreaTabOutput tabOutput = new AreaTabOutput(e.getValue(), entityCoverage, MetricManager.get(e.getKey()), roiWidth, roiHeight, Raster.getNoDataValue());
+				EntityTabOutput tabOutput = new EntityTabOutput(e.getValue(), entityCoverage, MetricManager.get(e.getKey()), roiWidth, roiHeight, Raster.getNoDataValue());
 				observers.add(tabOutput);
 			}
 		}
@@ -121,7 +102,7 @@ public class EntityLandscapeMetricAnalysisFactory  {
 			EntityLandscapeMetricKernel kernel = new EntityQuantitativeKernel(Raster.getNoDataValue());
 						
 			// analysis
-			return new HugeEntityLandscapeMetricAnalysis(coverage, entityCoverage, roiX, roiY, roiWidth, roiHeight, 7, kernel, counting);
+			return new TinyEntityLandscapeMetricAnalysis(coverage, entityCoverage, roiX, roiY, roiWidth, roiHeight, 7, kernel, counting);
 						
 		}else{ // qualitative
 			// recuperation des valeurs
@@ -220,7 +201,7 @@ public class EntityLandscapeMetricAnalysisFactory  {
 			}
 						
 			// analysis
-			return new HugeEntityLandscapeMetricAnalysis(coverage, entityCoverage, roiX, roiY, roiWidth, roiHeight, nbValues, kernel, counting);
+			return new TinyEntityLandscapeMetricAnalysis(coverage, entityCoverage, roiX, roiY, roiWidth, roiHeight, nbValues, kernel, counting);
 		}
 	}
 

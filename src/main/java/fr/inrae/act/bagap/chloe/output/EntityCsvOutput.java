@@ -3,6 +3,8 @@ package fr.inrae.act.bagap.chloe.output;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,12 +14,18 @@ import fr.inrae.act.bagap.chloe.metric.Metric;
 
 public class EntityCsvOutput implements CountingObserver{
 
+	private final DecimalFormat format;
+	
 	private BufferedWriter bw;
 	
 	private String csv;
 	
 	public EntityCsvOutput(String csv) {
 		this.csv = csv;
+		
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		symbols.setDecimalSeparator('.');
+		format = new DecimalFormat("0.00000", symbols);
 	}
 	
 	@Override
@@ -50,7 +58,7 @@ public class EntityCsvOutput implements CountingObserver{
 		try {
 			bw.write((id+""));
 			for(double v : values.values()){
-				bw.write((";"+v));
+				bw.write((";"+format.format(v)));
 			}
 			bw.newLine();
 		} catch (IOException e) {

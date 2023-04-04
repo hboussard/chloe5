@@ -13,8 +13,8 @@ import fr.inrae.act.bagap.raster.Coverage;
 
 public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnalysis {
 	
-	public TinyEntityLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, short[] values, int nbValues, EntityLandscapeMetricKernel kernel, Counting counting) {	
-		super(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, /*values,*/ nbValues, kernel, counting);
+	public TinyEntityLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, int nbValues, EntityLandscapeMetricKernel kernel, Counting counting) {	
+		super(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, nbValues, kernel, counting);
 	}
 
 	@Override
@@ -27,45 +27,39 @@ public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 		// voir si on ne peut faire cette initialisation � la vol�e
 				
 		// recuperation des donnees depuis le coverage
-		// attention bug de la récupération des données dans le coverage2D si le Y dépasse une certaine valeur
-		// bizarement ce bug influence les données en X
-		// ce bug n'est effectif que sur les coverage issus de fichiers AsciiGrid
-		// pas de problème sur fichier TIF
 		Rectangle roi = new Rectangle(roiX(), roiY(), roiWidth(), roiHeight());
 	
-		setInDatas(coverage().getDatas(roi));
+		kernel().setInDatas(coverage().getDatas(roi));
 		coverage().dispose();
-		kernel().setInDatas(inDatas());
 		
-		setInAreaDatas(areaCoverage().getDatas(roi));
-		areaCoverage().dispose();
-		kernel().setInAreaDatas(inAreaDatas());
+		kernel().setEntityDatas(entityCoverage().getDatas(roi));
 		
-		Set<Integer> areaNumbers = new TreeSet<Integer>();
-		for(float f : inAreaDatas()){
+		Set<Integer> entityIds = new TreeSet<Integer>();
+		for(float f : kernel().entityDatas()){
 			if(f != 0 && f != Raster.getNoDataValue()){
-				areaNumbers.add((int) f);
+				entityIds.add((int) f);
 			}
 		}
 		//System.out.println("nombre de features "+areaNumbers.size());
 		
 		// gestion des sorties
-		setOutDatas(new HashMap<Integer, double[]>());
-		for(int an : areaNumbers){
-			outDatas().put(an, new double[nbValues()]);
+		kernel().setOutDatas(new HashMap<Integer, double[]>());
+		for(int an : entityIds){
+			kernel().outDatas().put(an, new double[nbValues()]);
 		}
-		kernel().setOutDatas(outDatas());
 		
 		// initialisation du comptage
 		counting().init();
 		
+		// initialisation du kernel
+		kernel().init();
 	}
 
 	@Override
 	protected void doRun() {
-		kernel().applyAreaWindow();
+		kernel().applyEntityWindow();
 		
-		for(Entry<Integer, double[]> e : outDatas().entrySet()){
+		for(Entry<Integer, double[]> e : kernel().outDatas().entrySet()){
 			counting().setCounts(e.getValue());
 			counting().calculate();
 			counting().export(e.getKey());
@@ -75,6 +69,7 @@ public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 	@Override
 	protected void doClose() {
 		counting().close();
+		entityCoverage().dispose();
 	}
 
 }

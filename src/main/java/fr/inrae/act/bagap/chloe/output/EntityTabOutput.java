@@ -9,21 +9,21 @@ import fr.inrae.act.bagap.chloe.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public class AreaTabOutput implements CountingObserver{
-
+public class EntityTabOutput implements CountingObserver{
+	
 	private final float[] datas;
 	
 	private final Metric metric;
 	
-	private final Coverage areaCoverage;
+	private final Coverage entityCoverage;
 	
 	private final int width, height, noDataValue;
 	
 	private Map<Integer, Float> internalDatas;
 	
-	public AreaTabOutput(float[] datas, Coverage areaCoverage, Metric metric, int width, int height, int noDataValue){
+	public EntityTabOutput(float[] datas, Coverage entityCoverage, Metric metric, int width, int height, int noDataValue){
 		this.datas = datas;
-		this.areaCoverage = areaCoverage;
+		this.entityCoverage = entityCoverage;
 		this.metric = metric;
 		this.width = width;
 		this.height = height;
@@ -54,10 +54,10 @@ public class AreaTabOutput implements CountingObserver{
 	@Override
 	public void close(Counting c, Set<Metric> metrics){
 		Rectangle roi = new Rectangle(0, 0, width, height);
-		float[] areaDatas = areaCoverage.getDatas(roi);
+		float[] entityDatas = entityCoverage.getDatas(roi);
 		
 		int index = 0;
-		for(float ad : areaDatas){
+		for(float ad : entityDatas){
 			if(ad == noDataValue || ad == 0){
 				datas[index] = ad;
 			}else{

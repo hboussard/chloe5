@@ -5,6 +5,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,6 +22,8 @@ import fr.inrae.act.bagap.raster.Coverage;
 
 public class EntityMultipleAsciiGridOutput implements CountingObserver{
 
+	private final DecimalFormat format;
+	
 	private final String folder;
 	
 	private final Coverage entityCoverage;
@@ -39,6 +43,10 @@ public class EntityMultipleAsciiGridOutput implements CountingObserver{
 		this.yllCorner = yllCorner;
 		this.cellSize = cellSize;
 		this.noDataValue = noDataValue;
+		
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		symbols.setDecimalSeparator('.');
+		format = new DecimalFormat("0.00000", symbols);
 	}
 
 	@Override
@@ -115,7 +123,7 @@ public class EntityMultipleAsciiGridOutput implements CountingObserver{
 						if(!datas.containsKey((int) d)){
 							writers.get(m.getName()).write("0 ");
 						}else{
-							writers.get(m.getName()).write(datas.get((int) d).get(m)+" ");
+							writers.get(m.getName()).write(format.format(datas.get((int) d).get(m))+" ");
 						}
 					}
 				}

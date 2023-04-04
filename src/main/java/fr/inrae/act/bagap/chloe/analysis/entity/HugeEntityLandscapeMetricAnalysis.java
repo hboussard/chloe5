@@ -2,8 +2,8 @@ package fr.inrae.act.bagap.chloe.analysis.entity;
 
 import java.awt.Rectangle;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.Map.Entry;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysis;
@@ -22,6 +22,9 @@ public class HugeEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 		
 		kernel().setRoiWidth(roiWidth());
 		
+		// initialisation du kernel
+		kernel().init();
+		
 		// initialisation du comptage
 		counting().init();
 	}
@@ -29,10 +32,10 @@ public class HugeEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 	@Override
 	protected void doRun() {
 		
-		Set<Integer> areaIds = new TreeSet<Integer>();
+		Set<Integer> entityIds = new HashSet<Integer>();
 		
 		// gestion des sorties
-		setOutDatas(new HashMap<Integer, double[]>());
+		kernel().setOutDatas(new HashMap<Integer, double[]>());
 		
 		int tYs;
 		Rectangle roi;
@@ -44,31 +47,31 @@ public class HugeEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 			
 			kernel().setRoiHeight(tYs);
 			
+			// recuperation des donnees depuis le coverage
 			roi = new Rectangle(roiX(), localROIY, roiWidth(), tYs);
-			setInDatas(coverage().getDatas(roi));
-			kernel().setInDatas(inDatas());
 			
-			setInAreaDatas(areaCoverage().getDatas(roi));
-			kernel().setInAreaDatas(inAreaDatas());
+			// gestion des entrees
+			kernel().setInDatas(coverage().getDatas(roi));
 			
-			for(float f : inAreaDatas()){
+			kernel().setEntityDatas(entityCoverage().getDatas(roi));
+			
+			for(float f : kernel().entityDatas()){
 				if(f != 0 && f != Raster.getNoDataValue()){
-					areaIds.add((int) f);
+					entityIds.add((int) f);
 				}
 			}
 			
 			// gestion des sorties
-			for(int aId : areaIds){
-				if(!outDatas().containsKey(aId)){
-					outDatas().put(aId, new double[nbValues()]);
+			for(int aId : entityIds){
+				if(!kernel().outDatas().containsKey(aId)){
+					kernel().outDatas().put(aId, new double[nbValues()]);
 				}
 			}
-			kernel().setOutDatas(outDatas());
 			
-			kernel().applyAreaWindow();	
+			kernel().applyEntityWindow();	
 		}
 		
-		for(Entry<Integer, double[]> e : outDatas().entrySet()){
+		for(Entry<Integer, double[]> e : kernel().outDatas().entrySet()){
 			counting().setCounts(e.getValue());
 			counting().calculate();
 			counting().export(e.getKey());
@@ -79,7 +82,7 @@ public class HugeEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 	protected void doClose() {
 		counting().close();
 		coverage().dispose();
-		areaCoverage().dispose();
+		entityCoverage().dispose();
 	}
 
 }

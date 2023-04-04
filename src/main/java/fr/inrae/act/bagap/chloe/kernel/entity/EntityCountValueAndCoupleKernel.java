@@ -7,6 +7,10 @@ public class EntityCountValueAndCoupleKernel extends EntityLandscapeMetricKernel
 	private final int[][] mapCouples;
 	
 	private final int[] mapValues;
+	
+	private int[] lastEntityLine;
+	
+	private short[] lastValueLine;
 
 	public EntityCountValueAndCoupleKernel(int noDataValue, int[] values){
 		super(noDataValue);
@@ -39,13 +43,19 @@ public class EntityCountValueAndCoupleKernel extends EntityLandscapeMetricKernel
 	}	
 	
 	@Override
-	public void applyAreaWindow(){
+	public void init(){
+		lastEntityLine = new int[roiWidth()];
+		lastValueLine = new short[roiWidth()];
+	}
+	
+	@Override
+	public void applyEntityWindow(){
 		
 		int mv, va;
-		short v, v_H, v_V;
+		short v=0, v_H, v_V;
 		for(int y=0; y<roiHeight(); y++){
 			for(int x=0; x<roiWidth(); x++){
-				va = (int) inAreaDatas()[y*roiWidth() + x];
+				va = (int) entityDatas()[y*roiWidth() + x];
 				if(va != 0 && va != noDataValue()){
 					
 					v = (short) inDatas()[y*roiWidth() + x];
@@ -60,9 +70,21 @@ public class EntityCountValueAndCoupleKernel extends EntityLandscapeMetricKernel
 					}
 					
 					// couple vertical
-					if((y > 0) && inAreaDatas()[(y-1)*roiWidth() + x] == va){
+					if((y > 0) && entityDatas()[(y-1)*roiWidth() + x] == va){
 					
 						v_V = (short) inDatas()[(y-1)*roiWidth() + x];
+						
+						if(v == noDataValue() || v_V == noDataValue()){
+							outDatas().get(va)[nbValues+3] += 1;
+						}else if(v == 0 || v_V == 0){
+							outDatas().get(va)[nbValues+4] += 1;
+						}else{
+							mv = mapCouples[mapValues[v]][mapValues[v_V]];
+							outDatas().get(va)[nbValues+mv+5] += 1;
+						}
+					}else if((y == 0) && lastEntityLine[x] == va){
+						
+						v_V = lastValueLine[x];
 						
 						if(v == noDataValue() || v_V == noDataValue()){
 							outDatas().get(va)[nbValues+3] += 1;
@@ -75,7 +97,7 @@ public class EntityCountValueAndCoupleKernel extends EntityLandscapeMetricKernel
 					}
 					
 					// couple horizontal
-					if((x > 0) && inAreaDatas()[y*roiWidth() + (x-1)] == va){
+					if((x > 0) && entityDatas()[y*roiWidth() + (x-1)] == va){
 					
 						v_H = (short) inDatas()[y*roiWidth() + (x-1)];
 						
@@ -88,6 +110,10 @@ public class EntityCountValueAndCoupleKernel extends EntityLandscapeMetricKernel
 							outDatas().get(va)[nbValues+mv+5] += 1;
 						}
 					}
+				}
+				if(y == roiHeight()-1){
+					lastEntityLine[x] = va;
+					lastValueLine[x] = v;
 				}
 			}
 		}

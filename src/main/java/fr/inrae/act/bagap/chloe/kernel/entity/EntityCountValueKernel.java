@@ -18,12 +18,12 @@ public class EntityCountValueKernel extends EntityLandscapeMetricKernel{
 	}	
 	
 	@Override
-	public void applyAreaWindow(){
+	public void applyEntityWindow(){
 		int mv, va;
 		short v;
 		for(int y=0; y<roiHeight(); y++){
 			for(int x=0; x<roiWidth(); x++){
-				va = (int) inAreaDatas()[y*roiWidth() + x];
+				va = (int) entityDatas()[y*roiWidth() + x];
 				if(va != 0 && va != noDataValue()){
 					
 					v = (short) inDatas()[y*roiWidth() + x];

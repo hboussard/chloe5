@@ -10,7 +10,7 @@ public abstract class EntityLandscapeMetricKernel {
 	
 	private final int noDataValue;
 
-	private float[] inDatas, inAreaDatas;
+	private float[] inDatas, entityDatas;
 
 	private Map<Integer, double[]> outDatas;
 	
@@ -30,8 +30,8 @@ public abstract class EntityLandscapeMetricKernel {
 		this.inDatas = inDatas;
 	}
 	
-	public void setInAreaDatas(float[] inAreaDatas){
-		this.inAreaDatas = inAreaDatas;
+	public void setEntityDatas(float[] entityDatas){
+		this.entityDatas = entityDatas;
 	}
 	
 	public void setOutDatas(Map<Integer, double[]> outDatas){
@@ -54,14 +54,18 @@ public abstract class EntityLandscapeMetricKernel {
 		return inDatas;
 	}
 	
-	public float[] inAreaDatas(){
-		return inAreaDatas;
+	public float[] entityDatas(){
+		return entityDatas;
 	}
 	
 	public Map<Integer, double[]> outDatas(){
 		return outDatas;
 	}
 	
-	public abstract void applyAreaWindow();
+	public void init(){
+		// do nothing
+	}
+	
+	public abstract void applyEntityWindow();
 	
 }
