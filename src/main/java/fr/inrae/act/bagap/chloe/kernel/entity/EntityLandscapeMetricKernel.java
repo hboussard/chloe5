@@ -2,11 +2,13 @@ package fr.inrae.act.bagap.chloe.kernel.entity;
 
 import java.util.Map;
 
-public abstract class EntityLandscapeMetricKernel {
+import fr.inrae.act.bagap.chloe.kernel.LandscapeMetricKernel;
 
-	private int roiWidth;
+public abstract class EntityLandscapeMetricKernel implements LandscapeMetricKernel {
 
-	private int roiHeight;
+	private int width;
+
+	private int height;
 	
 	private final int noDataValue;
 
@@ -18,12 +20,12 @@ public abstract class EntityLandscapeMetricKernel {
 		this.noDataValue = noDataValue;
 	}
 	
-	public void setRoiWidth(int roiWidth){
-		this.roiWidth = roiWidth;
+	public void setWidth(int width){
+		this.width = width;
 	}
 	
-	public void setRoiHeight(int roiHeight){
-		this.roiHeight = roiHeight;
+	public void setHeight(int height){
+		this.height = height;
 	}
 	
 	public void setInDatas(float[] inDatas){
@@ -38,12 +40,12 @@ public abstract class EntityLandscapeMetricKernel {
 		this.outDatas = outDatas;
 	}
 	
-	public int roiWidth(){
-		return roiWidth;
+	public int width(){
+		return width;
 	}
 	
-	public int roiHeight(){
-		return roiHeight;
+	public int height(){
+		return height;
 	}
 	
 	public int noDataValue(){
@@ -64,6 +66,13 @@ public abstract class EntityLandscapeMetricKernel {
 	
 	public void init(){
 		// do nothing
+	}
+	
+	public void dispose(){
+		inDatas = null;
+		entityDatas = null;
+		outDatas.clear();
+		outDatas = null;
 	}
 	
 	public abstract void applyEntityWindow();

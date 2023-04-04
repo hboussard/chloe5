@@ -37,8 +37,8 @@ public class TinyGridLandscapeMetricAnalysisFactory {
 		int inWidth = coverage.width();
 		int inHeight = coverage.height();
 		double inMinX = coverage.minx();
-		double inMinY = coverage.miny();
-		double inMaxX = coverage.maxx();
+		//double inMinY = coverage.miny();
+		//double inMaxX = coverage.maxx();
 		double inMaxY = coverage.maxy();
 		double inCellSize = coverage.cellsize();
 			

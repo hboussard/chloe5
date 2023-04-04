@@ -13,15 +13,15 @@ import fr.inrae.act.bagap.raster.Coverage;
 
 public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnalysis {
 	
-	public TinyEntityLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, int nbValues, EntityLandscapeMetricKernel kernel, Counting counting) {	
-		super(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, nbValues, kernel, counting);
+	public TinyEntityLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, EntityLandscapeMetricKernel kernel, Counting counting) {	
+		super(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
 	}
 
 	@Override
 	protected void doInit() {
 		
-		kernel().setRoiWidth(roiWidth());
-		kernel().setRoiHeight(roiHeight());
+		kernel().setWidth(roiWidth());
+		kernel().setHeight(roiHeight());
 		
 		// lecture de la carte area et détection des numéros
 		// voir si on ne peut faire cette initialisation à la volée
@@ -68,6 +68,7 @@ public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 
 	@Override
 	protected void doClose() {
+		kernel().dispose();
 		counting().close();
 		entityCoverage().dispose();
 	}

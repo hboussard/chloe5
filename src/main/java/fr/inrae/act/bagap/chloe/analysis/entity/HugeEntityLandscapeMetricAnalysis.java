@@ -13,14 +13,14 @@ import fr.inrae.act.bagap.raster.Coverage;
 
 public class HugeEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnalysis {
 
-	public HugeEntityLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, int nbValues, EntityLandscapeMetricKernel kernel, Counting counting) {	
-		super(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, nbValues, kernel, counting);
+	public HugeEntityLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, EntityLandscapeMetricKernel kernel, Counting counting) {	
+		super(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
 	}
 
 	@Override
 	protected void doInit() {
 		
-		kernel().setRoiWidth(roiWidth());
+		kernel().setWidth(roiWidth());
 		
 		// initialisation du kernel
 		kernel().init();
@@ -45,7 +45,7 @@ public class HugeEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 			
 			tYs = Math.min(LandscapeMetricAnalysis.tileYSize(), roiHeight() + roiY() - localROIY );
 			
-			kernel().setRoiHeight(tYs);
+			kernel().setHeight(tYs);
 			
 			// recuperation des donnees depuis le coverage
 			roi = new Rectangle(roiX(), localROIY, roiWidth(), tYs);
@@ -80,6 +80,7 @@ public class HugeEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 
 	@Override
 	protected void doClose() {
+		kernel().dispose();
 		counting().close();
 		coverage().dispose();
 		entityCoverage().dispose();

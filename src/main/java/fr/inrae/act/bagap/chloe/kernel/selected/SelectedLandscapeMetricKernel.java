@@ -5,20 +5,21 @@ import java.util.Set;
 import com.aparapi.Kernel;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inrae.act.bagap.chloe.kernel.LandscapeMetricKernel;
 
-public abstract class SelectedLandscapeMetricKernel extends Kernel {
+public abstract class SelectedLandscapeMetricKernel extends Kernel implements LandscapeMetricKernel {
 
 	private final int windowSize;
 	
-	private final short[] shape;
+	private short[] shape;
 	
-	private final float[] coeff;
+	private float[] coeff;
 	
 	private final int noDataValue;
 	
-	private float imageIn[];
+	private float[] inDatas;
 	
-	private double[][] imageOut;
+	private double[][] outDatas;
 	
 	private int theY;
 	
@@ -79,20 +80,20 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel {
 		this.bufferROIYMax = bufferROIYMax;
 	}
 
-	public void setImageIn(float[] imageIn){
-		this.imageIn = imageIn;
+	public void setInDatas(float[] inDatas){
+		this.inDatas = inDatas;
 	}
 	
-	protected float[] imageIn(){
-		return imageIn;
+	protected float[] inDatas(){
+		return inDatas;
 	}
 	
-	public void setImageOut(double[][] imageOut){
-		this.imageOut = imageOut;
+	public void setOutDatas(double[][] outDatas){
+		this.outDatas = outDatas;
 	}
 	
-	protected double[][] imageOut(){
-		return imageOut;
+	public double[][] outDatas(){
+		return outDatas;
 	}
 	
 	public void applySelectedWindow(int theY, int buffer) {
@@ -131,5 +132,15 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel {
 
 	public Set<Pixel> pixels(){
 		return pixels;
+	}
+	
+	@Override
+	public void dispose(){
+		super.dispose();
+		shape = null;
+		coeff = null;
+		inDatas = null;
+		outDatas = null;
+		pixels = null;
 	}
 }

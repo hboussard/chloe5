@@ -2,15 +2,17 @@ package fr.inrae.act.bagap.chloe.kernel.grid;
 
 import com.aparapi.Kernel;
 
-public abstract class GridLandscapeMetricKernel extends Kernel {
+import fr.inrae.act.bagap.chloe.kernel.LandscapeMetricKernel;
+
+public abstract class GridLandscapeMetricKernel extends Kernel implements LandscapeMetricKernel {
 
 	private final int gridSize;
 	
 	private final int noDataValue;
 	
-	private float imageIn[];
+	private float[] inDatas;
 	
-	private double[][] imageOut;
+	private double[][] outDatas;
 	
 	private int theY;
 	
@@ -72,24 +74,24 @@ public abstract class GridLandscapeMetricKernel extends Kernel {
 		this.bufferROIYMax = bufferROIYMax;
 	}
 
-	public void setImageIn(float[] imageIn){
-		this.imageIn = imageIn;
+	public void setInDatas(float[] inDatas){
+		this.inDatas = inDatas;
 	}
 	
 	public void setTheY(int theY){
 		this.theY = theY;
 	}
 
-	protected float[] imageIn(){
-		return imageIn;
+	protected float[] inDatas(){
+		return inDatas;
 	}
 	
-	public void setImageOut(double[][] imageOut){
-		this.imageOut = imageOut;
+	public void setOutDatas(double[][] outDatas){
+		this.outDatas = outDatas;
 	}
 	
-	public double[][] imageOut(){
-		return imageOut;
+	public double[][] outDatas(){
+		return outDatas;
 	}
 	
 	protected int theY(){
@@ -120,4 +122,10 @@ public abstract class GridLandscapeMetricKernel extends Kernel {
 		return this.bufferROIYMax;
 	}
 
+	@Override
+	public void dispose(){
+		super.dispose();
+		inDatas = null;
+		outDatas = null;
+	}
 }

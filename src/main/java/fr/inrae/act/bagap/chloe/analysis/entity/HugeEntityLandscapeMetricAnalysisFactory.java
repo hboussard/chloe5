@@ -62,6 +62,12 @@ public class HugeEntityLandscapeMetricAnalysisFactory  {
 			roiHeight = inHeight;
 		}
 		
+		// buffer ROI
+		int bufferROIXMin = roiX;
+		int bufferROIXMax = inWidth-(roiX+roiWidth);
+		int bufferROIYMin = roiY;
+		int bufferROIYMax = inHeight-(roiY+roiHeight);
+		
 		// metriques
 		Set<Metric> metrics = builder.getMetrics();
 					
@@ -100,7 +106,7 @@ public class HugeEntityLandscapeMetricAnalysisFactory  {
 			EntityLandscapeMetricKernel kernel = new EntityQuantitativeKernel(Raster.getNoDataValue());
 						
 			// analysis
-			return new HugeEntityLandscapeMetricAnalysis(coverage, entityCoverage, roiX, roiY, roiWidth, roiHeight, 7, kernel, counting);
+			return new HugeEntityLandscapeMetricAnalysis(coverage, entityCoverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, 7, kernel, counting);
 						
 		}else{ // qualitative
 			// recuperation des valeurs
@@ -187,7 +193,7 @@ public class HugeEntityLandscapeMetricAnalysisFactory  {
 			}
 						
 			// analysis
-			return new HugeEntityLandscapeMetricAnalysis(coverage, entityCoverage, roiX, roiY, roiWidth, roiHeight, nbValues, kernel, counting);
+			return new HugeEntityLandscapeMetricAnalysis(coverage, entityCoverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
 		}
 	}
 
