@@ -45,10 +45,10 @@ public class DoubleTinySlidingLandscapeMetricAnalysis extends SlidingLandscapeMe
 		Rectangle roi = new Rectangle(roiX() - bufferROIXMin(), roiY() - bufferROIYMin(), roiWidth() + bufferROIXMin() + bufferROIXMax(), roiHeight() + bufferROIYMin() + bufferROIYMax());
 		
 		// gestion des entrees
-		kernel().setImageIn(coverage().getDatas(roi));
+		kernel().setInDatas(coverage().getDatas(roi));
 		coverage().dispose();
 		
-		kernel().setImageIn2(coverage2.getDatas(roi));
+		kernel().setInDatas2(coverage2.getDatas(roi));
 		coverage2.dispose();	
 		
 		// ajustement du buffer de calcul
@@ -56,7 +56,7 @@ public class DoubleTinySlidingLandscapeMetricAnalysis extends SlidingLandscapeMe
 		
 		// gestion des sorties
 		outDatas = new double[((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1))][nbValues()];
-		kernel().setImageOut(outDatas);
+		kernel().setOutDatas(outDatas);
 		
 		// initialisation du comptage
 		counting().init();

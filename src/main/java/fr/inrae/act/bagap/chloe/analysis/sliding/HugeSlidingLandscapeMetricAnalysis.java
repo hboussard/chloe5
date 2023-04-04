@@ -59,10 +59,10 @@ public class HugeSlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 			roi = new Rectangle(roiX() - bufferROIXMin(), localROIY - localBufferROIYMin, roiWidth() + bufferROIXMin() + bufferROIXMax(), tYs + localBufferROIYMin + localBufferROIYMax);
 			
 			// gestion des entrees
-			kernel().setImageIn(coverage().getDatas(roi));
+			kernel().setInDatas(coverage().getDatas(roi));
 			
 			// gestion des sorties
-			kernel().setImageOut(new double[((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1))][nbValues()]);
+			kernel().setOutDatas(new double[((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1))][nbValues()]);
 			
 			int nextJ = 0;
 			int index;
@@ -70,7 +70,7 @@ public class HugeSlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 				//System.out.println("buffer "+b+" "+tYs);
 				
 				kernel().applySlidingWindow(b, Math.min(buffer, (tYs-b)));
-				kernel().get(kernel().imageOut());
+				kernel().get(kernel().outDatas());
 				
 				index = 0;
 				for(int j=nextJ%buffer; j<Math.min(buffer, tYs-b); j+=displacement()){
@@ -78,7 +78,7 @@ public class HugeSlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 					nextJ += displacement();
 					for(int i=0; i<roiWidth(); i+=displacement()){
 						
-						counting().setCounts(kernel().imageOut()[index]);
+						counting().setCounts(kernel().outDatas()[index]);
 						counting().calculate();
 						counting().export(i, localROIY+j+b);
 						

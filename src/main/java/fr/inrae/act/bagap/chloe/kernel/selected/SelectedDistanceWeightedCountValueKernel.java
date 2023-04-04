@@ -6,7 +6,7 @@ import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 
 public class SelectedDistanceWeightedCountValueKernel extends SelectedLandscapeMetricKernel {
 
-	private final int[] mapValues;
+	private int[] mapValues;
 	
 	public SelectedDistanceWeightedCountValueKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue, int[] values){		
 		super(windowSize, pixels, shape, coeff, noDataValue);
@@ -37,11 +37,11 @@ public class SelectedDistanceWeightedCountValueKernel extends SelectedLandscapeM
 			
 			int ind = ((localY-bufferROIYMin())*(((width() - bufferROIXMin() - bufferROIXMax())-1)+1) + (x-bufferROIXMin()));
 			
-			for(int i=0; i<imageOut()[0].length; i++){
-				imageOut()[ind][i] = 0f;
+			for(int i=0; i<outDatas()[0].length; i++){
+				outDatas()[ind][i] = 0f;
 			}
 			
-			imageOut()[ind][2] = imageIn()[(y * width()) + x]; // affectation de la valeur du pixel central
+			outDatas()[ind][2] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
 			
 			
 			final int mid = windowSize() / 2;
@@ -54,14 +54,14 @@ public class SelectedDistanceWeightedCountValueKernel extends SelectedLandscapeM
 						if(((x + dx) >= 0) && ((x + dx) < width())){
 							ic = ((dy+mid) * windowSize()) + (dx+mid);
 							if(shape()[ic] == 1){
-								v = (int) imageIn()[((y + dy) * width()) + (x + dx)];		
+								v = (int) inDatas()[((y + dy) * width()) + (x + dx)];		
 								if(v == noDataValue()){
-									imageOut()[ind][0] = imageOut()[ind][0] + coeff()[ic];
+									outDatas()[ind][0] += coeff()[ic];
 								}else if(v == 0){
-									imageOut()[ind][1] = imageOut()[ind][1] + coeff()[ic];
+									outDatas()[ind][1] += coeff()[ic];
 								}else{
 									mv = mapValues[v];
-									imageOut()[ind][mv+3] = imageOut()[ind][mv+3] + coeff()[ic];	
+									outDatas()[ind][mv+3] += coeff()[ic];	
 								}
 							}
 						}
@@ -69,6 +69,12 @@ public class SelectedDistanceWeightedCountValueKernel extends SelectedLandscapeM
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void dispose(){
+		super.dispose();
+		mapValues = null;
 	}
 
 }

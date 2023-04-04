@@ -9,8 +9,8 @@ public class GridQuantitativeKernel extends GridLandscapeMetricKernel {
 	@Override
 	protected void processGrid(int x, int theY) {
 		
-		for(int i=0; i<imageOut()[0].length; i++){
-			imageOut()[x][i] = 0f;
+		for(int i=0; i<outDatas()[0].length; i++){
+			outDatas()[x][i] = 0f;
 		}
 			
 		short v;
@@ -19,14 +19,13 @@ public class GridQuantitativeKernel extends GridLandscapeMetricKernel {
 		float sum = 0;
 		double square_sum = 0;
 		float min = Float.MAX_VALUE;
-		float max = Float.MIN_VALUE;
-		int mv;				
+		float max = Float.MIN_VALUE;			
 		for(int y=0; y<gridSize(); y++) {
 			if((theY+y) < height()){
 				for(int lx=0; lx<gridSize(); lx++) {
 					if((x*gridSize() + lx) < width()){
 						
-						v = (short) imageIn()[((theY+y)*width()) + (x*gridSize() + lx)];	
+						v = (short) inDatas()[((theY+y)*width()) + (x*gridSize() + lx)];	
 						
 						if(v == noDataValue()) {
 							nb_nodata += 1;
@@ -42,12 +41,12 @@ public class GridQuantitativeKernel extends GridLandscapeMetricKernel {
 			}
 		}
 		
-		imageOut()[x][0] = nb_nodata;
-		imageOut()[x][1] = nb;
-		imageOut()[x][2] = sum;
-		imageOut()[x][3] = square_sum;
-		imageOut()[x][4] = min;
-		imageOut()[x][5] = max;
+		outDatas()[x][0] = nb_nodata;
+		outDatas()[x][1] = nb;
+		outDatas()[x][2] = sum;
+		outDatas()[x][3] = square_sum;
+		outDatas()[x][4] = min;
+		outDatas()[x][5] = max;
 	}
 
 }

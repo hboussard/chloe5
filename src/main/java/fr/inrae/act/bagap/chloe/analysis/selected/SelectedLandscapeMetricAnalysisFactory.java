@@ -28,7 +28,6 @@ import fr.inrae.act.bagap.chloe.kernel.selected.SelectedLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.kernel.selected.SelectedPatchKernel;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.chloe.metric.MetricManager;
-import fr.inrae.act.bagap.chloe.output.DataOutput;
 import fr.inrae.act.bagap.chloe.output.SelectedCsvOutput;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.util.Util;

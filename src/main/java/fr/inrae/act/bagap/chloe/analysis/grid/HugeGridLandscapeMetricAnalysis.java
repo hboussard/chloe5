@@ -40,7 +40,7 @@ public class HugeGridLandscapeMetricAnalysis extends GridLandscapeMetricAnalysis
 		}
 		
 		// gestion des sorties
-		kernel().setImageOut(new double[gridWidth][nbValues()]);
+		kernel().setOutDatas(new double[gridWidth][nbValues()]);
 		
 		int yGrid, tYs, localBufferROIYMin, localBufferROIYMax;
 		Rectangle roi;
@@ -66,17 +66,17 @@ public class HugeGridLandscapeMetricAnalysis extends GridLandscapeMetricAnalysis
 			//System.out.println(roiX()+" "+localROIY+" "+roiWidth()+" "+tYs);
 			
 			// gestion des entrees
-			kernel().setImageIn(coverage().getDatas(roi));
+			kernel().setInDatas(coverage().getDatas(roi));
 			
 			yGrid = 0;
 			for(int b=0; b<tYs; b+=buffer, yGrid++){
 				//System.out.println("buffer "+b);
 				kernel().applyGridWindow(gridWidth, b);
-				kernel().get(kernel().imageOut());
+				kernel().get(kernel().outDatas());
 				
 				for(int xGrid=0; xGrid<gridWidth; xGrid++){
 					
-					counting().setCounts(kernel().imageOut()[xGrid]);
+					counting().setCounts(kernel().outDatas()[xGrid]);
 					counting().calculate();
 					counting().export(xGrid, yGrid);
 				}	

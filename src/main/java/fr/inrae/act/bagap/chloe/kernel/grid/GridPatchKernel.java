@@ -5,7 +5,7 @@ import fr.inra.sad.bagap.apiland.analysis.matrix.cluster.ClusteringTabQueenAnaly
 
 public class GridPatchKernel extends GridLandscapeMetricKernel {
 
-	private final int[] values;
+	private int[] values;
 	
 	private double cellSize;
 	
@@ -18,8 +18,8 @@ public class GridPatchKernel extends GridLandscapeMetricKernel {
 	@Override
 	protected void processGrid(int x, int theY) {
 		
-		for(int i=0; i<imageOut()[0].length; i++){
-			imageOut()[x][i] = 0f;
+		for(int i=0; i<outDatas()[0].length; i++){
+			outDatas()[x][i] = 0f;
 		}
 			
 		int v;	
@@ -29,7 +29,7 @@ public class GridPatchKernel extends GridLandscapeMetricKernel {
 				for(int lx=0; lx<gridSize(); lx++) {
 					if((x*gridSize() + lx) < width()){
 						
-						v = (int) imageIn()[((theY+y)*width()) + (x*gridSize() + lx)];		
+						v = (int) inDatas()[((theY+y)*width()) + (x*gridSize() + lx)];		
 						
 						tabCover[y*gridSize() + lx] = v;
 					}
@@ -43,21 +43,27 @@ public class GridPatchKernel extends GridLandscapeMetricKernel {
 		ClusteringTabOutput cto = new ClusteringTabOutput(tabCluster, tabCover, values, cellSize);
 		cto.allRun();
 		
-		imageOut()[x][0] = cto.getNbPatch();
-		imageOut()[x][1] = cto.getTotalSurface();
-		imageOut()[x][2] = cto.getMaxSurface();
+		outDatas()[x][0] = cto.getNbPatch();
+		outDatas()[x][1] = cto.getTotalSurface();
+		outDatas()[x][2] = cto.getMaxSurface();
 		
 		for(int i=0; i<values.length; i++){
-			imageOut()[x][i+3] = cto.getNbPatch(values[i]);
+			outDatas()[x][i+3] = cto.getNbPatch(values[i]);
 		}
 		
 		for(int i=0; i<values.length; i++){
-			imageOut()[x][i+3+values.length] = cto.getTotalSurface(values[i]);
+			outDatas()[x][i+3+values.length] = cto.getTotalSurface(values[i]);
 		}
 		
 		for(int i=0; i<values.length; i++){
-			imageOut()[x][i+3+2*values.length] = cto.getMaxSurface(values[i]);
+			outDatas()[x][i+3+2*values.length] = cto.getMaxSurface(values[i]);
 		}
+	}
+	
+	@Override
+	public void dispose(){
+		super.dispose();
+		values = null;
 	}
 
 }

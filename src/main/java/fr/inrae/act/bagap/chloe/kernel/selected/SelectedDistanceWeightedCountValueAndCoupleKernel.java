@@ -8,11 +8,10 @@ public class SelectedDistanceWeightedCountValueAndCoupleKernel extends SelectedL
 	
 	private final int nbValues;
 	
-	private final int[][] mapCouples;
+	private int[][] mapCouples;
 	
-	private final int[] mapValues;
+	private int[] mapValues;
 	
-	@SuppressWarnings("deprecation")
 	public SelectedDistanceWeightedCountValueAndCoupleKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue, int[] values){
 		super(windowSize, pixels, shape, coeff, noDataValue);
 		this.nbValues = values.length;
@@ -59,11 +58,11 @@ public class SelectedDistanceWeightedCountValueAndCoupleKernel extends SelectedL
 			
 			int ind = ((localY-bufferROIYMin())*(((width() - bufferROIXMin() - bufferROIXMax())-1)+1) + (x-bufferROIXMin()));
 			
-			for(int i=0; i<imageOut()[0].length; i++){
-				imageOut()[ind][i] = 0f;
+			for(int i=0; i<outDatas()[0].length; i++){
+				outDatas()[ind][i] = 0f;
 			}
 			
-			imageOut()[ind][2] = imageIn()[(y * width()) + x]; // affectation de la valeur du pixel central
+			outDatas()[ind][2] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
 					
 			final int mid = windowSize() / 2;
 			int ic, ic_V, ic_H;
@@ -75,32 +74,30 @@ public class SelectedDistanceWeightedCountValueAndCoupleKernel extends SelectedL
 						if(((x + dx) >= 0) && ((x + dx) < width())){
 							ic = ((dy+mid) * windowSize()) + (dx+mid);
 							if(shape()[ic] == 1) {
-								v = (short) imageIn()[((y + dy) * width()) + (x + dx)];
+								v = (short) inDatas()[((y + dy) * width()) + (x + dx)];
 								
 								if(v == -1){
-									imageOut()[ind][0] = imageOut()[ind][0] + coeff()[ic];
+									outDatas()[ind][0] += coeff()[ic];
+								}else if(v == 0){
+									outDatas()[ind][1] += coeff()[ic];
 								}else{
-									if(v == 0){
-										imageOut()[ind][1] = imageOut()[ind][1] + coeff()[ic];
-									}else{
-										mv = mapValues[v];
-										imageOut()[ind][mv+3] = imageOut()[ind][mv+3] + coeff()[ic];
-									}
+									mv = mapValues[v];
+									outDatas()[ind][mv+3] += coeff()[ic];
 								}
 								
 								if((dy > -mid) && ((y + dy) > 0)) {
 									ic_V = ((dy+mid-1) * windowSize()) + (dx+mid);
 									if(shape()[ic_V] == 1){
-										v_V = (short) imageIn()[((y + dy - 1) * width()) + (x + dx)];
+										v_V = (short) inDatas()[((y + dy - 1) * width()) + (x + dx)];
 										
 										if(v == noDataValue() || v_V == noDataValue()){
-											imageOut()[ind][nbValues+3] = imageOut()[ind][nbValues+3] + coeff()[ic];
+											outDatas()[ind][nbValues+3] += coeff()[ic];
 										}else{
 											if(v == 0 || v_V == 0){
-												imageOut()[ind][nbValues+4] = imageOut()[ind][nbValues+4] + coeff()[ic];
+												outDatas()[ind][nbValues+4] += coeff()[ic];
 											}else{
 												mv = mapCouples[mapValues[v]][mapValues[v_V]];
-												imageOut()[ind][nbValues+mv+5] = imageOut()[ind][nbValues+mv+5] + coeff()[ic];
+												outDatas()[ind][nbValues+mv+5] += coeff()[ic];
 											}
 										}
 									}
@@ -109,16 +106,16 @@ public class SelectedDistanceWeightedCountValueAndCoupleKernel extends SelectedL
 								if((dx > -mid) && ((x + dx) > 0)) {
 									ic_H = ((dy+mid) * windowSize()) + (dx+mid-1);
 									if(shape()[ic_H] == 1){
-										v_H = (short) imageIn()[((y + dy) * width()) + (x + dx - 1)];
+										v_H = (short) inDatas()[((y + dy) * width()) + (x + dx - 1)];
 										
 										if(v == noDataValue() || v_H == noDataValue()){
-											imageOut()[ind][nbValues+3] = imageOut()[ind][nbValues+3] + coeff()[ic];
+											outDatas()[ind][nbValues+3] += coeff()[ic];
 										}else{
 											if(v == 0 || v_H == 0){
-												imageOut()[ind][nbValues+4] = imageOut()[ind][nbValues+4] + coeff()[ic];
+												outDatas()[ind][nbValues+4] += coeff()[ic];
 											}else{
 												mv = mapCouples[mapValues[v]][mapValues[v_H]];
-												imageOut()[ind][nbValues+mv+5] = imageOut()[ind][nbValues+mv+5] + coeff()[ic];
+												outDatas()[ind][nbValues+mv+5] += coeff()[ic];
 											}
 										}
 									}
@@ -129,6 +126,13 @@ public class SelectedDistanceWeightedCountValueAndCoupleKernel extends SelectedL
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void dispose(){
+		super.dispose();
+		mapCouples = null;
+		mapValues = null;
 	}
 
 }

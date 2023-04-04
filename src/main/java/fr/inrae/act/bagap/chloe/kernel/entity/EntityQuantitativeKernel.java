@@ -9,11 +9,11 @@ public class EntityQuantitativeKernel extends EntityLandscapeMetricKernel{
 	@Override
 	public void applyEntityWindow(){
 		
-		for(int y=0; y<roiHeight(); y++){
-			for(int x=0; x<roiWidth(); x++){
-				int va = (int) entityDatas()[y*roiWidth() + x];
+		for(int y=0; y<height(); y++){
+			for(int x=0; x<width(); x++){
+				int va = (int) entityDatas()[y*width() + x];
 				if(va != 0 && va != noDataValue()){
-					float v = inDatas()[y*roiWidth() + x];
+					float v = inDatas()[y*width() + x];
 					
 					if(v == noDataValue()) {
 						outDatas().get(va)[0] += 1;

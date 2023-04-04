@@ -16,6 +16,7 @@ import fr.inrae.act.bagap.chloe.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.chloe.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.output.DataOutput;
+import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class LandscapeMetricAnalysisBuilder {
@@ -213,15 +214,16 @@ public class LandscapeMetricAnalysisBuilder {
 	}
 	
 	public void addAsciiGridOutput(String metric, String ascii){
-		//addMetric(metric);
+		Util.createAccess(ascii);
 		this.asciiOutputs.put(metric, ascii);
 	}
-	
+
 	public void addTabOutput(String metric, float[] tab){
 		this.tabOutputs.put(metric, tab);
 	}
 	
 	public void addGeoTiffOutput(String metric, String geotiff){
+		Util.createAccess(geotiff);
 		this.geotiffOutputs.put(metric, geotiff);
 	}
 	

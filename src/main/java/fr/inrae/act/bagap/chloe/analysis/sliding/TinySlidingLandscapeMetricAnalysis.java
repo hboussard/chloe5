@@ -11,8 +11,6 @@ public class TinySlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 
 	private int buffer;
 	
-	private double[][] outDatas;
-	
 	public TinySlidingLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {		
 		super(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 	}
@@ -37,15 +35,14 @@ public class TinySlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 		Rectangle roi = new Rectangle(roiX() - bufferROIXMin(), roiY() - bufferROIYMin(), roiWidth() + bufferROIXMin() + bufferROIXMax(), roiHeight() + bufferROIYMin() + bufferROIYMax());
 	
 		// gestion des entrees
-		kernel().setImageIn(coverage().getDatas(roi));
+		kernel().setInDatas(coverage().getDatas(roi));
 		coverage().dispose();
 		
 		// ajustement du buffer de calcul
 		buffer = (short) Math.max(displacement(), LandscapeMetricAnalysis.bufferSize());
 		
 		// gestion des sorties
-		outDatas = new double[((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1))][nbValues()];
-		kernel().setImageOut(outDatas);
+		kernel().setOutDatas(new double[((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1))][nbValues()]);
 		
 		// initialisation du comptage
 		counting().init();
@@ -60,7 +57,6 @@ public class TinySlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 		for(int b=0; b<roiHeight(); b+=buffer){
 			System.out.println(b);
 			kernel().applySlidingWindow(b, Math.min(buffer, (roiHeight()-b)));
-			kernel().get(outDatas);
 			
 			index = 0;
 			for(int j=nextJ%buffer; j<Math.min(buffer, roiHeight()-b); j+=displacement()){
@@ -68,7 +64,7 @@ public class TinySlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 				nextJ += displacement();
 				for(int i=0; i<roiWidth(); i+=displacement()){
 					
-					counting().setCounts(outDatas[index]);
+					counting().setCounts(kernel().outDatas()[index]);
 					counting().calculate();
 					counting().export(i, j+b);
 					

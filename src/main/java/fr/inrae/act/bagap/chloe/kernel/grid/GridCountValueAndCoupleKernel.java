@@ -4,9 +4,9 @@ public class GridCountValueAndCoupleKernel extends GridLandscapeMetricKernel {
 
 	private final int nbValues;
 	
-	private final int[][] mapCouples;
+	private int[][] mapCouples;
 	
-	private final int[] mapValues;
+	private int[] mapValues;
 	
 	public GridCountValueAndCoupleKernel(int gridSize, int noDataValue, int[] values){		
 		super(gridSize, noDataValue);
@@ -41,8 +41,8 @@ public class GridCountValueAndCoupleKernel extends GridLandscapeMetricKernel {
 	@Override
 	protected void processGrid(int x, int theY) {
 		
-		for(int i=0; i<imageOut()[0].length; i++){
-			imageOut()[x][i] = 0f;
+		for(int i=0; i<outDatas()[0].length; i++){
+			outDatas()[x][i] = 0f;
 		}
 			
 		short v, v_H, v_V;
@@ -52,46 +52,53 @@ public class GridCountValueAndCoupleKernel extends GridLandscapeMetricKernel {
 				for(int lx=0; lx<gridSize(); lx++) {
 					if((x*gridSize() + lx) < width()){
 						
-						v = (short) imageIn()[((theY+y)*width()) + (x*gridSize() + lx)];	
+						v = (short) inDatas()[((theY+y)*width()) + (x*gridSize() + lx)];	
 						
 						if(v == noDataValue()){
-							imageOut()[x][0] += 1;
+							outDatas()[x][0] += 1;
 						}else if(v == 0){
-							imageOut()[x][1] += 1;
+							outDatas()[x][1] += 1;
 						}else{
 							mv = mapValues[v];
-							imageOut()[x][mv+3] += 1;	
+							outDatas()[x][mv+3] += 1;	
 						}
 						
 						if(y > 0) {
-							v_V = (short) imageIn()[((theY+y-1)*width()) + (x*gridSize() + lx)];
+							v_V = (short) inDatas()[((theY+y-1)*width()) + (x*gridSize() + lx)];
 							
 							if(v == noDataValue() || v_V == noDataValue()){
-								imageOut()[x][nbValues+3] += 1;
+								outDatas()[x][nbValues+3] += 1;
 							}else if(v == 0 || v_V == 0){
-								imageOut()[x][nbValues+4] += 1;
+								outDatas()[x][nbValues+4] += 1;
 							}else{
 								mv = mapCouples[mapValues[v]][mapValues[v_V]];
-								imageOut()[x][nbValues+mv+5] += 1;
+								outDatas()[x][nbValues+mv+5] += 1;
 							}
 						}
 						
 						if(lx > 0) {
-							v_H = (short) imageIn()[((theY+y)*width()) + (x*gridSize() + lx - 1)];
+							v_H = (short) inDatas()[((theY+y)*width()) + (x*gridSize() + lx - 1)];
 							
 							if(v == noDataValue() || v_H == noDataValue()){
-								imageOut()[x][nbValues+3] += 1;
+								outDatas()[x][nbValues+3] += 1;
 							}else if(v == 0 || v_H == 0){
-								imageOut()[x][nbValues+4] += 1;
+								outDatas()[x][nbValues+4] += 1;
 							}else{
 								mv = mapCouples[mapValues[v]][mapValues[v_H]];
-								imageOut()[x][nbValues+mv+5] += 1;
+								outDatas()[x][nbValues+mv+5] += 1;
 							}
 						}
 					}
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void dispose(){
+		super.dispose();
+		mapCouples = null;
+		mapValues = null;
 	}
 
 }

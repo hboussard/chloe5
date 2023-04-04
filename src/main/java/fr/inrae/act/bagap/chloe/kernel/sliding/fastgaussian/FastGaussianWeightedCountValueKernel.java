@@ -1,29 +1,24 @@
 package fr.inrae.act.bagap.chloe.kernel.sliding.fastgaussian;
 
-import com.aparapi.Kernel;
-
 import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingLandscapeMetricKernel;
 
 public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetricKernel {
 
-	private final int[] values;
+	private int[] values;
 	
-	private final int nbValues;
+	//private final int nbValues;
 	
-	private final int[] mapValues;
+	private int[] mapValues;
 	
 	private float[][] buf;
 	
-	private final float[] gauss;
+	private float[] gauss;
 	
 	public FastGaussianWeightedCountValueKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] values, int[] unfilters){
 		super( windowSize, displacement, shape, coeff, noDataValue, unfilters);
 
-		this.setExplicit(true);
-		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
-		
 		this.values = values;
-		this.nbValues = values.length;
+		//this.nbValues = values.length;
 		int maxV = 0;
 		for(int v : values){
 			maxV = Math.max(v, maxV);
@@ -56,7 +51,7 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 			if(((y + dy) >= 0) && ((y + dy) < height())){
 				
 				ic = abs(dy);
-				v = (int)imageIn()[((y + dy) * width()) + x];
+				v = (int) inDatas()[((y + dy) * width()) + x];
 							
 				if(v == noDataValue()){
 					mv = 0;
@@ -76,7 +71,7 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 		int x_buf = x*displacement();
 		int y=line/displacement();
 		int ind = y*((width()-1)/displacement()+1) + x;
-		imageOut()[ind][2] = (int)imageIn()[((theY() + line)* width()) + x];
+		outDatas()[ind][2] = (int) inDatas()[((theY() + line)* width()) + x];
 		float val;
 		
 		for(int value=0; value<values.length+3; value++) {
@@ -87,7 +82,7 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 			for(int i=max(x_buf-windowSize()+1,0); i<min(x_buf+windowSize(),width()); i++) {
 				val+=buf[i][value]*gauss[abs(i-x_buf)];
 			}
-			imageOut()[ind][value] = val;
+			outDatas()[ind][value] = val;
 		}
 	}
 
@@ -116,6 +111,15 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 		}else if(x < (width() - bufferROIXMin() - bufferROIXMax()-1) / displacement() + 1){
 			processHorizontalPixel(x, line);
 		}
+	}
+	
+	@Override
+	public void dispose(){
+		super.dispose();
+		values = null;
+		mapValues = null;
+		buf = null;
+		gauss = null;
 	}
 
 }

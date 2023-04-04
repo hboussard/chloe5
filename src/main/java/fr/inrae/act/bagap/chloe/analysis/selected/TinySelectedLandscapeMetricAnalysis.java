@@ -13,7 +13,7 @@ public class TinySelectedLandscapeMetricAnalysis extends SelectedLandscapeMetric
 
 	private int buffer;
 	
-	private double[][] outDatas;
+	//private double[][] outDatas;
 	
 	public TinySelectedLandscapeMetricAnalysis(Coverage coverage, Set<Pixel> pixels, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, SelectedLandscapeMetricKernel kernel, Counting counting) {		
 		super(coverage, pixels, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
@@ -40,14 +40,15 @@ public class TinySelectedLandscapeMetricAnalysis extends SelectedLandscapeMetric
 		
 		float[] inDatas = coverage().getDatas(roi);
 		coverage().dispose();
-		kernel().setImageIn(inDatas);
+		kernel().setInDatas(inDatas);
 		
 		// ajustement du buffer de calcul
 		buffer = LandscapeMetricAnalysis.bufferSize();
 		
 		// gestion des sorties
-		outDatas = new double[(((roiWidth()-1)+1)*((buffer-1)+1))][nbValues()];
-		kernel().setImageOut(outDatas);
+		//outDatas = new double[(((roiWidth()-1)+1)*((buffer-1)+1))][nbValues()];
+		//kernel().setImageOut(outDatas);
+		kernel().setOutDatas(new double[(((roiWidth()-1)+1)*((buffer-1)+1))][nbValues()]);
 		
 		// initialisation du comptage
 		counting().init();
@@ -62,7 +63,7 @@ public class TinySelectedLandscapeMetricAnalysis extends SelectedLandscapeMetric
 		for(int b=0; b<roiHeight(); b+=buffer){
 			//System.out.println(b);
 			kernel().applySelectedWindow(b, Math.min(buffer, (roiHeight()-b)));
-			kernel().get(outDatas);
+			//kernel().get(outDatas);
 			
 			index = 0;
 			for(int j=nextJ%buffer; j<Math.min(buffer, roiHeight()-b); j++){
@@ -74,7 +75,7 @@ public class TinySelectedLandscapeMetricAnalysis extends SelectedLandscapeMetric
 					if(pixels().contains(p)){
 						//System.out.println("ici "+i+" "+(j+b));
 						
-						counting().setCounts(outDatas[index]);
+						counting().setCounts(kernel().outDatas()[index]);
 						counting().calculate();
 						counting().export(i, j+b);
 					}

@@ -1,30 +1,25 @@
 package fr.inrae.act.bagap.chloe.kernel.sliding.fastgaussian;
 
-import com.aparapi.Kernel;
-
 import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingLandscapeMetricKernel;
 
 public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetricKernel {
 
-	private final int[] values;
+	//private final int[] values;
 	
-	private final int[] mapValues;
+	private int[] mapValues;
 	
-	private final int[][] mapCouples;
+	private int[][] mapCouples;
 	
 	private final int nCouplesValues;
 	
 	private float[][] buf;
 	
-	private final float[] gauss;
+	private float[] gauss;
 	
 	public FastGaussianWeightedCountCoupleKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] values, int[] unfilters){
 		super( windowSize, displacement, shape, coeff, noDataValue, unfilters);
 
-		this.setExplicit(true);
-		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
-		
-		this.values = values;
+		//this.values = values;
 		int maxV = 0;
 		for(int v : values){
 			maxV = Math.max(v, maxV);
@@ -74,9 +69,9 @@ public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetri
 			if(((y + dy) >= 0) && ((y + dy) < height())){
 				
 				ic = abs(dy);
-				v = (int) imageIn()[((y + dy) * width()) + x];
+				v = (int) inDatas()[((y + dy) * width()) + x];
 				if(y+dy>0) {
-					v_V = (int) imageIn()[((y + dy - 1) * width()) + x];
+					v_V = (int) inDatas()[((y + dy - 1) * width()) + x];
 					if(v == noDataValue() || v_V == noDataValue()){
 						mc=0;
 					}else if (v==0 || v_V == 0){
@@ -87,7 +82,7 @@ public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetri
 					buf[x][mc] += gauss[ic];
 				}
 				if(x>0) {
-					v_H = (int) imageIn()[((y + dy) * width()) + x - 1];
+					v_H = (int) inDatas()[((y + dy) * width()) + x - 1];
 					if(v == noDataValue() || v_H == noDataValue()){
 						mc = 0;
 					}else if (v==0 || v_H == 0){
@@ -115,7 +110,7 @@ public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetri
 			for(int i=max(x_buf-windowSize()+1, 0); i<min(x_buf+windowSize(),width()); i++) {
 				val += buf[i][value] * gauss[abs(i-x_buf)];
 			}
-			imageOut()[ind][value] = val;
+			outDatas()[ind][value] = val;
 		}
 	}
 
@@ -143,6 +138,15 @@ public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetri
 		}else if(x < (width() - bufferROIXMin() - bufferROIXMax()-1) / displacement() + 1){
 			processHorizontalPixel(x,line);
 		}
+	}
+	
+	@Override
+	public void dispose(){
+		super.dispose();
+		mapValues = null;
+		mapCouples = null;
+		buf = null;
+		gauss = null;
 	}
 
 }

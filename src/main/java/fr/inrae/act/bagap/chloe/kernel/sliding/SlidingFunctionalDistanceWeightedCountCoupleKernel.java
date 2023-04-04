@@ -13,9 +13,9 @@ import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 
 public class SlidingFunctionalDistanceWeightedCountCoupleKernel extends DoubleSlidingLandscapeMetricKernel {
 	
-	private final int[][] mapCouples;
+	private int[][] mapCouples;
 	
-	private final int[] mapValues;
+	private int[] mapValues;
 	
 	private double cellSize;
 	
@@ -62,13 +62,13 @@ public class SlidingFunctionalDistanceWeightedCountCoupleKernel extends DoubleSl
 			
 			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
 			
-			for(int i=0; i<imageOut()[0].length; i++){
-				imageOut()[ind][i] = 0f;
+			for(int i=0; i<outDatas()[0].length; i++){
+				outDatas()[ind][i] = 0f;
 			}
 			
 			float[] image, resistance, distance;
 			
-			if(filter((short) imageIn()[(y * width()) + x])){ // gestion des filtres
+			if(filter((short) inDatas()[(y * width()) + x])){ // gestion des filtres
 				
 				final int mid = windowSize() / 2;
 				
@@ -91,19 +91,19 @@ public class SlidingFunctionalDistanceWeightedCountCoupleKernel extends DoubleSl
 							if(((x + dx) >= 0) && ((x + dx) < width())){
 								ic = ((dy+mid) * windowSize()) + (dx+mid);
 								if(shape()[ic] == 1) {
-									v = (short) imageIn()[((y + dy) * width()) + (x + dx)];
+									v = (short) inDatas()[((y + dy) * width()) + (x + dx)];
 									
 									if((dy > -mid) && ((y + dy) > 0)) {
 										ic_V = ((dy+mid-1) * windowSize()) + (dx+mid);
 										if(shape()[ic_V] == 1){
-											v_V = (short) imageIn()[((y + dy - 1) * width()) + (x + dx)];
+											v_V = (short) inDatas()[((y + dy - 1) * width()) + (x + dx)];
 											if(v == noDataValue() || v_V == noDataValue()){
-												imageOut()[ind][0] += coeff()[ic];
+												outDatas()[ind][0] += coeff()[ic];
 											}else if(v == 0 || v_V == 0){
-												imageOut()[ind][1] += coeff()[ic];
+												outDatas()[ind][1] += coeff()[ic];
 											}else{
 												mc = mapCouples[mapValues[v]][mapValues[v_V]];
-												imageOut()[ind][mc+2] += coeff()[ic];
+												outDatas()[ind][mc+2] += coeff()[ic];
 											}
 										}
 									}
@@ -111,14 +111,14 @@ public class SlidingFunctionalDistanceWeightedCountCoupleKernel extends DoubleSl
 									if((dx > -mid) && ((x + dx) > 0)) {
 										ic_H = ((dy+mid) * windowSize()) + (dx+mid-1);
 										if(shape()[ic_H] == 1){
-											v_H = (short) imageIn()[((y + dy) * width()) + (x + dx - 1)];
+											v_H = (short) inDatas()[((y + dy) * width()) + (x + dx - 1)];
 											if(v == noDataValue() || v_H == noDataValue()){
-												imageOut()[ind][0] += coeff()[ic];
+												outDatas()[ind][0] += coeff()[ic];
 											}else if(v == 0 || v_H == 0){
-												imageOut()[ind][1] += coeff()[ic];
+												outDatas()[ind][1] += coeff()[ic];
 											}else{
 												mc = mapCouples[mapValues[v]][mapValues[v_H]];
-												imageOut()[ind][mc+2] += coeff()[ic];
+												outDatas()[ind][mc+2] += coeff()[ic];
 											}
 										}
 									}
@@ -167,7 +167,7 @@ public class SlidingFunctionalDistanceWeightedCountCoupleKernel extends DoubleSl
 				for (int dx = -mid; dx <= mid; dx += 1) {
 					if(((x + dx) >= 0) && ((x + dx) < width())){
 						ic = ((dy+mid) * windowSize()) + (dx+mid);
-						image[ic] = imageIn()[((y + dy) * width()) + (x + dx)];
+						image[ic] = inDatas()[((y + dy) * width()) + (x + dx)];
 					}
 				}
 			}
@@ -186,7 +186,7 @@ public class SlidingFunctionalDistanceWeightedCountCoupleKernel extends DoubleSl
 				for (int dx = -mid; dx <= mid; dx += 1) {
 					if(((x + dx) >= 0) && ((x + dx) < width())){
 						ic = ((dy+mid) * windowSize()) + (dx+mid);
-						resistance[ic] = imageIn2()[((y + dy) * width()) + (x + dx)];
+						resistance[ic] = inDatas2()[((y + dy) * width()) + (x + dx)];
 					}
 				}
 			}
@@ -219,5 +219,11 @@ public class SlidingFunctionalDistanceWeightedCountCoupleKernel extends DoubleSl
 		return distance;
 	}
 
-	
+	@Override
+	public void dispose(){
+		super.dispose();
+		mapCouples = null;
+		mapValues = null;
+		function = null;
+	}
 }

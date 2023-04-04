@@ -25,7 +25,34 @@ import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysisBuilder;
 public class Script {
 
 	public static void main(String[] args){
-		scriptTestArea();
+		scriptTestSliding();
+	}
+	
+	private static void scriptTestSliding(){
+
+		String path = "G:/chloe/winterschool/data/start/";
+		
+		long begin = System.currentTimeMillis();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(WindowAnalysisType.SLIDING);
+		builder.setRasterFile(path+"za.tif");
+		builder.setWindowSize(21);
+		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); // doivent etre classees
+		
+		//builder.addMetric("SHDI");
+		builder.addMetric("NV_5");
+		//builder.addMetric("NC_4-5");
+		//builder.addMetric("pNC_4-5");
+		
+		builder.addAsciiGridOutput("NV_5", path+"sliding/nv_5.asc"); 
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
 	}
 	
 	private static void scriptTestArea(){

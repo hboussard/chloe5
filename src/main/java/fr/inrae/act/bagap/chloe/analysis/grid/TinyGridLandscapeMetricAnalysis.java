@@ -9,13 +9,10 @@ public class TinyGridLandscapeMetricAnalysis extends GridLandscapeMetricAnalysis
 
 	private int buffer;
 	
-	private double[][] outDatas;
-	
 	private int gridWidth;
 	
 	public TinyGridLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, GridLandscapeMetricKernel kernel, Counting counting) {		
 		super(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
-		//System.out.println("cretor "+roiX+" "+roiY+" "+roiWidth+" "+roiHeight);
 	}
 	
 	@Override
@@ -42,7 +39,7 @@ public class TinyGridLandscapeMetricAnalysis extends GridLandscapeMetricAnalysis
 		//System.out.println("recup des donnees sur : "+roi.x+" "+roi.y+" "+roi.width+" "+roi.height);
 		
 		// gestion des entrees
-		kernel().setImageIn(coverage().getDatas(roi));
+		kernel().setInDatas(coverage().getDatas(roi));
 		coverage().dispose();
 		
 		// ajustement du buffer de calcul
@@ -62,8 +59,7 @@ public class TinyGridLandscapeMetricAnalysis extends GridLandscapeMetricAnalysis
 		}
 		
 		// gestion des sorties
-		outDatas = new double[gridWidth][nbValues()];
-		kernel().setImageOut(outDatas);
+		kernel().setOutDatas(new double[gridWidth][nbValues()]);
 		
 		// initialisation du comptage
 		counting().init();
@@ -78,11 +74,10 @@ public class TinyGridLandscapeMetricAnalysis extends GridLandscapeMetricAnalysis
 		for(int b=0; b<roiHeight(); b+=buffer, yGrid++){
 			System.out.println("buffer "+b);
 			kernel().applyGridWindow(gridWidth, b);
-			kernel().get(outDatas);
 			
 			for(int xGrid=0; xGrid<gridWidth; xGrid++){
 				
-				counting().setCounts(outDatas[xGrid]);
+				counting().setCounts(kernel().outDatas()[xGrid]);
 				counting().calculate();
 				counting().export(xGrid, yGrid);
 			}	

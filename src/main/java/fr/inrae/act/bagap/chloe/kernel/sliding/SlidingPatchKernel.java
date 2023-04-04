@@ -5,7 +5,7 @@ import fr.inra.sad.bagap.apiland.analysis.matrix.cluster.ClusteringTabQueenAnaly
 
 public class SlidingPatchKernel extends SlidingLandscapeMetricKernel {
 
-	private final int[] values;
+	private int[] values;
 	
 	private double cellSize;
 	
@@ -22,12 +22,12 @@ public class SlidingPatchKernel extends SlidingLandscapeMetricKernel {
 			
 			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
 			
-			for(int i=0; i<imageOut()[0].length; i++){
-				imageOut()[ind][i] = 0f;
+			for(int i=0; i<outDatas()[0].length; i++){
+				outDatas()[ind][i] = 0f;
 			}
 			
 			// gestion des filtres
-			if(filter((int) imageIn()[(y * width()) + x])){
+			if(filter((int) inDatas()[(y * width()) + x])){
 				final int mid = windowSize() / 2;
 				int ic;
 				int v;
@@ -38,7 +38,7 @@ public class SlidingPatchKernel extends SlidingLandscapeMetricKernel {
 							if(((x + dx) >= 0) && ((x + dx) < width())){
 								ic = ((dy+mid) * windowSize()) + (dx+mid);
 								if(shape()[ic] == 1){
-									v = (int) imageIn()[((y + dy) * width()) + (x + dx)];
+									v = (int) inDatas()[((y + dy) * width()) + (x + dx)];
 									tabCover[(dy+mid)*windowSize() + (dx+mid)] = v;	
 								}
 							}
@@ -52,24 +52,30 @@ public class SlidingPatchKernel extends SlidingLandscapeMetricKernel {
 				ClusteringTabOutput cto = new ClusteringTabOutput(tabCluster, tabCover, values, cellSize);
 				cto.allRun();
 				
-				imageOut()[ind][0] = cto.getNbPatch();
-				imageOut()[ind][1] = cto.getTotalSurface();
-				imageOut()[ind][2] = cto.getMaxSurface();
+				outDatas()[ind][0] = cto.getNbPatch();
+				outDatas()[ind][1] = cto.getTotalSurface();
+				outDatas()[ind][2] = cto.getMaxSurface();
 				
 				for(int i=0; i<values.length; i++){
-					imageOut()[ind][i+3] = cto.getNbPatch(values[i]);
+					outDatas()[ind][i+3] = cto.getNbPatch(values[i]);
 				}
 				
 				for(int i=0; i<values.length; i++){
-					imageOut()[ind][i+3+values.length] = cto.getTotalSurface(values[i]);
+					outDatas()[ind][i+3+values.length] = cto.getTotalSurface(values[i]);
 				}
 				
 				for(int i=0; i<values.length; i++){
-					imageOut()[ind][i+3+2*values.length] = cto.getMaxSurface(values[i]);
+					outDatas()[ind][i+3+2*values.length] = cto.getMaxSurface(values[i]);
 				}
 				
 			}
 		}
+	}
+	
+	@Override
+	public void dispose(){
+		super.dispose();
+		values = null;
 	}
 
 }

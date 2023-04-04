@@ -2,7 +2,7 @@ package fr.inrae.act.bagap.chloe.kernel.entity;
 
 public class EntityCountValueKernel extends EntityLandscapeMetricKernel{
 
-	private final int[] mapValues;
+	private int[] mapValues;
 
 	public EntityCountValueKernel(int noDataValue, int[] values){
 		super(noDataValue);
@@ -21,12 +21,12 @@ public class EntityCountValueKernel extends EntityLandscapeMetricKernel{
 	public void applyEntityWindow(){
 		int mv, va;
 		short v;
-		for(int y=0; y<roiHeight(); y++){
-			for(int x=0; x<roiWidth(); x++){
-				va = (int) entityDatas()[y*roiWidth() + x];
+		for(int y=0; y<height(); y++){
+			for(int x=0; x<width(); x++){
+				va = (int) entityDatas()[y*width() + x];
 				if(va != 0 && va != noDataValue()){
 					
-					v = (short) inDatas()[y*roiWidth() + x];
+					v = (short) inDatas()[y*width() + x];
 					
 					if(v == noDataValue()){
 						outDatas().get(va)[0] += 1;
@@ -39,6 +39,12 @@ public class EntityCountValueKernel extends EntityLandscapeMetricKernel{
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void dispose(){
+		super.dispose();
+		mapValues = null;
 	}
 	
 }

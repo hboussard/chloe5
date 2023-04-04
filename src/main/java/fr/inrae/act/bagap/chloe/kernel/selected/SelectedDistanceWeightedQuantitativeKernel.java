@@ -34,11 +34,11 @@ public class SelectedDistanceWeightedQuantitativeKernel extends SelectedLandscap
 			int ind = ((localY-bufferROIYMin())*(((width() - bufferROIXMin() - bufferROIXMax())-1)+1) + (x-bufferROIXMin()));
 			
 			// phase d'initialisation de la structure de données
-			for(int i=0; i<imageOut()[0].length; i++){
-				imageOut()[ind][i] = 0.0f;
+			for(int i=0; i<outDatas()[0].length; i++){
+				outDatas()[ind][i] = 0.0f;
 			}
 			
-			imageOut()[ind][6] = imageIn()[(y * width()) + x]; // affectation de la valeur du pixel central
+			outDatas()[ind][6] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
 			
 			
 			final int mid = windowSize() / 2;
@@ -59,7 +59,7 @@ public class SelectedDistanceWeightedQuantitativeKernel extends SelectedLandscap
 							if(((x + dx) >= 0) && ((x + dx) < width())){
 								ic = ((dy+mid) * windowSize()) + (dx+mid);
 								if(shape()[ic] == 1){
-									v = imageIn()[((y + dy) * width()) + (x + dx)];
+									v = inDatas()[((y + dy) * width()) + (x + dx)];
 									c = coeff()[ic];
 										
 									if(v == noDataValue()) {
@@ -88,7 +88,7 @@ public class SelectedDistanceWeightedQuantitativeKernel extends SelectedLandscap
 							if(((x + dx) >= 0) && ((x + dx) < width())){
 								ic = ((dy+mid) * windowSize()) + (dx+mid);
 								if(shape()[ic] == 1){
-									v = imageIn()[((y + dy) * width()) + (x + dx)];
+									v = inDatas()[((y + dy) * width()) + (x + dx)];
 									c = coeff()[ic];
 									if(v == noDataValue()) {
 										nb_nodata = nb_nodata + c;
@@ -106,12 +106,12 @@ public class SelectedDistanceWeightedQuantitativeKernel extends SelectedLandscap
 				}
 			}
 				
-			imageOut()[ind][0] = nb_nodata;
-			imageOut()[ind][1] = nb;
-			imageOut()[ind][2] = sum;
-			imageOut()[ind][3] = square_sum;
-			imageOut()[ind][4] = min;
-			imageOut()[ind][5] = max;
+			outDatas()[ind][0] = nb_nodata;
+			outDatas()[ind][1] = nb;
+			outDatas()[ind][2] = sum;
+			outDatas()[ind][3] = square_sum;
+			outDatas()[ind][4] = min;
+			outDatas()[ind][5] = max;
 			
 			//System.out.println(nb_nodata+" "+nb+" "+sum+" "+square_sum+" "+min+" "+max);
 		}

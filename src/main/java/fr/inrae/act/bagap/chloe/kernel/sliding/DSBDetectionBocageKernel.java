@@ -16,21 +16,21 @@ public class DSBDetectionBocageKernel extends SlidingLandscapeMetricKernel {
 			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
 			
 			// phase d'initialisation de la structure de donnees
-			imageOut()[ind][0] = 0.0f; // nb nodataValue
-			imageOut()[ind][1] = 0.0f; // nb value
-			imageOut()[ind][2] = 0.0f; // value
+			outDatas()[ind][0] = 0.0f; // nb nodataValue
+			outDatas()[ind][1] = 0.0f; // nb value
+			outDatas()[ind][2] = 0.0f; // value
 			
 			final int mid = windowSize() / 2;
 			
-			float vCentral = imageIn()[y*width()+x];
+			float vCentral = inDatas()[y*width()+x];
 			if(vCentral == noDataValue()) {
-				imageOut()[ind][0] = 1; // nb nodataValue
-				imageOut()[ind][1] = 0; // nb value
-				imageOut()[ind][2] = noDataValue(); // value
+				outDatas()[ind][0] = 1; // nb nodataValue
+				outDatas()[ind][1] = 0; // nb value
+				outDatas()[ind][2] = noDataValue(); // value
 			}else if(vCentral < minHauteur){
-				imageOut()[ind][0] = 0; // nb nodataValue
-				imageOut()[ind][1] = 1; // nb value
-				imageOut()[ind][2] = 0; // value
+				outDatas()[ind][0] = 0; // nb nodataValue
+				outDatas()[ind][1] = 1; // nb value
+				outDatas()[ind][2] = 0; // value
 			}else{
 				int ic;
 				float v, c;
@@ -43,7 +43,7 @@ public class DSBDetectionBocageKernel extends SlidingLandscapeMetricKernel {
 							if(((x + dx) >= 0) && ((x + dx) < width())){
 								ic = ((dy+mid) * windowSize()) + (dx+mid);
 								if(shape()[ic] == 1){
-									v = imageIn()[((y + dy) * width()) + (x + dx)];
+									v = inDatas()[((y + dy) * width()) + (x + dx)];
 									c = coeff()[ic];
 									if(v == noDataValue()) {
 										nb_nodata += c;
@@ -59,9 +59,9 @@ public class DSBDetectionBocageKernel extends SlidingLandscapeMetricKernel {
 					}
 				}
 				
-				imageOut()[ind][0] = nb_nodata;
-				imageOut()[ind][1] = nb_value;
-				imageOut()[ind][2] = value;
+				outDatas()[ind][0] = nb_nodata;
+				outDatas()[ind][1] = nb_value;
+				outDatas()[ind][2] = value;
 			}
 		}
 	}

@@ -8,11 +8,10 @@ import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 
 public class SelectedPatchKernel extends SelectedLandscapeMetricKernel {
 
-	private final int[] values;
+	private int[] values;
 	
 	private double cellSize;
 	
-	@SuppressWarnings("deprecation")
 	public SelectedPatchKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue, int[] values, double cellSize){		
 		super(windowSize, pixels, shape, coeff, noDataValue);
 		this.values = values;
@@ -35,10 +34,9 @@ public class SelectedPatchKernel extends SelectedLandscapeMetricKernel {
 			
 			int ind = ((localY-bufferROIYMin())*(((width() - bufferROIXMin() - bufferROIXMax())-1)+1) + (x-bufferROIXMin()));
 			
-			for(int i=0; i<imageOut()[0].length; i++){
-				imageOut()[ind][i] = 0f;
+			for(int i=0; i<outDatas()[0].length; i++){
+				outDatas()[ind][i] = 0f;
 			}
-			
 			
 			final int mid = windowSize() / 2;
 			int ic;
@@ -50,7 +48,7 @@ public class SelectedPatchKernel extends SelectedLandscapeMetricKernel {
 						if(((x + dx) >= 0) && ((x + dx) < width())){
 							ic = ((dy+mid) * windowSize()) + (dx+mid);
 							if(shape()[ic] == 1){
-								v = (int) imageIn()[((y + dy) * width()) + (x + dx)];
+								v = (int) inDatas()[((y + dy) * width()) + (x + dx)];
 								tabCover[(dy+mid)*windowSize() + (dx+mid)] = v;	
 							}
 						}
@@ -64,22 +62,28 @@ public class SelectedPatchKernel extends SelectedLandscapeMetricKernel {
 			ClusteringTabOutput cto = new ClusteringTabOutput(tabCluster, tabCover, values, cellSize);
 			cto.allRun();
 			
-			imageOut()[ind][0] = cto.getNbPatch();
-			imageOut()[ind][1] = cto.getTotalSurface();
-			imageOut()[ind][2] = cto.getMaxSurface();
+			outDatas()[ind][0] = cto.getNbPatch();
+			outDatas()[ind][1] = cto.getTotalSurface();
+			outDatas()[ind][2] = cto.getMaxSurface();
 			
 			for(int i=0; i<values.length; i++){
-				imageOut()[ind][i+3] = cto.getNbPatch(values[i]);
+				outDatas()[ind][i+3] = cto.getNbPatch(values[i]);
 			}
 			
 			for(int i=0; i<values.length; i++){
-				imageOut()[ind][i+3+values.length] = cto.getTotalSurface(values[i]);
+				outDatas()[ind][i+3+values.length] = cto.getTotalSurface(values[i]);
 			}
 			
 			for(int i=0; i<values.length; i++){
-				imageOut()[ind][i+3+2*values.length] = cto.getMaxSurface(values[i]);
+				outDatas()[ind][i+3+2*values.length] = cto.getMaxSurface(values[i]);
 			}
 		}
+	}
+	
+	@Override
+	public void dispose(){
+		super.dispose();
+		values = null;
 	}
 
 }

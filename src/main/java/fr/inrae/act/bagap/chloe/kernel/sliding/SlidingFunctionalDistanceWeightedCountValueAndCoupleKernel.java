@@ -13,11 +13,11 @@ import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 
 public class SlidingFunctionalDistanceWeightedCountValueAndCoupleKernel extends DoubleSlidingLandscapeMetricKernel {
 	
-	private final int nbValues;
+	private int nbValues;
 	
-	private final int[][] mapCouples;
+	private int[][] mapCouples;
 	
-	private final int[] mapValues;
+	private int[] mapValues;
 	
 	private double cellSize;
 	
@@ -65,15 +65,15 @@ public class SlidingFunctionalDistanceWeightedCountValueAndCoupleKernel extends 
 			
 			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
 			
-			for(int i=0; i<imageOut()[0].length; i++){
-				imageOut()[ind][i] = 0f;
+			for(int i=0; i<outDatas()[0].length; i++){
+				outDatas()[ind][i] = 0f;
 			}
 			
-			imageOut()[ind][2] = imageIn()[(y * width()) + x]; // affectation de la valeur du pixel central
+			outDatas()[ind][2] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
 			
 			float[] image, resistance, distance;
 			
-			if(filter((int) imageIn()[(y * width()) + x])){ // gestion des filtres
+			if(filter((int) inDatas()[(y * width()) + x])){ // gestion des filtres
 				
 				final int mid = windowSize() / 2;
 				
@@ -96,33 +96,29 @@ public class SlidingFunctionalDistanceWeightedCountValueAndCoupleKernel extends 
 							if(((x + dx) >= 0) && ((x + dx) < width())){
 								ic = ((dy+mid) * windowSize()) + (dx+mid);
 								if(shape()[ic] == 1) {
-									v = (short) imageIn()[((y + dy) * width()) + (x + dx)];
+									v = (short) inDatas()[((y + dy) * width()) + (x + dx)];
 									
 									if(v == noDataValue()){
-										imageOut()[ind][0] += coeff()[ic];
+										outDatas()[ind][0] += coeff()[ic];
+									}else if(v == 0){
+										outDatas()[ind][1] += coeff()[ic];
 									}else{
-										if(v == 0){
-											imageOut()[ind][1] += coeff()[ic];
-										}else{
-											mv = mapValues[v];
-											imageOut()[ind][mv+3] += coeff()[ic];
-										}
+										mv = mapValues[v];
+										outDatas()[ind][mv+3] += coeff()[ic];
 									}
 									
 									if((dy > -mid) && ((y + dy) > 0)) {
 										ic_V = ((dy+mid-1) * windowSize()) + (dx+mid);
 										if(shape()[ic_V] == 1){
-											v_V = (short) imageIn()[((y + dy - 1) * width()) + (x + dx)];
+											v_V = (short) inDatas()[((y + dy - 1) * width()) + (x + dx)];
 											
 											if(v == noDataValue() || v_V == noDataValue()){
-												imageOut()[ind][nbValues+3] += coeff()[ic];
+												outDatas()[ind][nbValues+3] += coeff()[ic];
+											}else if(v == 0 || v_V == 0){
+												outDatas()[ind][nbValues+4] += coeff()[ic];
 											}else{
-												if(v == 0 || v_V == 0){
-													imageOut()[ind][nbValues+4] += coeff()[ic];
-												}else{
-													mv = mapCouples[mapValues[v]][mapValues[v_V]];
-													imageOut()[ind][nbValues+mv+5] += coeff()[ic];
-												}
+												mv = mapCouples[mapValues[v]][mapValues[v_V]];
+												outDatas()[ind][nbValues+mv+5] += coeff()[ic];
 											}
 										}
 									}
@@ -130,17 +126,15 @@ public class SlidingFunctionalDistanceWeightedCountValueAndCoupleKernel extends 
 									if((dx > -mid) && ((x + dx) > 0)) {
 										ic_H = ((dy+mid) * windowSize()) + (dx+mid-1);
 										if(shape()[ic_H] == 1){
-											v_H = (short) imageIn()[((y + dy) * width()) + (x + dx - 1)];
+											v_H = (short) inDatas()[((y + dy) * width()) + (x + dx - 1)];
 											
 											if(v == noDataValue() || v_H == noDataValue()){
-												imageOut()[ind][nbValues+3] += coeff()[ic];
+												outDatas()[ind][nbValues+3] += coeff()[ic];
+											}else if(v == 0 || v_H == 0){
+												outDatas()[ind][nbValues+4] += coeff()[ic];
 											}else{
-												if(v == 0 || v_H == 0){
-													imageOut()[ind][nbValues+4] += coeff()[ic];
-												}else{
-													mv = mapCouples[mapValues[v]][mapValues[v_H]];
-													imageOut()[ind][nbValues+mv+5] += coeff()[ic];
-												}
+												mv = mapCouples[mapValues[v]][mapValues[v_H]];
+												outDatas()[ind][nbValues+mv+5] += coeff()[ic];
 											}
 										}
 									}
@@ -189,7 +183,7 @@ public class SlidingFunctionalDistanceWeightedCountValueAndCoupleKernel extends 
 				for (int dx = -mid; dx <= mid; dx += 1) {
 					if(((x + dx) >= 0) && ((x + dx) < width())){
 						ic = ((dy+mid) * windowSize()) + (dx+mid);
-						image[ic] = imageIn()[((y + dy) * width()) + (x + dx)];
+						image[ic] = inDatas()[((y + dy) * width()) + (x + dx)];
 					}
 				}
 			}
@@ -208,7 +202,7 @@ public class SlidingFunctionalDistanceWeightedCountValueAndCoupleKernel extends 
 				for (int dx = -mid; dx <= mid; dx += 1) {
 					if(((x + dx) >= 0) && ((x + dx) < width())){
 						ic = ((dy+mid) * windowSize()) + (dx+mid);
-						resistance[ic] = imageIn2()[((y + dy) * width()) + (x + dx)];
+						resistance[ic] = inDatas2()[((y + dy) * width()) + (x + dx)];
 					}
 				}
 			}
@@ -241,5 +235,12 @@ public class SlidingFunctionalDistanceWeightedCountValueAndCoupleKernel extends 
 		return distance;
 	}
 
-
+	@Override
+	public void dispose(){
+		super.dispose();
+		mapCouples = null;
+		mapValues = null;
+		function = null;
+	}
+	
 }

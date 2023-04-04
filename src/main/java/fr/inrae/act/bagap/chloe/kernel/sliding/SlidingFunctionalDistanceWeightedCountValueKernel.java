@@ -13,7 +13,7 @@ import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 
 public class SlidingFunctionalDistanceWeightedCountValueKernel extends DoubleSlidingLandscapeMetricKernel {
 
-	private final int[] mapValues;
+	private int[] mapValues;
 	
 	private double cellSize;
 	
@@ -44,15 +44,15 @@ public class SlidingFunctionalDistanceWeightedCountValueKernel extends DoubleSli
 			
 			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
 			
-			for(int i=0; i<imageOut()[0].length; i++){
-				imageOut()[ind][i] = 0f;
+			for(int i=0; i<outDatas()[0].length; i++){
+				outDatas()[ind][i] = 0f;
 			}
 			
-			imageOut()[ind][2] = imageIn()[(y * width()) + x]; // affectation de la valeur du pixel central
+			outDatas()[ind][2] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
 			
 			float[] image, resistance, distance;
 			
-			if(filter((int) imageIn()[(y * width()) + x])){ // gestion des filtres
+			if(filter((int) inDatas()[(y * width()) + x])){ // gestion des filtres
 				
 				final int mid = windowSize() / 2;
 				
@@ -75,14 +75,14 @@ public class SlidingFunctionalDistanceWeightedCountValueKernel extends DoubleSli
 							if(((x + dx) >= 0) && ((x + dx) < width())){
 								ic = ((dy+mid) * windowSize()) + (dx+mid);
 								if(shape()[ic] == 1){
-									v = (int) imageIn()[((y + dy) * width()) + (x + dx)];		
+									v = (int) inDatas()[((y + dy) * width()) + (x + dx)];		
 									if(v == noDataValue()){
-										imageOut()[ind][0] += coeff()[ic];
+										outDatas()[ind][0] += coeff()[ic];
 									}else if(v == 0){
-										imageOut()[ind][1] += coeff()[ic];
+										outDatas()[ind][1] += coeff()[ic];
 									}else{
 										mv = mapValues[v];
-										imageOut()[ind][mv+3] += coeff()[ic];	
+										outDatas()[ind][mv+3] += coeff()[ic];	
 									}
 								}
 							}
@@ -129,7 +129,7 @@ public class SlidingFunctionalDistanceWeightedCountValueKernel extends DoubleSli
 				for (int dx = -mid; dx <= mid; dx += 1) {
 					if(((x + dx) >= 0) && ((x + dx) < width())){
 						ic = ((dy+mid) * windowSize()) + (dx+mid);
-						image[ic] = imageIn()[((y + dy) * width()) + (x + dx)];
+						image[ic] = inDatas()[((y + dy) * width()) + (x + dx)];
 					}
 				}
 			}
@@ -148,7 +148,7 @@ public class SlidingFunctionalDistanceWeightedCountValueKernel extends DoubleSli
 				for (int dx = -mid; dx <= mid; dx += 1) {
 					if(((x + dx) >= 0) && ((x + dx) < width())){
 						ic = ((dy+mid) * windowSize()) + (dx+mid);
-						resistance[ic] = imageIn2()[((y + dy) * width()) + (x + dx)];
+						resistance[ic] = inDatas2()[((y + dy) * width()) + (x + dx)];
 					}
 				}
 			}
@@ -179,6 +179,13 @@ public class SlidingFunctionalDistanceWeightedCountValueKernel extends DoubleSli
 		rcm.allRun();
 		
 		return distance;
+	}
+	
+	@Override
+	public void dispose(){
+		super.dispose();
+		mapValues = null;
+		function = null;
 	}
 
 }
