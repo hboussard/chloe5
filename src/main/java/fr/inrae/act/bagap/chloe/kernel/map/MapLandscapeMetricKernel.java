@@ -20,7 +20,7 @@ public abstract class MapLandscapeMetricKernel implements LandscapeMetricKernel 
 		this.noDataValue = noDataValue;
 	}
 	
-	public abstract void applyMapWindow(int outWidth, int theY);
+	public abstract void applyMapWindow(int theY);
 	
 	public void setWidth(int width){
 		this.width = width;
