@@ -206,6 +206,7 @@ public class LandscapeMetricAnalysisBuilder {
 	}
 
 	public void addCsvOutput(String csv){
+		Util.createAccess(csv);
 		this.csv = csv;
 	}
 	

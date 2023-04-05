@@ -7,11 +7,13 @@ import org.geotools.coverage.grid.io.GridCoverage2DReader;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffReader;
 
+import fr.inra.sad.bagap.apiland.analysis.matrix.CoverageManager;
 import fr.inrae.act.bagap.chloe.WindowAnalysisType;
 import fr.inrae.act.bagap.chloe.analysis.entity.HugeEntityLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.entity.TinyEntityLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.grid.HugeGridLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.grid.TinyGridLandscapeMetricAnalysisFactory;
+import fr.inrae.act.bagap.chloe.analysis.map.TinyMapLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.selected.SelectedLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.sliding.HugeSlidingLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.sliding.TinySlidingLandscapeMetricAnalysisFactory;
@@ -134,6 +136,19 @@ public class LandscapeMetricAnalysisFactory {
 			}else{
 				
 				return HugeGridLandscapeMetricAnalysisFactory.create(builder, coverage);
+			}
+		}else if(builder.getAnalysisType() == WindowAnalysisType.MAP){
+		
+			int maxWidth = inWidth;
+			int maxHeight = inHeight;
+			
+			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
+				
+				return TinyMapLandscapeMetricAnalysisFactory.create(builder, coverage);
+				
+			}else{
+				
+				//return HugeMapLandscapeMetricAnalysisFactory.create(builder, coverage);
 			}
 		}
 		

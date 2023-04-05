@@ -10,6 +10,7 @@ import org.geotools.data.DataSourceException;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffReader;
 
+import fr.inra.sad.bagap.apiland.analysis.matrix.CoverageManager;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 import fr.inrae.act.bagap.raster.FileCoverage;

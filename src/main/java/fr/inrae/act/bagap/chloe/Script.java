@@ -25,7 +25,43 @@ import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysisBuilder;
 public class Script {
 
 	public static void main(String[] args){
-		scriptTestSliding();
+		scriptTestMap();
+	}
+	
+	private static void scriptTestMap(){
+
+		String path = "G:/chloe/winterschool/data/start/";
+		
+		long begin = System.currentTimeMillis();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(WindowAnalysisType.MAP);
+		builder.setRasterFile(path+"za.tif");
+		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); // doivent etre classees
+		
+		builder.setROIX(0);
+		builder.setROIY(0);
+		builder.setROIWidth(21);
+		builder.setROIHeight(21);
+		
+		//builder.addMetric("SHDI");
+		builder.addMetric("NV_5");
+		//builder.addMetric("pNV_5");
+		//builder.addMetric("NC_4-5");
+		//builder.addMetric("pNC_4-5");
+		//builder.addMetric("average");
+		//builder.addMetric("NP");
+		//builder.addMetric("MPS");
+		//builder.addMetric("LPI");
+		
+		builder.addCsvOutput(path+"map/analyse.csv");
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
 	}
 	
 	private static void scriptTestSliding(){
@@ -39,6 +75,11 @@ public class Script {
 		builder.setRasterFile(path+"za.tif");
 		builder.setWindowSize(21);
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); // doivent etre classees
+		
+		builder.setROIX(100);
+		builder.setROIY(100);
+		builder.setROIWidth(1000);
+		builder.setROIHeight(1000);
 		
 		//builder.addMetric("SHDI");
 		builder.addMetric("NV_5");

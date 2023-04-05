@@ -14,7 +14,5 @@ public class ValidValueMetric extends Metric implements ValueMetric {
 	protected void doCalculate(Counting co) {
 		value = co.validValues();
 	}
-	
-	
 
 }

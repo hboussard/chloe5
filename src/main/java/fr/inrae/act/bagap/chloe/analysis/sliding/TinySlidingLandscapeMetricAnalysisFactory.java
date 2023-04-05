@@ -102,6 +102,11 @@ public class TinySlidingLandscapeMetricAnalysisFactory {
 		int bufferROIXMax = Math.min(inWidth - (roiX + roiWidth), midWindowSize);
 		int bufferROIYMin = Math.min(roiY, midWindowSize);
 		int bufferROIYMax = Math.min(inHeight - (roiY + roiHeight), midWindowSize);
+		
+		System.out.println("roi : "+roiX+" "+roiY+" "+roiWidth+" "+roiHeight);
+		System.out.println("displacement : "+displacement);
+		System.out.println("window : "+windowSize+" "+midWindowSize);
+		System.out.println("buffer : "+bufferROIXMin+" "+bufferROIXMax+" "+bufferROIYMin+" "+bufferROIYMax);
 
 		// window shape and distance
 		short[] shape = new short[windowSize * windowSize];

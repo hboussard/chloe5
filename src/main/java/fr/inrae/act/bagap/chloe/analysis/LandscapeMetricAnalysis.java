@@ -15,10 +15,22 @@ public abstract class LandscapeMetricAnalysis extends Analysis {
 	
 	private final Coverage coverage;
 	
-	private final int roiX, roiY;
+	/**
+	 * coordonnees en pixels (X, Y) du premier pixel en haut à gauche du ROI a analyser
+	 * info relative par rapport au coverage
+	 */
+	private final int roiX, roiY; 
 	
+	/**
+	 * dimensions en pixels du ROI a analyser
+	 * info relative par rapport au coverage
+	 */
 	private final int roiWidth, roiHeight;
 	
+	/**
+	 * decalage en nombre de pixels a gauche (XMin), a droite (XMax), en haut (YMin) et en bas (YMax)
+	 * a prendre en compte autour du ROI pour enlever les effets de bords
+	 */
 	private final int bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax;
 	
 	private final int nbValues;
