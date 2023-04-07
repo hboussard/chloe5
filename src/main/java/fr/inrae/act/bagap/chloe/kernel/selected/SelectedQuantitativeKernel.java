@@ -4,15 +4,15 @@ import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 
-public class SelectedDistanceWeightedQuantitativeKernel extends SelectedLandscapeMetricKernel {
+public class SelectedQuantitativeKernel extends SelectedLandscapeMetricKernel {
 	
 	private final float threshold;
 	
-	public SelectedDistanceWeightedQuantitativeKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue){
+	public SelectedQuantitativeKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue){
 		this(windowSize, pixels, shape, coeff, noDataValue, -1);
 	}
 		
-	public SelectedDistanceWeightedQuantitativeKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue, float threshold){
+	public SelectedQuantitativeKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue, float threshold){
 		super(windowSize, pixels, shape, coeff, noDataValue);
 		this.threshold = threshold;
 	}

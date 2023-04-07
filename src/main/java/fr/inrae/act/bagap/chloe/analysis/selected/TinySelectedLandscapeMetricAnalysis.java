@@ -13,8 +13,6 @@ public class TinySelectedLandscapeMetricAnalysis extends SelectedLandscapeMetric
 
 	private int buffer;
 	
-	//private double[][] outDatas;
-	
 	public TinySelectedLandscapeMetricAnalysis(Coverage coverage, Set<Pixel> pixels, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, SelectedLandscapeMetricKernel kernel, Counting counting) {		
 		super(coverage, pixels, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
 	}
@@ -29,13 +27,7 @@ public class TinySelectedLandscapeMetricAnalysis extends SelectedLandscapeMetric
 		kernel().setBufferROIYMin(bufferROIYMin());
 		kernel().setBufferROIYMax(bufferROIYMax());
 		
-		//System.out.println(bufferROIXMin()+" "+bufferROIXMax()+" "+bufferROIYMin()+" "+bufferROIYMax());		
-		
 		// recuperation des donnees depuis le coverage
-		// attention bug de la récupération des données dans le coverage2D si le Y dépasse une certaine valeur
-		// bizarement ce bug influence les données en X
-		// ce bug n'est effectif que sur les coverage issus de fichiers AsciiGrid
-		// pas de problème sur fichier TIF
 		Rectangle roi = new Rectangle(roiX() - bufferROIXMin(), roiY() - bufferROIYMin(), roiWidth() + bufferROIXMin() + bufferROIXMax(), roiHeight() + bufferROIYMin() + bufferROIYMax());
 		
 		float[] inDatas = coverage().getDatas(roi);
@@ -46,14 +38,10 @@ public class TinySelectedLandscapeMetricAnalysis extends SelectedLandscapeMetric
 		buffer = LandscapeMetricAnalysis.bufferSize();
 		
 		// gestion des sorties
-		//outDatas = new double[(((roiWidth()-1)+1)*((buffer-1)+1))][nbValues()];
-		//kernel().setImageOut(outDatas);
 		kernel().setOutDatas(new double[(((roiWidth()-1)+1)*((buffer-1)+1))][nbValues()]);
 		
 		// initialisation du comptage
 		counting().init();
-		
-		//System.out.println(roiWidth() + bufferROIXMin() + bufferROIXMax()+" "+roiHeight() + bufferROIYMin() + bufferROIYMax()+" "+(roiWidth()*roiHeight())+" "+((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1)));
 	}
 
 	@Override

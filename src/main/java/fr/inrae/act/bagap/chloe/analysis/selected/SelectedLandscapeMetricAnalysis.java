@@ -3,12 +3,12 @@ package fr.inrae.act.bagap.chloe.analysis.selected;
 import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysis;
+import fr.inrae.act.bagap.chloe.analysis.UnitLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.kernel.selected.SelectedLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public abstract class SelectedLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
+public abstract class SelectedLandscapeMetricAnalysis extends UnitLandscapeMetricAnalysis {
 	
 	private Set<Pixel> pixels;
 	

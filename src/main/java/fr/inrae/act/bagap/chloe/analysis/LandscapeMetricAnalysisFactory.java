@@ -14,7 +14,7 @@ import fr.inrae.act.bagap.chloe.analysis.entity.TinyEntityLandscapeMetricAnalysi
 import fr.inrae.act.bagap.chloe.analysis.grid.HugeGridLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.grid.TinyGridLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.map.TinyMapLandscapeMetricAnalysisFactory;
-import fr.inrae.act.bagap.chloe.analysis.selected.SelectedLandscapeMetricAnalysisFactory;
+import fr.inrae.act.bagap.chloe.analysis.selected.TinySelectedLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.sliding.HugeSlidingLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.sliding.TinySlidingLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.raster.Coverage;
@@ -98,18 +98,45 @@ public class LandscapeMetricAnalysisFactory {
 			}
 			
 			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
-				//System.out.println("single creator");
+				
 				return TinySlidingLandscapeMetricAnalysisFactory.create(builder, coverage);
 				//return HugeSlidingLandscapeMetricAnalysisFactory.create(builder, coverage);
 			}else{
-				//System.out.println("huge creator");
+				
 				return HugeSlidingLandscapeMetricAnalysisFactory.create(builder, coverage);
 			}
 			
 		}else if(builder.getAnalysisType() == WindowAnalysisType.SELECTED){
 			
-			return SelectedLandscapeMetricAnalysisFactory.create(builder, coverage);
+			// windowSize
+			int windowSize = -1;
+			if(builder.getWindowSize() > 0){
+				windowSize = builder.getWindowSize();
+			}else if(builder.getWindowRadius() > 0){
+				double v = (2 * builder.getWindowRadius() / inCellSize);
+				windowSize = v%2==0?new Double(v+1).intValue():new Double(v).intValue();
+			}else{
+				throw new IllegalArgumentException("windowSize must be defined");
+			}
+			int midWindowSize = (int) (windowSize/2);
 			
+			int maxWidth = -1;
+			int maxHeight = -1;
+			if(roiWidth == -1){ // on analyse toute la carte
+				maxWidth = inWidth;
+				maxHeight = inHeight;
+			}else{ // on analyse une partie de la carte
+				maxWidth = roiWidth + 2 * midWindowSize;
+				maxHeight = roiHeight + 2 * midWindowSize;
+			}
+
+			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
+				
+				return TinySelectedLandscapeMetricAnalysisFactory.create(builder, coverage);
+			}else{
+				
+				//return HugeSelectedLandscapeMetricAnalysisFactory.create(builder, coverage);
+			}
 		}else if(builder.getAnalysisType() == WindowAnalysisType.ENTITY){
 			
 			int maxWidth = inWidth;
@@ -118,7 +145,7 @@ public class LandscapeMetricAnalysisFactory {
 			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
 				
 				return TinyEntityLandscapeMetricAnalysisFactory.create(builder, coverage);
-				
+
 			}else{
 				
 				return HugeEntityLandscapeMetricAnalysisFactory.create(builder, coverage);
@@ -132,7 +159,6 @@ public class LandscapeMetricAnalysisFactory {
 			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
 				
 				return TinyGridLandscapeMetricAnalysisFactory.create(builder, coverage);
-				
 			}else{
 				
 				return HugeGridLandscapeMetricAnalysisFactory.create(builder, coverage);
@@ -145,7 +171,6 @@ public class LandscapeMetricAnalysisFactory {
 			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
 				
 				return TinyMapLandscapeMetricAnalysisFactory.create(builder, coverage);
-				
 			}else{
 				
 				//return HugeMapLandscapeMetricAnalysisFactory.create(builder, coverage);
