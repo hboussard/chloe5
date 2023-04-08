@@ -28,9 +28,9 @@ import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingDistanceWeightedCountValue
 import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingDistanceWeightedQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingPatchKernel;
-import fr.inrae.act.bagap.chloe.kernel.sliding.fastgaussian.FastGaussianWeightedCountCoupleKernel;
-import fr.inrae.act.bagap.chloe.kernel.sliding.fastgaussian.FastGaussianWeightedCountValueAndCoupleKernel;
-import fr.inrae.act.bagap.chloe.kernel.sliding.fastgaussian.FastGaussianWeightedCountValueKernel;
+import fr.inrae.act.bagap.chloe.kernel.sliding.fast.FastGaussianWeightedCountCoupleKernel;
+import fr.inrae.act.bagap.chloe.kernel.sliding.fast.FastGaussianWeightedCountValueAndCoupleKernel;
+import fr.inrae.act.bagap.chloe.kernel.sliding.fast.FastGaussianWeightedCountValueKernel;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.chloe.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.output.AsciiGridOutput;

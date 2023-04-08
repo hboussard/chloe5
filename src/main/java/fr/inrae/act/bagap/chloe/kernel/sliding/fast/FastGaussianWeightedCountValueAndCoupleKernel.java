@@ -1,4 +1,4 @@
-package fr.inrae.act.bagap.chloe.kernel.sliding.fastgaussian;
+package fr.inrae.act.bagap.chloe.kernel.sliding.fast;
 
 import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingLandscapeMetricKernel;
 
