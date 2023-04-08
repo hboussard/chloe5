@@ -1,11 +1,11 @@
 package fr.inrae.act.bagap.chloe.analysis.sliding;
 
-import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysis;
+import fr.inrae.act.bagap.chloe.analysis.UnitLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public abstract class SlidingLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
+public abstract class SlidingLandscapeMetricAnalysis extends UnitLandscapeMetricAnalysis {
 	
 	private final int displacement;
 	

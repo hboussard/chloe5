@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.PixelWithID;
+//import fr.inra.sad.bagap.apiland.core.space.impl.raster.PixelWithID;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.RefPoint;
 import fr.inrae.act.bagap.chloe.WindowAnalysisType;
 import fr.inrae.act.bagap.chloe.WindowDistanceType;
@@ -35,9 +37,13 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	private EnteteRaster entete;
 	
-	private int windowSize, displacement, gridSize;
+	private int displacement, windowSize;
 	
-	private double windowRadius;
+	private double radius;
+	
+	private Set<Integer> windowSizes;
+	
+	private Set<Double> windowRadius;
 	
 	private Set<Metric> metrics;
 	
@@ -49,11 +55,11 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	private Set<? extends Pixel> refPixels;
 	
-	private Map<String, String> asciiOutputs;
+	private Map<Integer, Map<String, String>> asciiOutputs;
 	
-	private Map<String, String> geotiffOutputs;
+	private Map<Integer, Map<String, String>> geotiffOutputs;
 	
-	private Map<String, float[]> tabOutputs;
+	private Map<Integer, Map<String, float[]>> tabOutputs;
 	
 	private boolean interpolation;
 	
@@ -66,8 +72,6 @@ public class LandscapeMetricAnalysisBuilder {
 	private Map<RefPoint, Float> datas;
 	
 	public LandscapeMetricAnalysisBuilder(){
-		this.metrics = new HashSet<Metric>();
-		this.observers = new HashSet<CountingObserver>();
 		reset();
 	}
 	
@@ -76,13 +80,14 @@ public class LandscapeMetricAnalysisBuilder {
 		this.shapeType = WindowShapeType.CIRCLE;
 		this.distanceType = WindowDistanceType.THRESHOLD;
 		this.distanceFunction = "exp(-pow(distance, 2)/pow(dmax/2, 2))";
-		this.metrics.clear();
-		this.observers.clear();
+		this.metrics = new HashSet<Metric>();
+		this.observers = new HashSet<CountingObserver>();
 		this.displacement = 1;
 		this.interpolation = false;
-		this.windowSize = -1;
-		this.gridSize = -1;
-		this.windowRadius = -1;
+		this.windowSize = 0;
+		this.radius = 0;
+		this.windowSizes = new TreeSet<Integer>();
+		this.windowRadius = new TreeSet<Double>();
 		this.roiX = 0;
 		this.roiY = 0;
 		this.roiWidth = -1;
@@ -106,9 +111,9 @@ public class LandscapeMetricAnalysisBuilder {
 		this.refPixels = null;
 		this.exportWindowPath = null;
 		this.values = null;
-		this.asciiOutputs = new HashMap<String, String>();
-		this.geotiffOutputs = new HashMap<String, String>();
-		this.tabOutputs = new HashMap<String, float[]>();
+		this.asciiOutputs = new TreeMap<Integer, Map<String, String>>();
+		this.geotiffOutputs = new TreeMap<Integer, Map<String, String>>();
+		this.tabOutputs = new TreeMap<Integer, Map<String, float[]>>();
 		this.unfilters = null;
 		this.datas = null;
 	}
@@ -166,15 +171,33 @@ public class LandscapeMetricAnalysisBuilder {
 	}
 	
 	public void setWindowSize(int windowSize) {
-		this.windowSize = windowSize;
-	}
-	
-	public void setGridSize(int gridSize) {
-		this.gridSize = gridSize;
+		addWindowSize(windowSize);
 	}
 
 	public void setWindowRadius(double radius){
-		this.windowRadius = radius;
+		addWindowRadius(radius);
+	}
+	
+	public void addWindowSize(int windowSize) {
+		this.windowSizes.add(windowSize);
+		this.windowSize = windowSize;
+	}
+	
+	public void addWindowRadius(double radius){
+		this.windowRadius.add(radius);
+		this.radius = radius;
+	}
+	
+	public void setWindowSizes(int[] windowSizes) {
+		for(int ws : windowSizes){
+			addWindowSize(ws);
+		}
+	}
+	
+	public void setWindowRadius(double[] radius){
+		for(double r : radius){
+			addWindowRadius(r);	
+		}
 	}
 	
 	public void setDisplacement(int displacement) {
@@ -206,6 +229,7 @@ public class LandscapeMetricAnalysisBuilder {
 	}
 
 	public void addCsvOutput(String csv){
+		Util.createAccess(csv);
 		this.csv = csv;
 	}
 	
@@ -213,18 +237,57 @@ public class LandscapeMetricAnalysisBuilder {
 		this.asciiGridFolder = asciiGridFolder;
 	}
 	
+	public void addAsciiGridOutput(String ascii){
+		Metric metric = this.metrics.iterator().next();
+		addAsciiGridOutput(metric.getName(), ascii);
+	}
+	
 	public void addAsciiGridOutput(String metric, String ascii){
+		int size = this.windowSizes.iterator().next();
+		addAsciiGridOutput(size, metric, ascii);
+	}
+
+	public void addAsciiGridOutput(int size, String metric, String ascii){
 		Util.createAccess(ascii);
-		this.asciiOutputs.put(metric, ascii);
+		if(!this.asciiOutputs.containsKey(size)){
+			this.asciiOutputs.put(size, new HashMap<String, String>());
+		}
+		this.asciiOutputs.get(size).put(metric, ascii);
+	}
+	
+	public void addTabOutput(float[] tab){
+		Metric metric = this.metrics.iterator().next();
+		addTabOutput(metric.getName(), tab);
 	}
 
 	public void addTabOutput(String metric, float[] tab){
-		this.tabOutputs.put(metric, tab);
+		int size = this.windowSizes.iterator().next();
+		addTabOutput(size, metric, tab);
+	}
+	
+	public void addTabOutput(int size, String metric, float[] tab){
+		if(!this.tabOutputs.containsKey(size)){
+			this.tabOutputs.put(size, new HashMap<String, float[]>());
+		}
+		this.tabOutputs.get(size).put(metric, tab);
+	}
+	
+	public void addGeoTiffOutput(String geotiff){
+		Metric metric = this.metrics.iterator().next();
+		addGeoTiffOutput(metric.getName(), geotiff);
 	}
 	
 	public void addGeoTiffOutput(String metric, String geotiff){
+		int size = this.windowSizes.iterator().next();
+		addGeoTiffOutput(size, metric, geotiff);
+	}
+	
+	public void addGeoTiffOutput(int size, String metric, String geotiff){
 		Util.createAccess(geotiff);
-		this.geotiffOutputs.put(metric, geotiff);
+		if(!this.geotiffOutputs.containsKey(size)){
+			this.geotiffOutputs.put(size, new HashMap<String, String>());
+		}
+		this.geotiffOutputs.get(size).put(metric, geotiff);
 	}
 	
 	public void addDataOutput(String metric, Map<RefPoint, Float> datas){
@@ -356,15 +419,19 @@ public class LandscapeMetricAnalysisBuilder {
 		return values;
 	}
 
-	public int getWindowSize() {
-		return windowSize;
+	public int getWindowSize(){
+		return this.windowSize;
 	}
 	
-	public int getGridSize() {
-		return gridSize;
+	private Set<Integer> getWindowSizes() {
+		return windowSizes;
+	}
+	
+	public double getWindowRadius(){
+		return this.radius;
 	}
 
-	public double getWindowRadius() {
+	private Set<Double> getWindowsRadius() {
 		return windowRadius;
 	}
 
@@ -392,17 +459,29 @@ public class LandscapeMetricAnalysisBuilder {
 		return asciiGridFolder;
 	}
 	
-	public Map<String, String> getAsciiOutputs(){
-		return asciiOutputs;
+	public Map<String, String> getAsciiOutputs(int ws){
+		return asciiOutputs.get(ws);
 	}
 	
-	public Map<String, String> getGeoTiffOutputs(){
-		return geotiffOutputs;
+	//public Map<String, String> getAsciiOutputs(){
+	//	return asciiOutputs.entrySet().iterator().next().getValue();
+	//}
+	
+	public Map<String, String> getGeoTiffOutputs(int ws){
+		return geotiffOutputs.get(ws);
 	}
 	
-	public Map<String, float[]> getTabOutputs(){
-		return tabOutputs;
+	//public Map<String, String> getGeoTiffOutputs(){
+	//	return geotiffOutputs.entrySet().iterator().next().getValue();
+	//}
+	
+	public Map<String, float[]> getTabOutputs(int ws){
+		return tabOutputs.get(ws);
 	}
+	
+	//public Map<String, float[]> getTabOutputs(){
+	//	return tabOutputs.entrySet().iterator().next().getValue();
+	//}
 	
 	public Map<RefPoint, Float> getDatas(){
 		return datas;
@@ -465,11 +544,22 @@ public class LandscapeMetricAnalysisBuilder {
 	public LandscapeMetricAnalysis build(){
 		LandscapeMetricAnalysis analysis = null;
 		try{
-			analysis = LandscapeMetricAnalysisFactory.create(this);
+			
+			if(windowSizes.size() == 0){
+				// TODO gestion en radius
+			}else if(windowSizes.size() == 1){
+				analysis = LandscapeMetricAnalysisFactory.create(this);
+			}else{
+				analysis = new MultipleLandscapeMetricAnalysis();
+				for(int ws : windowSizes){
+					this.windowSize = ws;
+					((MultipleLandscapeMetricAnalysis) analysis).add(LandscapeMetricAnalysisFactory.create(this));
+				}
+			}
 		}catch(IOException ex){
 			ex.printStackTrace();
 		}finally{
-			//reset();
+			reset();
 		}
 		return analysis;
 	}

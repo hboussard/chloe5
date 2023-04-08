@@ -1,14 +1,14 @@
 package fr.inrae.act.bagap.chloe.kernel.sliding;
 
-public class SlidingDistanceWeightedQuantitativeKernel extends SlidingLandscapeMetricKernel {
+public class SlidingQuantitativeKernel extends SlidingLandscapeMetricKernel {
 	
 	private final float threshold;
 	
-	public SlidingDistanceWeightedQuantitativeKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] unfilters){
+	public SlidingQuantitativeKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] unfilters){
 		this(windowSize, displacement, shape, coeff, noDataValue, -1, unfilters);
 	}
 		
-	public SlidingDistanceWeightedQuantitativeKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, float threshold, int[] unfilters){
+	public SlidingQuantitativeKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, float threshold, int[] unfilters){
 		super(windowSize, displacement, shape, coeff, noDataValue, unfilters);
 		this.threshold = threshold;
 	}

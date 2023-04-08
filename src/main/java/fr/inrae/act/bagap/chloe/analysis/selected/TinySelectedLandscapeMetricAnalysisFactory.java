@@ -20,10 +20,10 @@ import fr.inrae.act.bagap.chloe.counting.MultipleCounting;
 import fr.inrae.act.bagap.chloe.counting.PatchCounting;
 import fr.inrae.act.bagap.chloe.counting.QuantitativeCounting;
 import fr.inrae.act.bagap.chloe.counting.ValueCounting;
-import fr.inrae.act.bagap.chloe.kernel.selected.SelectedDistanceWeightedCountCoupleKernel;
-import fr.inrae.act.bagap.chloe.kernel.selected.SelectedDistanceWeightedCountValueAndCoupleKernel;
-import fr.inrae.act.bagap.chloe.kernel.selected.SelectedDistanceWeightedCountValueKernel;
-import fr.inrae.act.bagap.chloe.kernel.selected.SelectedDistanceWeightedQuantitativeKernel;
+import fr.inrae.act.bagap.chloe.kernel.selected.SelectedCountCoupleKernel;
+import fr.inrae.act.bagap.chloe.kernel.selected.SelectedCountValueAndCoupleKernel;
+import fr.inrae.act.bagap.chloe.kernel.selected.SelectedCountValueKernel;
+import fr.inrae.act.bagap.chloe.kernel.selected.SelectedQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.kernel.selected.SelectedLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.kernel.selected.SelectedPatchKernel;
 import fr.inrae.act.bagap.chloe.metric.Metric;
@@ -33,16 +33,16 @@ import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public class SelectedLandscapeMetricAnalysisFactory {
+public class TinySelectedLandscapeMetricAnalysisFactory {
 
 	public static SelectedLandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder, Coverage coverage) throws IOException {
 	
 		int inWidth = coverage.width();
 		int inHeight = coverage.height();
-		double inMinX = coverage.minx();
-		double inMinY = coverage.miny();
-		double inMaxX = coverage.maxx();
-		double inMaxY = coverage.maxy();
+		//double inMinX = coverage.minx();
+		//double inMinY = coverage.miny();
+		//double inMaxX = coverage.maxx();
+		//double inMaxY = coverage.maxy();
 		double inCellSize = coverage.cellsize();
 			
 		// ROI
@@ -150,7 +150,7 @@ public class SelectedLandscapeMetricAnalysisFactory {
 				
 			SelectedLandscapeMetricKernel kernel = null;
 			if(metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("MD")){
-				kernel = new SelectedDistanceWeightedQuantitativeKernel(windowSize, pixels, shape, coeffs, Raster.getNoDataValue(), 100);
+				kernel = new SelectedQuantitativeKernel(windowSize, pixels, shape, coeffs, Raster.getNoDataValue(), 100);
 			}else if(metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("distance")){
 				// TODO
 				/*
@@ -203,7 +203,7 @@ public class SelectedLandscapeMetricAnalysisFactory {
 					kernel = new ProportionKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(), unfilters);
 				*/
 			}else{
-				kernel = new SelectedDistanceWeightedQuantitativeKernel(windowSize, pixels, shape, coeffs, Raster.getNoDataValue());
+				kernel = new SelectedQuantitativeKernel(windowSize, pixels, shape, coeffs, Raster.getNoDataValue());
 			}
 			Counting counting = new QuantitativeCounting(0, 7, theoreticalSize);
 				
@@ -263,7 +263,7 @@ public class SelectedLandscapeMetricAnalysisFactory {
 			if(MetricManager.hasOnlyValueMetric(metrics)){
 				nbValues += 1 + values.length;
 					
-				kernel = new SelectedDistanceWeightedCountValueKernel(windowSize, pixels, shape, coeffs, Raster.getNoDataValue(), values);
+				kernel = new SelectedCountValueKernel(windowSize, pixels, shape, coeffs, Raster.getNoDataValue(), values);
 				counting = new ValueCounting(0, nbValues, values, theoreticalSize);
 					
 				// add metrics to counting
@@ -279,7 +279,7 @@ public class SelectedLandscapeMetricAnalysisFactory {
 			}else if(MetricManager.hasOnlyCoupleMetric(metrics)){
 					
 				nbValues += couples.length;
-				kernel = new SelectedDistanceWeightedCountCoupleKernel(windowSize, pixels, shape, coeffs, Raster.getNoDataValue(), values);
+				kernel = new SelectedCountCoupleKernel(windowSize, pixels, shape, coeffs, Raster.getNoDataValue(), values);
 				counting = new CoupleCounting(0, nbValues, values.length, couples, theoreticalCoupleSize);
 					
 				// add metrics to counting
@@ -298,7 +298,7 @@ public class SelectedLandscapeMetricAnalysisFactory {
 					
 				Counting[] countings = new Counting[2];
 					
-				kernel = new SelectedDistanceWeightedCountValueAndCoupleKernel(windowSize, pixels, shape, coeffs, Raster.getNoDataValue(), values);
+				kernel = new SelectedCountValueAndCoupleKernel(windowSize, pixels, shape, coeffs, Raster.getNoDataValue(), values);
 				ValueCounting vCounting = new ValueCounting(0, values.length+3, values, theoreticalSize);
 				// add metrics to counting
 				for(Metric m : metrics){

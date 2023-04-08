@@ -10,13 +10,9 @@ public abstract class MapLandscapeMetricKernel implements LandscapeMetricKernel 
 	
 	private double[] outDatas;
 	
-	private int theY;
-	
 	private int width, height;
 	
-	private int bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax; // in pixels
-	
-	protected MapLandscapeMetricKernel(int noDataValue){
+	public MapLandscapeMetricKernel(int noDataValue){
 		this.noDataValue = noDataValue;
 	}
 	
@@ -28,22 +24,6 @@ public abstract class MapLandscapeMetricKernel implements LandscapeMetricKernel 
 	
 	public void setHeight(int height){
 		this.height = height;
-	}
-	
-	public void setBufferROIXMin(int bufferROIXMin) {
-		this.bufferROIXMin = bufferROIXMin;
-	}
-
-	public void setBufferROIXMax(int bufferROIXMax) {
-		this.bufferROIXMax = bufferROIXMax;
-	}
-
-	public void setBufferROIYMin(int bufferROIYMin) {
-		this.bufferROIYMin = bufferROIYMin;
-	}
-
-	public void setBufferROIYMax(int bufferROIYMax) {
-		this.bufferROIYMax = bufferROIYMax;
 	}
 	
 	public void setInDatas(float[] inDatas){
@@ -60,22 +40,6 @@ public abstract class MapLandscapeMetricKernel implements LandscapeMetricKernel 
 	
 	public int height(){
 		return height;
-	}
-	
-	public int bufferROIXMin(){
-		return this.bufferROIXMin;
-	}
-	
-	public int bufferROIXMax(){
-		return this.bufferROIXMax;
-	}
-	
-	public int bufferROIYMin(){
-		return this.bufferROIYMin;
-	}
-	
-	public int bufferROIYMax(){
-		return this.bufferROIYMax;
 	}
 	
 	public int noDataValue(){

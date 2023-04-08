@@ -12,10 +12,9 @@ import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.metric.Metric;
+import fr.inrae.act.bagap.chloe.util.Util;
 
 public class CsvOutput implements CountingObserver{
-	
-	private final DecimalFormat format;
 
 	private BufferedWriter bw;
 	
@@ -38,12 +37,9 @@ public class CsvOutput implements CountingObserver{
 		this.height = height;
 		this.cellSize = cellSize;
 		this.noDataValue = noDataValue;
-		
-		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-		symbols.setDecimalSeparator('.');
-		format = new DecimalFormat("0.00000", symbols);
 	}
 	
+	@Override
 	public void init(Counting c, Set<Metric> metrics) {
 
 		this.x = minX + cellSize/2.0;
@@ -85,6 +81,7 @@ public class CsvOutput implements CountingObserver{
 		}
 	}
 	
+	@Override
 	public void prerun(Counting c) {
 		/*
 		try {
@@ -97,6 +94,7 @@ public class CsvOutput implements CountingObserver{
 		// do nothing
 	}
 
+	@Override
 	public void postrun(Counting c, int i, int j, Map<Metric, Double> values) {
 		
 		try {
@@ -108,7 +106,7 @@ public class CsvOutput implements CountingObserver{
 					break;
 				}
 				sb.append(';');
-				sb.append(format(v));
+				sb.append(Util.format(v));
 			}
 			if(export){
 				bw.write(sb.toString());
@@ -137,6 +135,7 @@ public class CsvOutput implements CountingObserver{
 		
 	}
 
+	@Override
 	public void close(Counting c, Set<Metric> metrics) {
 		try {
 			bw.close();
@@ -148,14 +147,6 @@ public class CsvOutput implements CountingObserver{
 	@Override
 	public void postrun(Counting c, int id, Map<Metric, Double> values) {
 		// do nothing
-	}
-	
-	protected String format(double v){
-		int f = new Double(Math.floor(v)).intValue();
-		if(v == f){
-			return f+"";
-		}
-		return format.format(v);
 	}
 
 }

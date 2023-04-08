@@ -1,11 +1,11 @@
 package fr.inrae.act.bagap.chloe.analysis.entity;
 
-import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysis;
+import fr.inrae.act.bagap.chloe.analysis.UnitLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.kernel.entity.EntityLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public abstract class EntityLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
+public abstract class EntityLandscapeMetricAnalysis extends UnitLandscapeMetricAnalysis {
 
 	private final Coverage entityCoverage;
 	

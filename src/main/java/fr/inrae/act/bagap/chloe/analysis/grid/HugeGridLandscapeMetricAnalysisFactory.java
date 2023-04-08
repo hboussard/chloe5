@@ -57,7 +57,7 @@ public static GridLandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder 
 		}
 			
 		// gridSize
-		int gridSize = builder.getGridSize();
+		int gridSize = builder.getWindowSize();
 		
 		// taille de sortie
 		int outWidth = (int) (((roiWidth-1)/gridSize)+1);
@@ -101,7 +101,7 @@ public static GridLandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder 
 			CsvOutput csvOutput = new CsvOutput(builder.getCsv(), outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, Raster.getNoDataValue());
 			observers.add(csvOutput);	
 		}
-		for(Entry<String, String> entry : builder.getAsciiOutputs().entrySet()){
+		for(Entry<String, String> entry : builder.getAsciiOutputs(gridSize).entrySet()){
 			Metric metric = null;
 			for(Metric m : metrics){
 				if(m.getName().equalsIgnoreCase(entry.getKey())){
@@ -112,7 +112,7 @@ public static GridLandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder 
 			AsciiGridOutput asciiOutput = new AsciiGridOutput(entry.getValue(), metric, outWidth, outHeight, outMinX, outMinY, outCellSize, Raster.getNoDataValue());
 			observers.add(asciiOutput);
 		}
-		for(Entry<String, String> entry : builder.getGeoTiffOutputs().entrySet()){
+		for(Entry<String, String> entry : builder.getGeoTiffOutputs(gridSize).entrySet()){
 			Metric metric = null;
 			for(Metric m : metrics){
 				if(m.getName().equalsIgnoreCase(entry.getKey())){

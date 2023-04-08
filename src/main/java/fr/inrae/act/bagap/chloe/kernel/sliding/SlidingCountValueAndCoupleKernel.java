@@ -1,6 +1,6 @@
 package fr.inrae.act.bagap.chloe.kernel.sliding;
 
-public class SlidingDistanceWeightedCountValueAndCoupleKernel extends SlidingLandscapeMetricKernel {
+public class SlidingCountValueAndCoupleKernel extends SlidingLandscapeMetricKernel {
 	
 	private final int nbValues;
 	
@@ -8,7 +8,7 @@ public class SlidingDistanceWeightedCountValueAndCoupleKernel extends SlidingLan
 	
 	private int[] mapValues;
 	
-	public SlidingDistanceWeightedCountValueAndCoupleKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] values, int[] unfilters){
+	public SlidingCountValueAndCoupleKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] values, int[] unfilters){
 		super(windowSize, displacement, shape, coeff, noDataValue, unfilters);
 		this.nbValues = values.length;
 		int maxV = 0;

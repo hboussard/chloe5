@@ -4,11 +4,11 @@ import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 
-public class SelectedDistanceWeightedCountValueKernel extends SelectedLandscapeMetricKernel {
+public class SelectedCountValueKernel extends SelectedLandscapeMetricKernel {
 
 	private int[] mapValues;
 	
-	public SelectedDistanceWeightedCountValueKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue, int[] values){		
+	public SelectedCountValueKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue, int[] values){		
 		super(windowSize, pixels, shape, coeff, noDataValue);
 		int maxV = 0;
 		for(int v : values){

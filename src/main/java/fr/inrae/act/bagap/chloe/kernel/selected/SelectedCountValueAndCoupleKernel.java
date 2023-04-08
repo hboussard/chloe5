@@ -4,15 +4,17 @@ import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 
-public class SelectedDistanceWeightedCountCoupleKernel extends SelectedLandscapeMetricKernel {
+public class SelectedCountValueAndCoupleKernel extends SelectedLandscapeMetricKernel {
+	
+	private final int nbValues;
 	
 	private int[][] mapCouples;
 	
 	private int[] mapValues;
 	
-	public SelectedDistanceWeightedCountCoupleKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue, int[] values){
+	public SelectedCountValueAndCoupleKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue, int[] values){
 		super(windowSize, pixels, shape, coeff, noDataValue);
-		
+		this.nbValues = values.length;
 		int maxV = 0;
 		for(int v : values){
 			maxV = Math.max(v, maxV);
@@ -60,10 +62,12 @@ public class SelectedDistanceWeightedCountCoupleKernel extends SelectedLandscape
 				outDatas()[ind][i] = 0f;
 			}
 			
+			outDatas()[ind][2] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
+					
 			final int mid = windowSize() / 2;
 			int ic, ic_V, ic_H;
 			short v, v_H, v_V;
-			int mc;
+			int mv;
 			for (int dy = -mid; dy <= mid; dy += 1) {
 				if(((y + dy) >= 0) && ((y + dy) < height())){
 					for (int dx = -mid; dx <= mid; dx += 1) {
@@ -72,32 +76,47 @@ public class SelectedDistanceWeightedCountCoupleKernel extends SelectedLandscape
 							if(shape()[ic] == 1) {
 								v = (short) inDatas()[((y + dy) * width()) + (x + dx)];
 								
+								if(v == -1){
+									outDatas()[ind][0] += coeff()[ic];
+								}else if(v == 0){
+									outDatas()[ind][1] += coeff()[ic];
+								}else{
+									mv = mapValues[v];
+									outDatas()[ind][mv+3] += coeff()[ic];
+								}
+								
 								if((dy > -mid) && ((y + dy) > 0)) {
 									ic_V = ((dy+mid-1) * windowSize()) + (dx+mid);
 									if(shape()[ic_V] == 1){
 										v_V = (short) inDatas()[((y + dy - 1) * width()) + (x + dx)];
+										
 										if(v == noDataValue() || v_V == noDataValue()){
-											outDatas()[ind][0] += coeff()[ic];
-										}else if(v == 0 || v_V == 0){
-											outDatas()[ind][1] += coeff()[ic];
+											outDatas()[ind][nbValues+3] += coeff()[ic];
 										}else{
-											mc = mapCouples[mapValues[v]][mapValues[v_V]];
-											outDatas()[ind][mc+2] += coeff()[ic];
+											if(v == 0 || v_V == 0){
+												outDatas()[ind][nbValues+4] += coeff()[ic];
+											}else{
+												mv = mapCouples[mapValues[v]][mapValues[v_V]];
+												outDatas()[ind][nbValues+mv+5] += coeff()[ic];
+											}
 										}
 									}
 								}
-									
+								
 								if((dx > -mid) && ((x + dx) > 0)) {
 									ic_H = ((dy+mid) * windowSize()) + (dx+mid-1);
 									if(shape()[ic_H] == 1){
 										v_H = (short) inDatas()[((y + dy) * width()) + (x + dx - 1)];
+										
 										if(v == noDataValue() || v_H == noDataValue()){
-											outDatas()[ind][0] += coeff()[ic];
-										}else if(v == 0 || v_H == 0){
-											outDatas()[ind][1] += coeff()[ic];
+											outDatas()[ind][nbValues+3] += coeff()[ic];
 										}else{
-											mc = mapCouples[mapValues[v]][mapValues[v_H]];
-											outDatas()[ind][mc+2] += coeff()[ic];
+											if(v == 0 || v_H == 0){
+												outDatas()[ind][nbValues+4] += coeff()[ic];
+											}else{
+												mv = mapCouples[mapValues[v]][mapValues[v_H]];
+												outDatas()[ind][nbValues+mv+5] += coeff()[ic];
+											}
 										}
 									}
 								}
@@ -115,5 +134,5 @@ public class SelectedDistanceWeightedCountCoupleKernel extends SelectedLandscape
 		mapCouples = null;
 		mapValues = null;
 	}
-	
+
 }

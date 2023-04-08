@@ -11,7 +11,7 @@ import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceF
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 
-public class SlidingFunctionalDistanceWeightedCountValueKernel extends DoubleSlidingLandscapeMetricKernel {
+public class SlidingFunctionalCountValueKernel extends DoubleSlidingLandscapeMetricKernel {
 
 	private int[] mapValues;
 	
@@ -21,7 +21,7 @@ public class SlidingFunctionalDistanceWeightedCountValueKernel extends DoubleSli
 	
 	private DistanceFunction function;
 	
-	public SlidingFunctionalDistanceWeightedCountValueKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters, double cellSize, DistanceFunction function, double radius){		
+	public SlidingFunctionalCountValueKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters, double cellSize, DistanceFunction function, double radius){		
 		super(windowSize, displacement, null, null, noDataValue, unfilters);
 		this.cellSize = cellSize;
 		this.radius = radius;

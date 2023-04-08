@@ -1,17 +1,11 @@
 package fr.inrae.act.bagap.chloe.analysis.map;
 
 import java.awt.Rectangle;
-
-import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysis;
-import fr.inrae.act.bagap.chloe.analysis.grid.GridLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.counting.Counting;
-import fr.inrae.act.bagap.chloe.kernel.grid.GridLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.kernel.map.MapLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
 public class TinyMapLandscapeMetricAnalysis extends MapLandscapeMetricAnalysis {
-
-	private int buffer;
 	
 	public TinyMapLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, MapLandscapeMetricKernel kernel, Counting counting) {		
 		super(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
@@ -23,10 +17,6 @@ public class TinyMapLandscapeMetricAnalysis extends MapLandscapeMetricAnalysis {
 		
 		kernel().setWidth(roiWidth());
 		kernel().setHeight(roiHeight());
-		kernel().setBufferROIXMin(bufferROIXMin());
-		kernel().setBufferROIXMax(bufferROIXMax());
-		kernel().setBufferROIYMin(bufferROIYMin());
-		kernel().setBufferROIYMax(bufferROIYMax());
 		
 		//System.out.println(bufferROIXMin()+" "+bufferROIXMax()+" "+bufferROIYMin()+" "+bufferROIYMax());		
 		
@@ -43,17 +33,16 @@ public class TinyMapLandscapeMetricAnalysis extends MapLandscapeMetricAnalysis {
 		// initialisation du comptage
 		counting().init();
 		
-		buffer = LandscapeMetricAnalysis.bufferSize();
+		// initialisation du kernel
+		kernel().init();
+		
 		//System.out.println(roiWidth() + bufferROIXMin() + bufferROIXMax()+" "+roiHeight() + bufferROIYMin() + bufferROIYMax()+" "+(roiWidth()*roiHeight())+" "+((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1)));
 	}
 
 	@Override
 	protected void doRun() {
 		
-		for(int b=0; b<roiHeight(); b+=buffer){
-			System.out.println("buffer "+b);
-			kernel().applyMapWindow(b);
-		}
+		kernel().applyMapWindow(0);
 		
 		counting().setCounts(kernel().outDatas());
 		counting().calculate();

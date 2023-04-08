@@ -22,10 +22,10 @@ import fr.inrae.act.bagap.chloe.counting.ValueAndCoupleCounting;
 import fr.inrae.act.bagap.chloe.counting.ValueCounting;
 import fr.inrae.act.bagap.chloe.kernel.sliding.DSBDetectionBocageKernel;
 import fr.inrae.act.bagap.chloe.kernel.sliding.DSBDistanceBocageKernel;
-import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingDistanceWeightedCountCoupleKernel;
-import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingDistanceWeightedCountValueAndCoupleKernel;
-import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingDistanceWeightedCountValueKernel;
-import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingDistanceWeightedQuantitativeKernel;
+import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingCountCoupleKernel;
+import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingCountValueAndCoupleKernel;
+import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingCountValueKernel;
+import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingPatchKernel;
 import fr.inrae.act.bagap.chloe.kernel.sliding.fast.FastGaussianWeightedCountCoupleKernel;
@@ -174,57 +174,66 @@ public class HugeSlidingLandscapeMetricAnalysisFactory {
 				observers.add(csvOutput);
 			}
 		}
-		for (Entry<String, String> entry : builder.getAsciiOutputs().entrySet()) {
-			Metric metric = null;
-			for (Metric m : metrics) {
-				if (m.getName().equalsIgnoreCase(entry.getKey())) {
-					metric = m;
-					break;
+		
+		if(builder.getAsciiOutputs(windowSize) != null){
+			for (Entry<String, String> entry : builder.getAsciiOutputs(windowSize).entrySet()) {
+				Metric metric = null;
+				for (Metric m : metrics) {
+					if (m.getName().equalsIgnoreCase(entry.getKey())) {
+						metric = m;
+						break;
+					}
 				}
-			}
-			if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
-				AsciiGridOutput asciiOutput = new AsciiGridOutput(entry.getValue(), metric, outWidth, outHeight,
-						outMinX, outMinY, outCellSize, Raster.getNoDataValue());
-				observers.add(asciiOutput);
-			} else {
-				InterpolateSplineLinearAsciiGridOutput asciiOutput = new InterpolateSplineLinearAsciiGridOutput(
-						entry.getValue(), metric, roiWidth, roiHeight, inMinX + (roiX * inCellSize),
-						inMinY + ((inHeight - roiY) * inCellSize) - (roiHeight * inCellSize), inCellSize,
-						Raster.getNoDataValue(), displacement);
-				observers.add(asciiOutput);
+				if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
+					AsciiGridOutput asciiOutput = new AsciiGridOutput(entry.getValue(), metric, outWidth, outHeight,
+							outMinX, outMinY, outCellSize, Raster.getNoDataValue());
+					observers.add(asciiOutput);
+				} else {
+					InterpolateSplineLinearAsciiGridOutput asciiOutput = new InterpolateSplineLinearAsciiGridOutput(
+							entry.getValue(), metric, roiWidth, roiHeight, inMinX + (roiX * inCellSize),
+							inMinY + ((inHeight - roiY) * inCellSize) - (roiHeight * inCellSize), inCellSize,
+							Raster.getNoDataValue(), displacement);
+					observers.add(asciiOutput);
+				}
 			}
 		}
-		for (Entry<String, String> entry : builder.getGeoTiffOutputs().entrySet()) {
-			Metric metric = null;
-			for (Metric m : metrics) {
-				if (m.getName().equalsIgnoreCase(entry.getKey())) {
-					metric = m;
-					break;
+		
+		if(builder.getGeoTiffOutputs(windowSize) != null){
+			for (Entry<String, String> entry : builder.getGeoTiffOutputs(windowSize).entrySet()) {
+				Metric metric = null;
+				for (Metric m : metrics) {
+					if (m.getName().equalsIgnoreCase(entry.getKey())) {
+						metric = m;
+						break;
+					}
 				}
-			}
-			if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
-				GeoTiffOutput geotiffOutput = new GeoTiffOutput(entry.getValue(), metric, outWidth, outHeight, outMinX,
-						outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
-				observers.add(geotiffOutput);
-			} else {
-				// TODO
+				if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
+					GeoTiffOutput geotiffOutput = new GeoTiffOutput(entry.getValue(), metric, outWidth, outHeight, outMinX,
+							outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
+					observers.add(geotiffOutput);
+				} else {
+					// TODO
+				}
 			}
 		}
-		for (Entry<String, float[]> entry : builder.getTabOutputs().entrySet()) {
-			Metric metric = null;
-			for (Metric m : metrics) {
-				if (m.getName().equalsIgnoreCase(entry.getKey())) {
-					metric = m;
-					break;
+		
+		if(builder.getTabOutputs(windowSize) != null){
+			for (Entry<String, float[]> entry : builder.getTabOutputs(windowSize).entrySet()) {
+				Metric metric = null;
+				for (Metric m : metrics) {
+					if (m.getName().equalsIgnoreCase(entry.getKey())) {
+						metric = m;
+						break;
+					}
 				}
-			}
-			if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
-				TabOutput tabOutput = new TabOutput(entry.getValue(), metric, outWidth, displacement);
-				observers.add(tabOutput);
-			} else {
-				InterpolateSplineLinearTabOutput tabOutput = new InterpolateSplineLinearTabOutput(entry.getValue(),
-						metric, roiWidth, displacement);
-				observers.add(tabOutput);
+				if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
+					TabOutput tabOutput = new TabOutput(entry.getValue(), metric, outWidth, displacement);
+					observers.add(tabOutput);
+				} else {
+					InterpolateSplineLinearTabOutput tabOutput = new InterpolateSplineLinearTabOutput(entry.getValue(),
+							metric, roiWidth, displacement);
+					observers.add(tabOutput);
+				}
 			}
 		}
 
@@ -236,7 +245,7 @@ public class HugeSlidingLandscapeMetricAnalysisFactory {
 
 			SlidingLandscapeMetricKernel kernel = null;
 			if (metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("MD")) {
-				kernel = new SlidingDistanceWeightedQuantitativeKernel(windowSize, displacement, shape, coeffs,
+				kernel = new SlidingQuantitativeKernel(windowSize, displacement, shape, coeffs,
 						Raster.getNoDataValue(), 100, unfilters);
 			} else if (metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("distance")) {
 
@@ -273,7 +282,7 @@ public class HugeSlidingLandscapeMetricAnalysisFactory {
 				kernel = new DSBDetectionBocageKernel(windowSize, displacement, shape, coeffs, Raster.getNoDataValue(),
 						unfilters);
 			} else {
-				kernel = new SlidingDistanceWeightedQuantitativeKernel(windowSize, displacement, shape, coeffs,
+				kernel = new SlidingQuantitativeKernel(windowSize, displacement, shape, coeffs,
 						Raster.getNoDataValue(), unfilters);
 			}
 			Counting counting = new QuantitativeCounting(0, 7, theoreticalSize);
@@ -340,7 +349,7 @@ public class HugeSlidingLandscapeMetricAnalysisFactory {
 					kernel = new FastGaussianWeightedCountValueKernel(windowSize, displacement, shape, coeffs,
 							Raster.getNoDataValue(), values, unfilters);
 				else {
-					kernel = new SlidingDistanceWeightedCountValueKernel(windowSize, displacement, shape, coeffs,
+					kernel = new SlidingCountValueKernel(windowSize, displacement, shape, coeffs,
 							Raster.getNoDataValue(), values, unfilters);
 				}
 
@@ -356,7 +365,7 @@ public class HugeSlidingLandscapeMetricAnalysisFactory {
 					kernel = new FastGaussianWeightedCountCoupleKernel(windowSize, displacement, shape, coeffs,
 							Raster.getNoDataValue(), values, unfilters);
 				else {
-					kernel = new SlidingDistanceWeightedCountCoupleKernel(windowSize, displacement, shape, coeffs,
+					kernel = new SlidingCountCoupleKernel(windowSize, displacement, shape, coeffs,
 							Raster.getNoDataValue(), values, unfilters);
 				}
 
@@ -372,7 +381,7 @@ public class HugeSlidingLandscapeMetricAnalysisFactory {
 					kernel = new FastGaussianWeightedCountValueAndCoupleKernel(windowSize, displacement, shape, coeffs,
 							Raster.getNoDataValue(), values, unfilters);
 				else {
-					kernel = new SlidingDistanceWeightedCountValueAndCoupleKernel(windowSize, displacement, shape,
+					kernel = new SlidingCountValueAndCoupleKernel(windowSize, displacement, shape,
 							coeffs, Raster.getNoDataValue(), values, unfilters);
 				}
 

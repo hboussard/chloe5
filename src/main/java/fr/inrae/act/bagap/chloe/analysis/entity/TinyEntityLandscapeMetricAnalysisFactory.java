@@ -83,12 +83,12 @@ public class TinyEntityLandscapeMetricAnalysisFactory {
 			EntityMultipleAsciiGridOutput asciiOutput = new EntityMultipleAsciiGridOutput(builder.getAsciiGridFolder(), entityCoverage, roiWidth, roiHeight, inMinX, inMinY, inCellSize, Raster.getNoDataValue());
 			observers.add(asciiOutput);
 		}
-		if(builder.getTabOutputs().size() > 0){
+		/*if(builder.getTabOutputs().size() > 0){
 			for(Entry<String, float[]> e : builder.getTabOutputs().entrySet()){
 				EntityTabOutput tabOutput = new EntityTabOutput(e.getValue(), entityCoverage, MetricManager.get(e.getKey()), roiWidth, roiHeight, Raster.getNoDataValue());
 				observers.add(tabOutput);
 			}
-		}
+		}*/
 					
 		// gestion specifiques des analyses quantitatives ou qualitatives
 		if(MetricManager.hasOnlyQuantitativeMetric(metrics)){ // quantitative
