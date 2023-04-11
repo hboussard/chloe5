@@ -14,6 +14,8 @@ public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetri
 	
 	private float[][] buf;
 	
+	private int rayon;
+	
 	private float[] gauss;
 	
 	public FastGaussianWeightedCountCoupleKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] values, int[] unfilters){
@@ -46,10 +48,12 @@ public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetri
 			}
 		}
 		nCouplesValues = index;
-		this.gauss = new float[windowSize()];
 		
-		float r=(windowSize-1)/2.f;
-		for(int i=0; i<windowSize; i++) {
+		this.rayon = windowSize()/2+1;
+		this.gauss = new float[rayon];
+		
+		float r=(rayon-1)/2.f; // sigma = r/sqrt(2), rayon = 2*sqrt(2)*sigma
+		for(int i=0; i<rayon; i++) {
 			float d = i/r; // distance en nombre de rayons
 			gauss[i] = (float) Math.exp(-d*d);
 		}
@@ -57,7 +61,7 @@ public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetri
 
 	public void processVerticalPixel(int x,int line) {
 		
-		int y = theY() + line;
+		int y = theY() + line + bufferROIYMin();
 		int i, dy, ic, v, mc, v_V, v_H;
 		
 		// parcours vertical de l'image centre sur ligne theY+line et stocke dans buf
@@ -65,7 +69,7 @@ public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetri
 			buf[x][i]=0;
 		}
 		
-		for (dy = -windowSize()+1; dy < windowSize(); dy++) {
+		for (dy = -rayon+1; dy < rayon; dy++) {
 			if(((y + dy) >= 0) && ((y + dy) < height())){
 				
 				ic = abs(dy);
@@ -99,15 +103,15 @@ public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetri
 	public void processHorizontalPixel(int x,int line) {
 		
 		// parcours horizontal de buf: position dans imageOut : (x,y=line/dep)
-		int x_buf = x * displacement();
+		int x_buf = x * displacement() + bufferROIXMin();
 		int y = line / displacement();
-		int ind = y * ((width()-1)/displacement()+1) + x;
-		//imageOut()[ind][2] = (int) imageIn()[((theY() + line) * width()) + x];
+		int ind = y * ((width()-1-bufferROIXMin()-bufferROIXMax())/displacement()+1) + x;
+		//imageOut()[ind][2] = (int) inDatas()[((theY() + line) * width()) + x*displacement() + bufferROIXMin()];
 		float val;
 		
 		for(int value=0; value<nCouplesValues; value++) {
 			val=0;
-			for(int i=max(x_buf-windowSize()+1, 0); i<min(x_buf+windowSize(),width()); i++) {
+			for(int i=max(x_buf-rayon+1, 0); i<min(x_buf+rayon,width()); i++) {
 				val += buf[i][value] * gauss[abs(i-x_buf)];
 			}
 			outDatas()[ind][value] = val;
@@ -129,14 +133,14 @@ public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetri
 	
 	@Override
 	public void run() {
-		final int x = bufferROIXMin() + getGlobalId(0);
+		final int x = getGlobalId(0);
 		final int pass = getPassId();
 		final int vertical = pass % 2;
 		final int line = (displacement()-theY()%displacement())%displacement() + (pass/2)*displacement();
 		if(vertical == 0){
-			processVerticalPixel(x,line);
+			processVerticalPixel(x, line);
 		}else if(x < (width() - bufferROIXMin() - bufferROIXMax()-1) / displacement() + 1){
-			processHorizontalPixel(x,line);
+			processHorizontalPixel(x, line);
 		}
 	}
 	

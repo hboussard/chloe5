@@ -72,10 +72,10 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 	public void processHorizontalPixel(int x, int line) {
 
 		// parcours horizontal de buf: position dans imageOut : (x,y=line/dep)
-		int x_buf = x*displacement();
+		int x_buf = x*displacement()+bufferROIXMin();
 		int y=line/displacement();
-		int ind = y*((width()-1)/displacement()+1) + x;
-		outDatas()[ind][2] = (int) inDatas()[((theY() + line)* width()) + x];
+		int ind = y*((width()-1-bufferROIXMin()-bufferROIXMax())/displacement()+1) + x;
+		outDatas()[ind][2] = (int) inDatas()[((theY() + line)* width()) + x*displacement()+bufferROIXMin()];
 		float val;
 		
 		for(int value=0; value<values.length+3; value++) {
@@ -98,15 +98,6 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 	
 	@Override
 	public void applySlidingWindow(int theY, int buffer) {
-		System.out.println("theY : "+theY);
-		System.out.println("buffer : "+buffer);
-		System.out.println("width : "+width());
-		System.out.println("rayon : "+rayon);
-		System.out.println("bufferROIXMin : "+bufferROIXMin());
-		System.out.println("bufferROIXMax : "+bufferROIXMax());
-		System.out.println("bufferROIYMin : "+bufferROIYMin());
-		System.out.println("bufferROIYMax : "+bufferROIYMax());
-
 		this.setTheY(theY); // indique position de la premiere ligne du buffer dans imageIn
 		final int nlines = ((buffer-1) - (displacement()-theY()%displacement())%displacement())/displacement()+1;
 		execute(width(), 2*nlines);
@@ -118,7 +109,6 @@ public class FastGaussianWeightedCountValueKernel extends SlidingLandscapeMetric
 		final int pass = getPassId();
 		final int vertical = pass % 2;	
 		final int line = (displacement() - theY()%displacement())%displacement() + (pass/2)*displacement();
-	
 		if(vertical == 0){
 			processVerticalPixel(x, line);
 		}else if(x < (width() - bufferROIXMin() - bufferROIXMax()-1) / displacement() + 1){
