@@ -61,12 +61,12 @@ public class EntityCountValueAndCoupleKernel extends EntityLandscapeMetricKernel
 					v = (short) inDatas()[y*width() + x];
 					
 					if(v == noDataValue()){
-						outDatas().get(va)[0] += 1;
-					}else if(v == 0){
 						outDatas().get(va)[1] += 1;
+					}else if(v == 0){
+						outDatas().get(va)[2] += 1;
 					}else{
 						mv = mapValues[v];
-						outDatas().get(va)[mv+3] += 1;
+						outDatas().get(va)[mv+4] += 1;
 					}
 					
 					// couple vertical
@@ -75,24 +75,24 @@ public class EntityCountValueAndCoupleKernel extends EntityLandscapeMetricKernel
 						v_V = (short) inDatas()[(y-1)*width() + x];
 						
 						if(v == noDataValue() || v_V == noDataValue()){
-							outDatas().get(va)[nbValues+3] += 1;
-						}else if(v == 0 || v_V == 0){
 							outDatas().get(va)[nbValues+4] += 1;
+						}else if(v == 0 || v_V == 0){
+							outDatas().get(va)[nbValues+5] += 1;
 						}else{
 							mv = mapCouples[mapValues[v]][mapValues[v_V]];
-							outDatas().get(va)[nbValues+mv+5] += 1;
+							outDatas().get(va)[nbValues+mv+6] += 1;
 						}
 					}else if((y == 0) && lastEntityLine[x] == va){
 						
 						v_V = lastValueLine[x];
 						
 						if(v == noDataValue() || v_V == noDataValue()){
-							outDatas().get(va)[nbValues+3] += 1;
-						}else if(v == 0 || v_V == 0){
 							outDatas().get(va)[nbValues+4] += 1;
+						}else if(v == 0 || v_V == 0){
+							outDatas().get(va)[nbValues+5] += 1;
 						}else{
 							mv = mapCouples[mapValues[v]][mapValues[v_V]];
-							outDatas().get(va)[nbValues+mv+5] += 1;
+							outDatas().get(va)[nbValues+mv+6] += 1;
 						}
 					}
 					
@@ -102,12 +102,12 @@ public class EntityCountValueAndCoupleKernel extends EntityLandscapeMetricKernel
 						v_H = (short) inDatas()[y*width() + (x-1)];
 						
 						if(v == noDataValue() || v_H == noDataValue()){
-							outDatas().get(va)[nbValues+3] += 1;
-						}else if(v == 0 || v_H == 0){
 							outDatas().get(va)[nbValues+4] += 1;
+						}else if(v == 0 || v_H == 0){
+							outDatas().get(va)[nbValues+5] += 1;
 						}else{
 							mv = mapCouples[mapValues[v]][mapValues[v_H]];
-							outDatas().get(va)[nbValues+mv+5] += 1;
+							outDatas().get(va)[nbValues+mv+6] += 1;
 						}
 					}
 				}

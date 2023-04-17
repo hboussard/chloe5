@@ -7,13 +7,14 @@ import org.geotools.coverage.grid.io.GridCoverage2DReader;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffReader;
 
-import fr.inra.sad.bagap.apiland.analysis.matrix.CoverageManager;
 import fr.inrae.act.bagap.chloe.WindowAnalysisType;
 import fr.inrae.act.bagap.chloe.analysis.entity.HugeEntityLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.entity.TinyEntityLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.grid.HugeGridLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.grid.TinyGridLandscapeMetricAnalysisFactory;
+import fr.inrae.act.bagap.chloe.analysis.map.HugeMapLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.map.TinyMapLandscapeMetricAnalysisFactory;
+import fr.inrae.act.bagap.chloe.analysis.selected.HugeSelectedLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.selected.TinySelectedLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.sliding.HugeSlidingLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.analysis.sliding.TinySlidingLandscapeMetricAnalysisFactory;
@@ -26,7 +27,6 @@ public class LandscapeMetricAnalysisFactory {
 	
  	public static LandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder) throws IOException {
 		
-		//GridCoverage2D coverage;
 		Coverage coverage;
 		int inWidth;
 		int inHeight;
@@ -99,11 +99,11 @@ public class LandscapeMetricAnalysisFactory {
 			
 			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
 				
-				return TinySlidingLandscapeMetricAnalysisFactory.create(builder, coverage);
+				return new TinySlidingLandscapeMetricAnalysisFactory().create(builder, coverage);
 				//return HugeSlidingLandscapeMetricAnalysisFactory.create(builder, coverage);
 			}else{
 				
-				return HugeSlidingLandscapeMetricAnalysisFactory.create(builder, coverage);
+				return new HugeSlidingLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}
 			
 		}else if(builder.getAnalysisType() == WindowAnalysisType.SELECTED){
@@ -132,52 +132,74 @@ public class LandscapeMetricAnalysisFactory {
 
 			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
 				
-				return TinySelectedLandscapeMetricAnalysisFactory.create(builder, coverage);
+				return new TinySelectedLandscapeMetricAnalysisFactory().create(builder, coverage);
+				//return new HugeSelectedLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}else{
 				
-				//return HugeSelectedLandscapeMetricAnalysisFactory.create(builder, coverage);
+				return new HugeSelectedLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}
 		}else if(builder.getAnalysisType() == WindowAnalysisType.ENTITY){
 			
 			int maxWidth = inWidth;
 			int maxHeight = inHeight;
+			if(roiWidth == -1){ // on analyse toute la carte
+				maxWidth = inWidth;
+				maxHeight = inHeight;
+			}else{ // on analyse une partie de la carte
+				maxWidth = roiWidth;
+				maxHeight = roiHeight;
+			}
 			
 			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
 				
-				return TinyEntityLandscapeMetricAnalysisFactory.create(builder, coverage);
+				return new TinyEntityLandscapeMetricAnalysisFactory().create(builder, coverage);
 
 			}else{
 				
-				return HugeEntityLandscapeMetricAnalysisFactory.create(builder, coverage);
+				return new HugeEntityLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}
 			
 		}else if(builder.getAnalysisType() == WindowAnalysisType.GRID){
 		
 			int maxWidth = inWidth;
 			int maxHeight = inHeight;
+			if(roiWidth == -1){ // on analyse toute la carte
+				maxWidth = inWidth;
+				maxHeight = inHeight;
+			}else{ // on analyse une partie de la carte
+				maxWidth = roiWidth;
+				maxHeight = roiHeight;
+			}
 			
 			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
 				
-				return TinyGridLandscapeMetricAnalysisFactory.create(builder, coverage);
+				return new TinyGridLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}else{
 				
-				return HugeGridLandscapeMetricAnalysisFactory.create(builder, coverage);
+				return new HugeGridLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}
 		}else if(builder.getAnalysisType() == WindowAnalysisType.MAP){
 		
 			int maxWidth = inWidth;
 			int maxHeight = inHeight;
+			if(roiWidth == -1){ // on analyse toute la carte
+				maxWidth = inWidth;
+				maxHeight = inHeight;
+			}else{ // on analyse une partie de la carte
+				maxWidth = roiWidth;
+				maxHeight = roiHeight;
+			}
 			
 			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
 				
-				return TinyMapLandscapeMetricAnalysisFactory.create(builder, coverage);
+				return new TinyMapLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}else{
 				
-				//return HugeMapLandscapeMetricAnalysisFactory.create(builder, coverage);
+				return new HugeMapLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}
 		}
 		
-		throw new IllegalArgumentException(builder.getAnalysisType()+" is not a recognize analysis type");
+		throw new IllegalArgumentException(builder.getAnalysisType()+" is not a recognized analysis type");
 	}
 
 }

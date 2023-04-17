@@ -28,12 +28,12 @@ public class MapCountValueKernel extends MapLandscapeMetricKernel {
 				v = (short) inDatas()[((theY+y)*width()) + x];			
 				
 				if(v == noDataValue()){
-					outDatas()[0] += 1;
-				}else if(v == 0){
 					outDatas()[1] += 1;
+				}else if(v == 0){
+					outDatas()[2] += 1;
 				}else{
 					mv = mapValues[v];
-					outDatas()[mv+3] += 1;	
+					outDatas()[mv+4] += 1;	
 				}
 			}
 		}

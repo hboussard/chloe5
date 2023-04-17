@@ -4,11 +4,11 @@ import java.util.Arrays;
 
 import fr.inrae.act.bagap.chloe.metric.Metric;
 
-public class MultipleCounting extends Counting {
+public class MultipleCounting2 extends Counting {
 	
 	private Counting[] countings;
 	
-	public MultipleCounting(int minRange, int maxRange, Counting[] countings) {
+	public MultipleCounting2(int minRange, int maxRange, Counting[] countings) {
 		super(minRange, maxRange);
 		this.countings = countings;
 		for(Counting counting : countings){

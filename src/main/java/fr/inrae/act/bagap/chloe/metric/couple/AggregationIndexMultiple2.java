@@ -1,5 +1,6 @@
 package fr.inrae.act.bagap.chloe.metric.couple;
 
+import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.chloe.metric.value.ValueMetric;
@@ -64,7 +65,7 @@ public class AggregationIndexMultiple2 extends Metric implements ValueMetric, Co
 				value += (g / G * 100.0)*(ai/co.validValues());
 			}
 		}else{
-			value = -1;
+			value = Raster.getNoDataValue();
 		}
 	}
 	

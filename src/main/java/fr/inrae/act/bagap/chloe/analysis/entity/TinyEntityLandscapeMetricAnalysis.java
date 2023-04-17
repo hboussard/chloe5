@@ -13,8 +13,8 @@ import fr.inrae.act.bagap.raster.Coverage;
 
 public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnalysis {
 	
-	public TinyEntityLandscapeMetricAnalysis(Coverage coverage, Coverage areaCoverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, EntityLandscapeMetricKernel kernel, Counting counting) {	
-		super(coverage, areaCoverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
+	public TinyEntityLandscapeMetricAnalysis(Coverage coverage, Coverage entityCoverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, EntityLandscapeMetricKernel kernel, Counting counting) {	
+		super(coverage, entityCoverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
 	}
 
 	@Override
@@ -46,6 +46,7 @@ public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 		kernel().setOutDatas(new HashMap<Integer, double[]>());
 		for(int an : entityIds){
 			kernel().outDatas().put(an, new double[nbValues()]);
+			kernel().outDatas().get(an)[0] = 1; // filtre ok
 		}
 		
 		// initialisation du comptage
@@ -64,13 +65,6 @@ public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 			counting().calculate();
 			counting().export(e.getKey());
 		}
-	}
-
-	@Override
-	protected void doClose() {
-		kernel().dispose();
-		counting().close();
-		entityCoverage().dispose();
 	}
 
 }

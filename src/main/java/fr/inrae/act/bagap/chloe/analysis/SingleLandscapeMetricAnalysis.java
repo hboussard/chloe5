@@ -4,7 +4,7 @@ import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.kernel.LandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public abstract class UnitLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
+public abstract class SingleLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
 
 	private final Coverage coverage;
 	
@@ -32,7 +32,7 @@ public abstract class UnitLandscapeMetricAnalysis extends LandscapeMetricAnalysi
 	
 	private final Counting counting;
 	
-	public UnitLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, LandscapeMetricKernel kernel, Counting counting){
+	public SingleLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, LandscapeMetricKernel kernel, Counting counting){
 		this.coverage = coverage;
 		this.roiX = roiX;
 		this.roiY = roiY;
@@ -93,5 +93,11 @@ public abstract class UnitLandscapeMetricAnalysis extends LandscapeMetricAnalysi
 
 	public LandscapeMetricKernel kernel() {
 		return kernel;
+	}
+	
+	@Override
+	protected void doClose() {
+		kernel().dispose();
+		counting().close();
 	}
 }

@@ -31,28 +31,45 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
  	
 	@Override
 	public void setCounts(double[] counts) {
-		nbPatch = (int) counts[0];
-		totalSurface = counts[1];
-		maxSurface = counts[2];
 		
-		for(int i=0; i<values.length; i++){
-			nbPatches.put(values[i], (int) counts[i+3]);
-		}
-		
-		for(int i=0; i<values.length; i++){
-			totalSurfaces.put(values[i], counts[i+3+values.length]);
-		}
-		
-		for(int i=0; i<values.length; i++){
-			maxSurfaces.put(values[i], counts[i+3+2*values.length]);
+		if(counts[0] == 1){
+			
+			setValidCounting(true);
+			
+			nbPatch = (int) counts[1];
+			totalSurface = counts[2];
+			maxSurface = counts[3];
+			
+			for(int i=0; i<values.length; i++){
+				nbPatches.put(values[i], (int) counts[i+4]);
+			}
+			
+			for(int i=0; i<values.length; i++){
+				totalSurfaces.put(values[i], counts[i+4+values.length]);
+			}
+			
+			for(int i=0; i<values.length; i++){
+				maxSurfaces.put(values[i], counts[i+4+2*values.length]);
+			}
+			
+		}else{
+			
+			setValidCounting(false);
 		}
 	}
 
 	@Override
 	protected void doCalculate() {
-		for(Metric m : metrics()){
-			m.calculate(this, "");
+		if(validCounting()){
+			for(Metric m : metrics()){
+				m.calculate(this, "");
+			}
+		}else{
+			for(Metric m : metrics()){
+				m.unCalculate("");
+			}
 		}
+		
 	}
 
 	@Override

@@ -49,12 +49,12 @@ public class MapCountCoupleKernel extends MapLandscapeMetricKernel {
 					v_V = (short) inDatas()[((theY+y-1)*width()) + x];
 							
 					if(v == noDataValue() || v_V == noDataValue()){
-						outDatas()[0] += 1;
-					}else if(v == 0 || v_V == 0){
 						outDatas()[1] += 1;
+					}else if(v == 0 || v_V == 0){
+						outDatas()[2] += 1;
 					}else{
 						mc = mapCouples[mapValues[v]][mapValues[v_V]];
-						outDatas()[mc+2] += 1;
+						outDatas()[mc+3] += 1;
 					}
 				}
 						
@@ -62,12 +62,12 @@ public class MapCountCoupleKernel extends MapLandscapeMetricKernel {
 					v_H = (short) inDatas()[((theY+y)*width()) + (x - 1)];
 					
 					if(v == noDataValue() || v_H == noDataValue()){
-						outDatas()[0] += 1;
-					}else if(v == 0 || v_H == 0){
 						outDatas()[1] += 1;
+					}else if(v == 0 || v_H == 0){
+						outDatas()[2] += 1;
 					}else{
 						mc = mapCouples[mapValues[v]][mapValues[v_H]];
-						outDatas()[mc+2] += 1;
+						outDatas()[mc+3] += 1;
 					}
 				}
 			}

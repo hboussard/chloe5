@@ -41,6 +41,8 @@ public class GridCountCoupleKernel extends GridLandscapeMetricKernel {
 		for(int i=0; i<outDatas()[0].length; i++){
 			outDatas()[x][i] = 0f;
 		}
+		
+		outDatas()[x][0] = 1; // filtre ok
 			
 		short v, v_H, v_V;
 		int mc;				
@@ -55,12 +57,12 @@ public class GridCountCoupleKernel extends GridLandscapeMetricKernel {
 							v_V = (short) inDatas()[((theY+y-1)*width()) + (x*gridSize() + lx)];
 							
 							if(v == noDataValue() || v_V == noDataValue()){
-								outDatas()[x][0] += 1;
-							}else if(v == 0 || v_V == 0){
 								outDatas()[x][1] += 1;
+							}else if(v == 0 || v_V == 0){
+								outDatas()[x][2] += 1;
 							}else{
 								mc = mapCouples[mapValues[v]][mapValues[v_V]];
-								outDatas()[x][mc+2] += 1;
+								outDatas()[x][mc+3] += 1;
 							}
 						}
 						
@@ -68,12 +70,12 @@ public class GridCountCoupleKernel extends GridLandscapeMetricKernel {
 							v_H = (short) inDatas()[((theY+y)*width()) + (x*gridSize() + lx - 1)];
 							
 							if(v == noDataValue() || v_H == noDataValue()){
-								outDatas()[x][0] += 1;
-							}else if(v == 0 || v_H == 0){
 								outDatas()[x][1] += 1;
+							}else if(v == 0 || v_H == 0){
+								outDatas()[x][2] += 1;
 							}else{
 								mc = mapCouples[mapValues[v]][mapValues[v_H]];
-								outDatas()[x][mc+2] += 1;
+								outDatas()[x][mc+3] += 1;
 							}
 						}
 					}

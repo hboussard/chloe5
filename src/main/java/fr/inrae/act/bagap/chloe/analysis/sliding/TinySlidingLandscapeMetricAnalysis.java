@@ -17,15 +17,14 @@ public class TinySlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 	
 	@Override
 	protected void doInit() {
+		
 		// mise en place des infos pour le Kernel
 		kernel().setWidth(roiWidth() + bufferROIXMin() + bufferROIXMax());
 		kernel().setHeight(roiHeight() + bufferROIYMin() + bufferROIYMax());
 		kernel().setBufferROIXMin(bufferROIXMin());
 		kernel().setBufferROIXMax(bufferROIXMax());
 		kernel().setBufferROIYMin(bufferROIYMin());
-		kernel().setBufferROIYMax(bufferROIYMax());
-		
-		//System.out.println(bufferROIXMin()+" "+bufferROIXMax()+" "+bufferROIYMin()+" "+bufferROIYMax());		
+		kernel().setBufferROIYMax(bufferROIYMax());	
 		
 		// recuperation des donnees depuis le coverage
 		// attention bug de la récupération des données dans le coverage2D si le Y dépasse une certaine valeur
@@ -33,10 +32,9 @@ public class TinySlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 		// ce bug n'est effectif que sur les coverage issus de fichiers AsciiGrid
 		// pas de problème sur fichier TIF
 		Rectangle roi = new Rectangle(roiX() - bufferROIXMin(), roiY() - bufferROIYMin(), roiWidth() + bufferROIXMin() + bufferROIXMax(), roiHeight() + bufferROIYMin() + bufferROIYMax());
-	
+		
 		// gestion des entrees
-		kernel().setInDatas(coverage().getDatas(roi));
-		coverage().dispose();
+		manageInDatas(roi);
 		
 		// ajustement du buffer de calcul
 		buffer = (short) Math.max(displacement(), LandscapeMetricAnalysis.bufferSize());
@@ -47,7 +45,6 @@ public class TinySlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 		// initialisation du comptage
 		counting().init();
 		
-		//System.out.println(roiWidth() + bufferROIXMin() + bufferROIXMax()+" "+roiHeight() + bufferROIYMin() + bufferROIYMax()+" "+(roiWidth()*roiHeight())+" "+((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1)));
 	}
 
 	@Override
@@ -60,7 +57,7 @@ public class TinySlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 			
 			index = 0;
 			for(int j=nextJ%buffer; j<Math.min(buffer, roiHeight()-b); j+=displacement()){
-				//System.out.println(j);
+				
 				nextJ += displacement();
 				for(int i=0; i<roiWidth(); i+=displacement()){
 					
@@ -75,9 +72,11 @@ public class TinySlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 	}
 
 	@Override
-	protected void doClose() {
-		kernel().dispose();
-		counting().close();
+	protected void manageInDatas(Rectangle roi) {
+		
+		// gestion des entrees
+		kernel().setInDatas(coverage().getDatas(roi));
+		coverage().dispose();
 	}
 
 }

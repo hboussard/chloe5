@@ -8,113 +8,102 @@ public class SelectedQuantitativeKernel extends SelectedLandscapeMetricKernel {
 	
 	private final float threshold;
 	
-	public SelectedQuantitativeKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue){
-		this(windowSize, pixels, shape, coeff, noDataValue, -1);
+	public SelectedQuantitativeKernel(int windowSize, Set<Pixel> pixels, float[] coeff, int noDataValue){
+		this(windowSize, pixels, coeff, noDataValue, -1);
 	}
 		
-	public SelectedQuantitativeKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue, float threshold){
-		super(windowSize, pixels, shape, coeff, noDataValue);
+	public SelectedQuantitativeKernel(int windowSize, Set<Pixel> pixels, float[] coeff, int noDataValue, float threshold){
+		super(windowSize, pixels, coeff, noDataValue);
 		this.threshold = threshold;
 	}
 	
 	@Override
-	public void run() {
-		final int x = bufferROIXMin() + (getGlobalId(0) % (width() - bufferROIXMin() - bufferROIXMax()));
-		final int y = bufferROIYMin() + (getGlobalId(0) / (width() - bufferROIXMin() - bufferROIXMax()));
-		processPixel(x, theY() + y, y);
-	}
-
-	public void processPixel(int x, int y, int localY) {
+	protected void processPixel(Pixel p, int x, int y) {
 		
-		Pixel p = new Pixel(x, y);
-		if(pixels().contains(p)){
-			
-			//System.out.println(p);
-			
-			int ind = ((localY-bufferROIYMin())*(((width() - bufferROIXMin() - bufferROIXMax())-1)+1) + (x-bufferROIXMin()));
-			
-			// phase d'initialisation de la structure de données
-			for(int i=0; i<outDatas()[0].length; i++){
-				outDatas()[ind][i] = 0.0f;
-			}
-			
-			outDatas()[ind][6] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
-			
-			
-			final int mid = windowSize() / 2;
-			int ic;
-			float v, c;
-			float nb_nodata = 0;
-			float nb = 0;
-			float sum = 0;
-			double square_sum = 0;
-			float min = Float.MAX_VALUE;
-			float max = Float.MIN_VALUE;
-					
-			if(threshold != -1){
-					
-				for (int dy = -mid; dy <= mid; dy += 1) {
-					if(((y + dy) >= 0) && ((y + dy) < height())){
-						for (int dx = -mid; dx <= mid; dx += 1) {
-							if(((x + dx) >= 0) && ((x + dx) < width())){
-								ic = ((dy+mid) * windowSize()) + (dx+mid);
-								if(shape()[ic] == 1){
-									v = inDatas()[((y + dy) * width()) + (x + dx)];
-									c = coeff()[ic];
-										
-									if(v == noDataValue()) {
-										nb_nodata = nb_nodata + c;
-									}else{
-										nb = nb + c;
-										if(v > threshold){
-											sum = sum + threshold*c;
-											square_sum = square_sum + threshold*c * threshold*c;
-										}else{
-											sum = sum + v*c;
-											square_sum = square_sum + v*c * v*c;
-											min = Math.min(min, v*c);
-											max = Math.max(max, v*c);
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}else{
-				for (int dy = -mid; dy <= mid; dy += 1) {
-					if(((y + dy) >= 0) && ((y + dy) < height())){
-						for (int dx = -mid; dx <= mid; dx += 1) {
-							if(((x + dx) >= 0) && ((x + dx) < width())){
-								ic = ((dy+mid) * windowSize()) + (dx+mid);
-								if(shape()[ic] == 1){
-									v = inDatas()[((y + dy) * width()) + (x + dx)];
-									c = coeff()[ic];
-									if(v == noDataValue()) {
-										nb_nodata = nb_nodata + c;
-									}else{
-										nb = nb + c;
-										sum = sum + v*c;
-										square_sum = square_sum + v*c * v*c;
-										min = Math.min(min, v*c);
-										max = Math.max(max, v*c);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-				
-			outDatas()[ind][0] = nb_nodata;
-			outDatas()[ind][1] = nb;
-			outDatas()[ind][2] = sum;
-			outDatas()[ind][3] = square_sum;
-			outDatas()[ind][4] = min;
-			outDatas()[ind][5] = max;
-			
-			//System.out.println(nb_nodata+" "+nb+" "+sum+" "+square_sum+" "+min+" "+max);
+	
+		// phase d'initialisation de la structure de donnees
+		for(int i=0; i<outDatas().get(p).length; i++){
+			outDatas().get(p)[i] = 0.0f;
 		}
+			
+		outDatas().get(p)[7] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
+			
+		outDatas().get(p)[0] = 1; // filtre ok
+			
+			
+		final int mid = windowSize() / 2;
+		int ic;
+		float v, coeff;
+		float nb_nodata = 0;
+		float nb = 0;
+		float sum = 0;
+		double square_sum = 0;
+		float min = Float.MAX_VALUE;
+		float max = Float.MIN_VALUE;
+					
+		if(threshold != -1){
+					
+			for (int dy = -mid; dy <= mid; dy += 1) {
+				if(((y + dy) >= 0) && ((y + dy) < height())){
+					for (int dx = -mid; dx <= mid; dx += 1) {
+						if(((x + dx) >= 0) && ((x + dx) < width())){
+							ic = ((dy+mid) * windowSize()) + (dx+mid);
+							coeff = coeff()[ic];
+							if(coeff > 0){
+								v = inDatas()[((y + dy) * width()) + (x + dx)];
+								
+								if(v == noDataValue()) {
+									nb_nodata += coeff;
+								}else{
+									nb += coeff;
+									if(v > threshold){
+										sum += threshold*coeff;
+										square_sum += threshold*coeff * threshold*coeff;
+									}else{
+										sum += v*coeff;
+										square_sum += v*coeff * v*coeff;
+										min = Math.min(min, v*coeff);
+										max = Math.max(max, v*coeff);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}else{
+			for (int dy = -mid; dy <= mid; dy += 1) {
+				if(((y + dy) >= 0) && ((y + dy) < height())){
+					for (int dx = -mid; dx <= mid; dx += 1) {
+						if(((x + dx) >= 0) && ((x + dx) < width())){
+							ic = ((dy+mid) * windowSize()) + (dx+mid);
+							coeff = coeff()[ic];
+							if(coeff > 0){
+								v = inDatas()[((y + dy) * width()) + (x + dx)];
+								
+								if(v == noDataValue()) {
+									nb_nodata += coeff;
+								}else{
+									nb += coeff;
+									sum += v*coeff;
+									square_sum += v*coeff * v*coeff;
+									min = Math.min(min, v*coeff);
+									max = Math.max(max, v*coeff);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+				
+		outDatas().get(p)[1] = nb_nodata;
+		outDatas().get(p)[2] = nb;
+		outDatas().get(p)[3] = sum;
+		outDatas().get(p)[4] = square_sum;
+		outDatas().get(p)[5] = min;
+		outDatas().get(p)[6] = max;
+			
 	}
 
 	

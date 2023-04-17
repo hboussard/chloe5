@@ -1,11 +1,12 @@
 name;type;process;class
 N-valid;value;other;fr.inrae.act.bagap.chloe.metric.basic.ValidValueMetric
+pN-valid;value;other;fr.inrae.act.bagap.chloe.metric.basic.RateValidValueMetric
 NC-valid;couple;other;fr.inrae.act.bagap.chloe.metric.basic.ValidCoupleMetric
+pNC-valid;couple;other;fr.inrae.act.bagap.chloe.metric.basic.RateValidCoupleMetric
 NV;value;value;fr.inrae.act.bagap.chloe.metric.value.CountValueMetric
 pNV;value;value;fr.inrae.act.bagap.chloe.metric.value.RateValueMetric
 pNVm;value;value;fr.inrae.act.bagap.chloe.metric.value.RateValueMultipleMetric
 SHDI;value;other;fr.inrae.act.bagap.chloe.metric.value.ShannonDiversityIndex
-
 SHEI;value;other;fr.inrae.act.bagap.chloe.metric.value.ShannonEvennessIndex
 NC;couple;couple;fr.inrae.act.bagap.chloe.metric.couple.CountCoupleMetric
 pNC;couple;couple;fr.inrae.act.bagap.chloe.metric.couple.RateCoupleMetric

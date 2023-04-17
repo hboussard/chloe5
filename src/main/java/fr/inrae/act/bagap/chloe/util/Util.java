@@ -1,8 +1,15 @@
 package fr.inrae.act.bagap.chloe.util;
 
+import java.awt.Rectangle;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Set;
+import java.util.TreeSet;
+
+import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysis;
+import fr.inrae.act.bagap.raster.Coverage;
 
 public class Util {
 
@@ -36,6 +43,42 @@ public class Util {
 	
 	public static double distance(int x1, int y1, int x2, int y2, double cellSize){
 		return Math.sqrt(Math.pow(cellSize*(x1-x2), 2) + Math.pow(cellSize*(y1-y2), 2)); 
+	}
+	
+	public static int[] readValuesTinyRoi(Coverage coverage, Rectangle roi) {
+		float[] datas = coverage.getDatas(roi);
+		Set<Float> inValues = new TreeSet<Float>();
+		for (float d : datas) {
+			if (d != 0 && d != Raster.getNoDataValue()) {
+				inValues.add(d);
+			}
+		}
+		int index = 0;
+		int[] values = new int[inValues.size()];
+		for (float d : inValues) {
+			values[index++] = (int) d;
+		}
+		return values;
+	}
+	
+	public static int[] readValuesHugeRoi(Coverage coverage, Rectangle roi) {
+		
+		float[] datas;
+		Set<Float> inValues = new TreeSet<Float>();
+		for(int j=0; j<roi.height; j+=LandscapeMetricAnalysis.tileYSize()){
+			datas = coverage.getDatas(new Rectangle(roi.x, roi.y+j, roi.width, Math.min(LandscapeMetricAnalysis.tileYSize(), roi.height-j)));
+			for (float d : datas) {
+				if (d != 0 && d != Raster.getNoDataValue()) {
+					inValues.add(d);
+				}
+			}
+		}
+		int index = 0;
+		int[] values = new int[inValues.size()];
+		for (float d : inValues) {
+			values[index++] = (int) d;
+		}
+		return values;
 	}
 	
 }

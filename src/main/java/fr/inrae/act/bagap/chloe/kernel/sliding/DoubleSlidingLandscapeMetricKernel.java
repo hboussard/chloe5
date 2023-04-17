@@ -4,8 +4,8 @@ public abstract class DoubleSlidingLandscapeMetricKernel extends SlidingLandscap
 
 	private float[] inDatas2;
 	
-	protected DoubleSlidingLandscapeMetricKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] unfilters) {
-		super(windowSize, displacement, shape, coeff, noDataValue, unfilters);
+	protected DoubleSlidingLandscapeMetricKernel(int windowSize, int displacement, float[] coeff, int noDataValue, int[] unfilters) {
+		super(windowSize, displacement, coeff, noDataValue, unfilters);
 	}
 	
 	public void setInDatas2(float[] inDatas2){

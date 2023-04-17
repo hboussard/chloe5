@@ -3,21 +3,19 @@ package fr.inrae.act.bagap.chloe.output;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.Map;
 import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.PixelWithID;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.metric.Metric;
+import fr.inrae.act.bagap.chloe.util.Util;
 
 public class SelectedCsvOutput implements CountingObserver{
 	
-	private final DecimalFormat format;
+	private final StringBuffer sb;
 
 	private BufferedWriter bw;
 	
@@ -32,10 +30,7 @@ public class SelectedCsvOutput implements CountingObserver{
 		this.csv = csv;
 		this.pixels = pixels;
 		this.noDataValue = noDataValue;
-		
-		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-		symbols.setDecimalSeparator('.');
-		format = new DecimalFormat("0.00000", symbols);
+		this.sb = new StringBuffer();
 	}
 	
 	public void init(Counting c, Set<Metric> metrics) {
@@ -61,7 +56,6 @@ public class SelectedCsvOutput implements CountingObserver{
 	}
 
 	public void postrun(Counting c, int i, int j, Map<Metric, Double> values) {
-		//System.out.println(i+" "+j);
 		
 		Pixel pixel = null;
 		for(Pixel p : pixels){
@@ -74,21 +68,18 @@ public class SelectedCsvOutput implements CountingObserver{
 		if(pixel != null){
 			try {
 				boolean export = true;
-				StringBuffer sb = new StringBuffer();
-				if(pixel instanceof PixelWithID){
-					sb.append((((PixelWithID) pixel).getId())+";"+(((PixelWithID) pixel).getX())+";"+(((PixelWithID) pixel).getY()));
-				}else{
-					//TODO
-				}
+				sb.setLength(0);
+				sb.append((((PixelWithID) pixel).getId())+";"+(((PixelWithID) pixel).getX())+";"+(((PixelWithID) pixel).getY()));
 				
 				for(double v : values.values()){
-					if(v == Raster.getNoDataValue()){
+					if(v == noDataValue){
 						export = false;
 						break;
 					}
 					sb.append(';');
-					sb.append(format(v));
+					sb.append(Util.format(v));
 				}
+				
 				if(export){
 					bw.write(sb.toString());
 					bw.newLine();
@@ -111,14 +102,6 @@ public class SelectedCsvOutput implements CountingObserver{
 	@Override
 	public void postrun(Counting c, int id, Map<Metric, Double> values) {
 		// do nothing
-	}
-	
-	protected String format(double v){
-		int f = new Double(Math.floor(v)).intValue();
-		if(v == f){
-			return f+"";
-		}
-		return format.format(v);
 	}
 
 }

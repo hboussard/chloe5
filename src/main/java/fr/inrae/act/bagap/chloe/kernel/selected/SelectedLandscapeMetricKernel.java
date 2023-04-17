@@ -1,5 +1,6 @@
 package fr.inrae.act.bagap.chloe.kernel.selected;
 
+import java.util.Map;
 import java.util.Set;
 
 import com.aparapi.Kernel;
@@ -11,17 +12,15 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel implements La
 
 	private final int windowSize;
 	
-	private short[] shape;
-	
 	private float[] coeff;
 	
 	private final int noDataValue;
 	
 	private float[] inDatas;
 	
-	private double[][] outDatas;
+	private Map<Pixel, double[]> outDatas;
 	
-	private int theY;
+	private int localROIY;
 	
 	private int width, height;
 	
@@ -30,22 +29,41 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel implements La
 	private Set<Pixel> pixels;
 	
 	@SuppressWarnings("deprecation")
-	protected SelectedLandscapeMetricKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue){
+	protected SelectedLandscapeMetricKernel(int windowSize, Set<Pixel> pixels, float[] coeff, int noDataValue){
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.windowSize = windowSize;
 		this.pixels = pixels;
-		this.shape = shape;
 		this.coeff = coeff;
 		this.noDataValue = noDataValue;
 	}
 	
+	public void applySelectedWindow(int buffer, int localROIY) {
+		this.localROIY = localROIY;
+		execute((width - bufferROIXMin - bufferROIXMax) * buffer);
+	}
+	
+	@Override
+	public void run() {
+		final int x = bufferROIXMin() + (getGlobalId(0) % (width() - bufferROIXMin() - bufferROIXMax()));
+		final int y = bufferROIYMin() + (getGlobalId(0) / (width() - bufferROIXMin() - bufferROIXMax()));
+		
+		Pixel p = new Pixel(getGlobalId(0) % width(), (localROIY+(getGlobalId(0) / width())));
+		if(pixels().contains(p)){
+			processPixel(p, x, y);
+		}
+	}
+	
+	protected void processPixel(Pixel p, int x, int y){
+		// do nothing
+	}
+
 	public int windowSize(){
 		return this.windowSize;
 	}
 	
-	protected short[] shape(){
-		return this.shape;
+	protected void setCoeff(float[] coeff){
+		this.coeff = coeff;
 	}
 	
 	protected float[] coeff(){
@@ -88,22 +106,12 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel implements La
 		return inDatas;
 	}
 	
-	public void setOutDatas(double[][] outDatas){
+	public void setOutDatas(Map<Pixel, double[]> outDatas){
 		this.outDatas = outDatas;
 	}
 	
-	public double[][] outDatas(){
+	public Map<Pixel, double[]> outDatas(){
 		return outDatas;
-	}
-	
-	public void applySelectedWindow(int theY, int buffer) {
-		this.theY = theY;
-		//execute(width * buffer);
-		execute((width - bufferROIXMin - bufferROIXMax) * buffer);
-	}
-	
-	protected int theY(){
-		return this.theY;
 	}
 	
 	protected int width(){
@@ -137,10 +145,10 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel implements La
 	@Override
 	public void dispose(){
 		super.dispose();
-		shape = null;
 		coeff = null;
 		inDatas = null;
 		outDatas = null;
 		pixels = null;
 	}
+	
 }

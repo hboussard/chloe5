@@ -21,6 +21,8 @@ public class GridPatchKernel extends GridLandscapeMetricKernel {
 		for(int i=0; i<outDatas()[0].length; i++){
 			outDatas()[x][i] = 0f;
 		}
+		
+		outDatas()[x][0] = 1; // filtre ok
 			
 		int v;	
 		int[] tabCover = new int[gridSize()*gridSize()];
@@ -43,20 +45,20 @@ public class GridPatchKernel extends GridLandscapeMetricKernel {
 		ClusteringTabOutput cto = new ClusteringTabOutput(tabCluster, tabCover, values, cellSize);
 		cto.allRun();
 		
-		outDatas()[x][0] = cto.getNbPatch();
-		outDatas()[x][1] = cto.getTotalSurface();
-		outDatas()[x][2] = cto.getMaxSurface();
+		outDatas()[x][1] = cto.getNbPatch();
+		outDatas()[x][2] = cto.getTotalSurface();
+		outDatas()[x][3] = cto.getMaxSurface();
 		
 		for(int i=0; i<values.length; i++){
-			outDatas()[x][i+3] = cto.getNbPatch(values[i]);
+			outDatas()[x][i+4] = cto.getNbPatch(values[i]);
 		}
 		
 		for(int i=0; i<values.length; i++){
-			outDatas()[x][i+3+values.length] = cto.getTotalSurface(values[i]);
+			outDatas()[x][i+4+values.length] = cto.getTotalSurface(values[i]);
 		}
 		
 		for(int i=0; i<values.length; i++){
-			outDatas()[x][i+3+2*values.length] = cto.getMaxSurface(values[i]);
+			outDatas()[x][i+4+2*values.length] = cto.getMaxSurface(values[i]);
 		}
 	}
 	

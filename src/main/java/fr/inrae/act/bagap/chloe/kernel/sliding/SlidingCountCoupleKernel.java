@@ -6,8 +6,8 @@ public class SlidingCountCoupleKernel extends SlidingLandscapeMetricKernel {
 	
 	private int[] mapValues;
 	
-	public SlidingCountCoupleKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] values, int[] unfilters){
-		super(windowSize, displacement, shape, coeff, noDataValue, unfilters);
+	public SlidingCountCoupleKernel(int windowSize, int displacement, float[] coeff, int noDataValue, int[] values, int[] unfilters){
+		super(windowSize, displacement, coeff, noDataValue, unfilters);
 		
 		int maxV = 0;
 		for(int v : values){
@@ -49,44 +49,48 @@ public class SlidingCountCoupleKernel extends SlidingLandscapeMetricKernel {
 			
 			if(filter((short) inDatas()[(y * width()) + x])){ // gestion des filtres
 				
+				outDatas()[ind][0] = 1; // filtre ok 
+				
 				final int mid = windowSize() / 2;
 				int ic, ic_V, ic_H;
 				short v, v_H, v_V;
 				int mc;
+				float coeff;
 				for (int dy = -mid; dy <= mid; dy += 1) {
 					if(((y + dy) >= 0) && ((y + dy) < height())){
 						for (int dx = -mid; dx <= mid; dx += 1) {
 							if(((x + dx) >= 0) && ((x + dx) < width())){
 								ic = ((dy+mid) * windowSize()) + (dx+mid);
-								if(shape()[ic] == 1) {
+								coeff = coeff()[ic];
+								if(coeff > 0){
 									v = (short) inDatas()[((y + dy) * width()) + (x + dx)];
 									
 									if((dy > -mid) && ((y + dy) > 0)) {
 										ic_V = ((dy+mid-1) * windowSize()) + (dx+mid);
-										if(shape()[ic_V] == 1){
+										if(coeff()[ic_V] > 0){
 											v_V = (short) inDatas()[((y + dy - 1) * width()) + (x + dx)];
 											if(v == noDataValue() || v_V == noDataValue()){
-												outDatas()[ind][0] += coeff()[ic];
+												outDatas()[ind][1] += coeff;
 											}else if(v == 0 || v_V == 0){
-												outDatas()[ind][1] += coeff()[ic];
+												outDatas()[ind][2] += coeff;
 											}else{
 												mc = mapCouples[mapValues[v]][mapValues[v_V]];
-												outDatas()[ind][mc+2] += coeff()[ic];
+												outDatas()[ind][mc+3] += coeff;
 											}
 										}
 									}
 									
 									if((dx > -mid) && ((x + dx) > 0)) {
 										ic_H = ((dy+mid) * windowSize()) + (dx+mid-1);
-										if(shape()[ic_H] == 1){
+										if(coeff()[ic_H] > 0){
 											v_H = (short) inDatas()[((y + dy) * width()) + (x + dx - 1)];
 											if(v == noDataValue() || v_H == noDataValue()){
-												outDatas()[ind][0] += coeff()[ic];
+												outDatas()[ind][1] += coeff;
 											}else if(v == 0 || v_H == 0){
-												outDatas()[ind][1] += coeff()[ic];
+												outDatas()[ind][2] += coeff;
 											}else{
 												mc = mapCouples[mapValues[v]][mapValues[v_H]];
-												outDatas()[ind][mc+2] += coeff()[ic];
+												outDatas()[ind][mc+3] += coeff;
 											}
 										}
 									}

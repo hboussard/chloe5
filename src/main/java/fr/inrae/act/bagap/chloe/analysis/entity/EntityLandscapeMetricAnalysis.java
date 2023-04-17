@@ -1,11 +1,11 @@
 package fr.inrae.act.bagap.chloe.analysis.entity;
 
-import fr.inrae.act.bagap.chloe.analysis.UnitLandscapeMetricAnalysis;
+import fr.inrae.act.bagap.chloe.analysis.SingleLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.kernel.entity.EntityLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public abstract class EntityLandscapeMetricAnalysis extends UnitLandscapeMetricAnalysis {
+public abstract class EntityLandscapeMetricAnalysis extends SingleLandscapeMetricAnalysis {
 
 	private final Coverage entityCoverage;
 	
@@ -21,6 +21,12 @@ public abstract class EntityLandscapeMetricAnalysis extends UnitLandscapeMetricA
 	@Override
 	public EntityLandscapeMetricKernel kernel() {
 		return (EntityLandscapeMetricKernel) super.kernel();
+	}
+	
+	@Override
+	protected void doClose() {
+		super.doClose();
+		entityCoverage().dispose();
 	}
 
 }

@@ -65,6 +65,7 @@ public class HugeEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 			for(int aId : entityIds){
 				if(!kernel().outDatas().containsKey(aId)){
 					kernel().outDatas().put(aId, new double[nbValues()]);
+					kernel().outDatas().get(aId)[0] = 1; // filtre ok
 				}
 			}
 			
@@ -80,10 +81,8 @@ public class HugeEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 
 	@Override
 	protected void doClose() {
-		kernel().dispose();
-		counting().close();
+		super.doClose();
 		coverage().dispose();
-		entityCoverage().dispose();
 	}
 
 }

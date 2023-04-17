@@ -10,8 +10,8 @@ public class SelectedCountCoupleKernel extends SelectedLandscapeMetricKernel {
 	
 	private int[] mapValues;
 	
-	public SelectedCountCoupleKernel(int windowSize, Set<Pixel> pixels, short[] shape, float[] coeff, int noDataValue, int[] values){
-		super(windowSize, pixels, shape, coeff, noDataValue);
+	public SelectedCountCoupleKernel(int windowSize, Set<Pixel> pixels, float[] coeff, int noDataValue, int[] values){
+		super(windowSize, pixels, coeff, noDataValue);
 		
 		int maxV = 0;
 		for(int v : values){
@@ -41,64 +41,54 @@ public class SelectedCountCoupleKernel extends SelectedLandscapeMetricKernel {
 	}
 	
 	@Override
-	public void run() {
-		final int x = bufferROIXMin() + (getGlobalId(0) % (width() - bufferROIXMin() - bufferROIXMax()));
-		final int y = bufferROIYMin() + (getGlobalId(0) / (width() - bufferROIXMin() - bufferROIXMax()));
-		processPixel(x, theY() + y, y);
-	}
-
-	public void processPixel(int x, int y, int localY) {
+	protected void processPixel(Pixel p, int x, int y) {
 		
-		Pixel p = new Pixel(x, y);
-		if(pixels().contains(p)){
+		for(int i=0; i<outDatas().get(p).length; i++){
+			outDatas().get(p)[i] = 0f;
+		}
 			
-			//System.out.println(p);
+		outDatas().get(p)[0] = 1; // filtre ok
 			
-			int ind = ((localY-bufferROIYMin())*(((width() - bufferROIXMin() - bufferROIXMax())-1)+1) + (x-bufferROIXMin()));
-			
-			for(int i=0; i<outDatas()[0].length; i++){
-				outDatas()[ind][i] = 0f;
-			}
-			
-			final int mid = windowSize() / 2;
-			int ic, ic_V, ic_H;
-			short v, v_H, v_V;
-			int mc;
-			for (int dy = -mid; dy <= mid; dy += 1) {
-				if(((y + dy) >= 0) && ((y + dy) < height())){
-					for (int dx = -mid; dx <= mid; dx += 1) {
-						if(((x + dx) >= 0) && ((x + dx) < width())){
-							ic = ((dy+mid) * windowSize()) + (dx+mid);
-							if(shape()[ic] == 1) {
-								v = (short) inDatas()[((y + dy) * width()) + (x + dx)];
-								
-								if((dy > -mid) && ((y + dy) > 0)) {
-									ic_V = ((dy+mid-1) * windowSize()) + (dx+mid);
-									if(shape()[ic_V] == 1){
-										v_V = (short) inDatas()[((y + dy - 1) * width()) + (x + dx)];
-										if(v == noDataValue() || v_V == noDataValue()){
-											outDatas()[ind][0] += coeff()[ic];
-										}else if(v == 0 || v_V == 0){
-											outDatas()[ind][1] += coeff()[ic];
-										}else{
-											mc = mapCouples[mapValues[v]][mapValues[v_V]];
-											outDatas()[ind][mc+2] += coeff()[ic];
-										}
+		final int mid = windowSize() / 2;
+		int ic, ic_V, ic_H;
+		short v, v_H, v_V;
+		int mc;
+		float coeff;
+		for (int dy = -mid; dy <= mid; dy += 1) {
+			if(((y + dy) >= 0) && ((y + dy) < height())){
+				for (int dx = -mid; dx <= mid; dx += 1) {
+					if(((x + dx) >= 0) && ((x + dx) < width())){
+						ic = ((dy+mid) * windowSize()) + (dx+mid);
+						coeff = coeff()[ic];
+						if(coeff > 0){
+							v = (short) inDatas()[((y + dy) * width()) + (x + dx)];
+							
+							if((dy > -mid) && ((y + dy) > 0)) {
+								ic_V = ((dy+mid-1) * windowSize()) + (dx+mid);
+								if(coeff()[ic_V] > 0){
+									v_V = (short) inDatas()[((y + dy - 1) * width()) + (x + dx)];
+									if(v == noDataValue() || v_V == noDataValue()){
+										outDatas().get(p)[1] += coeff;
+									}else if(v == 0 || v_V == 0){
+										outDatas().get(p)[2] += coeff;
+									}else{
+										mc = mapCouples[mapValues[v]][mapValues[v_V]];
+										outDatas().get(p)[mc+3] += coeff;
 									}
 								}
+							}
 									
-								if((dx > -mid) && ((x + dx) > 0)) {
-									ic_H = ((dy+mid) * windowSize()) + (dx+mid-1);
-									if(shape()[ic_H] == 1){
-										v_H = (short) inDatas()[((y + dy) * width()) + (x + dx - 1)];
-										if(v == noDataValue() || v_H == noDataValue()){
-											outDatas()[ind][0] += coeff()[ic];
-										}else if(v == 0 || v_H == 0){
-											outDatas()[ind][1] += coeff()[ic];
-										}else{
-											mc = mapCouples[mapValues[v]][mapValues[v_H]];
-											outDatas()[ind][mc+2] += coeff()[ic];
-										}
+							if((dx > -mid) && ((x + dx) > 0)) {
+								ic_H = ((dy+mid) * windowSize()) + (dx+mid-1);
+								if(coeff()[ic_H] > 0){
+									v_H = (short) inDatas()[((y + dy) * width()) + (x + dx - 1)];
+									if(v == noDataValue() || v_H == noDataValue()){
+										outDatas().get(p)[1] += coeff;
+									}else if(v == 0 || v_H == 0){
+										outDatas().get(p)[2] += coeff;
+									}else{
+										mc = mapCouples[mapValues[v]][mapValues[v_H]];
+										outDatas().get(p)[mc+3] += coeff;
 									}
 								}
 							}

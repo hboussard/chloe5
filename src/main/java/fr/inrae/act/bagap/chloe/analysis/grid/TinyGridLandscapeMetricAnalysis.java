@@ -51,12 +51,13 @@ public class TinyGridLandscapeMetricAnalysis extends GridLandscapeMetricAnalysis
 		}else{
 			gridWidth = (roiWidth() / kernel().gridSize()) + 1;
 		}
+		/*
 		int gridHeight;
 		if(roiHeight()%kernel().gridSize() == 0){
 			gridHeight = roiHeight() / kernel().gridSize();
 		}else{
 			gridHeight = (roiHeight() / kernel().gridSize()) + 1;
-		}
+		}*/
 		
 		// gestion des sorties
 		kernel().setOutDatas(new double[gridWidth][nbValues()]);
@@ -82,12 +83,6 @@ public class TinyGridLandscapeMetricAnalysis extends GridLandscapeMetricAnalysis
 				counting().export(xGrid, yGrid);
 			}	
 		}
-	}
-
-	@Override
-	protected void doClose() {
-		kernel().dispose();
-		counting().close();
 	}
 
 }

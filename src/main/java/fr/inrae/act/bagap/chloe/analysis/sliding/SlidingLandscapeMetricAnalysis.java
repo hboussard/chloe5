@@ -1,11 +1,13 @@
 package fr.inrae.act.bagap.chloe.analysis.sliding;
 
-import fr.inrae.act.bagap.chloe.analysis.UnitLandscapeMetricAnalysis;
+import java.awt.Rectangle;
+
+import fr.inrae.act.bagap.chloe.analysis.SingleLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public abstract class SlidingLandscapeMetricAnalysis extends UnitLandscapeMetricAnalysis {
+public abstract class SlidingLandscapeMetricAnalysis extends SingleLandscapeMetricAnalysis {
 	
 	private final int displacement;
 	
@@ -22,5 +24,7 @@ public abstract class SlidingLandscapeMetricAnalysis extends UnitLandscapeMetric
 	public SlidingLandscapeMetricKernel kernel() {
 		return (SlidingLandscapeMetricKernel) super.kernel();
 	}
+	
+	protected abstract void manageInDatas(Rectangle roi);
 
 }

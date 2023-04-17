@@ -10,8 +10,6 @@ public abstract class SlidingLandscapeMetricKernel extends Kernel implements Lan
 	
 	private final int displacement;
 	
-	private short[] shape;
-	
 	private float[] coeff;
 	
 	private final int noDataValue;
@@ -29,12 +27,11 @@ public abstract class SlidingLandscapeMetricKernel extends Kernel implements Lan
 	private int[] unfilters;
 	
 	@SuppressWarnings("deprecation")
-	protected SlidingLandscapeMetricKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] unfilters){
+	protected SlidingLandscapeMetricKernel(int windowSize, int displacement, float[] coeff, int noDataValue, int[] unfilters){
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.windowSize = windowSize;
 		this.displacement = displacement;
-		this.shape = shape;
 		this.coeff = coeff;
 		this.noDataValue = noDataValue;
 		this.unfilters = unfilters;
@@ -52,7 +49,7 @@ public abstract class SlidingLandscapeMetricKernel extends Kernel implements Lan
 		processPixel(x, theY() + y, y);
 	}
 	
-	protected void processPixel(int x, int y, int localY) {
+	protected void processPixel(int x, int y, int localY){
 		// do nothing
 	}
 
@@ -74,15 +71,7 @@ public abstract class SlidingLandscapeMetricKernel extends Kernel implements Lan
 	protected int displacement(){
 		return this.displacement;
 	}
-	
-	protected void setShape(short[] shape){
-		this.shape = shape;
-	}
-	
-	protected short[] shape(){
-		return this.shape;
-	}
-	
+
 	protected void setCoeff(float[] coeff){
 		this.coeff = coeff;
 	}
@@ -170,7 +159,6 @@ public abstract class SlidingLandscapeMetricKernel extends Kernel implements Lan
 	@Override
 	public void dispose(){
 		super.dispose();
-		shape = null;
 		coeff = null;
 		inDatas = null;
 		outDatas = null;

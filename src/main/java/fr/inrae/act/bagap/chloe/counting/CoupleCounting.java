@@ -46,7 +46,7 @@ public class CoupleCounting extends Counting implements CoupleCountingInterface 
 	
 	@Override
 	protected void doCalculate(){
-		if(validCouples()/theoreticalCoupleSize() >= minRate){
+		if(validCounting() && validCouples()/theoreticalCoupleSize() >= minRate){
 			for(Metric m : metrics()){
 				m.calculate(this, "");
 			}
@@ -59,34 +59,42 @@ public class CoupleCounting extends Counting implements CoupleCountingInterface 
 	
 	@Override
 	public void setCounts(double[] counts){
-		totalCouples = 0;
-		validCouples = 0;
-		totalCountCouples = 0;
-		countCoupleClass = 0;
-		homogeneousCouples = 0;
-		heterogeneousCouples = 0;
-		countCouples.clear();
 		
-		totalCouples += counts[0];
-		
-		totalCouples += counts[1];
-		validCouples += counts[1];
-		
-		for(int i=2; i<counts.length; i++){
-			totalCouples += counts[i];
-			validCouples += counts[i];
-			totalCountCouples += counts[i];
+		if(counts[0] == 1){
 			
-			if(i-2 < nValues) {
-				homogeneousCouples += counts[i];
-			}else {
-				heterogeneousCouples += counts[i];
-			}
+			setValidCounting(true);
+		
+			totalCouples = 0;
+			validCouples = 0;
+			totalCountCouples = 0;
+			countCoupleClass = 0;
+			homogeneousCouples = 0;
+			heterogeneousCouples = 0;
+			countCouples.clear();
 			
-			if(counts[i] > 0){
-				countCoupleClass++;
+			totalCouples += counts[1];
+			
+			totalCouples += counts[2];
+			validCouples += counts[2];
+			
+			for(int i=3; i<counts.length; i++){
+				totalCouples += counts[i];
+				validCouples += counts[i];
+				totalCountCouples += counts[i];
+				
+				if(i-3 < nValues) {
+					homogeneousCouples += counts[i];
+				}else {
+					heterogeneousCouples += counts[i];
+				}
+				
+				if(counts[i] > 0){
+					countCoupleClass++;
+				}
+				countCouples.put(couples[i-3], counts[i]);
 			}
-			countCouples.put(couples[i-2], counts[i]);
+		}else{
+			setValidCounting(false);
 		}
 	}
 	

@@ -33,12 +33,12 @@ public class MapQuantitativeKernel extends MapLandscapeMetricKernel {
 			}
 		}
 		
-		outDatas()[0] += nb_nodata;
-		outDatas()[1] += nb;
-		outDatas()[2] += sum;
-		outDatas()[3] += square_sum;
-		outDatas()[4] += min;
-		outDatas()[5] += max;
+		outDatas()[1] += nb_nodata;
+		outDatas()[2] += nb;
+		outDatas()[3] += sum;
+		outDatas()[4] += square_sum;
+		outDatas()[5] += min;
+		outDatas()[6] += max;
 	}
 	
 	

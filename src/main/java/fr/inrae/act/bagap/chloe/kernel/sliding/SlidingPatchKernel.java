@@ -9,10 +9,11 @@ public class SlidingPatchKernel extends SlidingLandscapeMetricKernel {
 	
 	private double cellSize;
 	
-	public SlidingPatchKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] values, double cellSize, int[] unfilters){		
-		super(windowSize, displacement, shape, coeff, noDataValue, unfilters);
+	public SlidingPatchKernel(int windowSize, int displacement, float[] coeff, int noDataValue, int[] values, double cellSize, int[] unfilters){		
+		super(windowSize, displacement, coeff, noDataValue, unfilters);
 		this.values = values;
 		this.cellSize = cellSize;
+		//this.cellSize = 100.0; // pour rapporter en nombre de pixels
 	}
 	
 	@Override
@@ -26,18 +27,22 @@ public class SlidingPatchKernel extends SlidingLandscapeMetricKernel {
 				outDatas()[ind][i] = 0f;
 			}
 			
-			// gestion des filtres
-			if(filter((int) inDatas()[(y * width()) + x])){
+			if(filter((int) inDatas()[(y * width()) + x])){ // gestion des filtres
+				
+				outDatas()[ind][0] = 1; // filtre ok 
+				
 				final int mid = windowSize() / 2;
 				int ic;
 				int v;
+				float coeff;
 				int[] tabCover = new int[windowSize()*windowSize()];
 				for (int dy = -mid; dy <= mid; dy += 1) {
 					if(((y + dy) >= 0) && ((y + dy) < height())){
 						for (int dx = -mid; dx <= mid; dx += 1) {
 							if(((x + dx) >= 0) && ((x + dx) < width())){
 								ic = ((dy+mid) * windowSize()) + (dx+mid);
-								if(shape()[ic] == 1){
+								coeff = coeff()[ic];
+								if(coeff > 0){
 									v = (int) inDatas()[((y + dy) * width()) + (x + dx)];
 									tabCover[(dy+mid)*windowSize() + (dx+mid)] = v;	
 								}
@@ -52,20 +57,20 @@ public class SlidingPatchKernel extends SlidingLandscapeMetricKernel {
 				ClusteringTabOutput cto = new ClusteringTabOutput(tabCluster, tabCover, values, cellSize);
 				cto.allRun();
 				
-				outDatas()[ind][0] = cto.getNbPatch();
-				outDatas()[ind][1] = cto.getTotalSurface();
-				outDatas()[ind][2] = cto.getMaxSurface();
+				outDatas()[ind][1] = cto.getNbPatch();
+				outDatas()[ind][2] = cto.getTotalSurface();
+				outDatas()[ind][3] = cto.getMaxSurface();
 				
 				for(int i=0; i<values.length; i++){
-					outDatas()[ind][i+3] = cto.getNbPatch(values[i]);
+					outDatas()[ind][i+4] = cto.getNbPatch(values[i]);
 				}
 				
 				for(int i=0; i<values.length; i++){
-					outDatas()[ind][i+3+values.length] = cto.getTotalSurface(values[i]);
+					outDatas()[ind][i+4+values.length] = cto.getTotalSurface(values[i]);
 				}
 				
 				for(int i=0; i<values.length; i++){
-					outDatas()[ind][i+3+2*values.length] = cto.getMaxSurface(values[i]);
+					outDatas()[ind][i+4+2*values.length] = cto.getMaxSurface(values[i]);
 				}
 				
 			}

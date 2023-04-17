@@ -12,7 +12,7 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	
 	private int[] values;
 	
-	private int theoreticalSize;
+	private double theoreticalSize;
 	
 	private float centralValue;
 	
@@ -30,7 +30,7 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 		this.countValues = new HashMap<Integer, Double>();
 	}
 	
-	public ValueCounting(int minRange, int maxRange, int[] values, int theoreticalSize){
+	public ValueCounting(int minRange, int maxRange, int[] values, double theoreticalSize){
 		this(minRange, maxRange, values);
 		this.theoreticalSize = theoreticalSize;
 	}
@@ -41,7 +41,7 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	
 	@Override
 	protected void doCalculate(){
-		if(validValues()/theoreticalSize() >= minRate){
+		if(validCounting() && validValues()/theoreticalSize() >= minRate){
 			for(Metric m : metrics()){
 				m.calculate(this, "");
 			}
@@ -54,33 +54,42 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	
 	@Override
 	public void setCounts(double[] counts){
-		totalValues = 0;
-		validValues = 0;
-		totalCountValues = 0;
-		countClass = 0;
-		
-		totalValues += counts[0];
-		
-		totalValues += counts[1];
-		validValues += counts[1];
-		
-		centralValue = (float) counts[2];
-		
-		countValues.clear();
-		
-		for(int i=3; i<counts.length; i++){
-			totalValues += counts[i];
-			validValues += counts[i];
-			totalCountValues += counts[i];
-			if(counts[i] > 0){
-				countClass++;
+	
+		if(counts[0] == 1){
+			
+			setValidCounting(true);
+			
+			totalValues = 0;
+			validValues = 0;
+			totalCountValues = 0;
+			countClass = 0;
+			
+			totalValues += counts[1];
+			
+			totalValues += counts[2];
+			validValues += counts[2];
+			
+			centralValue = (float) counts[3];
+			
+			countValues.clear();
+			
+			for(int i=4; i<counts.length; i++){
+				totalValues += counts[i];
+				validValues += counts[i];
+				totalCountValues += counts[i];
+				if(counts[i] > 0){
+					countClass++;
+				}
+				countValues.put(values[i-4], counts[i]);
 			}
-			countValues.put(values[i-3], counts[i]);
+		}else{
+			setValidCounting(false);
 		}
+		
 	}
 	
 	@Override
-	public int theoreticalSize(){
+	public double theoreticalSize(){
 		return theoreticalSize;
 	}
 	

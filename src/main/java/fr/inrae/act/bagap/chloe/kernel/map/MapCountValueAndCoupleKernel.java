@@ -49,24 +49,24 @@ public class MapCountValueAndCoupleKernel extends MapLandscapeMetricKernel {
 				v = (short) inDatas()[((theY+y)*width()) + x];			
 						
 				if(v == noDataValue()){
-					outDatas()[0] += 1;
-				}else if(v == 0){
 					outDatas()[1] += 1;
+				}else if(v == 0){
+					outDatas()[2] += 1;
 				}else{
 					mv = mapValues[v];
-					outDatas()[mv+3] += 1;	
+					outDatas()[mv+4] += 1;	
 				}
 						
 				if(y > 0) {
 					v_V = (short) inDatas()[((theY+y-1)*width()) + x];
 					
 					if(v == noDataValue() || v_V == noDataValue()){
-						outDatas()[nbValues+3] += 1;
-					}else if(v == 0 || v_V == 0){
 						outDatas()[nbValues+4] += 1;
+					}else if(v == 0 || v_V == 0){
+						outDatas()[nbValues+5] += 1;
 					}else{
 						mv = mapCouples[mapValues[v]][mapValues[v_V]];
-						outDatas()[nbValues+mv+5] += 1;
+						outDatas()[nbValues+mv+6] += 1;
 					}
 				}
 						
@@ -74,12 +74,12 @@ public class MapCountValueAndCoupleKernel extends MapLandscapeMetricKernel {
 					v_H = (short) inDatas()[((theY+y)*width()) + (x - 1)];
 					
 					if(v == noDataValue() || v_H == noDataValue()){
-						outDatas()[nbValues+3] += 1;
-					}else if(v == 0 || v_H == 0){
 						outDatas()[nbValues+4] += 1;
+					}else if(v == 0 || v_H == 0){
+						outDatas()[nbValues+5] += 1;
 					}else{
 						mv = mapCouples[mapValues[v]][mapValues[v_H]];
-						outDatas()[nbValues+mv+5] += 1;
+						outDatas()[nbValues+mv+6] += 1;
 					}
 				}
 			}

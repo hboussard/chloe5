@@ -23,6 +23,8 @@ public class GridCountValueKernel extends GridLandscapeMetricKernel {
 		for(int i=0; i<outDatas()[0].length; i++){
 			outDatas()[x][i] = 0f;
 		}
+		
+		outDatas()[x][0] = 1; // filtre ok
 			
 		short v;
 		int mv;				
@@ -33,12 +35,12 @@ public class GridCountValueKernel extends GridLandscapeMetricKernel {
 						
 						v = (short) inDatas()[((theY+y)*width()) + (x*gridSize() + lx)];		
 						if(v == noDataValue()){
-							outDatas()[x][0] += 1;
-						}else if(v == 0){
 							outDatas()[x][1] += 1;
+						}else if(v == 0){
+							outDatas()[x][2] += 1;
 						}else{
 							mv = mapValues[v];
-							outDatas()[x][mv+3] += 1;	
+							outDatas()[x][mv+4] += 1;	
 						}
 					}
 				}

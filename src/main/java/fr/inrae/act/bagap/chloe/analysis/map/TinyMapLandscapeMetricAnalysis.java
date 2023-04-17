@@ -29,6 +29,7 @@ public class TinyMapLandscapeMetricAnalysis extends MapLandscapeMetricAnalysis {
 		
 		// gestion des sorties
 		kernel().setOutDatas(new double[nbValues()]);
+		kernel().outDatas()[0] = 1; // filtre ok
 		
 		// initialisation du comptage
 		counting().init();
@@ -47,12 +48,6 @@ public class TinyMapLandscapeMetricAnalysis extends MapLandscapeMetricAnalysis {
 		counting().setCounts(kernel().outDatas());
 		counting().calculate();
 		counting().export(0);
-	}
-
-	@Override
-	protected void doClose() {
-		kernel().dispose();
-		counting().close();
 	}
 
 }

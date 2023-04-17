@@ -16,8 +16,8 @@ public class FastGaussianWeightedCountCoupleKernel extends SlidingLandscapeMetri
 	
 	private float[] gauss;
 	
-	public FastGaussianWeightedCountCoupleKernel(int windowSize, int displacement, short[] shape, float[] coeff, int noDataValue, int[] values, int[] unfilters){
-		super( windowSize, displacement, shape, coeff, noDataValue, unfilters);
+	public FastGaussianWeightedCountCoupleKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters){
+		super( windowSize, displacement, null, noDataValue, unfilters);
 
 		//this.values = values;
 		int maxV = 0;

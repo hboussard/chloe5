@@ -2,11 +2,13 @@ package fr.inrae.act.bagap.chloe.counting;
 
 public interface BasicCountingInterface {
 
+	public boolean validCounting();
+	
 	/**
 	 * the theoretical size of the window if there were no border
 	 * @return the theoretical size
 	 */
-	int theoreticalSize();
+	double theoreticalSize();
 	
 	/**
 	 * the total count of values

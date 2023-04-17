@@ -21,6 +21,7 @@ public class EntityCountValueKernel extends EntityLandscapeMetricKernel{
 	public void applyEntityWindow(){
 		int mv, va;
 		short v;
+		
 		for(int y=0; y<height(); y++){
 			for(int x=0; x<width(); x++){
 				va = (int) entityDatas()[y*width() + x];
@@ -29,12 +30,12 @@ public class EntityCountValueKernel extends EntityLandscapeMetricKernel{
 					v = (short) inDatas()[y*width() + x];
 					
 					if(v == noDataValue()){
-						outDatas().get(va)[0] += 1;
-					}else if(v == 0){
 						outDatas().get(va)[1] += 1;
+					}else if(v == 0){
+						outDatas().get(va)[2] += 1;
 					}else{
 						mv = mapValues[v];
-						outDatas().get(va)[mv+3] += 1;
+						outDatas().get(va)[mv+4] += 1;
 					}
 				}
 			}

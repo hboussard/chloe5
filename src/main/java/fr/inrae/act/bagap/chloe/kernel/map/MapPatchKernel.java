@@ -24,20 +24,20 @@ public class MapPatchKernel extends MapLandscapeMetricKernel {
 		ClusteringTabOutput cto = new ClusteringTabOutput(tabCluster, inDatas(), values, cellSize);
 		cto.allRun();
 		
-		outDatas()[0] = cto.getNbPatch();
-		outDatas()[1] = cto.getTotalSurface();
-		outDatas()[2] = cto.getMaxSurface();
+		outDatas()[1] = cto.getNbPatch();
+		outDatas()[2] = cto.getTotalSurface();
+		outDatas()[3] = cto.getMaxSurface();
 		
 		for(int i=0; i<values.length; i++){
-			outDatas()[i+3] = cto.getNbPatch(values[i]);
+			outDatas()[i+4] = cto.getNbPatch(values[i]);
 		}
 		
 		for(int i=0; i<values.length; i++){
-			outDatas()[i+3+values.length] = cto.getTotalSurface(values[i]);
+			outDatas()[i+4+values.length] = cto.getTotalSurface(values[i]);
 		}
 		
 		for(int i=0; i<values.length; i++){
-			outDatas()[i+3+2*values.length] = cto.getMaxSurface(values[i]);
+			outDatas()[i+4+2*values.length] = cto.getMaxSurface(values[i]);
 		}
 	}
 	

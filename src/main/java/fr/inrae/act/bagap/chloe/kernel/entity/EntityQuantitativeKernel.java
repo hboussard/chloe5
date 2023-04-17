@@ -16,15 +16,15 @@ public class EntityQuantitativeKernel extends EntityLandscapeMetricKernel{
 					float v = inDatas()[y*width() + x];
 					
 					if(v == noDataValue()) {
-						outDatas().get(va)[0] += 1;
-					}else{
 						outDatas().get(va)[1] += 1;
-						outDatas().get(va)[2] += v;
-						outDatas().get(va)[3] += v*v;
-						outDatas().get(va)[4] = Math.min(outDatas().get(va)[4], v);
-						outDatas().get(va)[5] = Math.max(outDatas().get(va)[5], v);
+					}else{
+						outDatas().get(va)[2] += 1;
+						outDatas().get(va)[3] += v;
+						outDatas().get(va)[4] += v*v;
+						outDatas().get(va)[5] = Math.min(outDatas().get(va)[5], v);
+						outDatas().get(va)[6] = Math.max(outDatas().get(va)[6], v);
 					}
-					outDatas().get(va)[6] = -1;
+					outDatas().get(va)[7] = -1;
 				}
 			}
 		}

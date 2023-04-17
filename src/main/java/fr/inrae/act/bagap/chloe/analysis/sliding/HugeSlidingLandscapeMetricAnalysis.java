@@ -52,14 +52,10 @@ public class HugeSlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 			kernel().setBufferROIYMax(localBufferROIYMax);
 			
 			// recuperation des donnees depuis le coverage
-			// attention bug de la recuperation des donnees dans le coverage2D si le Y depasse une certaine valeur qui influence les donnees en X
-			// ce bug n'est effectif que sur les coverage issus de fichiers AsciiGrid
-			// pas de probleme sur fichier TIF
-			//System.out.println((roiX() - bufferROIXMin())+" "+(localROIY - localBufferROIYMin)+" "+(roiWidth() + bufferROIXMin() + bufferROIXMax())+" "+(tYs + localBufferROIYMin + localBufferROIYMax));
 			roi = new Rectangle(roiX() - bufferROIXMin(), localROIY - localBufferROIYMin, roiWidth() + bufferROIXMin() + bufferROIXMax(), tYs + localBufferROIYMin + localBufferROIYMax);
 			
 			// gestion des entrees
-			kernel().setInDatas(coverage().getDatas(roi));
+			manageInDatas(roi);
 			
 			// gestion des sorties
 			kernel().setOutDatas(new double[((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1))][nbValues()]);
@@ -70,7 +66,6 @@ public class HugeSlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 				//System.out.println("buffer "+b+" "+tYs);
 				
 				kernel().applySlidingWindow(b, Math.min(buffer, (tYs-b)));
-				kernel().get(kernel().outDatas());
 				
 				index = 0;
 				for(int j=nextJ%buffer; j<Math.min(buffer, tYs-b); j+=displacement()){
@@ -86,18 +81,20 @@ public class HugeSlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 					}
 				}	
 			}
-			
 		}
-		
-		
-		kernel().dispose();
 	}
 
 	@Override
 	protected void doClose() {
+		super.doClose();
 		LandscapeMetricAnalysis.setTileYSize(1000);
-		counting().close();
 		coverage().dispose();
+	}
+	
+	@Override
+	protected void manageInDatas(Rectangle roi) {
+		// gestion des entrees
+		kernel().setInDatas(coverage().getDatas(roi));
 	}
 
 }

@@ -86,8 +86,7 @@ public class HugeGridLandscapeMetricAnalysis extends GridLandscapeMetricAnalysis
 
 	@Override
 	protected void doClose() {
-		kernel().dispose();
-		counting().close();
+		super.doClose();
 		coverage().dispose();
 	}
 

@@ -4,7 +4,7 @@ import fr.inrae.act.bagap.chloe.metric.Metric;
 
 public class QuantitativeCounting extends Counting implements QuantitativeCountingInterface {
 
-	private int theoriticalSize;
+	private double theoriticalSize;
 	
 	private float totalValues;
 	
@@ -18,7 +18,7 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 		super(minRange, maxRange);
 	}
 	
-	public QuantitativeCounting(int minRange, int maxRange, int theoriticalSize) {
+	public QuantitativeCounting(int minRange, int maxRange, double theoriticalSize) {
 		this(minRange, maxRange);
 		this.theoriticalSize = theoriticalSize;
 	}
@@ -29,7 +29,7 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 	
 	@Override
 	protected void doCalculate(){
-		if(validValues()/theoreticalSize() >= minRate){
+		if(validCounting() && validValues()/theoreticalSize() >= minRate){
 			for(Metric m : metrics()){
 				m.calculate(this, "");
 			}
@@ -42,28 +42,32 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 	
 	@Override
 	public void setCounts(double[] counts){
+		
+		setValidCounting(true);
+			
 		totalValues = 0;
 		validValues = 0;
 		sum = 0;
-		
-		totalValues += counts[0];
-		
+			
 		totalValues += counts[1];
-		validValues += counts[1];
-		
-		sum = counts[2];
-		
-		squareSum = counts[3];
-		
-		minimum = counts[4];
-		
-		maximum = counts[5];
-		
-		centralValue = (float) counts[6];
+			
+		totalValues += counts[2];
+		validValues += counts[2];
+			
+		sum = counts[3];
+			
+		squareSum = counts[4];
+			
+		minimum = counts[5];
+			
+		maximum = counts[6];
+			
+		centralValue = (float) counts[7];
+			
 	}
 	
 	@Override
-	public int theoreticalSize() {
+	public double theoreticalSize() {
 		return theoriticalSize;
 	}
 
@@ -117,6 +121,7 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 		return maximum;
 	}
 
+	
 	@Override 
 	public float centralValue(){
 		return centralValue;

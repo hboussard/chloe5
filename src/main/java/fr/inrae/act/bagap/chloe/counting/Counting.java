@@ -17,6 +17,8 @@ public abstract class Counting implements
 	PatchCountingInterface,
 	MetricObserver {
 
+	protected boolean validCounting;
+	
 	/**
 	 * minimum rate of non missing values
 	 */
@@ -133,8 +135,16 @@ public abstract class Counting implements
 		}
 	}
 	
+	public boolean validCounting(){
+		return validCounting;
+	}
+	
+	public void setValidCounting(boolean vc){
+		this.validCounting = vc;
+	}
+	
 	@Override
-	public int theoreticalSize(){
+	public double theoreticalSize(){
 		throw new UnsupportedOperationException();
 	}
 	

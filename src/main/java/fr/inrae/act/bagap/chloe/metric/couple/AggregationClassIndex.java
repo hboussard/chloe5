@@ -1,5 +1,6 @@
 package fr.inrae.act.bagap.chloe.metric.couple;
 
+import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.metric.Metric;
 import fr.inrae.act.bagap.chloe.metric.value.ValueMetric;
@@ -16,7 +17,6 @@ public class AggregationClassIndex extends Metric implements ValueMetric, Couple
 	
 	@Override
 	public void doCalculate(Counting co) {
-		value = -1;
 		if(co.countCouples() > 0){
 			int ai = (int) co.countValue(classMetric);
 			int n=1, n2;

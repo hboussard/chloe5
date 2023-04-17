@@ -1,14 +1,15 @@
 package fr.inrae.act.bagap.chloe.analysis.selected;
 
+import java.awt.Rectangle;
 import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inrae.act.bagap.chloe.analysis.UnitLandscapeMetricAnalysis;
+import fr.inrae.act.bagap.chloe.analysis.SingleLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.kernel.selected.SelectedLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public abstract class SelectedLandscapeMetricAnalysis extends UnitLandscapeMetricAnalysis {
+public abstract class SelectedLandscapeMetricAnalysis extends SingleLandscapeMetricAnalysis {
 	
 	private Set<Pixel> pixels;
 	
@@ -24,5 +25,13 @@ public abstract class SelectedLandscapeMetricAnalysis extends UnitLandscapeMetri
 	
 	public Set<Pixel> pixels(){
 		return pixels;
+	}
+	
+	protected abstract void manageInDatas(Rectangle roi);
+	
+	@Override
+	protected void doClose() {
+		super.doClose();
+		pixels = null;
 	}
 }

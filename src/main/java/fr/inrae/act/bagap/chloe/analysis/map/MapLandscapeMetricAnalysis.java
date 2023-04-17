@@ -1,11 +1,11 @@
 package fr.inrae.act.bagap.chloe.analysis.map;
 
-import fr.inrae.act.bagap.chloe.analysis.UnitLandscapeMetricAnalysis;
+import fr.inrae.act.bagap.chloe.analysis.SingleLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.counting.Counting;
 import fr.inrae.act.bagap.chloe.kernel.map.MapLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public abstract class MapLandscapeMetricAnalysis extends UnitLandscapeMetricAnalysis {
+public abstract class MapLandscapeMetricAnalysis extends SingleLandscapeMetricAnalysis {
 
 	public MapLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight,
 			int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, MapLandscapeMetricKernel kernel, Counting counting) {
