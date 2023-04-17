@@ -23,7 +23,8 @@ public interface ValueCountingInterface {
 	
 	
 	/**
-	 * the central value
+	 * the central value of the window
+	 * only available for sliding et selected windows
 	 * @return the central value
 	 */
 	float centralValue();

@@ -100,7 +100,7 @@ public class LandscapeMetricAnalysisFactory {
 			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
 				
 				return new TinySlidingLandscapeMetricAnalysisFactory().create(builder, coverage);
-				//return HugeSlidingLandscapeMetricAnalysisFactory.create(builder, coverage);
+				//return new HugeSlidingLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}else{
 				
 				return new HugeSlidingLandscapeMetricAnalysisFactory().create(builder, coverage);

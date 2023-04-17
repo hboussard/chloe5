@@ -1,10 +1,10 @@
 package fr.inrae.act.bagap.chloe.kernel.sliding.fast;
 
-public class FastGaussianWeightedCountCoupleKernel extends FastGaussianWeightedKernel {
+public class FastSquareCountCoupleKernel extends FastKernel {
 	
 	private int[][] mapCouples;
 	
-	public FastGaussianWeightedCountCoupleKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters){
+	public FastSquareCountCoupleKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters){
 		super(windowSize, displacement, noDataValue, values, unfilters);
 		
 		mapCouples = new int[values.length][values.length];
@@ -30,7 +30,7 @@ public class FastGaussianWeightedCountCoupleKernel extends FastGaussianWeightedK
 	protected void processVerticalPixel(int x, int line) {
 		
 		int y = theY() + line + bufferROIYMin();
-		int i, dy, ic, v, mc, v_V, v_H;
+		int i, dy, v, mc, v_V, v_H;
 		
 		for(i=0;i<nValuesTot();i++) {
 			buf()[x][i] = 0;
@@ -39,7 +39,6 @@ public class FastGaussianWeightedCountCoupleKernel extends FastGaussianWeightedK
 		for (dy = -rayon()+1; dy < rayon(); dy++) {
 			if(((y + dy) >= 0) && ((y + dy) < height())){
 				
-				ic = abs(dy);
 				v = (int) inDatas()[((y + dy) * width()) + x];
 				if(y+dy>0) {
 					v_V = (int) inDatas()[((y + dy - 1) * width()) + x];
@@ -50,7 +49,7 @@ public class FastGaussianWeightedCountCoupleKernel extends FastGaussianWeightedK
 					}else{
 						mc = 3 + mapCouples[mapValues()[v]][mapValues()[v_V]];
 					}
-					buf()[x][mc] += gauss()[ic];
+					buf()[x][mc] += 1;
 				}
 				if(x>0) {
 					v_H = (int) inDatas()[((y + dy) * width()) + x - 1];
@@ -61,7 +60,7 @@ public class FastGaussianWeightedCountCoupleKernel extends FastGaussianWeightedK
 					}else{
 						mc = 3 + mapCouples[mapValues()[v]][mapValues()[v_H]];
 					}
-					buf()[x][mc] += gauss()[ic];
+					buf()[x][mc] += 1;
 				}
 			}
 		}
@@ -84,7 +83,7 @@ public class FastGaussianWeightedCountCoupleKernel extends FastGaussianWeightedK
 			for(int value=1; value<nValuesTot(); value++) {
 				val = 0;
 				for(int i=max(x_buf-rayon()+1, 0); i<min(x_buf+rayon(),width()); i++) {
-					val += buf()[i][value] * gauss()[abs(i-x_buf)];
+					val += buf()[i][value];
 				}
 				outDatas()[ind][value] = val;
 			}

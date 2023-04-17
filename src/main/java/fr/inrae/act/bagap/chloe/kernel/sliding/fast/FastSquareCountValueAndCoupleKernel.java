@@ -1,11 +1,15 @@
 package fr.inrae.act.bagap.chloe.kernel.sliding.fast;
 
-public class FastGaussianWeightedCountCoupleKernel extends FastGaussianWeightedKernel {
+public class FastSquareCountValueAndCoupleKernel extends FastKernel {
+	
+	private final int nValues;
 	
 	private int[][] mapCouples;
 	
-	public FastGaussianWeightedCountCoupleKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters){
+	public FastSquareCountValueAndCoupleKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters){
 		super(windowSize, displacement, noDataValue, values, unfilters);
+		
+		nValues = values.length;
 		
 		mapCouples = new int[values.length][values.length];
 		int index = 0;
@@ -23,14 +27,14 @@ public class FastGaussianWeightedCountCoupleKernel extends FastGaussianWeightedK
 				}
 			}
 		}
-		setNValuesTot(index);
+		setNValuesTot(4 + values.length + 2 + index);
 	}
 	
 	@Override
 	protected void processVerticalPixel(int x, int line) {
 		
 		int y = theY() + line + bufferROIYMin();
-		int i, dy, ic, v, mc, v_V, v_H;
+		int i, dy, v, mv, v_V, v_H;
 		
 		for(i=0;i<nValuesTot();i++) {
 			buf()[x][i] = 0;
@@ -39,29 +43,38 @@ public class FastGaussianWeightedCountCoupleKernel extends FastGaussianWeightedK
 		for (dy = -rayon()+1; dy < rayon(); dy++) {
 			if(((y + dy) >= 0) && ((y + dy) < height())){
 				
-				ic = abs(dy);
 				v = (int) inDatas()[((y + dy) * width()) + x];
+							
+				if(v == noDataValue()){
+					mv = 1;
+				}else if(v==0){
+					mv = 2;
+				}else{
+					mv = mapValues()[v] + 4;
+				}
+				buf()[x][mv] += 1;
+				int mc;
 				if(y+dy>0) {
 					v_V = (int) inDatas()[((y + dy - 1) * width()) + x];
 					if(v == noDataValue() || v_V == noDataValue()){
-						mc = 1;
+						mc = nValues + 4;
 					}else if (v==0 || v_V == 0){
-						mc = 2;
+						mc = nValues + 5;
 					}else{
-						mc = 3 + mapCouples[mapValues()[v]][mapValues()[v_V]];
+						mc = nValues + 6 + mapCouples[mapValues()[v]][mapValues()[v_V]];
 					}
-					buf()[x][mc] += gauss()[ic];
+					buf()[x][mc] += 1;
 				}
 				if(x>0) {
 					v_H = (int) inDatas()[((y + dy) * width()) + x - 1];
 					if(v == noDataValue() || v_H == noDataValue()){
-						mc = 1;
+						mc = nValues + 4;
 					}else if (v==0 || v_H == 0){
-						mc = 2;
+						mc = nValues + 5;
 					}else{
-						mc = 3 + mapCouples[mapValues()[v]][mapValues()[v_H]];
+						mc = nValues + 6 + mapCouples[mapValues()[v]][mapValues()[v_H]];
 					}
-					buf()[x][mc] += gauss()[ic];
+					buf()[x][mc] += 1;
 				}
 			}
 		}
@@ -69,22 +82,25 @@ public class FastGaussianWeightedCountCoupleKernel extends FastGaussianWeightedK
 
 	@Override
 	protected void processHorizontalPixel(int x, int line) {
-		
+
 		int y = line / displacement();
 		int ind = y * ((width()-1-bufferROIXMin()-bufferROIXMax())/displacement()+1) + x;
 		
-		//imageOut()[ind][2] = (int) inDatas()[((theY() + line) * width()) + x*displacement() + bufferROIXMin()]; // valeur pixel central
+		outDatas()[ind][3] = (int) inDatas()[((theY() + line) * width()) + x*displacement() + bufferROIXMin()]; // valeur pixel central
 		
 		if(filter((int) inDatas()[((theY() + line)* width()) + x*displacement()+bufferROIXMin()])){ // gestion des filtres
 			
 			outDatas()[ind][0] = 1; // filtre ok
-			
+		
 			int x_buf = x * displacement() + bufferROIXMin();
 			float val;
 			for(int value=1; value<nValuesTot(); value++) {
+				if(value==3){
+					continue;
+				}
 				val = 0;
-				for(int i=max(x_buf-rayon()+1, 0); i<min(x_buf+rayon(),width()); i++) {
-					val += buf()[i][value] * gauss()[abs(i-x_buf)];
+				for(int i=max(x_buf-rayon()+1, 0); i<min(x_buf+rayon(), width()); i++) {
+					val += buf()[i][value];
 				}
 				outDatas()[ind][value] = val;
 			}
@@ -93,7 +109,7 @@ public class FastGaussianWeightedCountCoupleKernel extends FastGaussianWeightedK
 			// filtre pas ok
 			for(int value=0; value<nValuesTot(); value++) {
 				outDatas()[ind][value] = 0;
-			}
+			}			
 		}
 	}
 	

@@ -29,5 +29,5 @@ public interface BasicCountingInterface {
 	 * @return the count of values
 	 */
 	double countValues();
-	
+
 }

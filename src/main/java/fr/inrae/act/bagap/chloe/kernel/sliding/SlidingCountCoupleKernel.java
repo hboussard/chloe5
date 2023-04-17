@@ -18,6 +18,7 @@ public class SlidingCountCoupleKernel extends SlidingLandscapeMetricKernel {
 		for(int i=0; i<values.length; i++){
 			mapValues[values[i]] = i;
 		}
+		
 		mapCouples = new int[values.length][values.length];
 		int index = 0;
 		for(int v : values){

@@ -1,8 +1,8 @@
 package fr.inrae.act.bagap.chloe.kernel.sliding.fast;
 
-public class FastGaussianWeightedCountValueKernel extends FastGaussianWeightedKernel {
+public class FastSquareCountValueKernel extends FastKernel {
 
-	public FastGaussianWeightedCountValueKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters){
+	public FastSquareCountValueKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters){
 		super(windowSize, displacement, noDataValue, values, unfilters);
 		setNValuesTot(values.length+4);
 	}
@@ -11,7 +11,7 @@ public class FastGaussianWeightedCountValueKernel extends FastGaussianWeightedKe
 	protected void processVerticalPixel(int x, int line) {
 		
 		int y = theY() + line + bufferROIYMin();
-		int i, dy, ic, v, mv;
+		int i, dy, v, mv;
 		
 		for(i=0; i<nValuesTot(); i++) {
 			buf()[x][i] = 0;
@@ -19,7 +19,6 @@ public class FastGaussianWeightedCountValueKernel extends FastGaussianWeightedKe
 		for (dy = -rayon() +1; dy < rayon(); dy++) {
 			if(((y + dy) >= 0) && ((y + dy) < height())){
 				
-				ic = abs(dy);
 				v = (int) inDatas()[((y + dy) * width()) + x];
 							
 				if(v == noDataValue()){
@@ -30,7 +29,7 @@ public class FastGaussianWeightedCountValueKernel extends FastGaussianWeightedKe
 					mv = mapValues()[v] + 4;
 				}
 				
-				buf()[x][mv] += gauss()[ic];
+				buf()[x][mv] += 1;
 			}
 		}
 	}
@@ -55,7 +54,7 @@ public class FastGaussianWeightedCountValueKernel extends FastGaussianWeightedKe
 				}
 				val = 0;
 				for(int i=max(x_buf-rayon()+1,0); i<min(x_buf+rayon(), width()); i++) {
-					val += buf()[i][value] * gauss()[abs(i-x_buf)];
+					val += buf()[i][value];
 				}
 				outDatas()[ind][value] = val;
 			}
