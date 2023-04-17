@@ -23,7 +23,7 @@ public class FastGaussianWeightedCountCoupleKernel extends FastGaussianWeightedK
 				}
 			}
 		}
-		setNValuesTot(index);
+		setNValuesTot(3 + index);
 	}
 	
 	@Override

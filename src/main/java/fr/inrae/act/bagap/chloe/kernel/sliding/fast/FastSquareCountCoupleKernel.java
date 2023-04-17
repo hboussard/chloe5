@@ -23,7 +23,7 @@ public class FastSquareCountCoupleKernel extends FastKernel {
 				}
 			}
 		}
-		setNValuesTot(index);
+		setNValuesTot(3 + index);
 	}
 	
 	@Override
