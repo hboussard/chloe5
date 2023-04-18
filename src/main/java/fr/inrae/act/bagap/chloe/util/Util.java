@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
-import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysis;
+import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.raster.Coverage;
 
 public class Util {

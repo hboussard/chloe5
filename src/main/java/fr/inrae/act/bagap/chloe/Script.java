@@ -19,8 +19,11 @@ import org.geotools.image.util.ImageUtilities;
 import fr.inra.sad.bagap.apiland.analysis.matrix.CoverageManager;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.matrix.MatrixManager;
-import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysis;
-import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysisBuilder;
+import fr.inrae.act.bagap.chloe.window.WindowAnalysisType;
+import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
+import fr.inrae.act.bagap.chloe.window.WindowShapeType;
+import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
+import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 
 public class Script {
 
@@ -30,22 +33,22 @@ public class Script {
 	
 	private static void scriptTestEcopaysage(){
 
-		//String path = "G:/chloe/winterschool/data/start/";
-		String path = "G:/data/sig/bretagne/";
+		String path = "G:/chloe/winterschool/data/start/";
+		//String path = "G:/data/sig/bretagne/";
 		
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
 		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
 		//builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
-		//builder.setRasterFile(path+"za.tif");
-		builder.setRasterFile(path+"Bretagne_2019_dispositif_bocage_ebr.tif");
+		builder.setRasterFile(path+"za.tif");
+		//builder.setRasterFile(path+"Bretagne_2019_dispositif_bocage_ebr.tif");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); // doivent etre classees
 		
-		builder.setWindowSize(2001);
-		builder.setDisplacement(40);
+		builder.setWindowSize(201);
+		builder.setDisplacement(20);
 		
-		builder.setUnfilters(new int[]{7}); // pas la mer
+		//builder.setUnfilters(new int[]{7}); // pas la mer
 		
 		for(int i=1; i<=12; i++){
 			builder.addMetric("pNV_"+i);
@@ -55,7 +58,7 @@ public class Script {
 				}
 			}
 		}
-		builder.addCsvOutput(path+"ecopaysage/analyse_bretagne.csv");
+		builder.addCsvOutput(path+"ecopaysage/analyse_za.csv");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 		
@@ -106,9 +109,9 @@ public class Script {
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
 		//builder.setAnalysisType(WindowAnalysisType.SLIDING);
 		//builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
-		//builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
 		//builder.setWindowShapeType(WindowShapeType.SQUARE);
-		builder.setWindowDistanceType(WindowDistanceType.FAST_SQUARE);
+		//builder.setWindowDistanceType(WindowDistanceType.FAST_SQUARE);
 		builder.setRasterFile(path+"za.tif");
 		builder.setWindowSize(201);
 		builder.setDisplacement(20);
@@ -139,7 +142,7 @@ public class Script {
 		//builder.addAsciiGridOutput("NV_5", path+"sliding/nv_5.asc"); 
 		
 		builder.addMetric("SHDI");
-		builder.addAsciiGridOutput("SHDI", path+"fast/cshdi_201p_dep20.asc"); 
+		builder.addAsciiGridOutput("SHDI", path+"sliding/fshdi_201p_dep20.asc"); 
 		/*
 		builder.addMetric("HET-frag");
 		builder.addAsciiGridOutput("HET-frag", path+"fast/double_roi_fhet_201p_dep20.asc"); 

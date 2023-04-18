@@ -8,11 +8,11 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Properties;
 
-import fr.inrae.act.bagap.chloe.WindowAnalysisType;
-import fr.inrae.act.bagap.chloe.WindowDistanceType;
-import fr.inrae.act.bagap.chloe.WindowShapeType;
-import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysis;
-import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysisBuilder;
+import fr.inrae.act.bagap.chloe.window.WindowAnalysisType;
+import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
+import fr.inrae.act.bagap.chloe.window.WindowShapeType;
+import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
+import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 
 public class ChloeAPI {
 
