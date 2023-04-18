@@ -1,12 +1,12 @@
 package fr.inrae.act.bagap.chloe.kernel.sliding.fast;
 
-public class FastSquareCountValueAndCoupleKernel extends FastKernel {
+public abstract class FastCountValueAndCoupleKernel extends FastQualitativeKernel {
 	
 	private final int nValues;
 	
 	private int[][] mapCouples;
 	
-	public FastSquareCountValueAndCoupleKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters){
+	public FastCountValueAndCoupleKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters){
 		super(windowSize, displacement, noDataValue, values, unfilters);
 		
 		nValues = values.length;
@@ -35,7 +35,7 @@ public class FastSquareCountValueAndCoupleKernel extends FastKernel {
 		
 		int y = theY() + line + bufferROIYMin();
 		int i, dy, v, mv, v_V, v_H;
-		
+		float c;
 		for(i=0;i<nValuesTot();i++) {
 			buf()[x][i] = 0;
 		}
@@ -44,7 +44,8 @@ public class FastSquareCountValueAndCoupleKernel extends FastKernel {
 			if(((y + dy) >= 0) && ((y + dy) < height())){
 				
 				v = (int) inDatas()[((y + dy) * width()) + x];
-							
+				c = coeff(dy);	
+				
 				if(v == noDataValue()){
 					mv = 1;
 				}else if(v==0){
@@ -52,7 +53,8 @@ public class FastSquareCountValueAndCoupleKernel extends FastKernel {
 				}else{
 					mv = mapValues()[v] + 4;
 				}
-				buf()[x][mv] += 1;
+				buf()[x][mv] += c;
+				
 				int mc;
 				if(y+dy>0) {
 					v_V = (int) inDatas()[((y + dy - 1) * width()) + x];
@@ -63,8 +65,9 @@ public class FastSquareCountValueAndCoupleKernel extends FastKernel {
 					}else{
 						mc = nValues + 6 + mapCouples[mapValues()[v]][mapValues()[v_V]];
 					}
-					buf()[x][mc] += 1;
+					buf()[x][mc] += c;
 				}
+				
 				if(x>0) {
 					v_H = (int) inDatas()[((y + dy) * width()) + x - 1];
 					if(v == noDataValue() || v_H == noDataValue()){
@@ -74,7 +77,7 @@ public class FastSquareCountValueAndCoupleKernel extends FastKernel {
 					}else{
 						mc = nValues + 6 + mapCouples[mapValues()[v]][mapValues()[v_H]];
 					}
-					buf()[x][mc] += 1;
+					buf()[x][mc] += c;
 				}
 			}
 		}
@@ -86,9 +89,9 @@ public class FastSquareCountValueAndCoupleKernel extends FastKernel {
 		int y = line / displacement();
 		int ind = y * ((width()-1-bufferROIXMin()-bufferROIXMax())/displacement()+1) + x;
 		
-		outDatas()[ind][3] = (int) inDatas()[((theY() + line) * width()) + x*displacement() + bufferROIXMin()]; // valeur pixel central
+		outDatas()[ind][3] = (int) inDatas()[((theY() + line + bufferROIYMin()) * width()) + x*displacement() + bufferROIXMin()]; // valeur pixel central
 		
-		if(filter((int) inDatas()[((theY() + line)* width()) + x*displacement()+bufferROIXMin()])){ // gestion des filtres
+		if(filter((int) inDatas()[((theY() + line + bufferROIYMin())* width()) + x*displacement()+bufferROIXMin()])){ // gestion des filtres
 			
 			outDatas()[ind][0] = 1; // filtre ok
 		
@@ -100,7 +103,7 @@ public class FastSquareCountValueAndCoupleKernel extends FastKernel {
 				}
 				val = 0;
 				for(int i=max(x_buf-rayon()+1, 0); i<min(x_buf+rayon(), width()); i++) {
-					val += buf()[i][value];
+					val += buf()[i][value] * coeff(i-x_buf);
 				}
 				outDatas()[ind][value] = val;
 			}

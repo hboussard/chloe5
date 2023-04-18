@@ -8,7 +8,7 @@ public abstract class LandscapeMetricAnalysis extends Analysis {
 	
 	private static int tileYSize = 1000;
 	
-	private static int bufferSize = 100;
+	private static int bufferSize = 200;
 	
 	public static int maxTile(){
 		return maxTile;

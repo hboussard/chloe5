@@ -25,12 +25,14 @@ import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingCountValueKernel;
 import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingPatchKernel;
 import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingQuantitativeKernel;
-import fr.inrae.act.bagap.chloe.kernel.sliding.fast.FastGaussianWeightedCountCoupleKernel;
-import fr.inrae.act.bagap.chloe.kernel.sliding.fast.FastGaussianWeightedCountValueAndCoupleKernel;
-import fr.inrae.act.bagap.chloe.kernel.sliding.fast.FastGaussianWeightedCountValueKernel;
-import fr.inrae.act.bagap.chloe.kernel.sliding.fast.FastSquareCountCoupleKernel;
-import fr.inrae.act.bagap.chloe.kernel.sliding.fast.FastSquareCountValueAndCoupleKernel;
-import fr.inrae.act.bagap.chloe.kernel.sliding.fast.FastSquareCountValueKernel;
+import fr.inrae.act.bagap.chloe.kernel.sliding.fast.gaussian.FastGaussianWeightedCountCoupleKernel;
+import fr.inrae.act.bagap.chloe.kernel.sliding.fast.gaussian.FastGaussianWeightedCountValueAndCoupleKernel;
+import fr.inrae.act.bagap.chloe.kernel.sliding.fast.gaussian.FastGaussianWeightedCountValueKernel;
+import fr.inrae.act.bagap.chloe.kernel.sliding.fast.gaussian.FastGaussianWeightedQuantitativeKernel;
+import fr.inrae.act.bagap.chloe.kernel.sliding.fast.square.FastSquareCountCoupleKernel;
+import fr.inrae.act.bagap.chloe.kernel.sliding.fast.square.FastSquareCountValueAndCoupleKernel;
+import fr.inrae.act.bagap.chloe.kernel.sliding.fast.square.FastSquareCountValueKernel;
+import fr.inrae.act.bagap.chloe.kernel.sliding.fast.square.FastSquareQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.kernel.sliding.functional.SlidingFunctionalCountCoupleKernel;
 import fr.inrae.act.bagap.chloe.kernel.sliding.functional.SlidingFunctionalCountValueAndCoupleKernel;
 import fr.inrae.act.bagap.chloe.kernel.sliding.functional.SlidingFunctionalCountValueKernel;
@@ -53,8 +55,6 @@ import fr.inrae.act.bagap.raster.TabCoverage;
 public abstract class SlidingLandscapeMetricAnalysisFactory {
 
 	public SlidingLandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder, Coverage coverage) throws IOException {
-		
-		System.out.println("tiny sliding");
 
 		int inWidth = coverage.width();
 		int inHeight = coverage.height();
@@ -282,11 +282,22 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 
 			} else if (metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("bocage")) {
 				
-				kernel = new GrainBocagerSlidingDetectionBocageKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(),	unfilters);
+				kernel = new GrainBocagerSlidingDetectionBocageKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), unfilters);
 				
 			} else {
+				if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN) {
+					
+					kernel = new FastGaussianWeightedQuantitativeKernel(windowSize, displacement, Raster.getNoDataValue(), unfilters);
 				
-				kernel = new SlidingQuantitativeKernel(windowSize, displacement, coeffs,	Raster.getNoDataValue(), unfilters);
+				} else if (builder.getWindowDistanceType() == WindowDistanceType.FAST_SQUARE) {
+					
+					kernel = new FastSquareQuantitativeKernel(windowSize, displacement, Raster.getNoDataValue(), unfilters);
+				
+				} else{
+					
+					kernel = new SlidingQuantitativeKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), unfilters);
+					
+				}
 			}
 			
 			counting = new QuantitativeCounting(0, nbValues, theoreticalSize);
@@ -364,15 +375,15 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 						return createDouble(coverage, coverageFriction, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 
 					} else {
-						if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN)
+						if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN){
 							
 							kernel = new FastGaussianWeightedCountValueKernel(windowSize, displacement, Raster.getNoDataValue(), values, unfilters);
 						
-						else if (builder.getWindowDistanceType() == WindowDistanceType.FAST_SQUARE)
+						} else if (builder.getWindowDistanceType() == WindowDistanceType.FAST_SQUARE){
 							
 							kernel = new FastSquareCountValueKernel(windowSize, displacement, Raster.getNoDataValue(), values, unfilters);
 						
-						else {
+						} else {
 							
 							kernel = new SlidingCountValueKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), values, unfilters);
 						}
@@ -416,15 +427,15 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 						
 					}else{
 						
-						if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN)
+						if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN) {
 							
 							kernel = new FastGaussianWeightedCountCoupleKernel(windowSize, displacement, Raster.getNoDataValue(), values, unfilters);
 						
-						else if (builder.getWindowDistanceType() == WindowDistanceType.FAST_SQUARE)
+						} else if (builder.getWindowDistanceType() == WindowDistanceType.FAST_SQUARE) {
 							
 							kernel = new FastSquareCountCoupleKernel(windowSize, displacement, Raster.getNoDataValue(), values, unfilters);
 						
-						else {
+						} else {
 							
 							kernel = new SlidingCountCoupleKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), values, unfilters);
 						}
@@ -468,15 +479,15 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 						
 					}else{
 						
-						if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN)
+						if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN) {
 							
 							kernel = new FastGaussianWeightedCountValueAndCoupleKernel(windowSize, displacement, Raster.getNoDataValue(), values, unfilters);
 						
-						else if (builder.getWindowDistanceType() == WindowDistanceType.FAST_SQUARE)
+						} else if (builder.getWindowDistanceType() == WindowDistanceType.FAST_SQUARE) {
 							
 							kernel = new FastSquareCountValueAndCoupleKernel(windowSize, displacement, Raster.getNoDataValue(), values, unfilters);
 						
-						else {
+						} else {
 							
 							kernel = new SlidingCountValueAndCoupleKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), values, unfilters);
 						}

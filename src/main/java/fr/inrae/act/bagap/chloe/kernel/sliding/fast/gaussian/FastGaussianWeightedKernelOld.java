@@ -1,10 +1,12 @@
-package fr.inrae.act.bagap.chloe.kernel.sliding.fast;
+package fr.inrae.act.bagap.chloe.kernel.sliding.fast.gaussian;
 
-public abstract class FastGaussianWeightedKernel extends FastKernel {
+import fr.inrae.act.bagap.chloe.kernel.sliding.fast.FastQualitativeKernel;
+
+public abstract class FastGaussianWeightedKernelOld extends FastQualitativeKernel {
 	
 	private float[] gauss;
 	
-	protected FastGaussianWeightedKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters) {
+	protected FastGaussianWeightedKernelOld(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters) {
 		super(windowSize, displacement, noDataValue, values, unfilters);
 		
 		this.gauss = new float[rayon()];

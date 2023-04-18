@@ -1,8 +1,8 @@
 package fr.inrae.act.bagap.chloe.kernel.sliding.fast;
 
-public class FastGaussianWeightedCountValueKernel extends FastGaussianWeightedKernel {
+public abstract class FastCountValueKernel extends FastQualitativeKernel {
 
-	public FastGaussianWeightedCountValueKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters){
+	public FastCountValueKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters){
 		super(windowSize, displacement, noDataValue, values, unfilters);
 		setNValuesTot(values.length+4);
 	}
@@ -11,7 +11,7 @@ public class FastGaussianWeightedCountValueKernel extends FastGaussianWeightedKe
 	protected void processVerticalPixel(int x, int line) {
 		
 		int y = theY() + line + bufferROIYMin();
-		int i, dy, ic, v, mv;
+		int i, dy, v, mv;
 		
 		for(i=0; i<nValuesTot(); i++) {
 			buf()[x][i] = 0;
@@ -19,9 +19,8 @@ public class FastGaussianWeightedCountValueKernel extends FastGaussianWeightedKe
 		for (dy = -rayon() +1; dy < rayon(); dy++) {
 			if(((y + dy) >= 0) && ((y + dy) < height())){
 				
-				ic = abs(dy);
 				v = (int) inDatas()[((y + dy) * width()) + x];
-							
+				
 				if(v == noDataValue()){
 					mv = 1;
 				}else if(v==0){
@@ -30,7 +29,7 @@ public class FastGaussianWeightedCountValueKernel extends FastGaussianWeightedKe
 					mv = mapValues()[v] + 4;
 				}
 				
-				buf()[x][mv] += gauss()[ic];
+				buf()[x][mv] += coeff(dy);
 			}
 		}
 	}
@@ -41,9 +40,11 @@ public class FastGaussianWeightedCountValueKernel extends FastGaussianWeightedKe
 		int y = line / displacement();
 		int ind = y * ((width()-1-bufferROIXMin()-bufferROIXMax())/displacement()+1) + x;
 		
-		outDatas()[ind][3] = (int) inDatas()[((theY() + line)* width()) + x*displacement()+bufferROIXMin()]; // valeur pixel central
+		//outDatas()[ind][3] = (int) inDatas()[((theY() + line)* width()) + x*displacement()+bufferROIXMin()]; // valeur pixel central
+		outDatas()[ind][3] = (int) inDatas()[((theY() + line + bufferROIYMin())* width()) + x*displacement()+bufferROIXMin()]; // valeur pixel central
 		
-		if(filter((int) inDatas()[((theY() + line)* width()) + x*displacement()+bufferROIXMin()])){ // gestion des filtres
+		//if(filter((int) inDatas()[((theY() + line)* width()) + x*displacement()+bufferROIXMin()])){ // gestion des filtres
+		if(filter((int) inDatas()[((theY() + line + bufferROIYMin())* width()) + x*displacement()+bufferROIXMin()])){ // gestion des filtres
 			
 			outDatas()[ind][0] = 1; // filtre ok 
 			
@@ -55,7 +56,7 @@ public class FastGaussianWeightedCountValueKernel extends FastGaussianWeightedKe
 				}
 				val = 0;
 				for(int i=max(x_buf-rayon()+1,0); i<min(x_buf+rayon(), width()); i++) {
-					val += buf()[i][value] * gauss()[abs(i-x_buf)];
+					val += buf()[i][value] * coeff(i-x_buf);
 				}
 				outDatas()[ind][value] = val;
 			}

@@ -3,8 +3,6 @@ package fr.inrae.act.bagap.chloe.kernel.sliding.fast;
 import fr.inrae.act.bagap.chloe.kernel.sliding.SlidingLandscapeMetricKernel;
 
 public abstract class FastKernel extends SlidingLandscapeMetricKernel {
-
-	private int[] mapValues;
 	
 	private float[][] buf;
 	
@@ -12,18 +10,8 @@ public abstract class FastKernel extends SlidingLandscapeMetricKernel {
 	
 	private int nValuesTot;
 	
-	protected FastKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters) {
+	protected FastKernel(int windowSize, int displacement, int noDataValue, int[] unfilters) {
 		super(windowSize, displacement, null, noDataValue, unfilters);
-		int maxV = 0;
-		for(int v : values){
-			maxV = Math.max(v, maxV);
-		}
-		maxV++;
-		mapValues = new int[maxV];
-		for(int i=0; i<values.length; i++){
-			mapValues[values[i]] = i;
-		}
-
 		this.rayon = windowSize()/2+1;
 	}
 	
@@ -56,7 +44,6 @@ public abstract class FastKernel extends SlidingLandscapeMetricKernel {
 	@Override
 	public void dispose(){
 		super.dispose();
-		mapValues = null;
 		buf = null;
 	}
 
@@ -73,6 +60,13 @@ public abstract class FastKernel extends SlidingLandscapeMetricKernel {
 	 * @param line : line number
 	 */
 	protected abstract void processHorizontalPixel(int x, int line);
+	
+	/**
+	 * recuperation du coeff de ponderation locale
+	 * @param ind : local
+	 * @return le coeff de ponderation
+	 */
+	protected abstract float coeff(int ind);
 
 	protected void setNValuesTot(int nValuesTot) {
 		this.nValuesTot = nValuesTot;
@@ -84,10 +78,6 @@ public abstract class FastKernel extends SlidingLandscapeMetricKernel {
 	
 	protected int rayon(){
 		return this.rayon;
-	}
-	
-	protected int[] mapValues(){
-		return this.mapValues;
 	}
 	
 	protected float[][] buf(){

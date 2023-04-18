@@ -25,7 +25,76 @@ import fr.inrae.act.bagap.chloe.analysis.LandscapeMetricAnalysisBuilder;
 public class Script {
 
 	public static void main(String[] args){
-		scriptTestSliding();
+		scriptTestEcopaysage();
+	}
+	
+	private static void scriptTestEcopaysage(){
+
+		//String path = "G:/chloe/winterschool/data/start/";
+		String path = "G:/data/sig/bretagne/";
+		
+		long begin = System.currentTimeMillis();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		//builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+		//builder.setRasterFile(path+"za.tif");
+		builder.setRasterFile(path+"Bretagne_2019_dispositif_bocage_ebr.tif");
+		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); // doivent etre classees
+		
+		builder.setWindowSize(2001);
+		builder.setDisplacement(40);
+		
+		builder.setUnfilters(new int[]{7}); // pas la mer
+		
+		for(int i=1; i<=12; i++){
+			builder.addMetric("pNV_"+i);
+			for(int j=1; j<=12; j++){
+				if(i<=j){
+					builder.addMetric("pNC_"+i+"-"+j);
+				}
+			}
+		}
+		builder.addCsvOutput(path+"ecopaysage/analyse_bretagne.csv");
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+	
+	private static void scriptTestQuantitative(){
+
+		String path = "G:/chloe/winterschool/data/start/";
+		
+		long begin = System.currentTimeMillis();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		//builder.setAnalysisType(WindowAnalysisType.SLIDING);
+		//builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		//builder.setWindowShapeType(WindowShapeType.SQUARE);
+		//builder.setWindowDistanceType(WindowDistanceType.FAST_SQUARE);
+		builder.setRasterFile(path+"fast/cshdi_201p_dep20.asc");
+		builder.setWindowSize(21);
+		/*
+		builder.setROIX(100);
+		builder.setROIY(100);
+		builder.setROIWidth(1000);
+		builder.setROIHeight(1000);
+		*/
+		
+		builder.addMetric("average");
+		builder.addAsciiGridOutput("average", path+"fast/fgaverage_21p.asc"); 
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
 	}
 	
 	private static void scriptTestSliding(){

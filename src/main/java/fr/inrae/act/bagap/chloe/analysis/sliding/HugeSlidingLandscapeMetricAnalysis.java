@@ -41,7 +41,7 @@ public class HugeSlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 			localBufferROIYMax = Math.min(Math.max(bufferROIYMax(), roiHeight()+bufferROIYMax()-(localROIY+LandscapeMetricAnalysis.tileYSize())), midWindowSize);
 			tYs = Math.min(LandscapeMetricAnalysis.tileYSize(), roiHeight() + roiY() - localROIY );
 			
-			//System.out.println("local ROI "+localROIY+" "+roiHeight()+" "+localBufferROIYMin+" "+localBufferROIYMax);
+			System.out.println("local ROI "+localROIY+" "+roiHeight()+" "+localBufferROIYMin+" "+localBufferROIYMax);
 			
 			// mise en place des infos pour le Kernel
 			kernel().setWidth(roiWidth() + bufferROIXMin() + bufferROIXMax());
@@ -63,7 +63,7 @@ public class HugeSlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 			int nextJ = 0;
 			int index;
 			for(int b=0; b<tYs; b+=buffer){
-				//System.out.println("buffer "+b+" "+tYs);
+				System.out.println("buffer "+b+" "+tYs);
 				
 				kernel().applySlidingWindow(b, Math.min(buffer, (tYs-b)));
 				
