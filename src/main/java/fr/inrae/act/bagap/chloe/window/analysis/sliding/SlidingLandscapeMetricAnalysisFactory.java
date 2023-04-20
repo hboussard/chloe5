@@ -1,6 +1,7 @@
 package fr.inrae.act.bagap.chloe.window.analysis.sliding;
 
 import java.awt.Rectangle;
+import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -44,6 +45,7 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.AsciiGridOutput;
 import fr.inrae.act.bagap.chloe.window.output.CsvOutput;
+import fr.inrae.act.bagap.chloe.window.output.EntityMultipleAsciiGridOutput;
 import fr.inrae.act.bagap.chloe.window.output.GeoTiffOutput;
 import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineLinearAsciiGridOutput;
 import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineLinearCsvOutput;
@@ -194,6 +196,45 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			}
 		}
 		
+		if(builder.getAsciiGridFolder() != null){
+			
+			String asciiFolder = builder.getAsciiGridFolder();
+			if(!(asciiFolder.endsWith("/") || asciiFolder.endsWith("\\"))){
+				asciiFolder += "/";
+			}
+			String asciiFile;
+			for (Metric m : metrics) {
+				
+				StringBuffer sb = new StringBuffer();
+				sb.append(new File(builder.getRasterFile()).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
+				if(builder.getWindowShapeType() == WindowShapeType.CIRCLE){
+					sb.append("_cr");
+				}else if(builder.getWindowShapeType() == WindowShapeType.SQUARE){
+					sb.append("_sq");
+				}else if (builder.getWindowShapeType() == WindowShapeType.FUNCTIONAL) {
+					sb.append("_fu");
+				}
+				sb.append("_w"+builder.getWindowSize());
+				sb.append("_"+m.getName());
+				sb.append("_d_"+builder.getDisplacement());
+				sb.append(".asc");
+				
+				asciiFile = asciiFolder+sb.toString();
+				
+				if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
+					AsciiGridOutput asciiOutput = new AsciiGridOutput(asciiFile, m, outWidth, outHeight,
+							outMinX, outMinY, outCellSize, Raster.getNoDataValue());
+					observers.add(asciiOutput);
+				} else {
+					InterpolateSplineLinearAsciiGridOutput asciiOutput = new InterpolateSplineLinearAsciiGridOutput(
+							asciiFile, m, roiWidth, roiHeight, inMinX + (roiX * inCellSize),
+							inMinY + ((inHeight - roiY) * inCellSize) - (roiHeight * inCellSize), inCellSize,
+							Raster.getNoDataValue(), displacement);
+					observers.add(asciiOutput);
+				}
+			}
+		}
+		
 		if(builder.getGeoTiffOutputs(windowSize) != null){
 			for (Entry<String, String> entry : builder.getGeoTiffOutputs(windowSize).entrySet()) {
 				Metric metric = null;
@@ -205,6 +246,41 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				}
 				if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
 					GeoTiffOutput geotiffOutput = new GeoTiffOutput(entry.getValue(), metric, outWidth, outHeight, outMinX,
+							outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
+					observers.add(geotiffOutput);
+				} else {
+					// TODO
+				}
+			}
+		}
+		
+		if(builder.getGeoTiffFolder() != null){
+			
+			String tifFolder = builder.getGeoTiffFolder();
+			if(!(tifFolder.endsWith("/") || tifFolder.endsWith("\\"))){
+				tifFolder += "/";
+			}
+			String tifFile;
+			for (Metric m : metrics) {
+				
+				StringBuffer sb = new StringBuffer();
+				sb.append(new File(builder.getRasterFile()).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
+				if(builder.getWindowShapeType() == WindowShapeType.CIRCLE){
+					sb.append("_cr");
+				}else if(builder.getWindowShapeType() == WindowShapeType.SQUARE){
+					sb.append("_sq");
+				}else if (builder.getWindowShapeType() == WindowShapeType.FUNCTIONAL) {
+					sb.append("_fu");
+				}
+				sb.append("_w"+builder.getWindowSize());
+				sb.append("_"+m.getName());
+				sb.append("_d_"+builder.getDisplacement());
+				sb.append(".tif");
+				
+				tifFile = tifFolder+sb.toString();
+				
+				if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
+					GeoTiffOutput geotiffOutput = new GeoTiffOutput(tifFile, m, outWidth, outHeight, outMinX,
 							outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
 					observers.add(geotiffOutput);
 				} else {

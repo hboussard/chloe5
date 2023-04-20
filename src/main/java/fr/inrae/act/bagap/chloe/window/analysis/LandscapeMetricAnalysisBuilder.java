@@ -49,7 +49,7 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	private Set<CountingObserver> observers;
 
-	private String csv, points, pixels, exportWindowPath, asciiGridFolder;
+	private String csv, points, pixels, exportWindowPath, asciiGridFolder, geoTiffFolder;
 	
 	private Set<RefPoint> refPoints;
 	
@@ -234,7 +234,13 @@ public class LandscapeMetricAnalysisBuilder {
 	}
 	
 	public void addAsciiGridFolderOutput(String asciiGridFolder){
+		Util.createAccess(asciiGridFolder);
 		this.asciiGridFolder = asciiGridFolder;
+	}
+	
+	public void addGeoTiffFolderOutput(String geoTiffFolder){
+		Util.createAccess(geoTiffFolder);
+		this.geoTiffFolder = geoTiffFolder;
 	}
 	
 	public void addAsciiGridOutput(String ascii){
@@ -457,6 +463,10 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	public String getAsciiGridFolder() {
 		return asciiGridFolder;
+	}
+	
+	public String getGeoTiffFolder() {
+		return geoTiffFolder;
 	}
 	
 	public Map<String, String> getAsciiOutputs(int ws){

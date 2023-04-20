@@ -1,4 +1,4 @@
-package fr.inrae.act.bagap.chloe;
+package fr.inrae.act.bagap.chloe.window;
 
 import java.awt.Rectangle;
 import java.io.File;
@@ -19,16 +19,47 @@ import org.geotools.image.util.ImageUtilities;
 import fr.inra.sad.bagap.apiland.analysis.matrix.CoverageManager;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.matrix.MatrixManager;
-import fr.inrae.act.bagap.chloe.window.WindowAnalysisType;
-import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
-import fr.inrae.act.bagap.chloe.window.WindowShapeType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 
 public class Script {
 
 	public static void main(String[] args){
-		scriptTestEcopaysage();
+		scriptTestOutput();
+	}
+	
+	private static void scriptTestOutput(){
+
+		String path = "G:/chloe/winterschool/data/start/";
+		
+		long begin = System.currentTimeMillis();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		builder.setRasterFile(path+"za.tif");
+		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); // doivent etre classees
+		
+		builder.setWindowSize(201);
+		builder.setDisplacement(20);
+		
+		for(int i=1; i<=12; i++){
+			builder.addMetric("pNV_"+i);
+			for(int j=1; j<=12; j++){
+				if(i<j){
+					builder.addMetric("pNC_"+i+"-"+j);
+				}
+			}
+		}
+		//builder.addCsvOutput(path+"output/analyse_za_5km.csv");
+		//builder.addAsciiGridFolderOutput(path+"output2");
+		builder.addGeoTiffFolderOutput(path+"output4/");
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
 	}
 	
 	private static void scriptTestEcopaysage(){
@@ -53,12 +84,12 @@ public class Script {
 		for(int i=1; i<=12; i++){
 			builder.addMetric("pNV_"+i);
 			for(int j=1; j<=12; j++){
-				if(i<=j){
+				if(i<j){
 					builder.addMetric("pNC_"+i+"-"+j);
 				}
 			}
 		}
-		builder.addCsvOutput(path+"ecopaysage/analyse_za.csv");
+		builder.addCsvOutput(path+"ecopaysage/analyse_za_5km.csv");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 		
