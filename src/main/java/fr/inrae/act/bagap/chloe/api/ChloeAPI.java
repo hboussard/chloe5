@@ -63,23 +63,20 @@ public class ChloeAPI {
 			importWindowDistanceFunction(builder, properties);
 			importFrictionRaster(builder, properties);
 			importUnfilters(builder, properties);
+			importXOrigin(builder, properties);
+			importYOrigin(builder, properties);
 			
 			// TODO
-			//importXOrigin(builder, properties);
-			//importYOrigin(builder, properties);
 			//importMaximumNoValueRate(builder, properties);
 			//importFrictionFile(builder, properties);
 			//importFilters(builder, properties);
-			/*
-			if(properties.containsKey("output_folder")){
-				importOutputFolder(properties);
-			}else{
-				importOutputAscii(properties);
-				importOutputCsv(properties);
-			}*/
 			
-			importOutputRaster(builder, properties);
-			importOutputCsv(builder, properties);
+			if(properties.containsKey("output_folder")){
+				importOutputFolderForSliding(builder, properties);
+			}else{
+				importOutputRaster(builder, properties);
+				importOutputCsv(builder, properties);
+			}
 			
 			LandscapeMetricAnalysis analysis = builder.build();
 			analysis.allRun();
@@ -135,7 +132,7 @@ public class ChloeAPI {
 	
 	// not required
 	// default parameter : "CIRCLE"
-	public static void importWindowShape(LandscapeMetricAnalysisBuilder builder, Properties properties) {
+	public static void importWindowShape(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("shape")){
 			builder.setWindowShapeType(WindowShapeType.valueOf(properties.getProperty("shape")));
 		}		
@@ -143,7 +140,7 @@ public class ChloeAPI {
 	
 	// not required
 	// default parameter : "THRESHOLD"
-	public static void importWindowDistanceType(LandscapeMetricAnalysisBuilder builder, Properties properties) {
+	public static void importWindowDistanceType(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("distance_type")){
 			builder.setWindowDistanceType(WindowDistanceType.valueOf(properties.getProperty("distance_type")));
 		}		
@@ -151,7 +148,7 @@ public class ChloeAPI {
 	
 	// not required
 	// default parameter : gaussienne par default
-	public static void importWindowDistanceFunction(LandscapeMetricAnalysisBuilder builder, Properties properties) {
+	public static void importWindowDistanceFunction(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("distance_function")){
 			builder.setWindowDistanceFunction(properties.getProperty("distance_function"));
 		}		
@@ -159,7 +156,7 @@ public class ChloeAPI {
 	
 	// not required
 	// default parameter : "1"
-	public static void importDisplacement(LandscapeMetricAnalysisBuilder builder, Properties properties) {
+	public static void importDisplacement(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("displacement")){
 			builder.setDisplacement(Integer.parseInt(properties.getProperty("displacement")));
 		}
@@ -167,21 +164,21 @@ public class ChloeAPI {
 	
 	// not required
 	// default parameter : "FALSE"
-	public static void importInterpolation(LandscapeMetricAnalysisBuilder builder, Properties properties) {
+	public static void importInterpolation(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("interpolation")){
 			builder.setInterpolation(Boolean.parseBoolean(properties.getProperty("interpolation")));
 		}
 	}
 	
 	// not required
-	public static void importFrictionRaster(LandscapeMetricAnalysisBuilder builder, Properties properties) {
+	public static void importFrictionRaster(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("friction_raster")){
 			builder.setRasterFile2(properties.getProperty("friction_raster"));
 		}
 	}
 	
 	// not required
-	public static void importUnfilters(LandscapeMetricAnalysisBuilder builder, Properties properties) {
+	public static void importUnfilters(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("unfilters")){
 			String prop = properties.getProperty("unfilters");
 			prop = prop.replace("{", "").replace("}", "").replace(" ", "");
@@ -210,19 +207,54 @@ public class ChloeAPI {
 	}	
 		
 	// not required 
-	public static void importOutputCsv(LandscapeMetricAnalysisBuilder builder, Properties properties) {
+	public static void importOutputCsv(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("output_csv")){
 			builder.addCsvOutput(properties.getProperty("output_csv"));
 		}
 	}
 	
-	// required 
-	/*
-	public static void importOutputFolder(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	// not required
+	public static void importOutputFolderForSliding(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("output_folder")){
-			builder.setOutputFolder();
+			String prop = properties.getProperty("output_folder");
+			String input = properties.getProperty("input_raster");
+			if(input.endsWith(".asc")){
+				builder.addAsciiGridFolderOutput(prop);
+			}else if(input.endsWith(".tif")){
+				builder.addGeoTiffFolderOutput(prop);
+			}else{
+				throw new NoParameterException("output_raster : "+input+" extension problem");
+			}
+			
+			StringBuffer sb = new StringBuffer();
+			sb.append(new File(input).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
+			if(builder.getWindowShapeType() == WindowShapeType.CIRCLE){
+				sb.append("_cr");
+			}else if(builder.getWindowShapeType() == WindowShapeType.SQUARE){
+				sb.append("_sq");
+			}else if (builder.getWindowShapeType() == WindowShapeType.FUNCTIONAL) {
+				sb.append("_fu");
+			}
+			sb.append("_w"+builder.getWindowSize());
+			sb.append("_d_"+builder.getDisplacement());
+			sb.append(".csv");
+			
+			builder.addCsvOutput(prop+sb.toString());
 		}
 	}
-	*/
+	
+	// not required
+	public static void importXOrigin(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("x_origin")){
+			builder.setROIX(Integer.parseInt(properties.getProperty("x_origin")));
+		}
+	}
+		
+	// not required
+	public static void importYOrigin(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("y_origin")){
+			builder.setROIY(Integer.parseInt(properties.getProperty("y_origin")));
+		}
+	}
 	
 }

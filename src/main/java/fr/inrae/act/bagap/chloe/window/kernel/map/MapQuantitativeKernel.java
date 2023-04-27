@@ -20,11 +20,10 @@ public class MapQuantitativeKernel extends MapLandscapeMetricKernel {
 			for(int x=0; x<width(); x++) {
 					
 				v = (short) inDatas()[((theY+y)*width()) + x];	
-						
+				nb += 1;	
 				if(v == noDataValue()) {
 					nb_nodata += 1;
 				}else{
-					nb += 1;
 					sum += v;
 					square_sum += v * v;
 					min = Math.min(min, v);
@@ -33,12 +32,12 @@ public class MapQuantitativeKernel extends MapLandscapeMetricKernel {
 			}
 		}
 		
-		outDatas()[1] += nb_nodata;
 		outDatas()[2] += nb;
-		outDatas()[3] += sum;
-		outDatas()[4] += square_sum;
-		outDatas()[5] += min;
-		outDatas()[6] += max;
+		outDatas()[3] += nb_nodata;
+		outDatas()[4] += sum;
+		outDatas()[5] += square_sum;
+		outDatas()[6] += min;
+		outDatas()[7] += max;
 	}
 	
 	

@@ -2,7 +2,13 @@ package fr.inrae.act.bagap.chloe.window.counting;
 
 public interface BasicCountingInterface {
 
-	public boolean validCounting();
+	/**
+	 * the counting is valid when the central pixel is filtered
+	 * make sense for SLIDING only, in other cases, it's always valid
+	 * note : the window may not be computed according to the "minimum valid value" parameter
+	 * @return the counting is valid
+	 */
+	boolean validCounting();
 	
 	/**
 	 * the theoretical size of the window if there were no border
@@ -24,10 +30,10 @@ public interface BasicCountingInterface {
 	double validValues();
 	
 	/**
-	 * the count of values
-	 * a value is different to 0 and to Raster.noDataValue()
-	 * @return the count of values
+	 * the central value of the window
+	 * only available for sliding et selected windows
+	 * @return the central value
 	 */
-	double countValues();
+	double centralValue();
 
 }

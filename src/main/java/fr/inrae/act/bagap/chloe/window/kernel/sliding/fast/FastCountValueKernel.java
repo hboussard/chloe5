@@ -4,7 +4,7 @@ public abstract class FastCountValueKernel extends FastQualitativeKernel {
 
 	public FastCountValueKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters){
 		super(windowSize, displacement, noDataValue, values, unfilters);
-		setNValuesTot(values.length+4);
+		setNValuesTot(values.length+5);
 	}
 	
 	@Override
@@ -16,57 +16,34 @@ public abstract class FastCountValueKernel extends FastQualitativeKernel {
 		for(i=0; i<nValuesTot(); i++) {
 			buf()[x][i] = 0;
 		}
+		float coeff;
+		float nb = 0;
+		float nb_nodata = 0;
+		float nb_zero = 0;
 		for (dy = -rayon() +1; dy < rayon(); dy++) {
 			if(((y + dy) >= 0) && ((y + dy) < height())){
 				
 				v = (int) inDatas()[((y + dy) * width()) + x];
-				
+				coeff = coeff(dy);
+				//buf()[x][2] += coeff; 
+				nb += coeff;
 				if(v == noDataValue()){
-					mv = 1;
+					//mv = 3;
+					nb_nodata += coeff;
 				}else if(v==0){
-					mv = 2;
+					//mv = 4;
+					nb_zero += coeff;
 				}else{
-					mv = mapValues()[v] + 4;
+					mv = mapValues()[v] + 5;
+					buf()[x][mv] += coeff;
 				}
-				
-				buf()[x][mv] += coeff(dy);
 			}
 		}
-	}
-	
-	@Override
-	protected void processHorizontalPixel(int x, int line) {
 		
-		int y = line / displacement();
-		int ind = y * ((width()-1-bufferROIXMin()-bufferROIXMax())/displacement()+1) + x;
+		buf()[x][2] = nb;
+		buf()[x][3] = nb_nodata;
+		buf()[x][4] = nb_zero;
 		
-		//outDatas()[ind][3] = (int) inDatas()[((theY() + line)* width()) + x*displacement()+bufferROIXMin()]; // valeur pixel central
-		outDatas()[ind][3] = (int) inDatas()[((theY() + line + bufferROIYMin())* width()) + x*displacement()+bufferROIXMin()]; // valeur pixel central
-		
-		//if(filter((int) inDatas()[((theY() + line)* width()) + x*displacement()+bufferROIXMin()])){ // gestion des filtres
-		if(filter((int) inDatas()[((theY() + line + bufferROIYMin())* width()) + x*displacement()+bufferROIXMin()])){ // gestion des filtres
-			
-			outDatas()[ind][0] = 1; // filtre ok 
-			
-			int x_buf = x*displacement()+bufferROIXMin();
-			float val;
-			for(int value=1; value<nValuesTot(); value++) {
-				if(value==3){
-					continue;
-				}
-				val = 0;
-				for(int i=max(x_buf-rayon()+1,0); i<min(x_buf+rayon(), width()); i++) {
-					val += buf()[i][value] * coeff(i-x_buf);
-				}
-				outDatas()[ind][value] = val;
-			}
-			
-		}else{
-			// filtre pas ok
-			for(int value=0; value<nValuesTot(); value++) {
-				outDatas()[ind][value] = 0;
-			}
-		}
 	}
 	
 }

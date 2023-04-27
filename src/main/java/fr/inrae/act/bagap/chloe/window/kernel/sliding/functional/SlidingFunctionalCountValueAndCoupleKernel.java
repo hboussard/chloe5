@@ -48,15 +48,15 @@ public class SlidingFunctionalCountValueAndCoupleKernel extends SlidingFunctiona
 			
 			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
 			
-			for(int i=0; i<outDatas()[0].length; i++){
-				outDatas()[ind][i] = 0f;
-			}
-			
-			outDatas()[ind][3] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
-			
-			if(filter((int) inDatas()[(y * width()) + x])){ // gestion des filtres
-				
+			if(!hasFilter() || filterValue((int) inDatas()[(y * width()) + x])){ // gestion des filtres
+					
 				outDatas()[ind][0] = 1; // filtre ok 
+				
+				outDatas()[ind][1] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
+			
+				for(int i=2; i<outDatas()[0].length; i++){
+					outDatas()[ind][i] = 0f;
+				}
 				
 				final int mid = windowSize() / 2;
 				
@@ -72,6 +72,12 @@ public class SlidingFunctionalCountValueAndCoupleKernel extends SlidingFunctiona
 				short v, v_H, v_V;
 				int mv;
 				float coeff;
+				float nb = 0;
+				float nb_nodata = 0;
+				float nb_zero = 0;
+				float nbC = 0;
+				float nbC_nodata = 0;
+				float nbC_zero = 0;
 				for (int dy = -mid; dy <= mid; dy += 1) {
 					if(((y + dy) >= 0) && ((y + dy) < height())){
 						for (int dx = -mid; dx <= mid; dx += 1) {
@@ -80,28 +86,34 @@ public class SlidingFunctionalCountValueAndCoupleKernel extends SlidingFunctiona
 								coeff = coeff()[ic];
 								if(coeff > 0){
 									v = (short) inDatas()[((y + dy) * width()) + (x + dx)];
-									
+									//outDatas()[ind][2] += coeff;
+									nb += coeff;
 									if(v == noDataValue()){
-										outDatas()[ind][1] += coeff;
+										//outDatas()[ind][3] += coeff;
+										nb_nodata += coeff;
 									}else if(v == 0){
-										outDatas()[ind][2] += coeff;
+										//outDatas()[ind][4] += coeff;
+										nb_zero += coeff;
 									}else{
 										mv = mapValues[v];
-										outDatas()[ind][mv+4] += coeff;
+										outDatas()[ind][mv+5] += coeff;
 									}
 									
 									if((dy > -mid) && ((y + dy) > 0)) {
 										ic_V = ((dy+mid-1) * windowSize()) + (dx+mid);
 										if(coeff()[ic_V] > 0){
 											v_V = (short) inDatas()[((y + dy - 1) * width()) + (x + dx)];
-											
+											//outDatas()[ind][nbValues+5] += coeff;
+											nbC += coeff;
 											if(v == noDataValue() || v_V == noDataValue()){
-												outDatas()[ind][nbValues+4] += coeff;
+												//outDatas()[ind][nbValues+6] += coeff;
+												nbC_nodata += coeff;
 											}else if(v == 0 || v_V == 0){
-												outDatas()[ind][nbValues+5] += coeff;
+												//outDatas()[ind][nbValues+7] += coeff;
+												nbC_zero += coeff;
 											}else{
 												mv = mapCouples[mapValues[v]][mapValues[v_V]];
-												outDatas()[ind][nbValues+mv+6] += coeff;
+												outDatas()[ind][nbValues+mv+8] += coeff;
 											}
 										}
 									}
@@ -110,14 +122,17 @@ public class SlidingFunctionalCountValueAndCoupleKernel extends SlidingFunctiona
 										ic_H = ((dy+mid) * windowSize()) + (dx+mid-1);
 										if(coeff()[ic_H] > 0){
 											v_H = (short) inDatas()[((y + dy) * width()) + (x + dx - 1)];
-											
+											//outDatas()[ind][nbValues+5] += coeff;
+											nbC += coeff;
 											if(v == noDataValue() || v_H == noDataValue()){
-												outDatas()[ind][nbValues+4] += coeff;
+												//outDatas()[ind][nbValues+6] += coeff;
+												nbC_nodata += coeff;
 											}else if(v == 0 || v_H == 0){
-												outDatas()[ind][nbValues+5] += coeff;
+												//outDatas()[ind][nbValues+7] += coeff;
+												nbC_zero += coeff;
 											}else{
 												mv = mapCouples[mapValues[v]][mapValues[v_H]];
-												outDatas()[ind][nbValues+mv+6] += coeff;
+												outDatas()[ind][nbValues+mv+8] += coeff;
 											}
 										}
 									}
@@ -126,6 +141,18 @@ public class SlidingFunctionalCountValueAndCoupleKernel extends SlidingFunctiona
 						}
 					}
 				}
+				
+				outDatas()[ind][2] = nb;
+				outDatas()[ind][3] = nb_nodata;
+				outDatas()[ind][4] = nb_zero;
+				outDatas()[ind][nbValues+5] = nbC;
+				outDatas()[ind][nbValues+6] = nbC_nodata;
+				outDatas()[ind][nbValues+7] = nbC_zero;
+				
+			}else{
+				
+				outDatas()[ind][0] = 0; // filtre pas ok 
+			
 			}
 		}
 	}

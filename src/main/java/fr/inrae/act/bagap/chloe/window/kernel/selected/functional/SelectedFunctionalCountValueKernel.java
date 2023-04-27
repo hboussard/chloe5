@@ -25,13 +25,9 @@ public class SelectedFunctionalCountValueKernel extends SelectedFunctionalKernel
 	@Override
 	protected void processPixel(Pixel p, int x, int y) {
 		
-		for(int i=0; i<outDatas().get(p).length; i++){
-			outDatas().get(p)[i] = 0f;
-		}
-		
 		outDatas().get(p)[0] = 1; // filtre ok
 			
-		outDatas().get(p)[3] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
+		outDatas().get(p)[1] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
 			
 		final int mid = windowSize() / 2;
 				
@@ -54,14 +50,15 @@ public class SelectedFunctionalCountValueKernel extends SelectedFunctionalKernel
 						ic = ((dy+mid) * windowSize()) + (dx+mid);
 						coeff = coeff()[ic];
 						if(coeff > 0){
-							v = (int) inDatas()[((y + dy) * width()) + (x + dx)];		
+							v = (int) inDatas()[((y + dy) * width()) + (x + dx)];
+							outDatas().get(p)[2] += coeff;
 							if(v == noDataValue()){
-								outDatas().get(p)[1] += coeff;
+								outDatas().get(p)[3] += coeff;
 							}else if(v == 0){
-								outDatas().get(p)[2] += coeff;
+								outDatas().get(p)[4] += coeff;
 							}else{
 								mv = mapValues[v];
-								outDatas().get(p)[mv+4] += coeff;	
+								outDatas().get(p)[mv+5] += coeff;	
 							}
 						}
 					}

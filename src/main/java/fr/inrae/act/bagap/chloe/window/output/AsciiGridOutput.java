@@ -3,21 +3,17 @@ package fr.inrae.act.bagap.chloe.window.output;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Map;
 import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.element.manager.DynamicLayerFactory;
 import fr.inra.sad.bagap.apiland.core.element.manager.Tool;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.matrix.MatrixManager;
+import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
-public class AsciiGridOutput implements CountingObserver{
-
-	private final DecimalFormat format;
+public class AsciiGridOutput implements CountingObserver {
 	
 	private final String file;
 	
@@ -42,9 +38,6 @@ public class AsciiGridOutput implements CountingObserver{
 		this.yllCorner = yllCorner;
 		this.cellSize = cellSize;
 		this.noDataValue = noDataValue;
-		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-		symbols.setDecimalSeparator('.');
-		format = new DecimalFormat("0.00000", symbols);
 	}
 
 	@Override
@@ -71,13 +64,12 @@ public class AsciiGridOutput implements CountingObserver{
 
 	@Override
 	public void prerun(Counting c) {
+		// do nothing;
 	}
 
 	@Override
-	public void postrun(Counting c, int x, int y, Map<Metric, Double> values) {
-		//System.out.println(metric+" "+values.get(metric));
-		//sb.append(values.get(metric)+" ");
-		sb.append(format(values.get(metric)));
+	public void postrun(Counting c, int x, int y, Set<Metric> metrics) {
+		sb.append(Util.format(metric.value()));
 		sb.append(' ');
 		currentWidth++;
 		
@@ -94,8 +86,8 @@ public class AsciiGridOutput implements CountingObserver{
 	}
 	
 	@Override
-	public void postrun(Counting c, int id, Map<Metric, Double> values) {
-		// do nothing
+	public void postrun(Counting c, int id, Set<Metric> metrics) {
+		// do nothing;
 	}
 	
 	@Override
@@ -111,14 +103,6 @@ public class AsciiGridOutput implements CountingObserver{
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	protected String format(double v){
-		int f = new Double(Math.floor(v)).intValue();
-		if(v == f){
-			return f+"";
-		}
-		return format.format(v);
 	}
 
 }

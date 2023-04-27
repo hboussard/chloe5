@@ -140,7 +140,7 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 			
 			kernel = new GridQuantitativeKernel(gridSize, Raster.getNoDataValue());
 				
-			counting = new QuantitativeCounting(0, nbValues, theoreticalSize);
+			counting = new QuantitativeCounting(theoreticalSize);
 			
 				
 		}else{ // qualitative
@@ -174,11 +174,11 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 						
 					System.out.println("comptage des valeurs");
 						
-					nbValues = 4 + values.length;
+					nbValues = 5 + values.length;
 						
 					kernel = new GridCountValueKernel(gridSize, Raster.getNoDataValue(), values);
 							
-					counting = new ValueCounting(0, nbValues, values, theoreticalSize);	
+					counting = new ValueCounting(values, theoreticalSize);	
 						
 				}else if(MetricManager.hasOnlyCoupleMetric(metrics)){
 					
@@ -188,13 +188,13 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 						
 					kernel = new GridCountCoupleKernel(gridSize, Raster.getNoDataValue(), values);
 						
-					counting = new CoupleCounting(0, nbValues, values.length, couples, theoreticalCoupleSize);
+					counting = new CoupleCounting(values.length, couples, theoreticalSize, theoreticalCoupleSize);
 					
 				}else{
 					
 					System.out.println("comptage des valeurs et des couples");
 
-					nbValues = 4 + values.length + 2 + couples.length;
+					nbValues = 5 + values.length + 3 + couples.length;
 						
 					kernel = new GridCountValueAndCoupleKernel(gridSize, Raster.getNoDataValue(), values);
 										
@@ -205,11 +205,11 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 					
 				System.out.println("comptage des patchs");
 					
-				nbValues = 4 + 3*values.length;
+				nbValues = 7 + 3*values.length;
 						
 				kernel = new GridPatchKernel(gridSize, Raster.getNoDataValue(), values, inCellSize);
 					
-				counting = new PatchCounting(values);
+				counting = new PatchCounting(values, theoreticalSize);
 					
 			}	
 		}

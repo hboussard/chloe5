@@ -16,16 +16,246 @@ import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffReader;
 import org.geotools.image.util.ImageUtilities;
 
-import fr.inra.sad.bagap.apiland.analysis.matrix.CoverageManager;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.matrix.MatrixManager;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
+import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.raster.CoverageManager;
+import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.raster.Tile;
+import fr.inrae.act.bagap.raster.TileCoverage;
 
 public class Script {
 
 	public static void main(String[] args){
-		scriptTestOutput();
+		scriptTestTileCoverageZA();
+	}
+	
+	private static void scriptTestTileCoverageZA(){
+		
+		String path = "H:/temp/tile_coverage/";
+		
+		//Coverage coverage = CoverageManager.getCoverage(path+"mean/");
+		//Coverage coverage = CoverageManager.getCoverage(path+"little/");
+		Coverage coverage = CoverageManager.getCoverage(path+"very_little/");
+		Tile tile = Tile.getTile((TileCoverage) coverage);
+		System.out.println(tile);
+	
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		//builder.setRasterFile("G:/chloe/winterschool/data/start/za.tif");
+		builder.setRasterFile("G:/data/sig/bretagne/Bretagne_2019_dispositif_bocage_ebr.tif");
+		builder.setWindowSize(501);
+		builder.setDisplacement(40);
+		
+		//builder.setUnfilters(new int[]{-1});
+		
+		/*
+		builder.setROIX(1000);
+		builder.setROIY(1000);
+		builder.setROIWidth(5000);
+		builder.setROIHeight(5000);
+		*/
+		
+		builder.addMetric("Majority");
+		builder.addTileGeoTiffOutput("Majority", path+"majority_501p/", tile);
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		long begin = System.currentTimeMillis();
+	
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+	
+	private static void scriptTestTileCoverage(){
+		
+		String path = "H:/temp/tile_coverage/";
+		
+		Coverage coverage = CoverageManager.getCoverage(path+"mean/");
+		//Coverage coverage = CoverageManager.getCoverage(path+"little/");
+		Tile tile = Tile.getTile((TileCoverage) coverage);
+		System.out.println(tile);
+	
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		builder.setCoverage(coverage);
+		builder.setWindowSize(21);
+		//builder.setDisplacement(20);
+		
+		builder.setUnfilters(new int[]{-1});
+		
+		/*
+		builder.setROIX(1000);
+		builder.setROIY(1000);
+		builder.setROIWidth(5000);
+		builder.setROIHeight(5000);
+		*/
+		
+		builder.addMetric("average");
+		//builder.addAsciiGridOutput("average", path+"zone_average_201p_d20.asc"); 
+		builder.addTileAsciiGridOutput("average", path+"average/", tile);
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		long begin = System.currentTimeMillis();
+	
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+	
+	private static void scriptTestGenerateTileCoverage(){
+		
+		System.out.println("importation des tuiles");
+		Coverage cov = CoverageManager.getCoverage("H:/temp/tile_coverage/little/");
+		
+		//System.out.println("recuperation des donnees");
+		//float[] datas = cov.getDatas();
+		
+		//System.out.println("recuperation de l'entete");
+		//EnteteRaster entete = cov.getEntete();
+		
+		//System.out.println("exportation du raster");
+		//CoverageManager.writeGeotiff("H:/temp/tile_coverage/test_35.tif", datas, entete);
+		
+		/*
+		Rectangle localRoi = new Rectangle(500, 2000, 2000, 2000);
+		
+		System.out.println("recuperation des donnees locales");
+		float[] roiDatas = cov.getDatas(localRoi);
+		
+		System.out.println("recuperation de l'entete locale");
+		EnteteRaster roiEntete = EnteteRaster.getEntete(cov.getEntete(), localRoi);
+		
+		System.out.println("exportation du raster local");
+		CoverageManager.writeGeotiff("H:/temp/tile_coverage/test_35_local.tif", roiDatas, roiEntete);
+		*/
+		
+		Rectangle localRoi = new Rectangle(500, 1500, 2000, 2000);
+		
+		System.out.println("recuperation des donnees locales");
+		float[] roiDatas = cov.getDatas(localRoi);
+		
+		System.out.println("recuperation de l'entete locale");
+		EnteteRaster roiEntete = EnteteRaster.getEntete(cov.getEntete(), localRoi);
+		
+		System.out.println("exportation du raster local");
+		CoverageManager.writeGeotiff("H:/temp/tile_coverage/test_35_local2.tif", roiDatas, roiEntete);
+	}
+	
+	private static void scriptTestSliding(){
+
+		String path = "G:/chloe/winterschool/data/start/";
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		//builder.setAnalysisType(WindowAnalysisType.SLIDING);
+		//builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+		//builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		//builder.setWindowShapeType(WindowShapeType.SQUARE);
+		//builder.setWindowDistanceType(WindowDistanceType.FAST_SQUARE);
+		builder.setRasterFile(path+"za.tif");
+		builder.setWindowSize(201);
+		builder.setDisplacement(20);
+		
+		//builder.setROIX(100);
+		//builder.setROIY(100);
+		//builder.setROIWidth(1000);
+		//builder.setROIHeight(1000);
+		
+		//builder.addMetric("SHDI");
+		/*
+		for(int i=1; i<12; i++){
+			builder.addMetric("pNV_"+i);
+			builder.addAsciiGridOutput("pNV_"+i, path+"nais/pnv_"+i+".asc"); 
+			for(int j=1; j<12; j++){
+				if(i<=j){
+					builder.addMetric("pNC_"+i+"-"+j);
+					builder.addAsciiGridOutput("pNC_"+i+"-"+j, path+"nais/pnv_"+i+"-"+j+".asc");
+				}
+			}
+		}
+		*/
+		//builder.addMetric("NV_5");
+		//builder.addMetric("NC_4-5");
+		//builder.addMetric("pNC_4-5");
+		
+		//builder.addAsciiGridOutput("NV_5", path+"sliding/nv_5.asc"); 
+		
+		//builder.addMetric("SHDI");
+		//builder.addAsciiGridOutput("SHDI", path+"sliding/mshdi_301p.asc"); 
+		
+		builder.addMetric("HET-frag");
+		//builder.addAsciiGridOutput("HET-frag", path+"sliding/mhet_201p.asc"); 
+		
+		//builder.addMetric("Central");
+		//builder.addAsciiGridOutput("Central", path+"fast/fcentral_201p_dep20.asc"); 
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		long begin = System.currentTimeMillis();
+	
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+	
+	private static void scriptTestEntity(){
+
+		String path = "G:/chloe/winterschool/data/start/";
+		
+		long begin = System.currentTimeMillis();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setRasterFile(path+"za.tif");
+		builder.setEntityRasterFile(path+"communes_za.asc");
+		
+		builder.addMetric("SHDI");
+		//builder.addMetric("NV_5");
+		//builder.addMetric("NC_4-5");
+		//builder.addMetric("pNC_4-5");
+		
+		//builder.addAsciiGridOutput("pNV_1", path+"area/pnv1.asc"); // marche pas...
+		
+		builder.addAsciiGridFolderOutput(path+"communes/");
+		//builder.addAsciiGridFolderOutput(path+"communes/double/");
+		//builder.addCsvOutput(path+"area/analyse_communes_za.csv");
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+	}
+	
+	
+	private static void scriptTestMinimumValidValue(){
+
+		String path = "G:/chloe/winterschool/data/start/";
+		
+		long begin = System.currentTimeMillis();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(path+"za_2018.asc");
+		builder.setWindowSize(51);
+		builder.setDisplacement(5);
+		builder.setMinRate(100);
+		builder.addMetric("SHDI");
+		builder.addAsciiGridOutput("SHDI", path+"valid/shdi_3.asc"); 
+	
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
 	}
 	
 	private static void scriptTestOutput(){
@@ -122,64 +352,6 @@ public class Script {
 		
 		builder.addMetric("average");
 		builder.addAsciiGridOutput("average", path+"fast/fgaverage_21p.asc"); 
-		
-		LandscapeMetricAnalysis analysis = builder.build();
-		
-		analysis.allRun();
-		
-		long end = System.currentTimeMillis();
-		System.out.println("time computing : "+(end - begin));
-	}
-	
-	private static void scriptTestSliding(){
-
-		String path = "G:/chloe/winterschool/data/start/";
-		
-		long begin = System.currentTimeMillis();
-		
-		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		//builder.setAnalysisType(WindowAnalysisType.SLIDING);
-		//builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
-		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
-		//builder.setWindowShapeType(WindowShapeType.SQUARE);
-		//builder.setWindowDistanceType(WindowDistanceType.FAST_SQUARE);
-		builder.setRasterFile(path+"za.tif");
-		builder.setWindowSize(201);
-		builder.setDisplacement(20);
-		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); // doivent etre classees
-		/*
-		builder.setROIX(100);
-		builder.setROIY(100);
-		builder.setROIWidth(1000);
-		builder.setROIHeight(1000);
-		*/
-		//builder.addMetric("SHDI");
-		/*
-		for(int i=1; i<12; i++){
-			builder.addMetric("pNV_"+i);
-			builder.addAsciiGridOutput("pNV_"+i, path+"nais/pnv_"+i+".asc"); 
-			for(int j=1; j<12; j++){
-				if(i<=j){
-					builder.addMetric("pNC_"+i+"-"+j);
-					builder.addAsciiGridOutput("pNC_"+i+"-"+j, path+"nais/pnv_"+i+"-"+j+".asc");
-				}
-			}
-		}
-		*/
-		//builder.addMetric("NV_5");
-		//builder.addMetric("NC_4-5");
-		//builder.addMetric("pNC_4-5");
-		
-		//builder.addAsciiGridOutput("NV_5", path+"sliding/nv_5.asc"); 
-		
-		builder.addMetric("SHDI");
-		builder.addAsciiGridOutput("SHDI", path+"sliding/fshdi_201p_dep20.asc"); 
-		/*
-		builder.addMetric("HET-frag");
-		builder.addAsciiGridOutput("HET-frag", path+"fast/double_roi_fhet_201p_dep20.asc"); 
-		*/
-		//builder.addMetric("Central");
-		//builder.addAsciiGridOutput("Central", path+"fast/fcentral_201p_dep20.asc"); 
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 		
@@ -293,37 +465,6 @@ public class Script {
 		//builder.addMetric("LPI");
 		
 		builder.addCsvOutput(path+"map/analyse.csv");
-		
-		LandscapeMetricAnalysis analysis = builder.build();
-		
-		analysis.allRun();
-		
-		long end = System.currentTimeMillis();
-		System.out.println("time computing : "+(end - begin));
-	}
-	
-	private static void scriptTestArea(){
-
-		String path = "G:/chloe/winterschool/data/start/";
-		
-		long begin = System.currentTimeMillis();
-		
-		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
-		builder.setRasterFile(path+"za.tif");
-		builder.setEntityRasterFile(path+"communes_za.asc");
-		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); // doivent etre classees
-		
-		//builder.addMetric("SHDI");
-		builder.addMetric("NV_5");
-		builder.addMetric("NC_4-5");
-		builder.addMetric("pNC_4-5");
-		
-		//builder.addAsciiGridOutput("pNV_1", path+"area/pnv1.asc"); // marche pas...
-		
-		builder.addAsciiGridFolderOutput(path+"communes4/");
-		//builder.addAsciiGridFolderOutput(path+"communes/double/");
-		//builder.addCsvOutput(path+"area/analyse_communes_za.csv");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 		

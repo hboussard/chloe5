@@ -4,66 +4,103 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
+
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
-import fr.inrae.act.bagap.chloe.window.metric.MetricObserver;
+//import fr.inrae.act.bagap.chloe.window.metric.MetricObserver;
 
 public abstract class Counting implements 
 	BasicCountingInterface, 
 	ValueCountingInterface,
 	CoupleCountingInterface,
 	QuantitativeCountingInterface,
-	PatchCountingInterface,
-	MetricObserver {
-
-	protected boolean validCounting;
+	PatchCountingInterface{//,
+	//MetricObserver {
 	
 	/**
-	 * minimum rate of non missing values
+	 * minimum rate of valid values
 	 */
-	protected static double minRate = 0;
+	private static double minRate = 0;
 	
-	private final int minRange, maxRange;
+	/**
+	 * the validity of the counting
+	 */
+	private boolean validCounting;
+	
+	private double theoreticalSize;
+	
+	private double centralValue;
+	
+	private double totalValues;
+	
+	private double validValues;
 	
 	/**
 	 * the metrics and values
 	 */
-	private Map<Metric, Double> metrics;
+	//private Map<Metric, Double> metrics;
+	
+	/**
+	 * the metrics
+	 */
+	private Set<Metric> metrics;
 	
 	/**
 	 * the observers
 	 */
 	private Set<CountingObserver> observers;
 	
-	public Counting(){
-		this(0 ,0);
-	}
-	
-	public Counting(int minRange, int maxRange){
-		this.minRange = minRange;
-		this.maxRange = maxRange;
-		metrics = new TreeMap<Metric, Double>();
+	public Counting(double theoreticalSize){
+		this.theoreticalSize = theoreticalSize;
+		//metrics = new TreeMap<Metric, Double>();
+		metrics = new TreeSet<Metric>();
 		observers = new HashSet<CountingObserver>();
 	}
 	
-	public int minRange(){
-		return this.minRange;
+	/**
+	 * partie commune :
+	 * 0 : validite du kernel selon les filtres
+	 * 1 : valeur pixel central (uniquement pour SLIDING et SELECTED, sinon 0)
+	 * 2 : nombre de pixels pris en compte
+	 * 3 : nombre de noDataValue
+	 */
+	public void setCounts(double[] counts){
+		
+		if(counts[0] == 1){
+			
+			totalValues = counts[2];
+			validValues = totalValues - counts[3];
+			
+			if(validValues/theoreticalSize >= minRate){
+				setValidCounting(true);
+			}else{
+				setValidCounting(false);
+				return;
+			}
+			
+			doSetCounts(counts);
+			
+			centralValue = counts[1];
+			
+		}else{
+			setValidCounting(false);
+		}
 	}
 	
-	public int maxRange(){
-		return this.maxRange;
-	}
-	
-	public abstract void setCounts(double[] counts);
+	// partie specifique
+	public abstract void doSetCounts(double[] counts);
 	
 	public void addMetric(Metric m){
-		metrics.put(m, (double) Raster.getNoDataValue());
-		m.addObserver(this);
+		//metrics.put(m, (double) Raster.getNoDataValue());
+		//m.addObserver(this);
+		metrics.add(m);
 	}
 	
 	public Set<Metric> metrics(){
-		return metrics.keySet();
+		//return metrics.keySet();
+		return metrics;
 	}
 	
 	public Set<CountingObserver> observers(){
@@ -77,28 +114,28 @@ public abstract class Counting implements
 	}
 	
 	public void close(){
-		for(Metric m : metrics()) {
-			m.closeObservers();
-		}
+		//for(Metric m : metrics()) {
+		//	m.closeObservers();
+		//}
 		for(CountingObserver co : observers) {
 			co.close(this, metrics());
 		}
 	}
 	
-	@Override
-	public void init(Metric m) {
-		metrics.put(m, (double) Raster.getNoDataValue());
-	}
+	//@Override
+	//public void init(Metric m) {
+	//	metrics.put(m, (double) Raster.getNoDataValue());
+	//}
 
-	@Override
-	public void notify(Metric m, double value) {
-		metrics.put(m, value);
-	}
+	//@Override
+	//public void notify(Metric m, double value) {
+	//	metrics.put(m, value);
+	//}
 
-	@Override
-	public void close(Metric m) {
-		// do nothing
-	}
+	//@Override
+	//public void close(Metric m) {
+	//	// do nothing
+	//}
 
 	public void addObserver(CountingObserver co) {
 		observers.add(co);
@@ -121,11 +158,37 @@ public abstract class Counting implements
 		doCalculate();
 	}
 	
-	protected abstract void doCalculate();
+	//protected abstract void doCalculate();
+	
+	private void doCalculate(){
+		if(validCounting()){
+			for(Metric m : metrics()){
+				m.calculate(this, "");
+			}
+		}else{
+			for(Metric m : metrics()){
+				m.unCalculate("");
+			}
+		}
+	}
+	
+	/*
+	protected void doCalculate(){
+		if(validCounting() && validValues()/theoreticalSize() >= minRate){
+			for(Metric m : metrics()){
+				m.calculate(this, "");
+			}
+		}else{
+			for(Metric m : metrics()){
+				m.unCalculate("");
+			}
+		}
+	}*/
 	
 	public void export(int x, int y) {
 		for(CountingObserver co : observers) {
 			co.postrun(this, x, y, metrics);
+			
 		}
 	}
 	
@@ -145,17 +208,22 @@ public abstract class Counting implements
 	
 	@Override
 	public double theoreticalSize(){
-		throw new UnsupportedOperationException();
+		return theoreticalSize;
 	}
 	
 	@Override
 	public double totalValues() {
-		throw new UnsupportedOperationException();
+		return totalValues;
 	}
 
 	@Override
 	public double validValues() {
-		throw new UnsupportedOperationException();
+		return validValues;
+	}
+	
+	@Override
+	public double centralValue(){
+		return centralValue;
 	}
 	
 	@Override
@@ -244,6 +312,11 @@ public abstract class Counting implements
 	}
 	
 	@Override
+	public double squareSum() {
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
 	public double minimum(){
 		throw new UnsupportedOperationException();
 	}
@@ -254,37 +327,32 @@ public abstract class Counting implements
 	}
 
 	@Override
-	public int getNbPatches(){
+	public int nbPatches(){
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public double getTotalSurface(){
+	public double totalSurface(){
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public double getMaxSurface(){
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public float centralValue(){
+	public double maxSurface(){
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public int getNbPatches(int v){
+	public int nbPatches(int v){
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public double getTotalSurface(int v){
+	public double totalSurface(int v){
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public double getMaxSurface(int v){
+	public double maxSurface(int v){
 		throw new UnsupportedOperationException();
 	}
 }

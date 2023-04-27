@@ -39,20 +39,20 @@ public class DataOutput implements CountingObserver{
 	}
 
 	@Override
-	public void postrun(Counting c, int x, int y, Map<Metric, Double> values) {
+	public void postrun(Counting c, int x, int y, Set<Metric> metrics) {
 		// stockage de la valeur
 		for(PixelWithID rp : pixels){
 			if(rp.x() == x && rp.y() == y){
-				internalDatas.put(rp, new Double(values.get(metric)).floatValue());
+				internalDatas.put(rp, new Double(metric.value()).floatValue());
 				break;
 			}
 		}
 		//internalDatas.put(new Pixel(x, y), new Double(values.get(metric)).floatValue());
-		System.out.println(x+" "+y+" : "+new Double(values.get(metric)).floatValue());
+		//System.out.println(x+" "+y+" : "+new Double(values.get(metric)).floatValue());
 	}
 	
 	@Override
-	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// do nothing
 	}
 	

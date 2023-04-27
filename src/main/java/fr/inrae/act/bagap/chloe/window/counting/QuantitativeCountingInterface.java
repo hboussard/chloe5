@@ -15,6 +15,12 @@ public interface QuantitativeCountingInterface {
 	double sum();
 	
 	/**
+	 * to get the squaresum
+	 * @return the square sum of values
+	 */
+	double squareSum();
+	
+	/**
 	 * to get the standard deviation
 	 * @return the standard deviation of values
 	 */
@@ -31,10 +37,5 @@ public interface QuantitativeCountingInterface {
 	 * @return the maximum of values
 	 */
 	double maximum();
-	
-	/**
-	 * to get the central value
-	 * @return the central value
-	 */
-	float centralValue();
+
 }

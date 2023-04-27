@@ -11,7 +11,7 @@ public class SurfaceIndex extends Metric implements PatchMetric {
 
 	@Override
 	protected void doCalculate(Counting co) {
-		value = co.getTotalSurface();
+		value = co.totalSurface();
 	}
 
 }

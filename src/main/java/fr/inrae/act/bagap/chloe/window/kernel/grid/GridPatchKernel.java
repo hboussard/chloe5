@@ -18,11 +18,11 @@ public class GridPatchKernel extends GridLandscapeMetricKernel {
 	@Override
 	protected void processGrid(int x, int theY) {
 		
-		for(int i=0; i<outDatas()[0].length; i++){
+		outDatas()[x][0] = 1; // filtre ok
+		
+		for(int i=1; i<outDatas()[0].length; i++){
 			outDatas()[x][i] = 0f;
 		}
-		
-		outDatas()[x][0] = 1; // filtre ok
 			
 		int v;	
 		int[] tabCover = new int[gridSize()*gridSize()];
@@ -32,33 +32,36 @@ public class GridPatchKernel extends GridLandscapeMetricKernel {
 					if((x*gridSize() + lx) < width()){
 						
 						v = (int) inDatas()[((theY+y)*width()) + (x*gridSize() + lx)];		
-						
+						outDatas()[x][2] += 1;
+						if(v == noDataValue()){
+							outDatas()[x][3] += 1;
+						}
 						tabCover[y*gridSize() + lx] = v;
 					}
 				}
 			}
 		}
 		
-		ClusteringTabQueenAnalysis ca = new ClusteringTabQueenAnalysis(tabCover, gridSize(), gridSize(), values);
+		ClusteringTabQueenAnalysis ca = new ClusteringTabQueenAnalysis(tabCover, gridSize(), gridSize(), values, noDataValue());
 		int[] tabCluster = (int[]) ca.allRun();
 		
 		ClusteringTabOutput cto = new ClusteringTabOutput(tabCluster, tabCover, values, cellSize);
 		cto.allRun();
 		
-		outDatas()[x][1] = cto.getNbPatch();
-		outDatas()[x][2] = cto.getTotalSurface();
-		outDatas()[x][3] = cto.getMaxSurface();
+		outDatas()[x][4] = cto.getNbPatch();
+		outDatas()[x][5] = cto.getTotalSurface();
+		outDatas()[x][6] = cto.getMaxSurface();
 		
 		for(int i=0; i<values.length; i++){
-			outDatas()[x][i+4] = cto.getNbPatch(values[i]);
+			outDatas()[x][i+7] = cto.getNbPatch(values[i]);
 		}
 		
 		for(int i=0; i<values.length; i++){
-			outDatas()[x][i+4+values.length] = cto.getTotalSurface(values[i]);
+			outDatas()[x][i+7+values.length] = cto.getTotalSurface(values[i]);
 		}
 		
 		for(int i=0; i<values.length; i++){
-			outDatas()[x][i+4+2*values.length] = cto.getMaxSurface(values[i]);
+			outDatas()[x][i+7+2*values.length] = cto.getMaxSurface(values[i]);
 		}
 	}
 	

@@ -9,7 +9,7 @@ import fr.inrae.act.bagap.chloe.window.counting.Counting;
 public abstract class Metric implements Comparable<Metric> {
 	
 	/** the metric observers */
-	private Set<MetricObserver> observers;
+	//private Set<MetricObserver> observers;
 	
 	/** the name of the metric */
 	private String name;
@@ -21,7 +21,7 @@ public abstract class Metric implements Comparable<Metric> {
 	 * constructor
 	 */
 	public Metric(){
-		this.observers = new HashSet<MetricObserver>();
+		//this.observers = new HashSet<MetricObserver>();
 	}
 	
 	public Metric(String name) {
@@ -51,9 +51,9 @@ public abstract class Metric implements Comparable<Metric> {
 	 * to add an observer
 	 * @param o the observer
 	 */
-	public void addObserver(MetricObserver o){
-		observers.add(o);
-	}
+	//public void addObserver(MetricObserver o){
+	//	observers.add(o);
+	//}
 
 	/**
 	 * to calculate the metric on a specific process
@@ -62,12 +62,12 @@ public abstract class Metric implements Comparable<Metric> {
 	public final void calculate(Counting c, String pref){
 		value = Raster.getNoDataValue();
 		doCalculate(c);
-		notifyObservers(value, pref);
+		//notifyObservers(value, pref);
 	}
 	
 	public final void unCalculate(String pref){
 		value = Raster.getNoDataValue();
-		notifyObservers(value, pref);
+		//notifyObservers(value, pref);
 	}
 
 	protected abstract void doCalculate(Counting co);
@@ -78,16 +78,20 @@ public abstract class Metric implements Comparable<Metric> {
 	 * @param wp the calling process
 	 * @param pref the prefix of the metric name
 	 */
-	public void notifyObservers(double value, String pref){
-		for(MetricObserver o : observers){
-			o.notify(this, value);
-		}
-	}
+	//public void notifyObservers(double value, String pref){
+	//	for(MetricObserver o : observers){
+	//		o.notify(this, value);
+	//	}
+	//}
 	
-	public void closeObservers(){
-		for(MetricObserver o : observers){
-			o.close(this);
-		}
+	//public void closeObservers(){
+	//	for(MetricObserver o : observers){
+	//		o.close(this);
+	//	}
+	//}
+	
+	public double value(){
+		return value;
 	}
 	
 }

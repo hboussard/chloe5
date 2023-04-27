@@ -49,15 +49,17 @@ public class EntityCsvOutput implements CountingObserver{
 	}
 
 	@Override
-	public void postrun(Counting c, int x, int y, Map<Metric, Double> values) {
+	public void postrun(Counting c, int x, int y, Set<Metric> metrics) {
 		// do nothing
 	}
 
 	@Override
-	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		try {
 			bw.write((id+""));
-			for(double v : values.values()){
+			double v;
+			for(Metric m : metrics){
+				v = m.value();
 				bw.write((";"+format.format(v)));
 			}
 			bw.newLine();

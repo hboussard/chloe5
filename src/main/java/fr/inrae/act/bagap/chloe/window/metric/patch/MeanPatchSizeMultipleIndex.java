@@ -24,8 +24,8 @@ public class MeanPatchSizeMultipleIndex extends Metric implements PatchMetric {
 		double totalSurface = 0.0;
 		int nbPatches = 0;
 		for(short vv : v){
-			totalSurface += co.getTotalSurface(vv);
-			nbPatches += co.getNbPatches(vv);
+			totalSurface += co.totalSurface(vv);
+			nbPatches += co.nbPatches(vv);
 		}
 		if(nbPatches > 0){
 			value = (double) totalSurface / nbPatches;

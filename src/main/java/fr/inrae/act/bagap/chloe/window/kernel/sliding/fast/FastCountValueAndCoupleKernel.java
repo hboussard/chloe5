@@ -27,7 +27,7 @@ public abstract class FastCountValueAndCoupleKernel extends FastQualitativeKerne
 				}
 			}
 		}
-		setNValuesTot(4 + values.length + 2 + index);
+		setNValuesTot(5 + values.length + 3 + index);
 	}
 	
 	@Override
@@ -35,85 +35,81 @@ public abstract class FastCountValueAndCoupleKernel extends FastQualitativeKerne
 		
 		int y = theY() + line + bufferROIYMin();
 		int i, dy, v, mv, v_V, v_H;
-		float c;
+		float coeff;
 		for(i=0;i<nValuesTot();i++) {
 			buf()[x][i] = 0;
 		}
-		
+		float nb = 0;
+		float nb_nodata = 0;
+		float nb_zero = 0;
+		float nbC = 0;
+		float nbC_nodata = 0;
+		float nbC_zero = 0;
 		for (dy = -rayon()+1; dy < rayon(); dy++) {
 			if(((y + dy) >= 0) && ((y + dy) < height())){
 				
 				v = (int) inDatas()[((y + dy) * width()) + x];
-				c = coeff(dy);	
+				coeff = coeff(dy);	
+				
+				//buf()[x][2] += coeff;
+				nb += coeff;
 				
 				if(v == noDataValue()){
-					mv = 1;
+					//mv = 3;
+					nb_nodata += coeff;
 				}else if(v==0){
-					mv = 2;
+					//mv = 4;
+					nb_zero += coeff;
 				}else{
-					mv = mapValues()[v] + 4;
+					mv = mapValues()[v] + 5;
+					buf()[x][mv] += coeff;
 				}
-				buf()[x][mv] += c;
 				
 				int mc;
 				if(y+dy>0) {
 					v_V = (int) inDatas()[((y + dy - 1) * width()) + x];
+					//buf()[x][nValues + 5] += coeff;
+					nbC += coeff;
+					
 					if(v == noDataValue() || v_V == noDataValue()){
-						mc = nValues + 4;
+						//mc = nValues + 6;
+						nbC_nodata += coeff;
 					}else if (v==0 || v_V == 0){
-						mc = nValues + 5;
+						//mc = nValues + 7;
+						nbC_zero += coeff;
 					}else{
-						mc = nValues + 6 + mapCouples[mapValues()[v]][mapValues()[v_V]];
+						mc = nValues + 8 + mapCouples[mapValues()[v]][mapValues()[v_V]];
+						buf()[x][mc] += coeff;
 					}
-					buf()[x][mc] += c;
+					
 				}
 				
 				if(x>0) {
 					v_H = (int) inDatas()[((y + dy) * width()) + x - 1];
+					//buf()[x][nValues + 5] += coeff;
+					nbC += coeff;
 					if(v == noDataValue() || v_H == noDataValue()){
-						mc = nValues + 4;
+						//mc = nValues + 6;
+						nbC_nodata += coeff;
 					}else if (v==0 || v_H == 0){
-						mc = nValues + 5;
+						//mc = nValues + 7;
+						nbC_zero += coeff;
 					}else{
-						mc = nValues + 6 + mapCouples[mapValues()[v]][mapValues()[v_H]];
+						mc = nValues + 8 + mapCouples[mapValues()[v]][mapValues()[v_H]];
+						buf()[x][mc] += coeff;
 					}
-					buf()[x][mc] += c;
+					
 				}
 			}
 		}
-	}
-
-	@Override
-	protected void processHorizontalPixel(int x, int line) {
-
-		int y = line / displacement();
-		int ind = y * ((width()-1-bufferROIXMin()-bufferROIXMax())/displacement()+1) + x;
 		
-		outDatas()[ind][3] = (int) inDatas()[((theY() + line + bufferROIYMin()) * width()) + x*displacement() + bufferROIXMin()]; // valeur pixel central
+		buf()[x][2] = nb;
+		buf()[x][3] = nb_nodata;
+		buf()[x][4] = nb_zero;
+		buf()[x][nValues+5] = nbC;
+		buf()[x][nValues+6] = nbC_nodata;
+		buf()[x][nValues+7] = nbC_zero;
 		
-		if(filter((int) inDatas()[((theY() + line + bufferROIYMin())* width()) + x*displacement()+bufferROIXMin()])){ // gestion des filtres
-			
-			outDatas()[ind][0] = 1; // filtre ok
-		
-			int x_buf = x * displacement() + bufferROIXMin();
-			float val;
-			for(int value=1; value<nValuesTot(); value++) {
-				if(value==3){
-					continue;
-				}
-				val = 0;
-				for(int i=max(x_buf-rayon()+1, 0); i<min(x_buf+rayon(), width()); i++) {
-					val += buf()[i][value] * coeff(i-x_buf);
-				}
-				outDatas()[ind][value] = val;
-			}
-			
-		}else{
-			// filtre pas ok
-			for(int value=0; value<nValuesTot(); value++) {
-				outDatas()[ind][value] = 0;
-			}			
-		}
 	}
 	
 	@Override

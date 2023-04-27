@@ -39,6 +39,7 @@ public class CsvOutput2 implements CountingObserver{
 		this.noDataValue = noDataValue;
 	}
 	
+	@Override
 	public void init(Counting c, Set<Metric> metrics) {
 
 		this.x = minX + cellSize/2.0;
@@ -81,6 +82,7 @@ public class CsvOutput2 implements CountingObserver{
 		}
 	}
 	
+	@Override
 	public void prerun(Counting c) {
 		try {
 			bout.write((x+";"+y).getBytes());
@@ -89,9 +91,12 @@ public class CsvOutput2 implements CountingObserver{
 		}
 	}
 
-	public void postrun(Counting c, int i, int j, Map<Metric, Double> values) {
+	@Override
+	public void postrun(Counting c, int i, int j, Set<Metric> metrics) {
 		try {
-			for(double v : values.values()){
+			double v;
+			for(Metric m : metrics){
+				v = m.value();
 				bout.write((";"+v).getBytes());
 			}
 			bout.write("\n".getBytes());
@@ -106,6 +111,7 @@ public class CsvOutput2 implements CountingObserver{
 		}
 	}
 
+	@Override
 	public void close(Counting c, Set<Metric> metrics) {
 		try {
 			bout.close();
@@ -115,7 +121,7 @@ public class CsvOutput2 implements CountingObserver{
 	}
 	
 	@Override
-	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// do nothing
 	}
 

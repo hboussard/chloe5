@@ -3,7 +3,6 @@ package fr.inrae.act.bagap.chloe.window.output;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Set;
 
 import fr.inrae.act.bagap.chloe.util.Util;
@@ -84,12 +83,14 @@ public class CsvOutput implements CountingObserver{
 	}
 
 	@Override
-	public void postrun(Counting c, int i, int j, Map<Metric, Double> values) {
+	public void postrun(Counting c, int i, int j, Set<Metric> metrics) {
 		
 		try {
 			boolean export = false;
 			StringBuffer sb = new StringBuffer(x+";"+y);
-			for(double v : values.values()){
+			double v;
+			for(Metric m : metrics){
+				v = m.value();
 				if(v != noDataValue){
 					export = true;
 				}
@@ -123,7 +124,7 @@ public class CsvOutput implements CountingObserver{
 	}
 	
 	@Override
-	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// do nothing
 	}
 

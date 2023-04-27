@@ -23,18 +23,22 @@ public class SlidingPatchKernel extends SlidingLandscapeMetricKernel {
 			
 			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
 			
-			for(int i=0; i<outDatas()[0].length; i++){
-				outDatas()[ind][i] = 0f;
-			}
-			
-			if(filter((int) inDatas()[(y * width()) + x])){ // gestion des filtres
+			if(!hasFilter() || filterValue((int) inDatas()[(y * width()) + x])){ // gestion des filtres
 				
 				outDatas()[ind][0] = 1; // filtre ok 
+				
+				outDatas()[ind][1] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
+				
+				for(int i=2; i<outDatas()[0].length; i++){
+					outDatas()[ind][i] = 0f;
+				}
 				
 				final int mid = windowSize() / 2;
 				int ic;
 				int v;
 				float coeff;
+				float nb = 0;
+				float nb_nodata = 0;
 				int[] tabCover = new int[windowSize()*windowSize()];
 				for (int dy = -mid; dy <= mid; dy += 1) {
 					if(((y + dy) >= 0) && ((y + dy) < height())){
@@ -44,6 +48,12 @@ public class SlidingPatchKernel extends SlidingLandscapeMetricKernel {
 								coeff = coeff()[ic];
 								if(coeff > 0){
 									v = (int) inDatas()[((y + dy) * width()) + (x + dx)];
+									//outDatas()[ind][2] += coeff;
+									nb += coeff;
+									if(v == noDataValue()){
+										//outDatas()[ind][3] += coeff;
+										nb_nodata += coeff;
+									}
 									tabCover[(dy+mid)*windowSize() + (dx+mid)] = v;	
 								}
 							}
@@ -51,28 +61,34 @@ public class SlidingPatchKernel extends SlidingLandscapeMetricKernel {
 					}
 				}
 				
-				ClusteringTabQueenAnalysis ca = new ClusteringTabQueenAnalysis(tabCover, windowSize(), windowSize(), values);
+				ClusteringTabQueenAnalysis ca = new ClusteringTabQueenAnalysis(tabCover, windowSize(), windowSize(), values, noDataValue());
 				int[] tabCluster = (int[]) ca.allRun();
 				
 				ClusteringTabOutput cto = new ClusteringTabOutput(tabCluster, tabCover, values, cellSize);
 				cto.allRun();
 				
-				outDatas()[ind][1] = cto.getNbPatch();
-				outDatas()[ind][2] = cto.getTotalSurface();
-				outDatas()[ind][3] = cto.getMaxSurface();
+				outDatas()[ind][2] = nb;
+				outDatas()[ind][3] = nb_nodata;
+				outDatas()[ind][4] = cto.getNbPatch();
+				outDatas()[ind][5] = cto.getTotalSurface();
+				outDatas()[ind][6] = cto.getMaxSurface();
 				
 				for(int i=0; i<values.length; i++){
-					outDatas()[ind][i+4] = cto.getNbPatch(values[i]);
+					outDatas()[ind][i+7] = cto.getNbPatch(values[i]);
 				}
 				
 				for(int i=0; i<values.length; i++){
-					outDatas()[ind][i+4+values.length] = cto.getTotalSurface(values[i]);
+					outDatas()[ind][i+7+values.length] = cto.getTotalSurface(values[i]);
 				}
 				
 				for(int i=0; i<values.length; i++){
-					outDatas()[ind][i+4+2*values.length] = cto.getMaxSurface(values[i]);
+					outDatas()[ind][i+7+2*values.length] = cto.getMaxSurface(values[i]);
 				}
 				
+			}else{
+				
+				outDatas()[ind][0] = 0; // filtre pas ok 
+			
 			}
 		}
 	}

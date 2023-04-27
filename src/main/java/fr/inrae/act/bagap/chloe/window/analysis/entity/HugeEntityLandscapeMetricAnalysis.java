@@ -66,6 +66,7 @@ public class HugeEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 				if(!kernel().outDatas().containsKey(aId)){
 					kernel().outDatas().put(aId, new double[nbValues()]);
 					kernel().outDatas().get(aId)[0] = 1; // filtre ok
+					kernel().outDatas().get(aId)[6] = Float.MAX_VALUE; // init minimum
 				}
 			}
 			

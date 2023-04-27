@@ -3,8 +3,6 @@ package fr.inrae.act.bagap.chloe.window.counting;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.inrae.act.bagap.chloe.window.metric.Metric;
-
 public class PatchCounting extends Counting implements PatchCountingInterface {
 	
 	private int[] values;
@@ -21,84 +19,75 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
 	
 	private Map<Integer, Double> maxSurfaces;
 	
- 	public PatchCounting(int[] values) {
-		super();
+ 	public PatchCounting(int[] values, double theoreticalSize){
+		super(theoreticalSize);
 		this.values = values;
 		nbPatches = new HashMap<Integer, Integer>();
 		totalSurfaces = new HashMap<Integer, Double>();
 		maxSurfaces = new HashMap<Integer, Double>();
 	}
  	
-	@Override
-	public void setCounts(double[] counts) {
-		
-		if(counts[0] == 1){
-			
-			setValidCounting(true);
-			
-			nbPatch = (int) counts[1];
-			totalSurface = counts[2];
-			maxSurface = counts[3];
-			
-			for(int i=0; i<values.length; i++){
-				nbPatches.put(values[i], (int) counts[i+4]);
-			}
-			
-			for(int i=0; i<values.length; i++){
-				totalSurfaces.put(values[i], counts[i+4+values.length]);
-			}
-			
-			for(int i=0; i<values.length; i++){
-				maxSurfaces.put(values[i], counts[i+4+2*values.length]);
-			}
-			
-		}else{
-			
-			setValidCounting(false);
-		}
+ 	public PatchCounting(int[] values){
+		this(values, 0);
 	}
-
-	@Override
-	protected void doCalculate() {
-		if(validCounting()){
-			for(Metric m : metrics()){
-				m.calculate(this, "");
-			}
-		}else{
-			for(Metric m : metrics()){
-				m.unCalculate("");
-			}
-		}
+ 	
+ 	/**
+	 * partie specifique :
+	 * 4 : nombre de pathes
+	 * 5 : surface totale
+	 * 6 : surface max
+	 * à partir de 7 jusqu'au nombre de valeurs + 7 : les nombres de patch par classe
+	 * à partir de nombre de valeurs + 7 jusqu'à 2*nombre de valeurs + 7 : les surfaces totales par classe
+	 * à partir de 2*nombre de valeurs + 7 jusqu'à 3*nombre de valeurs + 7 : les maximum de surfaces par classe
+	 */
+ 	@Override
+	public void doSetCounts(double[] counts) {
+		
+ 		nbPatch = (int) counts[4];
+ 		totalSurface = counts[5];
+ 		maxSurface = counts[6];
+			
+ 		for(int i=0; i<values.length; i++){
+ 			nbPatches.put(values[i], (int) counts[i+7]);
+ 		}
+			
+ 		for(int i=0; i<values.length; i++){
+ 			totalSurfaces.put(values[i], counts[i+7+values.length]);
+ 		}
+			
+ 		for(int i=0; i<values.length; i++){
+ 			maxSurfaces.put(values[i], counts[i+7+2*values.length]);
+ 		}	
 		
 	}
 
 	@Override
-	public double getTotalSurface() {
+	public double totalSurface() {
 		return totalSurface;
 	}
 
 	@Override
-	public int getNbPatches() {
+	public int nbPatches() {
 		return nbPatch;
 	}
 	
 	@Override
-	public double getMaxSurface(){
+	public double maxSurface(){
 		return maxSurface;
 	}
 	
 	@Override
-	public int getNbPatches(int v){
+	public int nbPatches(int v){
 		return nbPatches.get(v);
 	}
 
 	@Override
-	public double getTotalSurface(int v){
+	public double totalSurface(int v){
 		return totalSurfaces.get(v);
 	}
 
 	@Override
-	public double getMaxSurface(int v){
+	public double maxSurface(int v){
 		return maxSurfaces.get(v);
 	}
 	

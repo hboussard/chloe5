@@ -20,11 +20,11 @@ public class GridCountValueKernel extends GridLandscapeMetricKernel {
 	@Override
 	protected void processGrid(int x, int theY) {
 		
-		for(int i=0; i<outDatas()[0].length; i++){
+		outDatas()[x][0] = 1; // filtre ok
+		
+		for(int i=1; i<outDatas()[0].length; i++){
 			outDatas()[x][i] = 0f;
 		}
-		
-		outDatas()[x][0] = 1; // filtre ok
 			
 		short v;
 		int mv;				
@@ -34,13 +34,15 @@ public class GridCountValueKernel extends GridLandscapeMetricKernel {
 					if((x*gridSize() + lx) < width()){
 						
 						v = (short) inDatas()[((theY+y)*width()) + (x*gridSize() + lx)];		
+						outDatas()[x][2] += 1;
+						
 						if(v == noDataValue()){
-							outDatas()[x][1] += 1;
+							outDatas()[x][3] += 1;
 						}else if(v == 0){
-							outDatas()[x][2] += 1;
+							outDatas()[x][4] += 1;
 						}else{
 							mv = mapValues[v];
-							outDatas()[x][mv+4] += 1;	
+							outDatas()[x][mv+5] += 1;	
 						}
 					}
 				}

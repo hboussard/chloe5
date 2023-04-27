@@ -28,14 +28,15 @@ public class EntityCountValueKernel extends EntityLandscapeMetricKernel{
 				if(va != 0 && va != noDataValue()){
 					
 					v = (short) inDatas()[y*width() + x];
+					outDatas().get(va)[2] += 1;
 					
 					if(v == noDataValue()){
-						outDatas().get(va)[1] += 1;
+						outDatas().get(va)[3] += 1;
 					}else if(v == 0){
-						outDatas().get(va)[2] += 1;
+						outDatas().get(va)[4] += 1;
 					}else{
 						mv = mapValues[v];
-						outDatas().get(va)[mv+4] += 1;
+						outDatas().get(va)[mv+5] += 1;
 					}
 				}
 			}

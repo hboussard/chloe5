@@ -3,8 +3,6 @@ package fr.inrae.act.bagap.chloe.window.counting;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.inrae.act.bagap.chloe.window.metric.Metric;
-
 public class CoupleCounting extends Counting implements CoupleCountingInterface {
 
 	/** the count of couples */
@@ -28,73 +26,47 @@ public class CoupleCounting extends Counting implements CoupleCountingInterface 
 	
 	private short countCoupleClass;
 	
-	public CoupleCounting(int minRange, int maxRange, int nValues, float[] couples){
-		super(minRange, maxRange);
+	public CoupleCounting(int nValues, float[] couples, double theoreticalSize, int theoreticalCoupleSize){
+		super(theoreticalCoupleSize);
 		this.nValues = nValues;
 		this.couples = couples;
 		this.countCouples = new HashMap<Float, Double>();
 	}
 	
-	public CoupleCounting(int minRange, int maxRange, int nValues, float[] couples, int theoreticalCoupleSize){
-		this(minRange, maxRange, nValues, couples);
-		this.theoreticalCoupleSize = theoreticalCoupleSize;
+	public CoupleCounting(int nValues, float[] couples){
+		this(nValues, couples, 0, 0);
 	}
 	
-	public void setTheoriticalCoupleSize(int theoreticalCoupleSize){
-		this.theoreticalCoupleSize = theoreticalCoupleSize;
-	}
-	
+	/**
+	 * partie specifique :
+	 * 4 : nombre de couples pris en compte
+	 * 5 : nombre de couple noDataValue
+	 * 6 : nombre de couple "0"
+	 * à partir de 7 jusqu'au nombre de couples + 7 : les occurences de couples de pixels dans l'ordre numérique, couples homogènes d'abords
+	 */
 	@Override
-	protected void doCalculate(){
-		if(validCounting() && validCouples()/theoreticalCoupleSize() >= minRate){
-			for(Metric m : metrics()){
-				m.calculate(this, "");
-			}
-		}else{
-			for(Metric m : metrics()){
-				m.unCalculate("");
-			}
-		}
-	}
-	
-	@Override
-	public void setCounts(double[] counts){
+	public void doSetCounts(double[] counts){
 		
-		if(counts[0] == 1){
-			
-			setValidCounting(true);
 		
-			totalCouples = 0;
-			validCouples = 0;
-			totalCountCouples = 0;
-			countCoupleClass = 0;
-			homogeneousCouples = 0;
-			heterogeneousCouples = 0;
-			countCouples.clear();
-			
-			totalCouples += counts[1];
-			
-			totalCouples += counts[2];
-			validCouples += counts[2];
-			
-			for(int i=3; i<counts.length; i++){
-				totalCouples += counts[i];
-				validCouples += counts[i];
-				totalCountCouples += counts[i];
-				
-				if(i-3 < nValues) {
-					homogeneousCouples += counts[i];
-				}else {
-					heterogeneousCouples += counts[i];
-				}
-				
-				if(counts[i] > 0){
-					countCoupleClass++;
-				}
-				countCouples.put(couples[i-3], counts[i]);
+		totalCouples = counts[4];
+		validCouples = totalCouples - counts[5];
+		totalCountCouples = validCouples - counts[6];
+		
+		countCoupleClass = 0;
+		homogeneousCouples = 0;
+		heterogeneousCouples = 0;
+		countCouples.clear();
+		for(int i=7; i<counts.length; i++){
+			if(i-7 < nValues) {
+				homogeneousCouples += counts[i];
+			}else {
+				heterogeneousCouples += counts[i];
 			}
-		}else{
-			setValidCounting(false);
+				
+			if(counts[i] > 0){
+				countCoupleClass++;
+			}
+			countCouples.put(couples[i-7], counts[i]);
 		}
 	}
 	

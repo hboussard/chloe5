@@ -77,8 +77,8 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 	}
 
 	@Override
-	public void postrun(Counting c, int x, int y, Map<Metric, Double> metrics) {
-		double v = metrics.get(metric);
+	public void postrun(Counting c, int x, int y, Set<Metric> metrics) {
+		double v = metric.value();
 		
 		//System.out.println(x+" "+y+" "+v);
 		if(y == 0){ // on est sur la premiere ligne
@@ -212,7 +212,7 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 	}
 	
 	@Override
-	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// do nothing
 	}
 

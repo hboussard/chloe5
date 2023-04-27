@@ -44,9 +44,10 @@ public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 		
 		// gestion des sorties
 		kernel().setOutDatas(new HashMap<Integer, double[]>());
-		for(int an : entityIds){
-			kernel().outDatas().put(an, new double[nbValues()]);
-			kernel().outDatas().get(an)[0] = 1; // filtre ok
+		for(int aId : entityIds){
+			kernel().outDatas().put(aId, new double[nbValues()]);
+			kernel().outDatas().get(aId)[0] = 1; // filtre ok
+			kernel().outDatas().get(aId)[6] = Float.MAX_VALUE; // init minimum
 		}
 		
 		// initialisation du comptage

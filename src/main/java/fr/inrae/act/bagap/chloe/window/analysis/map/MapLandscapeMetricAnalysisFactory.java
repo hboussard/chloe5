@@ -93,7 +93,7 @@ public abstract class MapLandscapeMetricAnalysisFactory {
 			
 			kernel = new MapQuantitativeKernel(Raster.getNoDataValue());
 				
-			counting = new QuantitativeCounting(0, nbValues, theoreticalSize);
+			counting = new QuantitativeCounting(theoreticalSize);
 				
 		}else{
 			// recuperation des valeurs
@@ -125,27 +125,27 @@ public abstract class MapLandscapeMetricAnalysisFactory {
 						
 					System.out.println("comptage des valeurs");
 						
-					nbValues = 4 + values.length;
+					nbValues = 5 + values.length;
 						
 					kernel = new MapCountValueKernel(Raster.getNoDataValue(), values);
 							
-					counting = new ValueCounting(0, nbValues, values, theoreticalSize);
+					counting = new ValueCounting(values, theoreticalSize);
 						
 				}else if(MetricManager.hasOnlyCoupleMetric(metrics)){
 					
 					System.out.println("comptage des couples");
 						
-					nbValues = 3 + couples.length;
+					nbValues = 7 + couples.length;
 						
 					kernel = new MapCountCoupleKernel(Raster.getNoDataValue(), values);
 						
-					counting = new CoupleCounting(0, nbValues, values.length, couples, theoreticalCoupleSize);
+					counting = new CoupleCounting(values.length, couples, theoreticalSize, theoreticalCoupleSize);
 					
 				}else{
 					
 					System.out.println("comptage des valeurs et des couples");
 
-					nbValues = 4 + values.length + 2 + couples.length;
+					nbValues = 5 + values.length + 3 + couples.length;
 						
 					kernel = new MapCountValueAndCoupleKernel(Raster.getNoDataValue(), values);
 										
@@ -156,11 +156,11 @@ public abstract class MapLandscapeMetricAnalysisFactory {
 				
 				System.out.println("comptage des patchs");
 					
-				nbValues = 4 + 3*values.length;
+				nbValues = 7 + 3*values.length;
 					
 				kernel = new MapPatchKernel(Raster.getNoDataValue(), values, inCellSize);
 				
-				counting = new PatchCounting(values);
+				counting = new PatchCounting(values, theoreticalSize);
 				
 			}
 		}

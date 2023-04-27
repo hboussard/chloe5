@@ -3,7 +3,6 @@ package fr.inrae.act.bagap.chloe.window.output;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
@@ -33,6 +32,7 @@ public class SelectedCsvOutput implements CountingObserver{
 		this.sb = new StringBuffer();
 	}
 	
+	@Override
 	public void init(Counting c, Set<Metric> metrics) {
 		
 		try {
@@ -51,11 +51,13 @@ public class SelectedCsvOutput implements CountingObserver{
 		}
 	}
 	
+	@Override
 	public void prerun(Counting c) {
 		// do nothing
 	}
 
-	public void postrun(Counting c, int i, int j, Map<Metric, Double> values) {
+	@Override
+	public void postrun(Counting c, int i, int j, Set<Metric> metrics) {
 		
 		Pixel pixel = null;
 		for(Pixel p : pixels){
@@ -71,7 +73,9 @@ public class SelectedCsvOutput implements CountingObserver{
 				sb.setLength(0);
 				sb.append((((PixelWithID) pixel).getId())+";"+(((PixelWithID) pixel).getX())+";"+(((PixelWithID) pixel).getY()));
 				
-				for(double v : values.values()){
+				double v;
+				for(Metric m : metrics){
+					v = m.value();
 					if(v == noDataValue){
 						export = false;
 						break;
@@ -91,6 +95,7 @@ public class SelectedCsvOutput implements CountingObserver{
 		}
 	}
 
+	@Override
 	public void close(Counting c, Set<Metric> metrics) {
 		try {
 			bw.close();
@@ -100,7 +105,7 @@ public class SelectedCsvOutput implements CountingObserver{
 	}
 	
 	@Override
-	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// do nothing
 	}
 

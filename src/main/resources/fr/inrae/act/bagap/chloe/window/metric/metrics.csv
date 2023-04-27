@@ -20,9 +20,9 @@ sum;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.SumMe
 standard_deviation;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.StandardDeviationMetric
 minimum;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.MinimumMetric
 maximum;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.MaximumMetric
-MD;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.MeanDistanceMetric
-distance;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.DistanceMetric
-bocage;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.BocageMetric
+MD;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.grainbocager.GrainBocagerMeanDistanceMetric
+GBDistance;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.grainbocager.GrainBocagerDistanceMetric
+GBBocage;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.grainbocager.GrainBocagerBocageMetric
 prop;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.ProportionMetric
 MPS;patch;other;fr.inrae.act.bagap.chloe.window.metric.patch.MeanPatchSizeIndex
 MPS-class;patch;value;fr.inrae.act.bagap.chloe.window.metric.patch.MeanPatchSizeClassIndex
@@ -33,7 +33,7 @@ NP;patch;other;fr.inrae.act.bagap.chloe.window.metric.patch.PatchNumberIndex
 NP-class;patch;value;fr.inrae.act.bagap.chloe.window.metric.patch.PatchNumberClassIndex
 AREA;patch;other;fr.inrae.act.bagap.chloe.window.metric.patch.SurfaceIndex
 Nclass;value;other;fr.inrae.act.bagap.chloe.window.metric.value.CountClassMetric
-Central;value;other;fr.inrae.act.bagap.chloe.window.metric.value.CentralValue
+Central;value;other;fr.inrae.act.bagap.chloe.window.metric.basic.CentralValue
 pCentral;value;other;fr.inrae.act.bagap.chloe.window.metric.value.RateCentralValue
 vCentral;value;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.VCentralValue
 AI-class;couple;value;fr.inrae.act.bagap.chloe.window.metric.couple.AggregationClassIndex
@@ -42,3 +42,4 @@ AIm;couple;value;fr.inrae.act.bagap.chloe.window.metric.couple.AggregationIndexM
 AI2m;couple;value;fr.inrae.act.bagap.chloe.window.metric.couple.AggregationIndexMultiple2
 EMS;value;other;fr.inrae.act.bagap.chloe.window.metric.value.EffectiveMeshSizeMetric
 EMS-class;value;value;fr.inrae.act.bagap.chloe.window.metric.value.EffectiveMeshSizeClassMetric
+Majority;value;other;fr.inrae.act.bagap.chloe.window.metric.value.MajorityClassMetric

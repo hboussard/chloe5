@@ -20,10 +20,10 @@ import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
-import fr.inra.sad.bagap.apiland.analysis.matrix.CoverageManager;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
+import fr.inrae.act.bagap.raster.CoverageManager;
 
 public class GeoTiffOutput implements CountingObserver{
 
@@ -68,12 +68,12 @@ public class GeoTiffOutput implements CountingObserver{
 	}
 	
 	@Override
-	public void postrun(Counting c, int i, int j, Map<Metric, Double> values) {
-		datas[ind++] = Float.parseFloat(format(values.get(metric)));
+	public void postrun(Counting c, int i, int j, Set<Metric> metrics) {
+		datas[ind++] = Float.parseFloat(format(metric.value()));
 	}
 	
 	@Override
-	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// TODO Auto-generated method stub
 		
 	}

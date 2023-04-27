@@ -52,13 +52,15 @@ public abstract class SlidingLandscapeMetricKernel extends Kernel implements Lan
 	protected void processPixel(int x, int y, int localY){
 		// do nothing
 	}
-
-	protected boolean filter(int f){
-		if(unfilters != null){
-			for(int uf : unfilters){
-				if(uf == f){
-					return false;
-				}
+	
+	protected boolean hasFilter(){
+		return unfilters != null;
+	}
+	
+	protected boolean filterValue(int f){
+		for(int uf : unfilters){
+			if(uf == f){
+				return false;
 			}
 		}
 		return true;

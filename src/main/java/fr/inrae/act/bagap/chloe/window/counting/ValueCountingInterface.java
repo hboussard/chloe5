@@ -9,6 +9,13 @@ public interface ValueCountingInterface {
 	int[] values();
 	
 	/**
+	 * the count of values
+	 * a value is different to 0 and to Raster.noDataValue()
+	 * @return the count of values
+	 */
+	double countValues();
+	
+	/**
 	 * to count value of type v
 	 * @param v : type of value
 	 * @return the count of v
@@ -20,13 +27,5 @@ public interface ValueCountingInterface {
 	 * @return the count of classes
 	 */
 	int countClass();
-	
-	
-	/**
-	 * the central value of the window
-	 * only available for sliding et selected windows
-	 * @return the central value
-	 */
-	float centralValue();
 	
 }

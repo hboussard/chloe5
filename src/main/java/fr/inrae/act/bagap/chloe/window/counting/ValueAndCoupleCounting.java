@@ -3,8 +3,6 @@ package fr.inrae.act.bagap.chloe.window.counting;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.inrae.act.bagap.chloe.window.metric.Metric;
-
 public class ValueAndCoupleCounting extends Counting implements ValueCountingInterface, CoupleCountingInterface {
 
 	/** the count of values */
@@ -12,15 +10,7 @@ public class ValueAndCoupleCounting extends Counting implements ValueCountingInt
 	
 	private int[] values;
 	
-	private double theoreticalSize;
-	
-	private float centralValue;
-	
-	private float totalValues;
-	
-	private float validValues;
-	
-	private float totalCountValues;
+	private double totalCountValues;
 	
 	private int countClass;
 	
@@ -43,117 +33,62 @@ public class ValueAndCoupleCounting extends Counting implements ValueCountingInt
 	
 	private short countCoupleClass;
 	
-	public ValueAndCoupleCounting(int[] values, float[] couples){
-		super();
+	public ValueAndCoupleCounting(int[] values, float[] couples, double theoreticalSize, int theoreticalCoupleSize){
+		super(theoreticalSize);
 		this.values = values;
 		this.countValues = new HashMap<Integer, Double>();
 		this.couples = couples;
 		this.countCouples = new HashMap<Float, Double>();
-	}
-	
-	public ValueAndCoupleCounting(int[] values, float[] couples, double theoreticalSize, int theoreticalCoupleSize){
-		this(values, couples);
-		this.theoreticalSize = theoreticalSize;
 		this.theoreticalCoupleSize = theoreticalCoupleSize;
 	}
 	
-	public void setTheoriticalSize(int theoreticalSize){
-		this.theoreticalSize = theoreticalSize;
+	public ValueAndCoupleCounting(int[] values, float[] couples){
+		this(values, couples, 0, 0);
 	}
 	
+	/**
+	 * partie specifique :
+	 * 4 : nombre de valeur "0"
+	 * 5 : nombre de couples pris en compte
+	 * 6 : nombre de couple noDataValue
+	 * 7 : nombre de couple "0"
+	 * à partir de 8 jusqu'au nombre de valeurs + 8 : les occurences de valeurs dans l'ordre numérique
+	 * à partir de 8 + nombre de valeurs jusqu'au nombre de couples + 8 + nombre de valeurs : les occurences de couples de pixels dans l'ordre numérique, couples homogènes d'abords
+	 */
 	@Override
-	protected void doCalculate(){
-		if(validCounting() && validCouples()/theoreticalCoupleSize() >= minRate){
-			for(Metric m : metrics()){
-				m.calculate(this, "");
-			}
-		}else{
-			for(Metric m : metrics()){
-				m.unCalculate("");
-			}
-		}
-	}
-	
-	@Override
-	public void setCounts(double[] counts){
-		
-		if(counts[0] == 1){
-			
-			setValidCounting(true);
-			
-			totalValues = 0;
-			validValues = 0;
-			totalCountValues = 0;
-			countClass = 0;
-			totalCouples = 0;
-			validCouples = 0;
-			totalCountCouples = 0;
-			countCoupleClass = 0;
-			homogeneousCouples = 0;
-			heterogeneousCouples = 0;
-			countCouples.clear();
-			
-			totalValues += counts[1];
-			
-			totalValues += counts[2];
-			validValues += counts[2];
-			
-			centralValue = (float) counts[3];
-			
-			countValues.clear();
-			
-			for(int i=4; i<values.length+4; i++){
-				totalValues += counts[i];
-				validValues += counts[i];
-				totalCountValues += counts[i];
-				if(counts[i] > 0){
-					countClass++;
-				}
-				countValues.put(values[i-4], counts[i]);
-			}
-			
-			totalCouples += counts[values.length+4];
-			
-			totalCouples += counts[values.length+5];
-			validCouples += counts[values.length+5];
-			
-			//System.out.println(counts.length+" "+values.length+" "+couples.length);
-			
-			for(int i=values.length+6; i<values.length+6+couples.length; i++){
-				totalCouples += counts[i];
-				validCouples += counts[i];
-				totalCountCouples += counts[i];
-				
-				if(i-(values.length+6) < values.length) {
-					homogeneousCouples += counts[i];
-				}else {
-					heterogeneousCouples += counts[i];
-				}
-				
-				if(counts[i] > 0){
-					countCoupleClass++;
-				}
-				countCouples.put(couples[i-(values.length+6)], counts[i]);
-			}
-		}else{
-			
-			setValidCounting(false);
-		}
-	}
-		
-	@Override
-	public double theoreticalSize(){
-		return theoreticalSize;
-	}
-	
-	@Override
-	public double totalValues() {
-		return totalValues;
-	}
+	public void doSetCounts(double[] counts) {
 
-	@Override
-	public double validValues() {
-		return validValues;
+		totalCountValues = validValues() - counts[4];
+		
+		countClass = 0;
+		countValues.clear();
+		for(int i=5; i<values.length+5; i++){
+			if(counts[i] > 0){
+				countClass++;
+			}
+			countValues.put(values[i-5], counts[i]);
+		}
+		
+		totalCouples = counts[values.length+5];
+		validCouples = totalCouples - counts[values.length+6];
+		totalCountCouples = validCouples - counts[values.length+7];
+		
+		countCoupleClass = 0;
+		homogeneousCouples = 0;
+		heterogeneousCouples = 0;
+		countCouples.clear();
+		for(int i=values.length+8; i<values.length+8+couples.length; i++){
+			if(i-(values.length+8) < values.length) {
+				homogeneousCouples += counts[i];
+			}else {
+				heterogeneousCouples += counts[i];
+			}
+				
+			if(counts[i] > 0){
+				countCoupleClass++;
+			}
+			countCouples.put(couples[i-(values.length+8)], counts[i]);
+		}
 	}
 	
 	@Override
@@ -168,30 +103,13 @@ public class ValueAndCoupleCounting extends Counting implements ValueCountingInt
 	
 	@Override
 	public double countValue(int v){
-		
-		return countValues.get(v);	
-		/*
-		if(countValues.containsKey(v)){
-			return countValues.get(v);	
-		}
-		return 0;
-		*/
+		return countValues.get(v);
 	}
 
 	@Override
 	public int countClass() {
 		return countClass;
 	}
-	
-	@Override
-	public float centralValue(){
-		return centralValue;
-	}
-	public void setTheoriticalCoupleSize(int theoreticalCoupleSize){
-		this.theoreticalCoupleSize = theoreticalCoupleSize;
-	}
-	
-	
 	
 	/*
 	private boolean isHomogeneous(float c) {

@@ -11,7 +11,7 @@ public class PatchNumberIndex extends Metric implements PatchMetric {
 
 	@Override
 	protected void doCalculate(Counting co) {
-		value = co.getNbPatches();
+		value = co.nbPatches();
 	}
 
 }

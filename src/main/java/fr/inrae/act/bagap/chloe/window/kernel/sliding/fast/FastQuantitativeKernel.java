@@ -20,7 +20,7 @@ public abstract class FastQuantitativeKernel extends FastKernel {
 		float nb_nodata = 0;
 		float nb = 0;
 		float sum = 0;
-		float c;
+		float coeff;
 		double square_sum = 0;
 		float min = Float.MAX_VALUE;
 		float max = Float.MIN_VALUE;
@@ -28,25 +28,26 @@ public abstract class FastQuantitativeKernel extends FastKernel {
 			if(((y + dy) >= 0) && ((y + dy) < height())){
 				
 				v = inDatas()[((y + dy) * width()) + x];
-				c = coeff(dy);
+				coeff = coeff(dy);
+				nb += coeff;
 				if(v == noDataValue()){
-					nb_nodata += c;
+					nb_nodata += coeff;
 				}else{
-					nb += c;
-					sum += v*c;
-					square_sum += v*c * v*c;
-					min = Math.min(min, v*c);
-					max = Math.max(max, v*c);
+					
+					sum += v*coeff;
+					square_sum += v*coeff * v*coeff;
+					min = Math.min(min, v*coeff);
+					max = Math.max(max, v*coeff);
 				}
 			}
 		}
 		
-		buf()[x][1] = nb_nodata;
 		buf()[x][2] = nb;
-		buf()[x][3] = sum;
-		buf()[x][4] = (float) square_sum;
-		buf()[x][5] = min;
-		buf()[x][6] = max;
+		buf()[x][3] = nb_nodata;
+		buf()[x][4] = sum;
+		buf()[x][5] = (float) square_sum;
+		buf()[x][6] = min;
+		buf()[x][7] = max;
 		
 	}
 	
@@ -56,15 +57,15 @@ public abstract class FastQuantitativeKernel extends FastKernel {
 		int y = line / displacement();
 		int ind = y * ((width()-1-bufferROIXMin()-bufferROIXMax())/displacement()+1) + x;
 		
-		outDatas()[ind][7] = (int) inDatas()[((theY() + line + bufferROIYMin())* width()) + x*displacement()+bufferROIXMin()]; // valeur pixel central
-		
-		if(filter((int) inDatas()[((theY() + line + bufferROIYMin())* width()) + x*displacement()+bufferROIXMin()])){ // gestion des filtres
+		if(!hasFilter() || filterValue((int) inDatas()[((theY() + line + bufferROIYMin())* width()) + x*displacement()+bufferROIXMin()])){ // gestion des filtres
 			
 			outDatas()[ind][0] = 1; // filtre ok 
 			
+			outDatas()[ind][1] = (int) inDatas()[((theY() + line + bufferROIYMin())* width()) + x*displacement()+bufferROIXMin()]; // valeur pixel central
+			
 			int x_buf = x*displacement()+bufferROIXMin();
 			float val;
-			for(int value=1; value<4; value++) {
+			for(int value=2; value<5; value++) {
 				val = 0;
 				for(int i=max(x_buf-rayon()+1,0); i<min(x_buf+rayon(), width()); i++) {
 					val += buf()[i][value] * coeff(i-x_buf);
@@ -76,19 +77,16 @@ public abstract class FastQuantitativeKernel extends FastKernel {
 			for(int i=max(x_buf-rayon()+1,0); i<min(x_buf+rayon(), width()); i++) {
 				min = Math.min(min, buf()[i][5] * coeff(i-x_buf));
 			}
-			outDatas()[ind][5] = min;
+			outDatas()[ind][6] = min;
 			
 			float max = Float.MIN_VALUE;
 			for(int i=max(x_buf-rayon()+1,0); i<min(x_buf+rayon(), width()); i++) {
 				max = Math.max(max, buf()[i][6] * coeff(i-x_buf));
 			}
-			outDatas()[ind][6] = max;
+			outDatas()[ind][7] = max;
 			
 		}else{
-			// filtre pas ok
-			for(int value=0; value<nValuesTot(); value++) {
-				outDatas()[ind][value] = 0;
-			}
+			outDatas()[ind][0] = 0; // filtre pas ok 
 		}
 	}
 	

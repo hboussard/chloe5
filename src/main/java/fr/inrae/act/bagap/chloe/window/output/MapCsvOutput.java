@@ -44,15 +44,17 @@ public class MapCsvOutput implements CountingObserver{
 	}
 
 	@Override
-	public void postrun(Counting c, int i, int j, Map<Metric, Double> values) {
+	public void postrun(Counting c, int i, int j, Set<Metric> metrics) {
 		// do nothing
 	}
 
 	@Override
-	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		try {
 			bw.write(name);
-			for(double v : values.values()) {
+			double v;
+			for(Metric m : metrics){
+				v = m.value();
 				bw.write(";"+Util.format(v));
 			}
 			bw.newLine();

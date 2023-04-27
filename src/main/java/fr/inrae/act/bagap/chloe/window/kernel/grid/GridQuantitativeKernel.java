@@ -9,10 +9,6 @@ public class GridQuantitativeKernel extends GridLandscapeMetricKernel {
 	@Override
 	protected void processGrid(int x, int theY) {
 		
-		for(int i=0; i<outDatas()[0].length; i++){
-			outDatas()[x][i] = 0f;
-		}
-		
 		outDatas()[x][0] = 1; // filtre ok
 			
 		short v;
@@ -28,11 +24,10 @@ public class GridQuantitativeKernel extends GridLandscapeMetricKernel {
 					if((x*gridSize() + lx) < width()){
 						
 						v = (short) inDatas()[((theY+y)*width()) + (x*gridSize() + lx)];	
-						
+						nb += 1;
 						if(v == noDataValue()) {
 							nb_nodata += 1;
 						}else{
-							nb += 1;
 							sum += v;
 							square_sum += v * v;
 							min = Math.min(min, v);
@@ -43,12 +38,12 @@ public class GridQuantitativeKernel extends GridLandscapeMetricKernel {
 			}
 		}
 		
-		outDatas()[x][1] = nb_nodata;
 		outDatas()[x][2] = nb;
-		outDatas()[x][3] = sum;
-		outDatas()[x][4] = square_sum;
-		outDatas()[x][5] = min;
-		outDatas()[x][6] = max;
+		outDatas()[x][3] = nb_nodata;
+		outDatas()[x][4] = sum;
+		outDatas()[x][5] = square_sum;
+		outDatas()[x][6] = min;
+		outDatas()[x][7] = max;
 	}
 
 }

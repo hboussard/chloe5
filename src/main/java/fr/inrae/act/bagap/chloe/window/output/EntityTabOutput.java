@@ -42,14 +42,14 @@ public class EntityTabOutput implements CountingObserver{
 	}
 
 	@Override
-	public void postrun(Counting c, int x, int y, Map<Metric, Double> values) {
+	public void postrun(Counting c, int x, int y, Set<Metric> metrics) {
 		// do nothing
 	}
 	
 	@Override
-	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// stockage de la valeur
-		internalDatas.put(id, new Double(values.get(metric)).floatValue());
+		internalDatas.put(id, new Double(metric.value()).floatValue());
 	}
 	
 	@Override

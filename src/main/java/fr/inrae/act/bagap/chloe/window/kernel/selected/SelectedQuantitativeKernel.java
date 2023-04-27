@@ -20,16 +20,9 @@ public class SelectedQuantitativeKernel extends SelectedLandscapeMetricKernel {
 	@Override
 	protected void processPixel(Pixel p, int x, int y) {
 		
-	
-		// phase d'initialisation de la structure de donnees
-		for(int i=0; i<outDatas().get(p).length; i++){
-			outDatas().get(p)[i] = 0.0f;
-		}
-			
-		outDatas().get(p)[7] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
-			
 		outDatas().get(p)[0] = 1; // filtre ok
-			
+		
+		outDatas().get(p)[1] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
 			
 		final int mid = windowSize() / 2;
 		int ic;
@@ -51,14 +44,15 @@ public class SelectedQuantitativeKernel extends SelectedLandscapeMetricKernel {
 							coeff = coeff()[ic];
 							if(coeff > 0){
 								v = inDatas()[((y + dy) * width()) + (x + dx)];
-								
+								nb += coeff;
 								if(v == noDataValue()) {
 									nb_nodata += coeff;
 								}else{
-									nb += coeff;
 									if(v > threshold){
 										sum += threshold*coeff;
 										square_sum += threshold*coeff * threshold*coeff;
+										min = Math.min(min, threshold*coeff);
+										max = Math.max(max, threshold*coeff);
 									}else{
 										sum += v*coeff;
 										square_sum += v*coeff * v*coeff;
@@ -80,11 +74,10 @@ public class SelectedQuantitativeKernel extends SelectedLandscapeMetricKernel {
 							coeff = coeff()[ic];
 							if(coeff > 0){
 								v = inDatas()[((y + dy) * width()) + (x + dx)];
-								
+								nb += coeff;
 								if(v == noDataValue()) {
 									nb_nodata += coeff;
 								}else{
-									nb += coeff;
 									sum += v*coeff;
 									square_sum += v*coeff * v*coeff;
 									min = Math.min(min, v*coeff);
@@ -97,14 +90,13 @@ public class SelectedQuantitativeKernel extends SelectedLandscapeMetricKernel {
 			}
 		}
 				
-		outDatas().get(p)[1] = nb_nodata;
 		outDatas().get(p)[2] = nb;
-		outDatas().get(p)[3] = sum;
-		outDatas().get(p)[4] = square_sum;
-		outDatas().get(p)[5] = min;
-		outDatas().get(p)[6] = max;
+		outDatas().get(p)[3] = nb_nodata;
+		outDatas().get(p)[4] = sum;
+		outDatas().get(p)[5] = square_sum;
+		outDatas().get(p)[6] = min;
+		outDatas().get(p)[7] = max;
 			
 	}
-
 	
 }

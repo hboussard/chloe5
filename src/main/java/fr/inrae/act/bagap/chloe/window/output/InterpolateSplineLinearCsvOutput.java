@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -104,10 +103,14 @@ public class InterpolateSplineLinearCsvOutput implements CountingObserver{
 	}
 
 	@Override
-	public void postrun(Counting c, int i, int j, Map<Metric, Double> metrics) {
-		for(Entry<Metric, Double> entry : metrics.entrySet()){
-			double v = entry.getValue();
-			String metric = entry.getKey().getName();
+	public void postrun(Counting c, int i, int j, Set<Metric> metrics) {
+		double v;
+		String metric;
+		for(Metric m : metrics){
+		//for(Entry<Metric, Double> entry : metrics.entrySet()){
+			//double v = entry.getValue();
+			v = m.value();
+			metric = m.getName();
 			
 			if(!values.get(metric).containsKey(j)){ 
 				// affectation des anciennes valeurs
@@ -127,8 +130,6 @@ public class InterpolateSplineLinearCsvOutput implements CountingObserver{
 			values.get(metric).get(j)[i] = v;
 		}
 		
-		
-		double v;
 		int yy, im;
 		if(j != 0 && i == 0){ // ecriture des valeurs precedentes
 			double[] vv = new double[values.keySet().size()];
@@ -256,7 +257,7 @@ public class InterpolateSplineLinearCsvOutput implements CountingObserver{
 	}
 	
 	@Override
-	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// do nothing
 	}
 

@@ -20,12 +20,14 @@ public class SelectedPatchKernel extends SelectedLandscapeMetricKernel {
 	
 	@Override
 	protected void processPixel(Pixel p, int x, int y) {
-		
-		for(int i=0; i<outDatas().get(p).length; i++){
-			outDatas().get(p)[i] = 0f;
-		}
 			
 		outDatas().get(p)[0] = 1; // filtre ok
+		
+		outDatas().get(p)[1] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
+		
+		for(int i=2; i<outDatas().get(p).length; i++){
+			outDatas().get(p)[i] = 0f;
+		}
 		
 		final int mid = windowSize() / 2;
 		int ic;
@@ -40,6 +42,10 @@ public class SelectedPatchKernel extends SelectedLandscapeMetricKernel {
 						coeff = coeff()[ic];
 						if(coeff > 0){
 							v = (int) inDatas()[((y + dy) * width()) + (x + dx)];
+							outDatas().get(p)[2] += coeff;
+							if(v == noDataValue()){
+								outDatas().get(p)[3] += coeff;
+							}
 							tabCover[(dy+mid)*windowSize() + (dx+mid)] = v;	
 						}
 					}
@@ -47,26 +53,26 @@ public class SelectedPatchKernel extends SelectedLandscapeMetricKernel {
 			}
 		}
 			
-		ClusteringTabQueenAnalysis ca = new ClusteringTabQueenAnalysis(tabCover, windowSize(), windowSize(), values);
+		ClusteringTabQueenAnalysis ca = new ClusteringTabQueenAnalysis(tabCover, windowSize(), windowSize(), values, noDataValue());
 		int[] tabCluster = (int[]) ca.allRun();
 			
 		ClusteringTabOutput cto = new ClusteringTabOutput(tabCluster, tabCover, values, cellSize);
 		cto.allRun();
 			
-		outDatas().get(p)[1] = cto.getNbPatch();
-		outDatas().get(p)[2] = cto.getTotalSurface();
-		outDatas().get(p)[3] = cto.getMaxSurface();
+		outDatas().get(p)[4] = cto.getNbPatch();
+		outDatas().get(p)[5] = cto.getTotalSurface();
+		outDatas().get(p)[6] = cto.getMaxSurface();
 			
 		for(int i=0; i<values.length; i++){
-			outDatas().get(p)[i+4] = cto.getNbPatch(values[i]);
+			outDatas().get(p)[i+7] = cto.getNbPatch(values[i]);
 		}
 			
 		for(int i=0; i<values.length; i++){
-			outDatas().get(p)[i+4+values.length] = cto.getTotalSurface(values[i]);
+			outDatas().get(p)[i+7+values.length] = cto.getTotalSurface(values[i]);
 		}
 			
 		for(int i=0; i<values.length; i++){
-			outDatas().get(p)[i+4+2*values.length] = cto.getMaxSurface(values[i]);
+			outDatas().get(p)[i+7+2*values.length] = cto.getMaxSurface(values[i]);
 		}
 	}
 	

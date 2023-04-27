@@ -4,7 +4,6 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.Set;
 
-import fr.inra.sad.bagap.apiland.analysis.matrix.CoverageManager;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
@@ -24,6 +23,7 @@ import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.EntityCsvOutput;
 import fr.inrae.act.bagap.chloe.window.output.EntityMultipleAsciiGridOutput;
 import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.TabCoverage;
 
 public abstract class EntityLandscapeMetricAnalysisFactory {
@@ -98,7 +98,7 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 			
 			kernel = new EntityQuantitativeKernel(Raster.getNoDataValue());
 			
-			counting = new QuantitativeCounting(0, nbValues);
+			counting = new QuantitativeCounting();
 						
 		}else{ // qualitative
 			
@@ -129,27 +129,27 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 				
 				System.out.println("comptage des valeurs");
 				
-				nbValues = 4 + values.length;
+				nbValues = 5 + values.length;
 				
 				kernel = new EntityCountValueKernel(Raster.getNoDataValue(), values);
 				
-				counting = new ValueCounting(0, nbValues, values);
+				counting = new ValueCounting(values);
 				
 			}else if(MetricManager.hasOnlyCoupleMetric(metrics)){
 				
 				System.out.println("comptage des couples");
 				
-				nbValues = 3 + couples.length;
+				nbValues = 7 + couples.length;
 				
 				kernel = new EntityCountCoupleKernel(Raster.getNoDataValue(), values);
 				
-				counting = new CoupleCounting(0, nbValues, values.length, couples);
+				counting = new CoupleCounting(values.length, couples);
 			
 			}else{
 				
 				System.out.println("comptage des valeurs et des couples");
 				
-				nbValues = 4 + values.length + 2 + couples.length;
+				nbValues = 5 + values.length + 3 + couples.length;
 				
 				kernel = new EntityCountValueAndCoupleKernel(Raster.getNoDataValue(), values);
 				

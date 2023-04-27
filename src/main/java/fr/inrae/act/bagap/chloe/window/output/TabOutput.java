@@ -43,13 +43,13 @@ public class TabOutput implements CountingObserver{
 	}
 
 	@Override
-	public void postrun(Counting c, int i, int j, Map<Metric, Double> values) {
+	public void postrun(Counting c, int i, int j, Set<Metric> metrics) {
 		//System.out.println(i+" "+j);
-		datas[(j/displacement)*width+(i/displacement)] = values.get(metric).floatValue();
+		datas[(j/displacement)*width+(i/displacement)] = (float) metric.value();
 	}
 
 	@Override
-	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// do nothing
 	}
 

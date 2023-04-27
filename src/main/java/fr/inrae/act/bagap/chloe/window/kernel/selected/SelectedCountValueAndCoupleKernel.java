@@ -45,14 +45,10 @@ public class SelectedCountValueAndCoupleKernel extends SelectedLandscapeMetricKe
 	@Override
 	protected void processPixel(Pixel p, int x, int y) {
 		
-		for(int i=0; i<outDatas().get(p).length; i++){
-			outDatas().get(p)[i] = 0f;
-		}
-			
-		outDatas().get(p)[3] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
-			
 		outDatas().get(p)[0] = 1; // filtre ok
-					
+		
+		outDatas().get(p)[1] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
+				
 		final int mid = windowSize() / 2;
 		int ic, ic_V, ic_H;
 		short v, v_H, v_V;
@@ -66,29 +62,31 @@ public class SelectedCountValueAndCoupleKernel extends SelectedLandscapeMetricKe
 						coeff = coeff()[ic];
 						if(coeff > 0){
 							v = (short) inDatas()[((y + dy) * width()) + (x + dx)];
-								
+							outDatas().get(p)[2] += coeff;
+							
 							if(v == -1){
-								outDatas().get(p)[1] += coeff;
+								outDatas().get(p)[3] += coeff;
 							}else if(v == 0){
-								outDatas().get(p)[2] += coeff;
+								outDatas().get(p)[4] += coeff;
 							}else{
 								mv = mapValues[v];
-								outDatas().get(p)[mv+4] += coeff;
+								outDatas().get(p)[mv+5] += coeff;
 							}
 								
 							if((dy > -mid) && ((y + dy) > 0)) {
 								ic_V = ((dy+mid-1) * windowSize()) + (dx+mid);
 								if(coeff()[ic_V] > 0){
 									v_V = (short) inDatas()[((y + dy - 1) * width()) + (x + dx)];
-										
+									outDatas().get(p)[nbValues+5] += coeff;
+									
 									if(v == noDataValue() || v_V == noDataValue()){
-										outDatas().get(p)[nbValues+4] += coeff;
+										outDatas().get(p)[nbValues+6] += coeff;
 									}else{
 										if(v == 0 || v_V == 0){
-											outDatas().get(p)[nbValues+5] += coeff;
+											outDatas().get(p)[nbValues+7] += coeff;
 										}else{
 											mv = mapCouples[mapValues[v]][mapValues[v_V]];
-											outDatas().get(p)[nbValues+mv+6] += coeff;
+											outDatas().get(p)[nbValues+mv+8] += coeff;
 										}
 									}
 								}
@@ -98,15 +96,16 @@ public class SelectedCountValueAndCoupleKernel extends SelectedLandscapeMetricKe
 								ic_H = ((dy+mid) * windowSize()) + (dx+mid-1);
 								if(coeff()[ic_H] > 0){
 									v_H = (short) inDatas()[((y + dy) * width()) + (x + dx - 1)];
-										
+									outDatas().get(p)[nbValues+5] += coeff;
+									
 									if(v == noDataValue() || v_H == noDataValue()){
-										outDatas().get(p)[nbValues+4] += coeff;
+										outDatas().get(p)[nbValues+6] += coeff;
 									}else{
 										if(v == 0 || v_H == 0){
-											outDatas().get(p)[nbValues+5] += coeff;
+											outDatas().get(p)[nbValues+7] += coeff;
 										}else{
 											mv = mapCouples[mapValues[v]][mapValues[v_H]];
-											outDatas().get(p)[nbValues+mv+6] += coeff;
+											outDatas().get(p)[nbValues+mv+8] += coeff;
 										}
 									}
 								}

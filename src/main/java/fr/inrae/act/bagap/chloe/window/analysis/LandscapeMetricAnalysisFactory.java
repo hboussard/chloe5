@@ -19,6 +19,7 @@ import fr.inrae.act.bagap.chloe.window.analysis.selected.TinySelectedLandscapeMe
 import fr.inrae.act.bagap.chloe.window.analysis.sliding.HugeSlidingLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.window.analysis.sliding.TinySlidingLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 import fr.inrae.act.bagap.raster.FileCoverage;
 import fr.inrae.act.bagap.raster.TabCoverage;
@@ -32,7 +33,21 @@ public class LandscapeMetricAnalysisFactory {
 		int inHeight;
 		float inCellSize;
 		
-		if(builder.getRasterFile() != null){
+		if(builder.getCoverage() != null){
+		
+			coverage = builder.getCoverage();
+			inWidth = coverage.getEntete().width();
+			inHeight = coverage.getEntete().height();
+			inCellSize = coverage.getEntete().cellsize();
+		
+		}else if(builder.getRasterFile() != null){
+			
+			coverage = CoverageManager.getCoverage(builder.getRasterFile());
+			inWidth = coverage.getEntete().width();
+			inHeight = coverage.getEntete().height();
+			inCellSize = coverage.getEntete().cellsize();
+			
+			/*
 			// coverage et infos associees
 			GridCoverage2DReader reader;
 			if(builder.getRasterFile().endsWith(".asc")){
@@ -57,7 +72,7 @@ public class LandscapeMetricAnalysisFactory {
 			
 			EnteteRaster entete = new EnteteRaster(inWidth, inHeight, inMinX, inMaxX, inMinY, inMaxY, inCellSize, -1);
 			coverage = new FileCoverage(coverage2D, entete);
-			
+			*/
 		}else if(builder.getRasterTab() != null){
 			
 			inWidth = builder.getEntete().width();
@@ -65,6 +80,13 @@ public class LandscapeMetricAnalysisFactory {
 			inCellSize = builder.getEntete().cellsize();
 			
 			coverage = new TabCoverage(builder.getRasterTab(), builder.getEntete());
+			
+		}else if(builder.getRasterTile() != null){
+			
+			coverage = CoverageManager.getCoverage(builder.getRasterTile());
+			inWidth = coverage.getEntete().width();
+			inHeight = coverage.getEntete().height();
+			inCellSize = coverage.getEntete().cellsize();
 			
 		}else{
 			throw new IllegalArgumentException("no raster declared");
@@ -98,11 +120,11 @@ public class LandscapeMetricAnalysisFactory {
 			}
 			
 			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
-				
+				System.out.println("tiny sliding");
 				return new TinySlidingLandscapeMetricAnalysisFactory().create(builder, coverage);
 				//return new HugeSlidingLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}else{
-				
+				System.out.println("huge sliding");
 				return new HugeSlidingLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}
 			

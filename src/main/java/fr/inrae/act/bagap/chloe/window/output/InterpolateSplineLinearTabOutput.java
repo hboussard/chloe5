@@ -56,9 +56,9 @@ public class InterpolateSplineLinearTabOutput implements CountingObserver{
 	}
 
 	@Override
-	public void postrun(Counting c, int i, int j, Map<Metric, Double> metrics) {
+	public void postrun(Counting c, int i, int j, Set<Metric> metrics) {
 		
-		line[i] = metrics.get(metric);
+		line[i] = metric.value();
 		if(i > 0){
 			for(int x=1; x<delta; x++){
 				line[i-delta+x] = splineValue(line[i-delta], line[i], x);
@@ -83,7 +83,7 @@ public class InterpolateSplineLinearTabOutput implements CountingObserver{
 	}
 
 	@Override
-	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// do nothing
 	}
 

@@ -26,15 +26,15 @@ public class SlidingFunctionalCountValueKernel extends SlidingFunctionalKernel {
 			
 			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
 			
-			for(int i=0; i<outDatas()[0].length; i++){
-				outDatas()[ind][i] = 0f;
-			}
-			
-			outDatas()[ind][3] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
-			
-			if(filter((int) inDatas()[(y * width()) + x])){ // gestion des filtres
+			if(!hasFilter() || filterValue((int) inDatas()[(y * width()) + x])){ // gestion des filtres
 				
 				outDatas()[ind][0] = 1; // filtre ok 
+				
+				outDatas()[ind][1] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
+				
+				for(int i=2; i<outDatas()[0].length; i++){
+					outDatas()[ind][i] = 0f;
+				}
 				
 				final int mid = windowSize() / 2;
 				
@@ -50,6 +50,9 @@ public class SlidingFunctionalCountValueKernel extends SlidingFunctionalKernel {
 				int v;
 				int mv;	
 				float coeff;
+				float nb = 0;
+				float nb_nodata = 0;
+				float nb_zero = 0;
 				for (int dy = -mid; dy <= mid; dy += 1) {
 					if(((y + dy) >= 0) && ((y + dy) < height())){
 						for (int dx = -mid; dx <= mid; dx += 1) {
@@ -57,20 +60,33 @@ public class SlidingFunctionalCountValueKernel extends SlidingFunctionalKernel {
 								ic = ((dy+mid) * windowSize()) + (dx+mid);
 								coeff = coeff()[ic];
 								if(coeff > 0){
-									v = (int) inDatas()[((y + dy) * width()) + (x + dx)];		
+									v = (int) inDatas()[((y + dy) * width()) + (x + dx)];
+									//outDatas()[ind][2] += coeff;
+									nb += coeff;
 									if(v == noDataValue()){
-										outDatas()[ind][1] += coeff;
+										//outDatas()[ind][3] += coeff;
+										nb_nodata += coeff;
 									}else if(v == 0){
-										outDatas()[ind][2] += coeff;
+										//outDatas()[ind][4] += coeff;
+										nb_zero += coeff;
 									}else{
 										mv = mapValues[v];
-										outDatas()[ind][mv+4] += coeff;	
+										outDatas()[ind][mv+5] += coeff;	
 									}
 								}
 							}
 						}
 					}
 				}
+				
+				outDatas()[ind][2] = nb;
+				outDatas()[ind][3] = nb_nodata;
+				outDatas()[ind][4] = nb_zero;
+				
+			} else{
+					
+				outDatas()[ind][0] = 0; // filtre pas ok 
+				
 			}
 		}
 	}

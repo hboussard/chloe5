@@ -7,34 +7,31 @@ import fr.inrae.act.bagap.chloe.window.kernel.selected.DoubleSelectedLandscapeMe
 
 public class GrainBocagerSelectedDistanceBocageKernel extends DoubleSelectedLandscapeMetricKernel{
 	
-	private float cellSize = 5; // la taille du pixel en metre (IGN)
+	private float cellSize; // = 5; // la taille du pixel en metre (IGN)
 	
-	private float minHauteur = 3; // 3 metres minimum 
+	private float minHauteur; // = 3; // 3 metres minimum 
 	
-	private float seuilMax = 30; // 30 metres maximum
+	private float seuilMax; // = 30; // 30 metres maximum
 	
-	public GrainBocagerSelectedDistanceBocageKernel(int windowSize, Set<Pixel> pixels, float[] coeff, int noDataValue) {
+	public GrainBocagerSelectedDistanceBocageKernel(int windowSize, Set<Pixel> pixels, float[] coeff, int noDataValue, float cellSize, float minHauteur, float seuilMax) {
 		super(windowSize, pixels, coeff, noDataValue);
+		this.cellSize = cellSize;
+		this.minHauteur = minHauteur;
+		this.seuilMax = seuilMax;
 	}
 
 	@Override
-	protected void processPixel(Pixel p, int x, int y) {
-				
+	protected void processPixel(Pixel p, int x, int y) {	
 	
 		outDatas().get(p)[0] = 1; // filtre ok
-			
-		// phase d'initialisation de la structure de donnees
-		outDatas().get(p)[1] = 0.0f; // nodataValue
-		outDatas().get(p)[2] = 0.0f; // value
-		outDatas().get(p)[3] = 1.0f; // max
-		outDatas().get(p)[4] = 0.0f; // prop
+		
+		outDatas().get(p)[1] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
 			
 		final int mid = windowSize() / 2;
 		int ic;
 		float v, coeff;
 		float nb_nodata = 0;
 		float nb = 0;
-		float prop = 0;
 		double min = 1.0;
 		double r, R;
 		for (int dy = -mid; dy <= mid; dy += 1) {
@@ -45,20 +42,16 @@ public class GrainBocagerSelectedDistanceBocageKernel extends DoubleSelectedLand
 						coeff = coeff()[ic];
 						if(coeff > 0){
 							v = inDatas()[((y + dy) * width()) + (x + dx)];
-							
+							nb += coeff;
 							if(v == noDataValue()) {
-								nb_nodata = nb_nodata + coeff;
+								nb_nodata += coeff;
 							}else{
-								nb = nb + coeff;
 								if(v >= minHauteur){
-										
 									if(v > seuilMax){
 										v = seuilMax;
 									}
-										
 									r = cellSize*Math.sqrt((dx*dx)+(dy*dy));
-									R = v * inDatas2()[((y + dy) * width()) + (x + dx)];	
-									
+									R = v * inDatas2()[((y + dy) * width()) + (x + dx)];
 									if(r < R){
 										min = Math.min(min, r/R);
 									}
@@ -70,10 +63,9 @@ public class GrainBocagerSelectedDistanceBocageKernel extends DoubleSelectedLand
 			}
 		}
 			
-		outDatas().get(p)[1] = nb_nodata;
 		outDatas().get(p)[2] = nb;
-		outDatas().get(p)[3] = min;
-		outDatas().get(p)[4] = prop;
+		outDatas().get(p)[3] = nb_nodata;
+		outDatas().get(p)[6] = min;
 			
 	}
 

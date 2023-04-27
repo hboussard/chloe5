@@ -15,11 +15,14 @@ import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowAnalysisType;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
+import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.DataOutput;
+import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.raster.Tile;
 
 public class LandscapeMetricAnalysisBuilder {
 
@@ -31,7 +34,9 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	private String distanceFunction;
 	
-	private String rasterFile, rasterFile2, entityRasterFile;
+	private Coverage coverage;
+	
+	private String rasterFile, rasterFile2, entityRasterFile, rasterTile;
 	
 	private float[] rasterTab, rasterTab2, entityRasterTab;
 	
@@ -60,6 +65,10 @@ public class LandscapeMetricAnalysisBuilder {
 	private Map<Integer, Map<String, String>> geotiffOutputs;
 	
 	private Map<Integer, Map<String, float[]>> tabOutputs;
+	
+	private Map<Tile, Map<String, String>> tileAsciiOutputs;
+	
+	private Map<Tile, Map<String, String>> tileGeoTiffOutputs;
 	
 	private boolean interpolation;
 	
@@ -96,6 +105,8 @@ public class LandscapeMetricAnalysisBuilder {
 		//this.bufferROIXMax = 0;
 		//this.bufferROIYMin = 0;
 		//this.bufferROIYMax = 0;
+		this.coverage = null;
+		this.rasterTile = null;
 		this.rasterFile = null;
 		this.rasterFile2 = null;
 		this.rasterTab = null;
@@ -114,6 +125,8 @@ public class LandscapeMetricAnalysisBuilder {
 		this.asciiOutputs = new TreeMap<Integer, Map<String, String>>();
 		this.geotiffOutputs = new TreeMap<Integer, Map<String, String>>();
 		this.tabOutputs = new TreeMap<Integer, Map<String, float[]>>();
+		this.tileAsciiOutputs = null;
+		this.tileGeoTiffOutputs = null;
 		this.unfilters = null;
 		this.datas = null;
 	}
@@ -132,6 +145,14 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	public void setWindowDistanceFunction(String function) {
 		this.distanceFunction = function;
+	}
+	
+	public void setCoverage(Coverage coverage){
+		this.coverage = coverage;
+	}
+	
+	public void setRasterTile(String rasterTile) {
+		this.rasterTile = rasterTile;
 	}
 
 	public void setRasterFile(String rasterFile) {
@@ -304,6 +325,28 @@ public class LandscapeMetricAnalysisBuilder {
 		observers.add(dout);
 	}
 	
+	public void addTileAsciiGridOutput(String metric, String pathTile, Tile tile){
+		Util.createAccess(pathTile);
+		if(this.tileAsciiOutputs == null){
+			this.tileAsciiOutputs = new HashMap<Tile, Map<String, String>>();
+		}
+		if(!this.tileAsciiOutputs.containsKey(tile)){
+			this.tileAsciiOutputs.put(tile, new HashMap<String, String>());
+		}
+		this.tileAsciiOutputs.get(tile).put(metric, pathTile);
+	}
+	
+	public void addTileGeoTiffOutput(String metric, String pathTile, Tile tile){
+		Util.createAccess(pathTile);
+		if(this.tileGeoTiffOutputs == null){
+			this.tileGeoTiffOutputs = new HashMap<Tile, Map<String, String>>();
+		}
+		if(!this.tileGeoTiffOutputs.containsKey(tile)){
+			this.tileGeoTiffOutputs.put(tile, new HashMap<String, String>());
+		}
+		this.tileGeoTiffOutputs.get(tile).put(metric, pathTile);
+	}
+	
 	public void setPointsFilter(String points) {
 		this.points = points;
 	}
@@ -377,6 +420,11 @@ public class LandscapeMetricAnalysisBuilder {
 		this.roiHeight = roiHeight;
 	}
 	
+	// affectation statique
+	public void setMinRate(double min){
+		Counting.setMinRate(min/100.0);
+	}
+	
 	public WindowAnalysisType getAnalysisType() {
 		return analysisType;
 	}
@@ -391,6 +439,14 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	public String getWindowDistanceFunction() {
 		return distanceFunction;
+	}
+	
+	public Coverage getCoverage(){
+		return coverage;
+	}
+	
+	public String getRasterTile() {
+		return rasterTile;
 	}
 
 	public String getRasterFile() {
@@ -493,6 +549,14 @@ public class LandscapeMetricAnalysisBuilder {
 	//	return tabOutputs.entrySet().iterator().next().getValue();
 	//}
 	
+	public Map<Tile, Map<String, String>> getTileAsciiGridOutputs(){
+		return tileAsciiOutputs;
+	}
+	
+	public Map<Tile, Map<String, String>> getTileGeoTiffOutputs(){
+		return tileGeoTiffOutputs;
+	}
+	
 	public Map<RefPoint, Float> getDatas(){
 		return datas;
 	}
@@ -555,17 +619,25 @@ public class LandscapeMetricAnalysisBuilder {
 		LandscapeMetricAnalysis analysis = null;
 		try{
 			
-			if(windowSizes.size() == 0){
-				// TODO gestion en radius
-			}else if(windowSizes.size() == 1){
-				analysis = LandscapeMetricAnalysisFactory.create(this);
-			}else{
-				analysis = new MultipleLandscapeMetricAnalysis();
-				for(int ws : windowSizes){
-					this.windowSize = ws;
-					((MultipleLandscapeMetricAnalysis) analysis).add(LandscapeMetricAnalysisFactory.create(this));
+			if(analysisType.equals(WindowAnalysisType.SLIDING) || analysisType.equals(WindowAnalysisType.SELECTED)){
+				
+				if(windowSizes.size() == 0){
+					// TODO gestion en radius
+				}else if(windowSizes.size() == 1){
+					analysis = LandscapeMetricAnalysisFactory.create(this);
+				}else{
+					analysis = new MultipleLandscapeMetricAnalysis();
+					for(int ws : windowSizes){
+						this.windowSize = ws;
+						((MultipleLandscapeMetricAnalysis) analysis).add(LandscapeMetricAnalysisFactory.create(this));
+					}
 				}
+				
+			}else{
+				
+				analysis = LandscapeMetricAnalysisFactory.create(this);
 			}
+
 		}catch(IOException ex){
 			ex.printStackTrace();
 		}finally{

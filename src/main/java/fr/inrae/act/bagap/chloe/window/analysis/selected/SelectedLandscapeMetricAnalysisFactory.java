@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.analysis.combination.CombinationExpressionFactory;
-import fr.inra.sad.bagap.apiland.analysis.matrix.CoverageManager;
 import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
 import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
@@ -36,6 +35,7 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.SelectedCsvOutput;
 import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.TabCoverage;
 
 public abstract class SelectedLandscapeMetricAnalysisFactory {
@@ -51,11 +51,11 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 		int roiY = builder.getROIY();
 		int roiWidth = builder.getROIWidth();
 		if(roiWidth == -1){
-			roiWidth = inWidth;
+			roiWidth = inWidth - roiX;
 		}
 		int roiHeight = builder.getROIHeight();
 		if(roiHeight == -1){
-			roiHeight = inHeight;
+			roiHeight = inHeight - roiY;
 		}
 			
 		// windowSize
@@ -154,9 +154,9 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 				
 				kernel = new SelectedQuantitativeKernel(windowSize, pixels, coeffs, Raster.getNoDataValue(), 100);
 				
-			}else if (metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("distance")) {
+			}else if (metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("GBDistance")) {
 
-				kernel = new GrainBocagerSelectedDistanceBocageKernel(windowSize, pixels, coeffs, Raster.getNoDataValue());
+				kernel = new GrainBocagerSelectedDistanceBocageKernel(windowSize, pixels, coeffs, Raster.getNoDataValue(), 5, 3, 30);
 
 				Coverage coverageBocage = null;
 				if (builder.getRasterFile2() != null) {
@@ -167,7 +167,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 					throw new IllegalArgumentException("no raster 'type de boisement' declared");
 				}
 
-				counting = new QuantitativeCounting(0, nbValues, theoreticalSize);
+				counting = new QuantitativeCounting(theoreticalSize);
 
 				// add metrics to counting
 				for (Metric m : metrics) {
@@ -183,15 +183,15 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 				return createDouble(coverage, coverageBocage, pixels, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
 				
 
-			} /*else if (metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("bocage")) {
-				// a priori jamais utilisé
+			} /*else if (metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("GBBocage")) {
+				// a priori jamais utilise
 				kernel = new GrainBocagerSelectedDetectionBocageKernel(windowSize, pixels, coeffs, Raster.getNoDataValue());
 				
 			}*/ else{
 				kernel = new SelectedQuantitativeKernel(windowSize, pixels, coeffs, Raster.getNoDataValue());
 			}
 			
-			counting = new QuantitativeCounting(0, nbValues, theoreticalSize);
+			counting = new QuantitativeCounting(theoreticalSize);
 				
 			// add metrics to counting
 			for(Metric m : metrics){
@@ -238,9 +238,9 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 					
 					System.out.println("comptage des valeurs");
 
-					nbValues = 4 + values.length;
+					nbValues = 5 + values.length;
 					
-					counting = new ValueCounting(0, nbValues, values, theoreticalSize);
+					counting = new ValueCounting(values, theoreticalSize);
 						
 					// add metrics to counting
 					for(Metric m : metrics){
@@ -279,9 +279,9 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 						
 					System.out.println("comptage des couples");
 
-					nbValues = 3 + couples.length;
+					nbValues = 7 + couples.length;
 					
-					counting = new CoupleCounting(0, nbValues, values.length, couples, theoreticalCoupleSize);
+					counting = new CoupleCounting(values.length, couples, theoreticalSize, theoreticalCoupleSize);
 						
 					// add metrics to counting
 					for(Metric m : metrics){
@@ -320,7 +320,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 					
 					System.out.println("comptage des valeurs et des couples");
 					
-					nbValues = 4 + values.length + 2 + couples.length;
+					nbValues = 5 + values.length + 3 + couples.length;
 					
 					counting = new ValueAndCoupleCounting(values, couples, theoreticalSize, theoreticalCoupleSize);
 					
@@ -361,11 +361,11 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 					
 			}else if(MetricManager.hasOnlyPatchMetric(metrics)){ // patch
 					
-				nbValues = 4 + 3 * values.length;
+				nbValues = 7 + 3 * values.length;
 				
 				kernel = new SelectedPatchKernel(windowSize, pixels, coeffs, Raster.getNoDataValue(), values, inCellSize);
 				
-				counting =  new PatchCounting(values);
+				counting =  new PatchCounting(values, theoreticalSize);
 					
 				// add metrics to counting
 				for(Metric m : metrics){

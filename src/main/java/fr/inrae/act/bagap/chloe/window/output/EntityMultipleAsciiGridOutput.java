@@ -61,16 +61,16 @@ public class EntityMultipleAsciiGridOutput implements CountingObserver{
 	}
 
 	@Override
-	public void postrun(Counting c, int x, int y, Map<Metric, Double> values) {
+	public void postrun(Counting c, int x, int y, Set<Metric> metrics) {
 		// do nothing
 	}
 	
 	@Override
-	public void postrun(Counting c, int id, Map<Metric, Double> values) {
+	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// stockage des valeurs
 		Map<Metric, Double> v = new HashMap<Metric, Double>();
-		for(Metric m : values.keySet()){
-			v.put(m, values.get(m));
+		for(Metric m : metrics){
+			v.put(m, m.value());
 		}
 		datas.put(id, v);
 	}
