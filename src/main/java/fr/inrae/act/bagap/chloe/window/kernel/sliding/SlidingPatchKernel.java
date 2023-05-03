@@ -3,7 +3,7 @@ package fr.inrae.act.bagap.chloe.window.kernel.sliding;
 import fr.inra.sad.bagap.apiland.analysis.matrix.cluster.ClusteringTabOutput;
 import fr.inra.sad.bagap.apiland.analysis.matrix.cluster.ClusteringTabQueenAnalysis;
 
-public class SlidingPatchKernel extends SlidingLandscapeMetricKernel {
+public class SlidingPatchKernel extends AbstractSlidingLandscapeMetricKernel {
 
 	private int[] values;
 	

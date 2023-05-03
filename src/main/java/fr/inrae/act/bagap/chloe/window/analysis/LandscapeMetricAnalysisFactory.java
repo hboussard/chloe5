@@ -1,11 +1,6 @@
 package fr.inrae.act.bagap.chloe.window.analysis;
 
-import java.io.File;
 import java.io.IOException;
-import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.coverage.grid.io.GridCoverage2DReader;
-import org.geotools.gce.arcgrid.ArcGridReader;
-import org.geotools.gce.geotiff.GeoTiffReader;
 
 import fr.inrae.act.bagap.chloe.window.WindowAnalysisType;
 import fr.inrae.act.bagap.chloe.window.analysis.entity.HugeEntityLandscapeMetricAnalysisFactory;
@@ -20,8 +15,6 @@ import fr.inrae.act.bagap.chloe.window.analysis.sliding.HugeSlidingLandscapeMetr
 import fr.inrae.act.bagap.chloe.window.analysis.sliding.TinySlidingLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.FileCoverage;
 import fr.inrae.act.bagap.raster.TabCoverage;
 
 public class LandscapeMetricAnalysisFactory {

@@ -10,9 +10,9 @@ import fr.inra.sad.bagap.apiland.analysis.matrix.ArrayRCMDistanceAnalysis;
 import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
-import fr.inrae.act.bagap.chloe.window.kernel.sliding.DoubleSlidingLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.AbstractDoubleSlidingLandscapeMetricKernel;
 
-public abstract class SlidingFunctionalKernel extends DoubleSlidingLandscapeMetricKernel {
+public abstract class SlidingFunctionalKernel extends AbstractDoubleSlidingLandscapeMetricKernel {
 
 	private double cellSize;
 	

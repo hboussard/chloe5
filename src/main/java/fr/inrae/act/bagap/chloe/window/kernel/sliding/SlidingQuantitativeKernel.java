@@ -1,6 +1,6 @@
 package fr.inrae.act.bagap.chloe.window.kernel.sliding;
 
-public class SlidingQuantitativeKernel extends SlidingLandscapeMetricKernel {
+public class SlidingQuantitativeKernel extends AbstractSlidingLandscapeMetricKernel {
 	
 	private final float threshold;
 	

@@ -1,8 +1,8 @@
 package fr.inrae.act.bagap.chloe.window.kernel.sliding.grainbocager;
 
-import fr.inrae.act.bagap.chloe.window.kernel.sliding.DoubleSlidingLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.AbstractDoubleSlidingLandscapeMetricKernel;
 
-public class GrainBocagerSlidingDistanceBocageKernel extends DoubleSlidingLandscapeMetricKernel {
+public class GrainBocagerSlidingDistanceBocageKernel extends AbstractDoubleSlidingLandscapeMetricKernel {
 
 	private float cellSize; // = 5; // la taille du pixel en metre (IGN)
 	

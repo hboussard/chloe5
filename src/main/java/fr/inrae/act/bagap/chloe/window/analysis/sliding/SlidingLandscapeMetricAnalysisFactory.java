@@ -31,10 +31,12 @@ import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.gaussian.FastGaussianWeightedCountCoupleKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.gaussian.FastGaussianWeightedCountValueAndCoupleKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.gaussian.FastGaussianWeightedCountValueKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.gaussian.FastGaussianWeightedGrainBocagerDetectionBocageKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.gaussian.FastGaussianWeightedQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.square.FastSquareCountCoupleKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.square.FastSquareCountValueAndCoupleKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.square.FastSquareCountValueKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.square.FastSquareGrainBocagerDistanceBocageKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.square.FastSquareQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.functional.SlidingFunctionalCountCoupleKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.functional.SlidingFunctionalCountValueAndCoupleKernel;
@@ -363,7 +365,14 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				
 			} else if (metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("GBDistance")) {
 
-				kernel = new GrainBocagerSlidingDistanceBocageKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), unfilters, 5, 3, 30);
+				if (builder.getWindowDistanceType() == WindowDistanceType.FAST_SQUARE){
+					
+					kernel = new FastSquareGrainBocagerDistanceBocageKernel(windowSize, displacement, Raster.getNoDataValue(), unfilters, 5, 3, 30);
+					
+				}else{
+					
+					kernel = new GrainBocagerSlidingDistanceBocageKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), unfilters, 5, 3, 30);
+				}
 
 				Coverage coverageBocage = null;
 				if (builder.getRasterFile2() != null) {
@@ -392,7 +401,13 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 
 			} else if (metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("GBBocage")) {
 				
-				kernel = new GrainBocagerSlidingDetectionBocageKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), unfilters, 3);
+				if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN){
+					
+					kernel = new FastGaussianWeightedGrainBocagerDetectionBocageKernel(windowSize, displacement, Raster.getNoDataValue(), unfilters, 3);
+				}else{
+					
+					kernel = new GrainBocagerSlidingDetectionBocageKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), unfilters, 3);
+				}
 				
 			} else {
 				if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN) {

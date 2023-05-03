@@ -1,8 +1,8 @@
 package fr.inrae.act.bagap.chloe.window.kernel.sliding.fast;
 
-import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.AbstractSlidingLandscapeMetricKernel;
 
-public abstract class FastKernel extends SlidingLandscapeMetricKernel {
+public abstract class FastKernel extends AbstractSlidingLandscapeMetricKernel {
 	
 	private float[][] buf;
 	
@@ -23,7 +23,7 @@ public abstract class FastKernel extends SlidingLandscapeMetricKernel {
 	
 	@Override
 	public void applySlidingWindow(int theY, int buffer) {
-		this.setTheY(theY); // indique position de la premiere ligne du buffer dans imageIn
+		this.setTheY(theY); // indique position de la premiere ligne du buffer dans inData
 		final int nlines = ((buffer-1) - (displacement()-theY()%displacement())%displacement() )/displacement()+1;
 		execute(width(), 2*nlines);
 	}

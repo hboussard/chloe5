@@ -1,6 +1,6 @@
 package fr.inrae.act.bagap.chloe.window.kernel.sliding;
 
-public class SlidingCountValueAndCoupleKernel extends SlidingLandscapeMetricKernel {
+public class SlidingCountValueAndCoupleKernel extends AbstractSlidingLandscapeMetricKernel {
 	
 	private final int nbValues;
 	

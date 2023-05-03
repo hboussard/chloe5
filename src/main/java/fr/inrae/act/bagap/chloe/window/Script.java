@@ -29,7 +29,67 @@ import fr.inrae.act.bagap.raster.TileCoverage;
 public class Script {
 
 	public static void main(String[] args){
-		scriptTestTileCoverageZA();
+		scriptTestSliding();
+	}
+	
+	private static void scriptTestSliding(){
+
+		String path = "G:/chloe/winterschool/data/start/";
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		//builder.setAnalysisType(WindowAnalysisType.SLIDING);
+		//builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+		//builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		//builder.setWindowShapeType(WindowShapeType.SQUARE);
+		builder.setWindowDistanceType(WindowDistanceType.FAST_SQUARE);
+		builder.setRasterFile(path+"za.tif");
+		builder.setWindowSize(201);
+		builder.setDisplacement(20);
+		
+		//builder.setROIX(100);
+		//builder.setROIY(100);
+		//builder.setROIWidth(1000);
+		//builder.setROIHeight(1000);
+		
+		//builder.addMetric("SHDI");
+		/*
+		for(int i=1; i<12; i++){
+			builder.addMetric("pNV_"+i);
+			builder.addAsciiGridOutput("pNV_"+i, path+"nais/pnv_"+i+".asc"); 
+			for(int j=1; j<12; j++){
+				if(i<=j){
+					builder.addMetric("pNC_"+i+"-"+j);
+					builder.addAsciiGridOutput("pNC_"+i+"-"+j, path+"nais/pnv_"+i+"-"+j+".asc");
+				}
+			}
+		}
+		*/
+		//builder.addMetric("NV_5");
+		//builder.addMetric("NC_4-5");
+		//builder.addMetric("pNC_4-5");
+		
+		//builder.addAsciiGridOutput("NV_5", path+"sliding/nv_5.asc"); 
+		
+		//builder.addMetric("SHDI");
+		//builder.addAsciiGridOutput("SHDI", path+"fast/sshdi.asc"); 
+		
+		builder.addMetric("average");
+		builder.addAsciiGridOutput("average", path+"fast/fsaverage.asc"); 
+		
+		//builder.addMetric("HET-frag");
+		//builder.addAsciiGridOutput("HET-frag", path+"sliding/mhet_201p.asc"); 
+		
+		//builder.addMetric("Central");
+		//builder.addAsciiGridOutput("Central", path+"fast/fcentral_201p_dep20.asc"); 
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		long begin = System.currentTimeMillis();
+	
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
 	}
 	
 	private static void scriptTestTileCoverageZA(){
@@ -148,63 +208,6 @@ public class Script {
 		CoverageManager.writeGeotiff("H:/temp/tile_coverage/test_35_local2.tif", roiDatas, roiEntete);
 	}
 	
-	private static void scriptTestSliding(){
-
-		String path = "G:/chloe/winterschool/data/start/";
-		
-		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		//builder.setAnalysisType(WindowAnalysisType.SLIDING);
-		//builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
-		//builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
-		//builder.setWindowShapeType(WindowShapeType.SQUARE);
-		//builder.setWindowDistanceType(WindowDistanceType.FAST_SQUARE);
-		builder.setRasterFile(path+"za.tif");
-		builder.setWindowSize(201);
-		builder.setDisplacement(20);
-		
-		//builder.setROIX(100);
-		//builder.setROIY(100);
-		//builder.setROIWidth(1000);
-		//builder.setROIHeight(1000);
-		
-		//builder.addMetric("SHDI");
-		/*
-		for(int i=1; i<12; i++){
-			builder.addMetric("pNV_"+i);
-			builder.addAsciiGridOutput("pNV_"+i, path+"nais/pnv_"+i+".asc"); 
-			for(int j=1; j<12; j++){
-				if(i<=j){
-					builder.addMetric("pNC_"+i+"-"+j);
-					builder.addAsciiGridOutput("pNC_"+i+"-"+j, path+"nais/pnv_"+i+"-"+j+".asc");
-				}
-			}
-		}
-		*/
-		//builder.addMetric("NV_5");
-		//builder.addMetric("NC_4-5");
-		//builder.addMetric("pNC_4-5");
-		
-		//builder.addAsciiGridOutput("NV_5", path+"sliding/nv_5.asc"); 
-		
-		//builder.addMetric("SHDI");
-		//builder.addAsciiGridOutput("SHDI", path+"sliding/mshdi_301p.asc"); 
-		
-		builder.addMetric("HET-frag");
-		//builder.addAsciiGridOutput("HET-frag", path+"sliding/mhet_201p.asc"); 
-		
-		//builder.addMetric("Central");
-		//builder.addAsciiGridOutput("Central", path+"fast/fcentral_201p_dep20.asc"); 
-		
-		LandscapeMetricAnalysis analysis = builder.build();
-		
-		long begin = System.currentTimeMillis();
-	
-		analysis.allRun();
-		
-		long end = System.currentTimeMillis();
-		System.out.println("time computing : "+(end - begin));
-	}
-	
 	private static void scriptTestEntity(){
 
 		String path = "G:/chloe/winterschool/data/start/";
@@ -234,7 +237,6 @@ public class Script {
 		long end = System.currentTimeMillis();
 		System.out.println("time computing : "+(end - begin));
 	}
-	
 	
 	private static void scriptTestMinimumValidValue(){
 
