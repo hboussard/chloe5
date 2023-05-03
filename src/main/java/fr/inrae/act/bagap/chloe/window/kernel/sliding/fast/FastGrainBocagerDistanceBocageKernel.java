@@ -32,6 +32,8 @@ public abstract class FastGrainBocagerDistanceBocageKernel extends DoubleFastKer
 		double r, R;
 		float global_r = -1;
 		float global_R = -1;
+		float global2_r = -1;
+		float global2_R = -1;
 		for (dy = -rayon() +1; dy < rayon(); dy++) {
 			if(((y + dy) >= 0) && ((y + dy) < height())){
 				
@@ -49,14 +51,16 @@ public abstract class FastGrainBocagerDistanceBocageKernel extends DoubleFastKer
 					R = v * inDatas2()[((y + dy) * width()) + x];	
 					
 					if(r < R){
-					//if(r > 0 && r < R){
-						//if(r/R < min || (r/R == min && R > global_R)){
 						if(r/R < min){
-						//if(R > global_R){
 							min = (float) (r/R);
 							global_r = (float) r;
 							global_R = (float) R;
 						}
+					}
+					
+					if(R > global2_R || (R == global2_R && r < global2_r)){
+						global2_r = (float) r;
+						global2_R = (float) R;
 					}
 				}
 			}
@@ -65,6 +69,8 @@ public abstract class FastGrainBocagerDistanceBocageKernel extends DoubleFastKer
 		buf()[x][3] = nb_nodata;
 		buf()[x][4] = global_r;
 		buf()[x][5] = global_R;
+		buf()[x][6] = global2_r;
+		buf()[x][7] = global2_R;
 	}
 	
 	@Override
@@ -83,16 +89,24 @@ public abstract class FastGrainBocagerDistanceBocageKernel extends DoubleFastKer
 			int x_buf = x*displacement()+bufferROIXMin();
 			float min = 1.0f;
 			float r, rprime;
-			if(hCentral > 0){
+			double distHorizontaleCarre;
+			if(hCentral >= minHauteur){
 				
 				min = 0;
 				
 			}else{
 				for(int i=max(x_buf-rayon()+1,0); i<min(x_buf+rayon(), width()); i++) {
+					distHorizontaleCarre = Math.pow(cellSize * (i-x_buf), 2);
 					r = buf()[i][4];
 					if(r != -1){
-						rprime = (float) Math.sqrt((r*r) + Math.pow(cellSize * (i-x_buf), 2));
+						rprime = (float) Math.sqrt((r*r) + distHorizontaleCarre);
 						min = Math.min(min, rprime / buf()[i][5]);
+					}
+					
+					r = buf()[i][6];
+					if(r != -1){
+						rprime = (float) Math.sqrt((r*r) + distHorizontaleCarre);
+						min = Math.min(min, rprime / buf()[i][7]);
 					}
 				}
 			}
