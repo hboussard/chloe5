@@ -34,7 +34,7 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	private String distanceFunction;
 	
-	private Coverage coverage;
+	private Coverage coverage, coverage2;
 	
 	private String rasterFile, rasterFile2, entityRasterFile, rasterTile;
 	
@@ -106,6 +106,7 @@ public class LandscapeMetricAnalysisBuilder {
 		//this.bufferROIYMin = 0;
 		//this.bufferROIYMax = 0;
 		this.coverage = null;
+		this.coverage2 = null;
 		this.rasterTile = null;
 		this.rasterFile = null;
 		this.rasterFile2 = null;
@@ -149,6 +150,10 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	public void setCoverage(Coverage coverage){
 		this.coverage = coverage;
+	}
+	
+	public void setCoverage2(Coverage coverage2){
+		this.coverage2 = coverage2;
 	}
 	
 	public void setRasterTile(String rasterTile) {
@@ -443,6 +448,10 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	public Coverage getCoverage(){
 		return coverage;
+	}
+	
+	public Coverage getCoverage2(){
+		return coverage2;
 	}
 	
 	public String getRasterTile() {

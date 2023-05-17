@@ -7,7 +7,7 @@ import fr.inrae.act.bagap.chloe.window.kernel.sliding.DoubleSlidingLandscapeMetr
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.Coverage;
 
-public class DoubleHugeSlidingLandscapeMetricAnalysis extends TinySlidingLandscapeMetricAnalysis {
+public class DoubleHugeSlidingLandscapeMetricAnalysis extends HugeSlidingLandscapeMetricAnalysis {
 	
 	private Coverage coverage2;
 		

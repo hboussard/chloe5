@@ -379,6 +379,8 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 					coverageBocage = CoverageManager.getCoverage(builder.getRasterFile2());
 				} else if (builder.getRasterTab2() != null) {
 					coverageBocage = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
+				} else if (builder.getCoverage2() != null) {
+					coverageBocage = builder.getCoverage2();
 				} else {
 					throw new IllegalArgumentException("no raster 'type de boisement' declared");
 				}
@@ -493,6 +495,8 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 							coverageFriction = CoverageManager.getCoverage(builder.getRasterFile2());
 						} else if (builder.getRasterTab2() != null) {
 							coverageFriction = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
+						} else if (builder.getCoverage2() != null) {
+							coverageFriction = builder.getCoverage2();
 						} else {
 							throw new IllegalArgumentException("no raster2 declared");
 						}
@@ -544,6 +548,8 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 							coverageFriction = CoverageManager.getCoverage(builder.getRasterFile2());
 						} else if (builder.getRasterTab2() != null) {
 							coverageFriction = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
+						} else if (builder.getCoverage2() != null) {
+							coverageFriction = builder.getCoverage2();
 						} else {
 							throw new IllegalArgumentException("no raster2 declared");
 						}
@@ -596,6 +602,8 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 							coverageFriction = CoverageManager.getCoverage(builder.getRasterFile2());
 						} else if (builder.getRasterTab2() != null) {
 							coverageFriction = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
+						} else if (builder.getCoverage2() != null) {
+							coverageFriction = builder.getCoverage2();
 						} else {
 							throw new IllegalArgumentException("no raster2 declared");
 						}

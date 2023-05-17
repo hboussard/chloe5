@@ -1,7 +1,7 @@
 package fr.inrae.act.bagap.chloe.window.kernel.map;
 
-import fr.inra.sad.bagap.apiland.analysis.matrix.cluster.ClusteringTabOutput;
-import fr.inra.sad.bagap.apiland.analysis.matrix.cluster.ClusteringTabQueenAnalysis;
+import fr.inrae.act.bagap.chloe.cluster.TabClusteringOutput;
+import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenClusteringAnalysis;
 
 public class MapPatchKernel extends MapLandscapeMetricKernel {
 
@@ -18,10 +18,10 @@ public class MapPatchKernel extends MapLandscapeMetricKernel {
 	@Override
 	public void applyMapWindow(int theY) {
 			
-		ClusteringTabQueenAnalysis ca = new ClusteringTabQueenAnalysis(inDatas(), width(), height(), values, noDataValue());
+		TabQueenClusteringAnalysis ca = new TabQueenClusteringAnalysis(inDatas(), width(), height(), values, noDataValue());
 		int[] tabCluster = (int[]) ca.allRun();
 		
-		ClusteringTabOutput cto = new ClusteringTabOutput(tabCluster, inDatas(), values, cellSize);
+		TabClusteringOutput cto = new TabClusteringOutput(tabCluster, inDatas(), values, cellSize);
 		cto.allRun();
 		
 		outDatas()[2] = inDatas().length;

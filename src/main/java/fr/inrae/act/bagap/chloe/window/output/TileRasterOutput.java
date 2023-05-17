@@ -41,7 +41,10 @@ public abstract class TileRasterOutput implements CountingObserver {
 	public TileRasterOutput(String folder, Metric metric, Tile tile, int width, int height, double minX, double maxX, double minY, double maxY, double cellSize, int noDataValue){
 		this.folder = folder;
 		this.metric = metric;
-		this.tile = Tile.getTile(tile, new Envelope(minX, maxX, minY, maxY));
+		
+		//this.tile = Tile.getTile(tile, new Envelope(minX, maxX, minY, maxY));
+		this.tile = new Tile(new Envelope(minX, maxX, minY, maxY), tile.getNcols(), tile.getNrows(), tile.getTileLength());
+		
 		this.width = width;
 		this.height = height;
 		this.minX = minX;
@@ -56,7 +59,7 @@ public abstract class TileRasterOutput implements CountingObserver {
 	@Override
 	public void init(Counting c, Set<Metric> metrics) {
 		
-		tileSize = new Double(tile.getTileSize()/cellSize).intValue();
+		tileSize = new Double(tile.getTileLength()/cellSize).intValue();
 		
 		actives = new boolean[tile.getNcols()];
 		tabs = new float[tile.getNcols()][new Double(Math.pow(tileSize, 2)).intValue()];
@@ -143,11 +146,9 @@ public abstract class TileRasterOutput implements CountingObserver {
 	}
 	
 	private void exportTab(int tX) {
-		//System.out.println("export "+tX+" "+tY);
 		Envelope e = tile.getEnvelope(tX, tY);
 		EnteteRaster entete = new EnteteRaster(tileSize, tileSize, e.getMinX(), e.getMaxX(), e.getMinY(), e.getMaxY(), (float) cellSize, noDataValue);
-		//CoverageManager.writeAsciiGrid(folder+metric.getName()+"_"+tX+"_"+tY+".asc", tabs[tX], entete);
-		writeRaster(folder+metric.getName()+"_"+tX+"_"+tY, tabs[tX], entete);
+		writeRaster(folder+metric.getName()+"_"+((int) e.getMinX()/1000)+"_"+((int) e.getMaxY()/1000), tabs[tX], entete);
 	}
 
 	@Override

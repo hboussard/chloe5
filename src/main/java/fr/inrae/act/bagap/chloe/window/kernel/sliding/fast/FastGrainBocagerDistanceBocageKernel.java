@@ -13,7 +13,8 @@ public abstract class FastGrainBocagerDistanceBocageKernel extends DoubleFastKer
 		this.cellSize = cellSize;
 		this.minHauteur = minHauteur;
 		this.seuilMax = seuilMax;
-		setNValuesTot(8);
+		//setNValuesTot(8);
+		setNValuesTot(10);
 	}
 	
 	@Override
@@ -28,12 +29,15 @@ public abstract class FastGrainBocagerDistanceBocageKernel extends DoubleFastKer
 		float nb_nodata = 0;
 		float nb = 0;
 		float coeff;
-		float min = 1.0f;
-		double r, R;
+		float /*min = 1.0f,*/ min2 = 1.0f;
+		double r, R, C;
 		float global_r = -1;
 		float global_R = -1;
 		float global2_r = -1;
 		float global2_R = -1;
+		float global2_C = -1;
+		float global3_r = -1;
+		float global3_R = -1;
 		for (dy = -rayon() +1; dy < rayon(); dy++) {
 			if(((y + dy) >= 0) && ((y + dy) < height())){
 				
@@ -48,19 +52,29 @@ public abstract class FastGrainBocagerDistanceBocageKernel extends DoubleFastKer
 					}
 					
 					r = cellSize * Math.abs(dy); // distance au centroid
-					R = v * inDatas2()[((y + dy) * width()) + x];	
+					C = inDatas2()[((y + dy) * width()) + x];
+					R = v * C;
 					
 					if(r < R){
-						if(r/R < min){
-							min = (float) (r/R);
+						
+						if(r == 0){
 							global_r = (float) r;
 							global_R = (float) R;
+							
+						}else{
+							
+							if(C >= global2_C && r/R < min2){
+								global2_r = (float) r;
+								global2_R = (float) R;
+								global2_C = (float) C;
+								min2 = (float) (r/R);
+							}
+							
+							if(R > global3_R){
+								global3_r = (float) r;
+								global3_R = (float) R;
+							}
 						}
-					}
-					
-					if(R > global2_R || (R == global2_R && r < global2_r)){
-						global2_r = (float) r;
-						global2_R = (float) R;
 					}
 				}
 			}
@@ -71,6 +85,8 @@ public abstract class FastGrainBocagerDistanceBocageKernel extends DoubleFastKer
 		buf()[x][5] = global_R;
 		buf()[x][6] = global2_r;
 		buf()[x][7] = global2_R;
+		buf()[x][8] = global3_r;
+		buf()[x][9] = global3_R;
 	}
 	
 	@Override
@@ -107,6 +123,12 @@ public abstract class FastGrainBocagerDistanceBocageKernel extends DoubleFastKer
 					if(r != -1){
 						rprime = (float) Math.sqrt((r*r) + distHorizontaleCarre);
 						min = Math.min(min, rprime / buf()[i][7]);
+					}
+					
+					r = buf()[i][8];
+					if(r != -1){
+						rprime = (float) Math.sqrt((r*r) + distHorizontaleCarre);
+						min = Math.min(min, rprime / buf()[i][9]);
 					}
 				}
 			}

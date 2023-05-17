@@ -1,7 +1,7 @@
 package fr.inrae.act.bagap.chloe.window.kernel.grid;
 
-import fr.inra.sad.bagap.apiland.analysis.matrix.cluster.ClusteringTabOutput;
-import fr.inra.sad.bagap.apiland.analysis.matrix.cluster.ClusteringTabQueenAnalysis;
+import fr.inrae.act.bagap.chloe.cluster.TabClusteringOutput;
+import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenClusteringAnalysis;
 
 public class GridPatchKernel extends GridLandscapeMetricKernel {
 
@@ -42,10 +42,10 @@ public class GridPatchKernel extends GridLandscapeMetricKernel {
 			}
 		}
 		
-		ClusteringTabQueenAnalysis ca = new ClusteringTabQueenAnalysis(tabCover, gridSize(), gridSize(), values, noDataValue());
+		TabQueenClusteringAnalysis ca = new TabQueenClusteringAnalysis(tabCover, gridSize(), gridSize(), values, noDataValue());
 		int[] tabCluster = (int[]) ca.allRun();
 		
-		ClusteringTabOutput cto = new ClusteringTabOutput(tabCluster, tabCover, values, cellSize);
+		TabClusteringOutput cto = new TabClusteringOutput(tabCluster, tabCover, values, cellSize);
 		cto.allRun();
 		
 		outDatas()[x][4] = cto.getNbPatch();

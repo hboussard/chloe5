@@ -19,7 +19,20 @@ public class Test {
 
 	public static void main(String[] args) {
 
-		System.out.println(((int)(2/0.0)));
+		//Coverage cov = CoverageManager.getCoverage("H:/temp/test/za.tif");
+		
+		Coverage cov = CoverageManager.getCoverage("H:/temp/test/ascii1.asc");
+		float[] data = cov.getDatas();
+		EnteteRaster entete = cov.getEntete();
+		cov.dispose();
+		System.out.println(entete);
+		
+		CoverageManager.writeGeotiff("H:/temp/test/ascii1.tif", data, entete);
+		
+		Coverage cov2 = CoverageManager.getCoverage("H:/temp/test/ascii1.tif");
+		EnteteRaster entete2 = cov2.getEntete();
+		System.out.println(entete2.noDataValue());
+		cov2.dispose();
 	}
 
 }

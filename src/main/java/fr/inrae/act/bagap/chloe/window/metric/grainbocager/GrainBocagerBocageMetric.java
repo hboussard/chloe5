@@ -19,6 +19,7 @@ public class GrainBocagerBocageMetric extends Metric implements QuantitativeMetr
 		value /= co.validValues();
 		
 		if(value > 0.75){
+		//if(value > 0.50){
 			value = 5; // 5 fois la hauteur des arbres en forets
 		}else if(value < 0.20){
 			value = 1; // 1 fois la hauteur des arbres isoles

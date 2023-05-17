@@ -2,9 +2,9 @@ package fr.inrae.act.bagap.chloe.window.kernel.selected;
 
 import java.util.Set;
 
-import fr.inra.sad.bagap.apiland.analysis.matrix.cluster.ClusteringTabOutput;
-import fr.inra.sad.bagap.apiland.analysis.matrix.cluster.ClusteringTabQueenAnalysis;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inrae.act.bagap.chloe.cluster.TabClusteringOutput;
+import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenClusteringAnalysis;
 
 public class SelectedPatchKernel extends SelectedLandscapeMetricKernel {
 
@@ -53,10 +53,10 @@ public class SelectedPatchKernel extends SelectedLandscapeMetricKernel {
 			}
 		}
 			
-		ClusteringTabQueenAnalysis ca = new ClusteringTabQueenAnalysis(tabCover, windowSize(), windowSize(), values, noDataValue());
+		TabQueenClusteringAnalysis ca = new TabQueenClusteringAnalysis(tabCover, windowSize(), windowSize(), values, noDataValue());
 		int[] tabCluster = (int[]) ca.allRun();
 			
-		ClusteringTabOutput cto = new ClusteringTabOutput(tabCluster, tabCover, values, cellSize);
+		TabClusteringOutput cto = new TabClusteringOutput(tabCluster, tabCover, values, cellSize);
 		cto.allRun();
 			
 		outDatas().get(p)[4] = cto.getNbPatch();
