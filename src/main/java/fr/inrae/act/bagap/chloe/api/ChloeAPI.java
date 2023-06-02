@@ -97,7 +97,6 @@ public class ChloeAPI {
 				builder.setRasterFile(prop);
 				return;
 			}
-			throw new NoParameterException("input_raster : "+prop);
 		}
 		throw new NoParameterException("input_raster");
 	}

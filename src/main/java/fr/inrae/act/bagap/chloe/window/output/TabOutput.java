@@ -1,6 +1,5 @@
 package fr.inrae.act.bagap.chloe.window.output;
 
-import java.util.Map;
 import java.util.Set;
 
 import fr.inrae.act.bagap.chloe.window.counting.Counting;

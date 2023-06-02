@@ -46,6 +46,7 @@ import fr.inrae.act.bagap.chloe.window.kernel.sliding.grainbocager.GrainBocagerS
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.AsciiGridOutput;
+import fr.inrae.act.bagap.chloe.window.output.CoverageOutput;
 import fr.inrae.act.bagap.chloe.window.output.CsvOutput;
 import fr.inrae.act.bagap.chloe.window.output.GeoTiffOutput;
 import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineLinearAsciiGridOutput;
@@ -56,6 +57,7 @@ import fr.inrae.act.bagap.chloe.window.output.TileAsciiGridOutput;
 import fr.inrae.act.bagap.chloe.window.output.TileGeoTiffOutput;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 import fr.inrae.act.bagap.raster.TabCoverage;
 import fr.inrae.act.bagap.raster.Tile;
 
@@ -159,6 +161,14 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 
 		// observers
 		Set<CountingObserver> observers = builder.getObservers();
+		
+		if(builder.getCoverageOutputs() != null){
+			for(CoverageOutput coverageOutput : builder.getCoverageOutputs()) {
+				coverageOutput.setEntete(new EnteteRaster(outWidth, outHeight, outMinX, outMaxX, outMaxY, outMinY, (float) outCellSize, Raster.getNoDataValue()));
+				observers.add(coverageOutput);
+			}
+		}
+		
 		if (builder.getCsv() != null) {
 			if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
 				// CsvOutput2 csvOutput = new CsvOutput2(builder.getCsv(),

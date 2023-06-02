@@ -19,6 +19,7 @@ import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
+import fr.inrae.act.bagap.chloe.window.output.CoverageOutput;
 import fr.inrae.act.bagap.chloe.window.output.DataOutput;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.EnteteRaster;
@@ -80,6 +81,8 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	private Map<RefPoint, Float> datas;
 	
+	private Set<CoverageOutput> coverageOutputs;
+	
 	public LandscapeMetricAnalysisBuilder(){
 		reset();
 	}
@@ -130,6 +133,7 @@ public class LandscapeMetricAnalysisBuilder {
 		this.tileGeoTiffOutputs = null;
 		this.unfilters = null;
 		this.datas = null;
+		this.coverageOutputs = new HashSet<CoverageOutput>();
 	}
 
 	public void setAnalysisType(WindowAnalysisType analysisType) {
@@ -257,6 +261,10 @@ public class LandscapeMetricAnalysisBuilder {
 	public void addCsvOutput(String csv){
 		Util.createAccess(csv);
 		this.csv = csv;
+	}
+	
+	public void addCoverageOutput(CoverageOutput coverageOutput){
+		this.coverageOutputs.add(coverageOutput);
 	}
 	
 	public void addAsciiGridFolderOutput(String asciiGridFolder){
@@ -524,6 +532,10 @@ public class LandscapeMetricAnalysisBuilder {
 
 	public String getCsv() {
 		return csv;
+	}
+	
+	public Set<CoverageOutput> getCoverageOutputs(){
+		return coverageOutputs;
 	}
 	
 	public String getAsciiGridFolder() {

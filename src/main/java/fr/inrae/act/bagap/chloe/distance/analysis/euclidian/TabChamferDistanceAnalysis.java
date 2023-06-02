@@ -1,5 +1,7 @@
 package fr.inrae.act.bagap.chloe.distance.analysis.euclidian;
 
+import java.util.Arrays;
+
 import fr.inra.sad.bagap.apiland.analysis.Analysis;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 
@@ -68,72 +70,85 @@ public class TabChamferDistanceAnalysis extends Analysis {
 	}
 	
 	private float[] compute() {
-		
-		// forward
-		for (int y = 0; y <= height - 1; y++) {
-			for (int x = 0; x <= width - 1; x++) {
-				float v = outDatas[y * width + x];
-				if (v < 0) {
-					continue;
-				}
-				for (int k = 0; k < chamfer.length; k++) {
-					int dx = chamfer[k][0];
-					int dy = chamfer[k][1];
-					int dt = chamfer[k][2];
-
-					testAndSet(x + dx, y + dy, v + dt);
-					if (dy != 0) {
-						testAndSet(x - dx, y + dy, v + dt);
+		if(hasValue){
+			// forward
+			for (int y = 0; y <= height - 1; y++) {
+				for (int x = 0; x <= width - 1; x++) {
+					float v = outDatas[y * width + x];
+					if (v < 0) {
+						continue;
 					}
-					if (dx != dy) {
-						testAndSet(x + dy, y + dx, v + dt);
+					for (int k = 0; k < chamfer.length; k++) {
+						int dx = chamfer[k][0];
+						int dy = chamfer[k][1];
+						int dt = chamfer[k][2];
+
+						testAndSet(x + dx, y + dy, v + dt);
 						if (dy != 0) {
-							testAndSet(x - dy, y + dx, v + dt);
+							testAndSet(x - dx, y + dy, v + dt);
+						}
+						if (dx != dy) {
+							testAndSet(x + dy, y + dx, v + dt);
+							if (dy != 0) {
+								testAndSet(x - dy, y + dx, v + dt);
+							}
+						}
+					}
+				}
+			}
+
+			// backward
+			for (int y = height - 1; y >= 0; y--) {
+				for (int x = width - 1; x >= 0; x--) {
+					float v = outDatas[y * width + x];
+					if (v < 0) {
+						continue;
+					}
+					for (int k = 0; k < chamfer.length; k++) {
+						int dx = chamfer[k][0];
+						int dy = chamfer[k][1];
+						int dt = chamfer[k][2];
+
+						testAndSet(x - dx, y - dy, v + dt);
+						if (dy != 0) {
+							testAndSet(x + dx, y - dy, v + dt);
+						}
+						if (dx != dy) {
+							testAndSet(x - dy, y - dx, v + dt);
+							if (dy != 0)
+								testAndSet(x + dy, y - dx, v + dt);
 						}
 					}
 				}
 			}
 		}
 
-		// backward
-		for (int y = height - 1; y >= 0; y--) {
-			for (int x = width - 1; x >= 0; x--) {
-				float v = outDatas[y * width + x];
-				if (v < 0) {
-					continue;
-				}
-				for (int k = 0; k < chamfer.length; k++) {
-					int dx = chamfer[k][0];
-					int dy = chamfer[k][1];
-					int dt = chamfer[k][2];
-
-					testAndSet(x - dx, y - dy, v + dt);
-					if (dy != 0) {
-						testAndSet(x + dx, y - dy, v + dt);
-					}
-					if (dx != dy) {
-						testAndSet(x - dy, y - dx, v + dt);
-						if (dy != 0)
-							testAndSet(x + dy, y - dx, v + dt);
-					}
-				}
-			}
-		}
-		
 		return outDatas;
+		
 	}
 
 	public float[] normalize(){
-		float v;
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				v = outDatas[y * width + x];
-				if(v != Raster.getNoDataValue()){
-					outDatas[y * width + x] = (v / normalizer) * cellSize;
+		
+		if(hasValue){
+			
+			float v;
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					v = outDatas[y * width + x];
+					if(v != Raster.getNoDataValue()){
+						outDatas[y * width + x] = (v / normalizer) * cellSize;
+					}
 				}
 			}
+			
+		}else{
+			
+			Arrays.fill(outDatas, noDataValue);
+			
 		}
+		
 		return outDatas;
+		
 	}
 	
 	@Override

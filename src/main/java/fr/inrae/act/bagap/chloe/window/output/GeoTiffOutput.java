@@ -1,15 +1,8 @@
 package fr.inrae.act.bagap.chloe.window.output;
 
-import java.awt.image.DataBuffer;
-import java.awt.image.WritableRaster;
-import java.awt.image.WritableRenderedImage;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Map;
 import java.util.Set;
 
 import org.geotools.coverage.grid.GridCoverage2D;
