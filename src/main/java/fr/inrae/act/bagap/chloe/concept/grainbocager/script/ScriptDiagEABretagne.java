@@ -17,8 +17,8 @@ import org.jumpmind.symmetric.csv.CsvWriter;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.farm.DiagnosticGrainBocagerExploitation;
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.farm.DiagnosticGrainBocagerExploitationBuilder;
+import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.farm.DiagnosticGrainBocagerExploitation;
+import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.farm.DiagnosticGrainBocagerExploitationBuilder;
 
 public class ScriptDiagEABretagne {
 

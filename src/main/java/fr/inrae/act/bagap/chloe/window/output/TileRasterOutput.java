@@ -43,7 +43,7 @@ public abstract class TileRasterOutput implements CountingObserver {
 		this.metric = metric;
 		
 		//this.tile = Tile.getTile(tile, new Envelope(minX, maxX, minY, maxY));
-		this.tile = new Tile(new Envelope(minX, maxX, minY, maxY), tile.getNcols(), tile.getNrows(), tile.getTileLength());
+		this.tile = new Tile(new Envelope(minX, maxX, minY, maxY), tile.getNcols(), tile.getNrows(), tile.getTileLength(), tile.grid());
 		
 		this.width = width;
 		this.height = height;
@@ -146,9 +146,11 @@ public abstract class TileRasterOutput implements CountingObserver {
 	}
 	
 	private void exportTab(int tX) {
-		Envelope e = tile.getEnvelope(tX, tY);
-		EnteteRaster entete = new EnteteRaster(tileSize, tileSize, e.getMinX(), e.getMaxX(), e.getMinY(), e.getMaxY(), (float) cellSize, noDataValue);
-		writeRaster(folder+metric.getName()+"_"+((int) e.getMinX()/1000)+"_"+((int) e.getMaxY()/1000), tabs[tX], entete);
+		if(tile.hasTile(tX, tY)){
+			Envelope e = tile.getEnvelope(tX, tY);
+			EnteteRaster entete = new EnteteRaster(tileSize, tileSize, e.getMinX(), e.getMaxX(), e.getMinY(), e.getMaxY(), (float) cellSize, noDataValue);
+			writeRaster(folder+metric.getName()+"_"+((int) e.getMinX()/1000)+"_"+((int) e.getMaxY()/1000), tabs[tX], entete);
+		}
 	}
 
 	@Override

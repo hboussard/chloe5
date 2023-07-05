@@ -2,8 +2,9 @@ package fr.inrae.act.bagap.chloe.concept.grainbocager.script;
 
 
 import fr.inra.sad.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.territory.GrainBocagerTerritoire;
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.territory.GrainBocagerTerritoireBuilder;
+import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.GrainBocager;
+import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.territory.GrainBocagerTerritoire;
+import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.territory.GrainBocagerTerritoireBuilder;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
@@ -12,10 +13,61 @@ public class ScriptTerritoire {
 
 	public static void main(String[] args){
 		
-		//scriptMartigneFerchaud();
+		scriptMartigneFerchaud();
 		//scriptCUMAQuestembert();
-		scriptRSELeRheu();
+		//scriptRSELeRheu();
+		//scriptRennesMetropole();
 		
+	}
+	
+	private static void scriptRennesMetropole() {
+		
+		long begin = System.currentTimeMillis();
+		
+		GrainBocagerTerritoireBuilder builder = new GrainBocagerTerritoireBuilder();
+		
+		builder.setOutputPath("H:/rennes_metropole/grain_bocager/");
+		builder.setBocage("H:/IGN/data/35_2020_5m/mean/");
+		builder.setTerritoire("H:/rennes_metropole/data/communes_rennes_metropole_L93.shp");
+		builder.setName("rm");
+		builder.setBufferArea(5000);
+		builder.setOutCellSize(50);
+		
+		GrainBocagerTerritoire gbTerritoire = builder.build();
+		
+		gbTerritoire.run();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+		
+		Coverage cov4Classes5m = GrainBocager.runClassificationNClasses("H:/rennes_metropole/grain_bocager/rm_grain_bocager_5m.tif", 0.20, 0.33, 0.45);
+		CoverageManager.writeGeotiff("H:/rennes_metropole/grain_bocager/rm_grain_bocager_5m_4classes.tif", cov4Classes5m.getDatas(), cov4Classes5m.getEntete());
+		cov4Classes5m.dispose();
+		
+		/*
+		Coverage cov4Classes50m = GrainBocager.runClassificationNClasses("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m.tif", 0.20, 0.33, 0.45);
+		CoverageManager.writeGeotiff("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m_4classes.tif", cov4Classes50m.getDatas(), cov4Classes50m.getEntete());
+		cov4Classes50m.dispose();
+		*/
+		Coverage covClassif = GrainBocager.runClassificationFonctionnelle("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m.tif", 0.33);
+		CoverageManager.writeGeotiff("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m_fonctionnel.tif", covClassif.getDatas(), covClassif.getEntete());
+		covClassif.dispose();
+		
+		
+		Coverage covCluster = GrainBocager.runClusterisationGrainFonctionnel("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m_fonctionnel.tif");
+		CoverageManager.writeGeotiff("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m_cluster.tif", covCluster.getDatas(), covCluster.getEntete());
+		covCluster.dispose();
+		
+		/*
+		Coverage covSHDICluster = GrainBocager.runSHDIClusterGrainFonctionnel("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m_cluster.tif", 101);
+		CoverageManager.writeGeotiff("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m_shdi_cluster.tif", covSHDICluster.getDatas(), covSHDICluster.getEntete());
+		covSHDICluster.dispose();
+		*/
+		/*
+		Coverage covPorportionFonctionnelle = GrainBocager.runProportionGrainFonctionnel("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m_fonctionnel.tif", 101);
+		CoverageManager.writeGeotiff("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m_proportion_fonctionnelle.tif", covPorportionFonctionnelle.getDatas(), covPorportionFonctionnelle.getEntete());
+		covPorportionFonctionnelle.dispose();
+		*/
 	}
 	
 	private static void scriptRSELeRheu() {
@@ -79,7 +131,7 @@ public class ScriptTerritoire {
 	}
 
 	private static void scriptMartigneFerchaud() {
-		
+		/*
 		GrainBocagerTerritoireBuilder builder = new GrainBocagerTerritoireBuilder();
 		
 		builder.setOutputPath("H:/rafcom/grain_bocager/");
@@ -87,10 +139,48 @@ public class ScriptTerritoire {
 		builder.setTerritoire("H:/rafcom/data/perimetre_RAF_2022_cadastre.shp");
 		builder.setName("raf");
 		builder.setReplantationBocagere("H:/rafcom/data/plantations_RAF_2008-2023_l93.shp");
-		
+		builder.setOutCellSize(50);
+		builder.setBufferArea(700);
 		GrainBocagerTerritoire gbTerritoire = builder.build();
 		
 		gbTerritoire.run();
+		*/
+		
+		//String scenario = "";
+		String scenario = "simule_";
+		/*
+		Coverage cov4Classes5m = GrainBocager.runClassificationNClasses("H:/rafcom/grain_bocager/raf_"+scenario+"grain_bocager_5m.tif", 0.20, 0.33, 0.45);
+		CoverageManager.writeGeotiff("H:/rafcom/grain_bocager/raf_"+scenario+"grain_bocager_5m_4classes.tif", cov4Classes5m.getDatas(), cov4Classes5m.getEntete());
+		cov4Classes5m.dispose();
+		
+		Coverage cov4Classes50m = GrainBocager.runClassificationNClasses("H:/rafcom/grain_bocager/raf_"+scenario+"grain_bocager_50m.tif", 0.20, 0.33, 0.45);
+		CoverageManager.writeGeotiff("H:/rafcom/grain_bocager/raf_"+scenario+"grain_bocager_50m_4classes.tif", cov4Classes50m.getDatas(), cov4Classes50m.getEntete());
+		cov4Classes50m.dispose();
+		
+		Coverage covClassif = GrainBocager.runClassificationFonctionnelle("H:/rafcom/grain_bocager/raf_"+scenario+"grain_bocager_50m.tif", 0.33);
+		CoverageManager.writeGeotiff("H:/rafcom/grain_bocager/raf_"+scenario+"grain_bocager_50m_fonctionnel.tif", covClassif.getDatas(), covClassif.getEntete());
+		covClassif.dispose();
+		
+		Coverage covCluster = GrainBocager.runClusterisationGrainFonctionnel("H:/rafcom/grain_bocager/raf_"+scenario+"grain_bocager_50m_fonctionnel.tif");
+		CoverageManager.writeGeotiff("H:/rafcom/grain_bocager/raf_"+scenario+"grain_bocager_50m_cluster.tif", covCluster.getDatas(), covCluster.getEntete());
+		covCluster.dispose();
+		
+		Coverage covSHDICluster = GrainBocager.runSHDIClusterGrainFonctionnel("H:/rafcom/grain_bocager/raf_"+scenario+"grain_bocager_50m_cluster.tif", 101);
+		CoverageManager.writeGeotiff("H:/rafcom/grain_bocager/raf_"+scenario+"grain_bocager_50m_shdi_cluster.tif", covSHDICluster.getDatas(), covSHDICluster.getEntete());
+		covSHDICluster.dispose();
+		
+		Coverage covPorportionFonctionnelle = GrainBocager.runProportionGrainFonctionnel("H:/rafcom/grain_bocager/raf_"+scenario+"grain_bocager_50m_fonctionnel.tif", 101);
+		CoverageManager.writeGeotiff("H:/rafcom/grain_bocager/raf_"+scenario+"grain_bocager_50m_proportion_fonctionnelle.tif", covPorportionFonctionnelle.getDatas(), covPorportionFonctionnelle.getEntete());
+		covPorportionFonctionnelle.dispose();
+		
+		Coverage covSHDICluster = GrainBocager.runSHDIClusterGrainFonctionnel("H:/rafcom/grain_bocager/raf_"+scenario+"grain_bocager_50m_cluster.tif", 41);
+		CoverageManager.writeGeotiff("H:/rafcom/grain_bocager/raf_"+scenario+"grain_bocager_50m_shdi_cluster_1km.tif", covSHDICluster.getDatas(), covSHDICluster.getEntete());
+		covSHDICluster.dispose();
+		
+		Coverage covPorportionFonctionnelle = GrainBocager.runProportionGrainFonctionnel("H:/rafcom/grain_bocager/raf_"+scenario+"grain_bocager_50m_fonctionnel.tif", 41);
+		CoverageManager.writeGeotiff("H:/rafcom/grain_bocager/raf_"+scenario+"grain_bocager_50m_proportion_fonctionnelle_1km.tif", covPorportionFonctionnelle.getDatas(), covPorportionFonctionnelle.getEntete());
+		covPorportionFonctionnelle.dispose();
+		*/
 		
 	}
 	

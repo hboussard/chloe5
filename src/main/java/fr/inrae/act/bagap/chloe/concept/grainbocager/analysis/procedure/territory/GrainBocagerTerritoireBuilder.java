@@ -1,4 +1,4 @@
-package fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.territory;
+package fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.territory;
 
 public class GrainBocagerTerritoireBuilder {
 	
@@ -18,6 +18,8 @@ public class GrainBocagerTerritoireBuilder {
 	
 	private double outCellSize;			// du pixel de sortie
 	
+	private int bufferArea; 			// buffer autour du territoire d'analyse
+	
 	public GrainBocagerTerritoireBuilder(){
 		reset();
 	}
@@ -28,6 +30,7 @@ public class GrainBocagerTerritoireBuilder {
 		seuil = 0.33;
 		modeFast = true;
 		outCellSize = 5;
+		bufferArea = 350;
 		
 		// attributs à redéfinir obligatoirement
 		outputPath = "";
@@ -71,6 +74,10 @@ public class GrainBocagerTerritoireBuilder {
 		this.modeFast = modeFast;
 	}
 	
+	public void setBufferArea(int bufferArea){
+		this.bufferArea = bufferArea;
+	}
+	
 	private boolean check(){
 		boolean ok = true;
 		if(seuil<0 || seuil>1){
@@ -79,6 +86,10 @@ public class GrainBocagerTerritoireBuilder {
 		}
 		if(outCellSize < 5 && outCellSize%5!=0){
 			System.out.println("output cellsize parameter 'outputCellSize' is unconsistant "+outCellSize);
+			ok = false;
+		}
+		if(bufferArea < 0){
+			System.out.println("buffer area parameter 'bufferArea' is unconsistant "+outCellSize);
 			ok = false;
 		}
 		if(outputPath.equalsIgnoreCase("")){
@@ -103,7 +114,7 @@ public class GrainBocagerTerritoireBuilder {
 	public GrainBocagerTerritoire build(){
 		
 		if(check()){
-			GrainBocagerTerritoire gbTerritoire = new GrainBocagerTerritoire(outputPath, territoire, name, bocage, seuil, replantationBocagere, modeFast, outCellSize);
+			GrainBocagerTerritoire gbTerritoire = new GrainBocagerTerritoire(outputPath, territoire, name, bocage, seuil, replantationBocagere, modeFast, outCellSize, bufferArea);
 			reset();
 			return gbTerritoire;
 		}

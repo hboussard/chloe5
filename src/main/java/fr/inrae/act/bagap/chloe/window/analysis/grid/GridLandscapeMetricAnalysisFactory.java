@@ -89,32 +89,40 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 			
 		// observers
 		Set<CountingObserver> observers = builder.getObservers();
+		
 		if(builder.getCsv() != null){
 			CsvOutput csvOutput = new CsvOutput(builder.getCsv(), outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, Raster.getNoDataValue());
 			observers.add(csvOutput);	
 		}
-		for(Entry<String, String> entry : builder.getAsciiOutputs(gridSize).entrySet()){
-			Metric metric = null;
-			for(Metric m : metrics){
-				if(m.getName().equalsIgnoreCase(entry.getKey())){
-					metric = m;
-					break;
+		
+		if(builder.getAsciiOutputs(gridSize) != null){
+			for(Entry<String, String> entry : builder.getAsciiOutputs(gridSize).entrySet()){
+				Metric metric = null;
+				for(Metric m : metrics){
+					if(m.getName().equalsIgnoreCase(entry.getKey())){
+						metric = m;
+						break;
+					}
 				}
+				AsciiGridOutput asciiOutput = new AsciiGridOutput(entry.getValue(), metric, outWidth, outHeight, outMinX, outMinY, outCellSize, Raster.getNoDataValue());
+				observers.add(asciiOutput);
 			}
-			AsciiGridOutput asciiOutput = new AsciiGridOutput(entry.getValue(), metric, outWidth, outHeight, outMinX, outMinY, outCellSize, Raster.getNoDataValue());
-			observers.add(asciiOutput);
 		}
-		for(Entry<String, String> entry : builder.getGeoTiffOutputs(gridSize).entrySet()){
-			Metric metric = null;
-			for(Metric m : metrics){
-				if(m.getName().equalsIgnoreCase(entry.getKey())){
-					metric = m;
-					break;
+		
+		if(builder.getGeoTiffOutputs(gridSize) != null){
+			for(Entry<String, String> entry : builder.getGeoTiffOutputs(gridSize).entrySet()){
+				Metric metric = null;
+				for(Metric m : metrics){
+					if(m.getName().equalsIgnoreCase(entry.getKey())){
+						metric = m;
+						break;
+					}
 				}
+				GeoTiffOutput geotiffOutput = new GeoTiffOutput(entry.getValue(), metric, outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
+				observers.add(geotiffOutput);
 			}
-			GeoTiffOutput geotiffOutput = new GeoTiffOutput(entry.getValue(), metric, outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
-			observers.add(geotiffOutput);
 		}
+		
 		/*
 		for(Entry<String, float[]> entry : builder.getTabOutputs().entrySet()){
 			Metric metric = null;

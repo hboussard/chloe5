@@ -164,7 +164,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 		
 		if(builder.getCoverageOutputs() != null){
 			for(CoverageOutput coverageOutput : builder.getCoverageOutputs()) {
-				coverageOutput.setEntete(new EnteteRaster(outWidth, outHeight, outMinX, outMaxX, outMaxY, outMinY, (float) outCellSize, Raster.getNoDataValue()));
+				coverageOutput.setEntete(new EnteteRaster(outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, (float) outCellSize, Raster.getNoDataValue()));
 				observers.add(coverageOutput);
 			}
 		}

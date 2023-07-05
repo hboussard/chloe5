@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Properties;
 
+import fr.inrae.act.bagap.chloe.concept.grainbocager.api.GrainBocagerAPI;
 import fr.inrae.act.bagap.chloe.window.WindowAnalysisType;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
@@ -30,7 +31,14 @@ public class ChloeAPI {
 	        Reader in = new InputStreamReader(new FileInputStream(file), "UTF8");
 			properties.load(in);
 			in.close();
-			if(properties.containsKey("treatment")){
+			if(properties.containsKey("procedure")){
+				String procedure = properties.getProperty("procedure");
+				switch(procedure){
+				case "grain_bocager" : GrainBocagerAPI.launchBatch(file); break;
+				default :
+					throw new IllegalArgumentException("procedure "+procedure+" is not implemented yet");
+				}
+			}else if(properties.containsKey("treatment")){
 				String treatment = properties.getProperty("treatment");
 				switch(treatment){
 				case "sliding" : launchSliding(properties); break;

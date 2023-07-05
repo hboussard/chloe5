@@ -30,4 +30,22 @@ public abstract class LandscapeMetricAnalysis extends Analysis {
 		bufferSize = buff;
 	}
 	
+	// fonctions utilitaires
+	
+	public static int getDisplacement(double inCellSize, double outCellSize){
+		int displacement = 1;
+		if(inCellSize != outCellSize){
+			displacement = (int) (outCellSize/inCellSize);
+		}
+		return displacement;
+	}
+
+	public static int getWindowSize(float inCellSize, double windowRadius) {
+		int windowSize = (int) (2*windowRadius / inCellSize);
+		if(windowSize%2 == 0){
+			windowSize++;
+		}
+		return windowSize;
+	}
+	
 }

@@ -391,7 +391,7 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 	
 	private void normalisation(){
 		
-		System.out.println("normalisation");
+		//System.out.println("normalisation");
 		
 		// normalisation
 		int dx = 0, dy = 0;
@@ -426,7 +426,7 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 	
 	private void exportRaster() {
 		
-		System.out.println("export raster");
+		//System.out.println("export raster");
 		
 		TileRasterDistanceOutput output = new TileGeoTiffDistanceOutput(folder, name, tile, width, height, maxTile, imageMinX, imageMaxX, imageMinY, imageMaxY, cellSize, Raster.getNoDataValue());
 		

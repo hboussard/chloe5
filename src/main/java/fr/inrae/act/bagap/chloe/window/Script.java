@@ -29,7 +29,31 @@ import fr.inrae.act.bagap.raster.TileCoverage;
 public class Script {
 
 	public static void main(String[] args){
-		scriptTestSliding();
+		scriptTestErwan();
+	}
+	
+	private static void scriptTestErwan(){
+
+		String path = "G:/chloe/winterschool/data/start/";
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		//builder.setAnalysisType(WindowAnalysisType.SLIDING);
+		builder.setAnalysisType(WindowAnalysisType.GRID);
+		builder.setRasterFile(path+"za.tif");
+		builder.setWindowSize(201);
+		//builder.setDisplacement(20);
+		builder.addMetric("pNV_3");
+		
+		builder.addGeoTiffOutput("pNV_3", path+"erwan/prop_prairie_grid_500m.tif"); 
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		long begin = System.currentTimeMillis();
+	
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
 	}
 	
 	private static void scriptTestSliding(){

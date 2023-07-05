@@ -1,6 +1,9 @@
 package fr.inrae.act.bagap.chloe.concept.grainbocager.analysis;
 
+import org.locationtech.jts.geom.Envelope;
+
 import fr.inra.sad.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
+import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenClusteringAnalysis;
 import fr.inrae.act.bagap.chloe.distance.analysis.euclidian.TabChamferDistanceAnalysis;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
@@ -9,71 +12,218 @@ import fr.inrae.act.bagap.chloe.window.output.CoverageOutput;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.raster.TabCoverage;
+import fr.inrae.act.bagap.raster.converter.ShapeFile2CoverageConverter;
 
 public class GrainBocager {
 
-	public static Coverage calculate(float[] dataHauteurBoisement, EnteteRaster entete){
-		return calculate(dataHauteurBoisement, entete, true, null, 5);
+	// run sur la procedure de Grain Bocager
+	
+	public static Coverage run(String rasterHauteurBoisement){
+		return run(rasterHauteurBoisement, 250, 5, true);
 	}
 	
-	public static Coverage calculate(float[] dataHauteurBoisement, EnteteRaster entete, double outputCellSize){
-		return calculate(dataHauteurBoisement, entete, true, null, outputCellSize);
+	public static Coverage run(String rasterHauteurBoisement, double outputCellSize){
+		return run(rasterHauteurBoisement, 250, outputCellSize, true);
 	}
 	
-	public static Coverage calculate(float[] dataHauteurBoisement, EnteteRaster entete, boolean modeFast){
-		return calculate(dataHauteurBoisement, entete, modeFast, null, 5);
+	public static Coverage run(String rasterHauteurBoisement, boolean modeFast){
+		return run(rasterHauteurBoisement, 250, 5, modeFast);
 	}
 	
-	public static Coverage calculate(float[] dataHauteurBoisement, EnteteRaster entete, boolean modeFast, double outputCellSize){
-		return calculate(dataHauteurBoisement, entete, modeFast, null, outputCellSize);
+	public static Coverage run(String rasterHauteurBoisement, double outputCellSize, boolean modeFast){
+		return run(rasterHauteurBoisement, 250, outputCellSize, modeFast);
 	}
 	
-	public static Coverage calculate(float[] dataHauteurBoisement, EnteteRaster entete, String outputName){
-		return calculate(dataHauteurBoisement, entete, true, outputName, 5);
+	public static Coverage run(String rasterHauteurBoisement, double windowRadius, double outputCellSize, boolean modeFast){
+		
+		Coverage covHauteurBoisement = CoverageManager.getCoverage(rasterHauteurBoisement);
+		float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
+		EnteteRaster entete = covHauteurBoisement.getEntete();
+		covHauteurBoisement.dispose();
+		
+		return run(dataHauteurBoisement, entete, windowRadius, outputCellSize, modeFast);
 	}
 	
-	public static Coverage calculate(float[] dataHauteurBoisement, EnteteRaster entete, boolean modeFast, String outputName, double outputCellSize){
+	public static Coverage run(Coverage covHauteurBoisement){
+		return run(covHauteurBoisement, 250, 5, true);
+	}
+	
+	public static Coverage run(Coverage covHauteurBoisement, double outputCellSize){
+		return run(covHauteurBoisement, 250, outputCellSize, true);
+	}
+	
+	public static Coverage run(Coverage covHauteurBoisement, boolean modeFast){
+		return run(covHauteurBoisement, 250, 5, modeFast);
+	}
+	
+	public static Coverage run(Coverage covHauteurBoisement, double outputCellSize, boolean modeFast){
+		return run(covHauteurBoisement, 250, outputCellSize, modeFast);
+	}
+	
+	public static Coverage run(Coverage covHauteurBoisement, double windowRadius, double outputCellSize, boolean modeFast){
+		
+		float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
+		EnteteRaster entete = covHauteurBoisement.getEntete();
+		
+		return run(dataHauteurBoisement, entete, windowRadius, outputCellSize, modeFast);
+	}
+	
+	public static Coverage run(float[] dataHauteurBoisement, EnteteRaster entete){
+		return run(dataHauteurBoisement, entete, 250, 5, true);
+	}
+	
+	public static Coverage run(float[] dataHauteurBoisement, EnteteRaster entete, double outputCellSize){
+		return run(dataHauteurBoisement, entete, 250, outputCellSize, true);
+	}
+	
+	public static Coverage run(float[] dataHauteurBoisement, EnteteRaster entete, boolean modeFast){
+		return run(dataHauteurBoisement, entete, 250, 5, modeFast);
+	}
+	
+	public static Coverage run(float[] dataHauteurBoisement, EnteteRaster entete, double outputCellSize, boolean modeFast){
+		return run(dataHauteurBoisement, entete, 250, outputCellSize, modeFast);
+	}
+	
+	public static Coverage run(float[] dataHauteurBoisement, EnteteRaster entete, double windowRadius, double outputCellSize, boolean modeFast){
 		
 		// detection des types de boisement
-		float[] dataTypeBoisement = detectionTypeBoisement(dataHauteurBoisement, entete, modeFast, outputName);
-		if(outputName != null){
-			CoverageManager.write(outputName+"_type_boisement.tif", dataTypeBoisement, entete);
-		}
-		
-		// test grain 2D
-		//float[] dataTypeBoisement = dataHauteurBoisement;
+		Coverage covTypeBoisement = detectionTypeBoisement(dataHauteurBoisement, entete, modeFast);
 		
 		// calcul de distances ponderees
-		float[] dataDistancePonderee = calculInfluenceBoisement(dataHauteurBoisement, dataTypeBoisement, entete, modeFast);
-		//if(outputName != null){
-		//	CoverageManager.write(outputName+"_influence_boisement.tif", dataDistancePonderee, entete);
-		//}
+		Coverage covDistanceInfluence = calculDistancesInfluences(dataHauteurBoisement, covTypeBoisement.getDatas(), entete, modeFast);
 		
 		// moyenne globale du grain bocager
-		return calculGrainBocager(dataDistancePonderee, entete, outputName, outputCellSize);
+		return calculGrainBocager(covDistanceInfluence, windowRadius, outputCellSize);
 	}
 	
-	private static float[] detectionTypeBoisement(float[] dataHauteurBoisement, EnteteRaster entete, boolean modeFast, String outputName) {
+	// recuperation des hauteurs de boisement
+	
+	public static Coverage recuperationHauteurBoisement(String bocage, EnteteRaster entete) {
+		
+		Coverage covHauteurBoisement = CoverageManager.getCoverage(bocage);
+		EnteteRaster enteteMNHC = covHauteurBoisement.getEntete();
+		float[] dataBoisement = covHauteurBoisement.getDatas(EnteteRaster.getROI(enteteMNHC, new Envelope(entete.minx(), entete.maxx(), entete.miny(), entete.maxy())));
+		covHauteurBoisement.dispose();
+		
+		return new TabCoverage(dataBoisement, entete);
+	}
+	
+	public static Coverage recuperationZoneArrachage(String arrachage, EnteteRaster entete) {
+		
+		Coverage covZoneArrachage = ShapeFile2CoverageConverter.getSurfaceCoverage(arrachage, entete, 0, entete.noDataValue());
+		
+		return covZoneArrachage;
+	}
+	
+	public static Coverage recuperationHauteurPlantation(String plantation, String attributHauteurPlantation, EnteteRaster entete) {
+		
+		Coverage covHauteurReplantation = ShapeFile2CoverageConverter.getLinearCoverage(plantation, attributHauteurPlantation, entete.cellsize(), entete.noDataValue(), entete.minx(), entete.maxx(), entete.miny(), entete.maxy(), 0, entete.cellsize());
+		
+		return covHauteurReplantation;
+	}
+	
+	// ajoute hauteurs de boisement des plantations
+	
+	public static Coverage ajouteHauteurPlantation(Coverage bocage, Coverage plantation){
+		
+		EnteteRaster entete = bocage.getEntete();
+		
+		float[] dataHauteurBoisement = bocage.getDatas();
+		float[] dataHauteurPlantation = plantation.getDatas();
+		
+		return ajouteHauteurPlantation(dataHauteurBoisement, dataHauteurPlantation, entete);
+	}
+	
+	public static Coverage ajouteHauteurPlantation(float[] dataHauteurBoisement, float[] dataHauteurPlantation, EnteteRaster entete){
+		
+		float[] data = new float[entete.width()*entete.height()];
+		
+		Pixel2PixelTabCalculation pptc = new Pixel2PixelTabCalculation(data, dataHauteurBoisement, dataHauteurPlantation){
+			@Override
+			protected float doTreat(float[] v) {
+				return Math.max(v[0], v[1]);
+			}
+		};
+		pptc.run();
+		
+		return new TabCoverage(data, entete);
+	}
+	
+	public static Coverage supprimeZoneArrachage(float[] dataHauteurBoisement, float[] dataZoneArrachage, EnteteRaster entete){
+		
+		float[] data = new float[entete.width()*entete.height()];
+		
+		Pixel2PixelTabCalculation pptc = new Pixel2PixelTabCalculation(data, dataHauteurBoisement, dataZoneArrachage){
+			@Override
+			protected float doTreat(float[] v) {
+				float da = v[1];
+				if(da != entete.noDataValue()){
+					return da;
+				}
+				return v[0];
+			}
+		};
+		pptc.run();
+		
+		return new TabCoverage(data, entete);
+	}
+	
+	// detection des types de boisement 
+	
+	public static Coverage detectionTypeBoisement(String rasterHauteurBoisement, boolean modeFast) {
+		
+		Coverage covHauteurBoisement = CoverageManager.getCoverage(rasterHauteurBoisement);
+		float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
+		EnteteRaster entete = covHauteurBoisement.getEntete();
+		covHauteurBoisement.dispose();
+		
+		return detectionTypeBoisement(dataHauteurBoisement, entete, modeFast);
+	}
+	
+	public static Coverage detectionTypeBoisement(Coverage covHauteurBoisement, boolean modeFast) {
+	
+		float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
+		EnteteRaster entete = covHauteurBoisement.getEntete();
+		
+		return detectionTypeBoisement(dataHauteurBoisement, entete, modeFast);
+	}
+	
+	public static Coverage detectionTypeBoisement(float[] dataHauteurBoisement, EnteteRaster entete, boolean modeFast) {
 		
 		// detection des boisements phase 1
-		float[] dataTypeBoisementPhase1 = detectionTypeBoisementPhase1(dataHauteurBoisement, entete, modeFast);
-		//if(outputName != null){
-		//	CoverageManager.write(outputName+"_type_boisement_phase1.tif", dataTypeBoisementPhase1, entete);
-		//}
+		Coverage covTypeBoisementPhase1 = detectionTypeBoisementPhase1(dataHauteurBoisement, entete, modeFast);
+	
 		
 		// calcul de distance aux massifs boises
-		float[] dataDistanceMassif = calculDistanceMassifsBoisesEuclidian(dataTypeBoisementPhase1, entete);
-		//if(outputName != null){
-		//	CoverageManager.write(outputName+"_distance_massif.tif", dataDistanceMassif, entete);
-		//}
+		Coverage covDistanceMassif = calculDistanceMassifsBoisesEuclidian(covTypeBoisementPhase1);
+		
 		
 		// detection des boisements phase 2
-		return detectionTypeBoisementPhase2(dataTypeBoisementPhase1, dataDistanceMassif, entete);	
+		return detectionTypeBoisementPhase2(covTypeBoisementPhase1, covDistanceMassif);	
 	}
 	
-	private static float[] detectionTypeBoisementPhase1(float[] dataHauteurBoisement, EnteteRaster entete, boolean modeFast) {
+	// detection des types de boisement phase 1
+	
+	public static Coverage detectionTypeBoisementPhase1(String rasterHauteurBoisement, boolean modeFast) {
 		
-		//System.out.println("detection du type de bocage phase 1");
+		Coverage covHauteurBoisement = CoverageManager.getCoverage(rasterHauteurBoisement);
+		float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
+		EnteteRaster entete = covHauteurBoisement.getEntete();
+		covHauteurBoisement.dispose();
+		
+		return detectionTypeBoisementPhase1(dataHauteurBoisement, entete, modeFast);
+	}
+	
+	public static Coverage detectionTypeBoisementPhase1(Coverage covHauteurBoisement, boolean modeFast) {
+		
+		float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
+		EnteteRaster entete = covHauteurBoisement.getEntete();
+		
+		return detectionTypeBoisementPhase1(dataHauteurBoisement, entete, modeFast);
+	}
+	
+	public static Coverage detectionTypeBoisementPhase1(float[] dataHauteurBoisement, EnteteRaster entete, boolean modeFast) {
 		
 		float[] data = new float[entete.width()*entete.height()];
 		
@@ -95,24 +245,66 @@ public class GrainBocager {
 	
 		analysis.allRun();
 		
-		return data;
+		return new TabCoverage(data, entete);
 	}
 	
-	private static float[] calculDistanceMassifsBoisesEuclidian(float[] dataTypeBoisementPhase1, EnteteRaster entete){
+	// calcul des distances euclidiennes aux massifs
+	
+	public static Coverage calculDistanceMassifsBoisesEuclidian(String rasterTypeBoisementPhase1){
 		
-		//System.out.println("calcul de distance aux massifs boises");
+		Coverage covTypeBoisementPhase1 = CoverageManager.getCoverage(rasterTypeBoisementPhase1);
+		float[] dataTypeBoisementPhase1 = covTypeBoisementPhase1.getDatas();
+		EnteteRaster entete = covTypeBoisementPhase1.getEntete();
+		covTypeBoisementPhase1.dispose();
+		
+		return calculDistanceMassifsBoisesEuclidian(dataTypeBoisementPhase1, entete);
+	}
+	
+	public static Coverage calculDistanceMassifsBoisesEuclidian(Coverage covTypeBoisementPhase1){
+		
+		float[] dataTypeBoisementPhase1 = covTypeBoisementPhase1.getDatas();
+		EnteteRaster entete = covTypeBoisementPhase1.getEntete();
+		
+		return calculDistanceMassifsBoisesEuclidian(dataTypeBoisementPhase1, entete);
+	}
+	
+	public static Coverage calculDistanceMassifsBoisesEuclidian(float[] dataTypeBoisementPhase1, EnteteRaster entete){
 		
 		float[] data = new float[entete.width()*entete.height()];
 		
 		TabChamferDistanceAnalysis da = new TabChamferDistanceAnalysis(data, dataTypeBoisementPhase1, entete.width(), entete.height(), entete.cellsize(), entete.noDataValue(), new int[]{5});
 		da.allRun();
 		
-		return data;
+		return new TabCoverage(data, entete);
 	}
 	
-	private static float[] detectionTypeBoisementPhase2(float[] dataTypeBoisementPhase1, float[] dataDistanceMassif, EnteteRaster entete) {	
+	// detection des types de boisement phase 2
+	
+	public static Coverage detectionTypeBoisementPhase2(String rasterTypeBoisementPhase1, String rasterDistanceMassif) {	
 		
-		//System.out.println("mise à jour du type de bocage phase 2");
+		Coverage covTypeBoisementPhase1 = CoverageManager.getCoverage(rasterTypeBoisementPhase1);
+		float[] dataTypeBoisementPhase1 = covTypeBoisementPhase1.getDatas();
+		EnteteRaster entete = covTypeBoisementPhase1.getEntete();
+		covTypeBoisementPhase1.dispose();
+		
+		Coverage covDistanceMassif = CoverageManager.getCoverage(rasterDistanceMassif);
+		float[] dataDistanceMassif = covDistanceMassif.getDatas();
+		covDistanceMassif.dispose();
+		
+		return detectionTypeBoisementPhase2(dataTypeBoisementPhase1, dataDistanceMassif, entete);
+	}
+	
+	public static Coverage detectionTypeBoisementPhase2(Coverage covTypeBoisementPhase1, Coverage covDistanceMassif) {	
+		
+		float[] dataTypeBoisementPhase1 = covTypeBoisementPhase1.getDatas();
+		EnteteRaster entete = covTypeBoisementPhase1.getEntete();
+		
+		float[] dataDistanceMassif = covDistanceMassif.getDatas();
+		
+		return detectionTypeBoisementPhase2(dataTypeBoisementPhase1, dataDistanceMassif, entete);
+	}
+	
+	public static Coverage detectionTypeBoisementPhase2(float[] dataTypeBoisementPhase1, float[] dataDistanceMassif, EnteteRaster entete) {	
 		
 		float[] data = new float[entete.width()*entete.height()];
 		
@@ -137,13 +329,37 @@ public class GrainBocager {
 		};
 		pptcc.run();
 		
-		return data;
+		return new TabCoverage(data, entete);
 	}
 	
-	private static float[] calculInfluenceBoisement(float[] dataHauteurBoisement, float[] dataTypeBoisement, EnteteRaster entete, boolean modeFast) {
-				
-		//System.out.println("calcul des distances ponderees");
+	// calcul des distances d'influence de boisement
+	
+	public static Coverage calculDistancesInfluences(String rasterHauteurBoisement, String rasterTypeBoisement, boolean modeFast) {
 		
+		Coverage covHauteurBoisement = CoverageManager.getCoverage(rasterHauteurBoisement);
+		float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
+		EnteteRaster entete = covHauteurBoisement.getEntete();
+		covHauteurBoisement.dispose();
+		
+		Coverage covTypeBoisement = CoverageManager.getCoverage(rasterTypeBoisement);
+		float[] dataTypeBoisement = covTypeBoisement.getDatas();
+		covTypeBoisement.dispose();
+		
+		return calculDistancesInfluences(dataHauteurBoisement, dataTypeBoisement, entete, modeFast);
+	}
+	
+	public static Coverage calculDistancesInfluences(Coverage covHauteurBoisement, Coverage covTypeBoisement, boolean modeFast) {
+		
+		float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
+		EnteteRaster entete = covHauteurBoisement.getEntete();
+		
+		float[] dataTypeBoisement = covTypeBoisement.getDatas();
+		
+		return calculDistancesInfluences(dataHauteurBoisement, dataTypeBoisement, entete, modeFast);
+	}
+	
+	public static Coverage calculDistancesInfluences(float[] dataHauteurBoisement, float[] dataTypeBoisement, EnteteRaster entete, boolean modeFast) {
+				
 		float[] data = new float[entete.width()*entete.height()];
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
@@ -163,37 +379,249 @@ public class GrainBocager {
 		
 		analysis.allRun();
 		
-		return data;
+		return new TabCoverage(data, entete);
 	}
 	
-	private static Coverage calculGrainBocager(float[] dataDistancePonderee, EnteteRaster entete, String outputName, double outputCellSize) {
-				
-		//System.out.println("calcul du grain bocager");
+	// calcul du grain bocager en fonction d'une taille de fenêtre et d'une taille de sortie
+	
+	public static Coverage calculGrainBocager(String rasterDistanceInfluence, double windowRadius, double outputCellSize) {
 		
-		int displacement = 1;
-		if(entete.cellsize() != outputCellSize){
-			displacement = (int) (outputCellSize/entete.cellsize());
-		}else{
-		}
+		Coverage covDistanceInfluence = CoverageManager.getCoverage(rasterDistanceInfluence);
+		float[] dataDistanceInfluence = covDistanceInfluence.getDatas();
+		EnteteRaster entete = covDistanceInfluence.getEntete();
+		covDistanceInfluence.dispose();
+		
+		return calculGrainBocager(dataDistanceInfluence, entete, windowRadius, outputCellSize);
+	}
+	
+	public static Coverage calculGrainBocager(Coverage covDistanceInfluence, double windowRadius, double outputCellSize) {
+		
+		float[] dataDistanceInfluence = covDistanceInfluence.getDatas();
+		EnteteRaster entete = covDistanceInfluence.getEntete();
+		
+		return calculGrainBocager(dataDistanceInfluence, entete, windowRadius, outputCellSize);
+	}
+	
+	public static Coverage calculGrainBocager(float[] dataDistanceInfluence, EnteteRaster entete, double windowRadius, double outputCellSize) {
+		
+		int windowSize = LandscapeMetricAnalysis.getWindowSize(entete.cellsize(), windowRadius);
+		int displacement = LandscapeMetricAnalysis.getDisplacement(entete.cellsize(), outputCellSize);
 		
 		CoverageOutput covOutput = new CoverageOutput("average");
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setRasterTab(dataDistancePonderee);
+		builder.setRasterTab(dataDistanceInfluence);
 		builder.setEntete(entete);
-		
 		builder.setDisplacement(displacement); 
-		
 		builder.addMetric("average");
-		builder.setWindowSize(101);
-		//builder.addGeoTiffOutput(outputName+"_grain_bocager.tif");
+		builder.setWindowSize(windowSize);
 		builder.addCoverageOutput(covOutput);
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 		
 		analysis.allRun();
 		
-		//return data;
+		return covOutput.getCoverage();
+	}
+	
+	// classification en N classes definit par des seuils
+	
+	public static Coverage runClassificationNClasses(String rasterGrainBocager, double... seuils) {	
+		
+		Coverage covGrainBocager = CoverageManager.getCoverage(rasterGrainBocager);
+		float[] dataGrainBocager = covGrainBocager.getDatas();
+		EnteteRaster entete = covGrainBocager.getEntete();
+		covGrainBocager.dispose();
+		
+		return runClassificationNClasses(dataGrainBocager, entete, seuils);
+	}
+
+	public static Coverage runClassificationNClasses(Coverage covGrainBocager, double... seuils) {	
+		
+		float[] dataGrainBocager = covGrainBocager.getDatas();
+		EnteteRaster entete = covGrainBocager.getEntete();
+		
+		return runClassificationNClasses(dataGrainBocager, entete, seuils);
+	}
+	
+	public static Coverage runClassificationNClasses(float[] dataGrainBocager, EnteteRaster entete, double... seuils) {	
+		
+		float[] data = new float[entete.width()*entete.height()];
+		
+		Pixel2PixelTabCalculation pptcc = new Pixel2PixelTabCalculation(data, dataGrainBocager){
+			@Override
+			protected float doTreat(float[] v) {
+				float value = v[0];
+				int classe = 1;
+				for(double s : seuils){
+					if(value <= s){
+						return classe;
+					}
+					classe++;
+				}
+				return classe;
+			}
+		};
+		pptcc.run();
+		
+		return new TabCoverage(data, entete);
+	}
+	
+	// classification fonctionnelle a partir d'un seuil
+	
+	public static Coverage runClassificationFonctionnelle(String rasterGrainBocager, double seuil) {	
+		
+		Coverage covGrainBocager = CoverageManager.getCoverage(rasterGrainBocager);
+		float[] dataGrainBocager = covGrainBocager.getDatas();
+		EnteteRaster entete = covGrainBocager.getEntete();
+		covGrainBocager.dispose();
+		
+		return runClassificationFonctionnelle(dataGrainBocager, entete, seuil);
+	}
+	
+	public static Coverage runClassificationFonctionnelle(Coverage covGrainBocager, double seuil) {	
+		
+		float[] dataGrainBocager = covGrainBocager.getDatas();
+		EnteteRaster entete = covGrainBocager.getEntete();
+		
+		return runClassificationFonctionnelle(dataGrainBocager, entete, seuil);
+	}
+
+	public static Coverage runClassificationFonctionnelle(float[] dataGrainBocager, EnteteRaster entete, double seuil) {	
+	
+		float[] data = new float[entete.width()*entete.height()];
+	
+		Pixel2PixelTabCalculation pptcc = new Pixel2PixelTabCalculation(data, dataGrainBocager){
+			@Override
+			protected float doTreat(float[] v) {
+				if(v[0] <= seuil){
+					return 1;
+				}
+				return 0;
+			}
+		};
+		pptcc.run();
+	
+		return new TabCoverage(data, entete);
+	}
+	
+	// clusterisation du grain fonctionnel
+	
+	public static Coverage runClusterisationGrainFonctionnel(String rasterGrainBocagerFonctionnel){
+		
+		Coverage covGrainBocagerFonctionnel = CoverageManager.getCoverage(rasterGrainBocagerFonctionnel);
+		float[] dataGrainBocagerFonctionnel = covGrainBocagerFonctionnel.getDatas();
+		EnteteRaster entete = covGrainBocagerFonctionnel.getEntete();
+		covGrainBocagerFonctionnel.dispose();
+		
+		return runClusterisationGrainFonctionnel(dataGrainBocagerFonctionnel, entete);
+	}
+	
+	public static Coverage runClusterisationGrainFonctionnel(Coverage covGrainBocagerFonctionnel){
+		
+		float[] dataGrainBocagerFonctionnel = covGrainBocagerFonctionnel.getDatas();
+		EnteteRaster entete = covGrainBocagerFonctionnel.getEntete();
+		
+		return runClusterisationGrainFonctionnel(dataGrainBocagerFonctionnel, entete);
+	}
+	
+	public static Coverage runClusterisationGrainFonctionnel(float[] dataGrainBocagerFonctionnel, EnteteRaster entete){
+		
+		TabQueenClusteringAnalysis ca = new TabQueenClusteringAnalysis(dataGrainBocagerFonctionnel, entete.width(), entete.height(), new int[]{1}, entete.noDataValue());
+		float[] tabCluster = (float[]) ca.allRun();
+		
+		return new TabCoverage(tabCluster, entete);
+	}
+	
+	// SHDI sur les clusters fonctionnels en fonction d'une taille de fenetre
+	
+	public static Coverage runSHDIClusterGrainBocagerFonctionnel(String rasterClusterGrainFonctionnel, double windowRadius, double outputCellSize, boolean modeFast) {
+
+		Coverage covClusterGrainFonctionnel = CoverageManager.getCoverage(rasterClusterGrainFonctionnel);
+		float[] dataClusterGrainFonctionnel = covClusterGrainFonctionnel.getDatas();
+		EnteteRaster entete = covClusterGrainFonctionnel.getEntete();
+		covClusterGrainFonctionnel.dispose();
+		
+		return runSHDIClusterGrainBocagerFonctionnel(dataClusterGrainFonctionnel, entete, windowRadius, outputCellSize, modeFast);
+	}
+	
+	public static Coverage runSHDIClusterGrainBocagerFonctionnel(Coverage covClusterGrainFonctionnel, double windowRadius, double outputCellSize, boolean modeFast) {
+
+		float[] dataClusterGrainFonctionnel = covClusterGrainFonctionnel.getDatas();
+		EnteteRaster entete = covClusterGrainFonctionnel.getEntete();
+		
+		return runSHDIClusterGrainBocagerFonctionnel(dataClusterGrainFonctionnel, entete, windowRadius, outputCellSize, modeFast);
+	}
+	
+	public static Coverage runSHDIClusterGrainBocagerFonctionnel(float[] dataClusterGrainFonctionnel, EnteteRaster entete, double windowRadius, double outputCellSize, boolean modeFast) {
+
+		int windowSize = LandscapeMetricAnalysis.getWindowSize(entete.cellsize(), windowRadius);
+		int displacement = LandscapeMetricAnalysis.getDisplacement(entete.cellsize(), outputCellSize);
+		
+		CoverageOutput covOutput = new CoverageOutput("SHDI");
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterTab(dataClusterGrainFonctionnel);
+		builder.setEntete(entete);
+		if(modeFast){
+			builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		}else{
+			builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+		}
+		builder.addMetric("SHDI");
+		builder.setWindowSize(windowSize);
+		builder.setDisplacement(displacement);
+		builder.addCoverageOutput(covOutput);
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		return covOutput.getCoverage();
+	}
+	
+	// proportion de grain fonctionnel en fonction d'une taille de fenetre
+	
+	public static Coverage runProportionGrainBocagerFonctionnel(String rasterGrainBocagerFonctionnel, double windowRadius, double outputCellSize, boolean modeFast) {
+		
+		Coverage covGrainBocagerFonctionnel = CoverageManager.getCoverage(rasterGrainBocagerFonctionnel);
+		float[] dataGrainBocagerFonctionnel = covGrainBocagerFonctionnel.getDatas();
+		EnteteRaster entete = covGrainBocagerFonctionnel.getEntete();
+		covGrainBocagerFonctionnel.dispose();
+		
+		return runProportionGrainBocagerFonctionnel(dataGrainBocagerFonctionnel, entete, windowRadius, outputCellSize, modeFast);
+	}
+	
+	public static Coverage runProportionGrainBocagerFonctionnel(Coverage covGrainBocagerFonctionnel, double windowRadius, double outputCellSize, boolean modeFast) {
+		
+		float[] dataGrainBocagerFonctionnel = covGrainBocagerFonctionnel.getDatas();
+		EnteteRaster entete = covGrainBocagerFonctionnel.getEntete();
+
+		return runProportionGrainBocagerFonctionnel(dataGrainBocagerFonctionnel, entete, windowRadius, outputCellSize, modeFast);
+	}
+	
+	public static Coverage runProportionGrainBocagerFonctionnel(float[] dataGrainBocagerFonctionnel, EnteteRaster entete, double windowRadius, double outputCellSize, boolean modeFast) {
+		
+		int windowSize = LandscapeMetricAnalysis.getWindowSize(entete.cellsize(), windowRadius);
+		int displacement = LandscapeMetricAnalysis.getDisplacement(entete.cellsize(), outputCellSize);
+		
+		CoverageOutput covOutput = new CoverageOutput("pNV_1");
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterTab(dataGrainBocagerFonctionnel);
+		builder.setEntete(entete);
+		if(modeFast){
+			builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		}else{
+			builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+		}
+		builder.addMetric("pNV_1");
+		builder.setWindowSize(windowSize);
+		builder.setDisplacement(displacement);
+		builder.addCoverageOutput(covOutput);
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
 		return covOutput.getCoverage();
 	}
 
