@@ -1,8 +1,5 @@
 package fr.inrae.act.bagap.chloe.window.metric;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 

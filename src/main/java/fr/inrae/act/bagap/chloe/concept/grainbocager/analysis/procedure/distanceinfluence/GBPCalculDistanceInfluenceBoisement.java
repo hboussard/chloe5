@@ -29,15 +29,15 @@ public class GBPCalculDistanceInfluenceBoisement extends GrainBocagerProcedure {
 		
 		System.out.println("calcul des distances d'influences des boisements");
 		
-		Coverage covhauteurBoisement = CoverageManager.getCoverage(manager().hauteurBoisement());
+		Coverage covHauteurBoisement = CoverageManager.getCoverage(manager().hauteurBoisement());
 		
-		Coverage covDistanceInfluence = GrainBocager.calculDistancesInfluences(covhauteurBoisement, covTypeBoisement, manager().modeFast());
+		Coverage covDistanceInfluence = GrainBocager.calculDistancesInfluences(covHauteurBoisement, covTypeBoisement, manager().modeFast());
 		
-		covhauteurBoisement.dispose();
+		covHauteurBoisement.dispose();
 		covTypeBoisement.dispose();
 		
 		if(!manager().distanceInfluenceBoisement().equalsIgnoreCase("")){
-			CoverageManager.write(manager().distanceInfluenceBoisement(), covDistanceInfluence.getDatas(), covDistanceInfluence.getEntete());
+			CoverageManager.write(manager().distanceInfluenceBoisement(), covDistanceInfluence.getData(), covDistanceInfluence.getEntete());
 			
 			try {
 				Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_distance_influence_boisement.qml"), Tool.deleteExtension(manager().distanceInfluenceBoisement())+".qml");

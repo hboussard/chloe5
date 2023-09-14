@@ -21,7 +21,13 @@ public class GBPClusterisationFonctionnaliteFactory extends GrainBocagerProcedur
 
 	@Override
 	public GrainBocagerProcedure create(GrainBocagerManager manager) {
-		return new GBPClusterisationFonctionnalite(manager);
+		
+		if(manager.tile() == null){
+			return new GBPClusterisationFonctionnalite(manager);
+		}else{
+			return new HugeGBPClusterisationFonctionnalite(manager);
+		}
+		
 	}
 
 }

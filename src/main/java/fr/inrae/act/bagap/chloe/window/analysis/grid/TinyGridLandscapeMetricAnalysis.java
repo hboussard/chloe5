@@ -40,7 +40,7 @@ public class TinyGridLandscapeMetricAnalysis extends GridLandscapeMetricAnalysis
 		//System.out.println("recup des donnees sur : "+roi.x+" "+roi.y+" "+roi.width+" "+roi.height);
 		
 		// gestion des entrees
-		kernel().setInDatas(coverage().getDatas(roi));
+		kernel().setInDatas(coverage().getData(roi));
 		coverage().dispose();
 		
 		// ajustement du buffer de calcul

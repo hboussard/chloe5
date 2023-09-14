@@ -45,7 +45,6 @@ public class GBPDetectionTypeBoisementFactory extends GrainBocagerProcedureFacto
 		}else{
 			return new HugeGBPDetectionTypeBoisement(manager);
 		}
-		
 	}
 
 }

@@ -29,10 +29,10 @@ public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 		// recuperation des donnees depuis le coverage
 		Rectangle roi = new Rectangle(roiX(), roiY(), roiWidth(), roiHeight());
 	
-		kernel().setInDatas(coverage().getDatas(roi));
+		kernel().setInDatas(coverage().getData(roi));
 		coverage().dispose();
 		
-		kernel().setEntityDatas(entityCoverage().getDatas(roi));
+		kernel().setEntityDatas(entityCoverage().getData(roi));
 		
 		Set<Integer> entityIds = new TreeSet<Integer>();
 		for(float f : kernel().entityDatas()){
@@ -47,7 +47,7 @@ public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 		for(int aId : entityIds){
 			kernel().outDatas().put(aId, new double[nbValues()]);
 			kernel().outDatas().get(aId)[0] = 1; // filtre ok
-			kernel().outDatas().get(aId)[6] = Float.MAX_VALUE; // init minimum
+			//kernel().outDatas().get(aId)[6] = Float.MAX_VALUE; // init minimum
 		}
 		
 		// initialisation du comptage

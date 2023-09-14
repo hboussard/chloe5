@@ -20,12 +20,12 @@ public class GBPRecuperationHauteurBoisement extends GrainBocagerProcedure {
 		
 		Coverage covHauteurBoisement = GrainBocager.recuperationHauteurBoisement(manager().bocage(), manager().entete());
 		
-		if(!manager().arrachage().equalsIgnoreCase("")){ // suppression des arrachages
+		if(!manager().suppression().equalsIgnoreCase("")){ // suppression des arrachages
 
-			Coverage covZoneArrachage = GrainBocager.recuperationZoneArrachage(manager().arrachage(), manager().entete());
+			Coverage covZoneArrachage = GrainBocager.recuperationZoneArrachage(manager().suppression(), manager().entete());
 			
-			float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
-			float[] dataZoneArrachage = covZoneArrachage.getDatas();
+			float[] dataHauteurBoisement = covHauteurBoisement.getData();
+			float[] dataZoneArrachage = covZoneArrachage.getData();
 			
 			covHauteurBoisement.dispose();
 			covZoneArrachage.dispose();
@@ -38,8 +38,8 @@ public class GBPRecuperationHauteurBoisement extends GrainBocagerProcedure {
 
 			Coverage covHauteurPlantation = GrainBocager.recuperationHauteurPlantation(manager().plantation(), manager().attributHauteurPlantation(), manager().entete());
 			
-			float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
-			float[] dataHauteurPlantation = covHauteurPlantation.getDatas();
+			float[] dataHauteurBoisement = covHauteurBoisement.getData();
+			float[] dataHauteurPlantation = covHauteurPlantation.getData();
 			
 			covHauteurBoisement.dispose();
 			covHauteurPlantation.dispose();
@@ -50,7 +50,7 @@ public class GBPRecuperationHauteurBoisement extends GrainBocagerProcedure {
 		
 		if(!manager().hauteurBoisement().equalsIgnoreCase("")){
 			
-			CoverageManager.write(manager().hauteurBoisement(), covHauteurBoisement.getDatas(), covHauteurBoisement.getEntete());
+			CoverageManager.write(manager().hauteurBoisement(), covHauteurBoisement.getData(), covHauteurBoisement.getEntete());
 			
 			try {
 				Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_hauteur_boisement.qml"), Tool.deleteExtension(manager().hauteurBoisement())+".qml");

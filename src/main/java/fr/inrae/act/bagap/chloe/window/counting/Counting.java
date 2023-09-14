@@ -1,15 +1,10 @@
 package fr.inrae.act.bagap.chloe.window.counting;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
-
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
-//import fr.inrae.act.bagap.chloe.window.metric.MetricObserver;
 
 public abstract class Counting implements 
 	BasicCountingInterface, 
@@ -208,6 +203,9 @@ public abstract class Counting implements
 	
 	@Override
 	public double theoreticalSize(){
+		if(theoreticalSize == 0){
+			return totalValues;
+		}
 		return theoreticalSize;
 	}
 	

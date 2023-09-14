@@ -37,7 +37,9 @@ public class GrainBocagerManager {
 	
 	private String name;				// nom identifiant du territoire
 	
-	private String territoire;			// shapefile du territoire
+	private String territoire;			// shapefile du territoire pour definir l'enveloppe
+	
+	private String enveloppe;			// envelopppe d'analyse
 	
 	private double bufferArea; 			// buffer autour du territoire d'analyse
 	
@@ -158,22 +160,35 @@ public class GrainBocagerManager {
 	
 	private boolean initEntete(){
 		
-		if(!grainBocager.equalsIgnoreCase("") && new File(grainBocager).exists()){
+		if(!bocage.equalsIgnoreCase("")){
 			
-			// récupération de l'entete
-			Coverage covGrainBocager = CoverageManager.getCoverage(grainBocager);
-			entete = covGrainBocager.getEntete();
-			covGrainBocager.dispose();
+			// récupération de l'entete du bocage
+			Coverage covBocage = CoverageManager.getCoverage(bocage);
+			entete = covBocage.getEntete();
+			covBocage.dispose();
 			
-			return true;
-		}
-		
-		if(!distanceInfluenceBoisement.equalsIgnoreCase("") && new File(distanceInfluenceBoisement).exists()){
-			
-			// récupération de l'entete
-			Coverage covDistanceInfluence = CoverageManager.getCoverage(distanceInfluenceBoisement);
-			entete = covDistanceInfluence.getEntete();
-			covDistanceInfluence.dispose();
+			if(!enveloppe.equalsIgnoreCase("") && bufferArea >= 0){
+				
+				String[] bornes = enveloppe.replace("{", "").replace("}", "").split(";");
+				
+				// récupération de l'enveloppe totale de travail
+				Envelope envelope = new Envelope(
+						Double.parseDouble(bornes[0])-bufferArea, 
+						Double.parseDouble(bornes[1])+bufferArea, 
+						Double.parseDouble(bornes[2])-bufferArea, 
+						Double.parseDouble(bornes[3])+bufferArea);
+							
+				// récupération de l'entete
+				entete = EnteteRaster.getEntete(entete, envelope);
+				
+			} else if(!territoire.equalsIgnoreCase("") && bufferArea >= 0){
+				
+				// récupération de l'enveloppe totale de travail
+				Envelope envelope = ShapeFile2CoverageConverter.getEnvelope(territoire, bufferArea);
+							
+				// récupération de l'entete
+				entete = EnteteRaster.getEntete(entete, envelope);
+			}
 			
 			return true;
 		}
@@ -188,24 +203,36 @@ public class GrainBocagerManager {
 			return true;
 		}
 		
-		if(!bocage.equalsIgnoreCase("")){
+		if(!distanceInfluenceBoisement.equalsIgnoreCase("") && new File(distanceInfluenceBoisement).exists()){
 			
-			// récupération de l'entete du bocage
-			Coverage covBocage = CoverageManager.getCoverage(bocage);
-			entete = covBocage.getEntete();
-			covBocage.dispose();
-			
-			if(!territoire.equalsIgnoreCase("") && bufferArea >= 0){
-				
-				// récupération de l'enveloppe totale de travail
-				Envelope envelope = ShapeFile2CoverageConverter.getEnvelope(territoire, bufferArea);
-							
-				// récupération de l'entete
-				entete = EnteteRaster.getEntete(entete, envelope);
-			}
+			// récupération de l'entete
+			Coverage covDistanceInfluence = CoverageManager.getCoverage(distanceInfluenceBoisement);
+			entete = covDistanceInfluence.getEntete();
+			covDistanceInfluence.dispose();
 			
 			return true;
 		}
+		
+		if(!grainBocager.equalsIgnoreCase("") && new File(grainBocager).exists()){
+			
+			// récupération de l'entete
+			Coverage covGrainBocager = CoverageManager.getCoverage(grainBocager);
+			entete = covGrainBocager.getEntete();
+			covGrainBocager.dispose();
+			
+			return true;
+		}
+		
+		if(!clusterGrainBocagerFonctionnel.equalsIgnoreCase("") && new File(clusterGrainBocagerFonctionnel).exists()){
+			
+			// récupération de l'entete
+			Coverage covClusterGrainBocager = CoverageManager.getCoverage(clusterGrainBocagerFonctionnel);
+			entete = covClusterGrainBocager.getEntete();
+			covClusterGrainBocager.dispose();
+			
+			return true;
+		}
+		
 		return false;
 	}
 	
@@ -310,6 +337,10 @@ public class GrainBocagerManager {
 		this.territoire = territoire;
 	}
 	
+	public void setEnveloppe(String enveloppe) {
+		this.enveloppe = enveloppe;
+	}
+	
 	public void setBufferArea(double bufferArea){
 		this.bufferArea = bufferArea;
 	}
@@ -380,9 +411,10 @@ public class GrainBocagerManager {
 		return outputFile;
 	}*/
 
+	/*
 	public String territoire() {
 		return territoire;
-	}
+	}*/
 	
 	public String zoneBocage() {
 		return zoneBocage;
@@ -459,11 +491,11 @@ public class GrainBocagerManager {
 	public double enjeuxWindowRadius(){
 		return enjeuxWindowRadius;
 	}
-	
+	/*
 	public double bufferArea() {
 		return bufferArea;
 	}
-	
+	*/
 	public String attributCodeEA(){
 		return attributCodeEA;
 	}

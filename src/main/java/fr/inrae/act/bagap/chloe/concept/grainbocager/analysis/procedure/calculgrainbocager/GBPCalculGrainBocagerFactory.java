@@ -48,7 +48,12 @@ public class GBPCalculGrainBocagerFactory extends GrainBocagerProcedureFactory {
 
 	@Override
 	public GrainBocagerProcedure create(GrainBocagerManager manager) {
-		return new GBPCalculGrainBocager(manager);
+		
+		if(manager.tile() == null){
+			return new GBPCalculGrainBocager(manager);
+		}else{
+			return new HugeGBPCalculGrainBocager(manager);
+		}
 	}
 
 }

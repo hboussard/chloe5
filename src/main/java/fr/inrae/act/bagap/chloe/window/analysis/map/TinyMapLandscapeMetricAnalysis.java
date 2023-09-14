@@ -25,7 +25,7 @@ public class TinyMapLandscapeMetricAnalysis extends MapLandscapeMetricAnalysis {
 		Rectangle roi = new Rectangle(roiX(), roiY(), roiWidth(), roiHeight());
 		
 		// gestion des entrees
-		kernel().setInDatas(coverage().getDatas(roi));
+		kernel().setInDatas(coverage().getData(roi));
 		coverage().dispose();
 		
 		// gestion des sorties

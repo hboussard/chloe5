@@ -112,10 +112,11 @@ public class LandscapeMetricAnalysisFactory {
 				maxHeight = roiHeight + 2 * midWindowSize;
 			}
 			
+			//System.out.println((maxWidth/1000.0)+" "+(maxHeight/1000.0)+" "+((maxWidth/1000.0) * (maxHeight/1000.0))+" "+(LandscapeMetricAnalysis.maxTile()/1000000.0));
+			
 			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
 				//System.out.println("tiny sliding");
 				return new TinySlidingLandscapeMetricAnalysisFactory().create(builder, coverage);
-				//return new HugeSlidingLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}else{
 				//System.out.println("huge sliding");
 				return new HugeSlidingLandscapeMetricAnalysisFactory().create(builder, coverage);

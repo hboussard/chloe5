@@ -26,7 +26,7 @@ public class DoubleTinySlidingLandscapeMetricAnalysis extends TinySlidingLandsca
 		super.manageInDatas(roi);
 		
 		// gestion des entrees complémentaires
-		kernel().setInDatas2(coverage2.getDatas(roi));
+		kernel().setInDatas2(coverage2.getData(roi));
 		coverage2.dispose();
 	}
 

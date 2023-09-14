@@ -46,7 +46,7 @@ public class Util {
 	}
 	
 	public static int[] readValuesTinyRoi(Coverage coverage, Rectangle roi) {
-		float[] datas = coverage.getDatas(roi);
+		float[] datas = coverage.getData(roi);
 		Set<Float> inValues = new TreeSet<Float>();
 		for (float d : datas) {
 			if (d != 0 && d != Raster.getNoDataValue()) {
@@ -66,7 +66,7 @@ public class Util {
 		float[] datas;
 		Set<Float> inValues = new TreeSet<Float>();
 		for(int j=0; j<roi.height; j+=LandscapeMetricAnalysis.tileYSize()){
-			datas = coverage.getDatas(new Rectangle(roi.x, roi.y+j, roi.width, Math.min(LandscapeMetricAnalysis.tileYSize(), roi.height-j)));
+			datas = coverage.getData(new Rectangle(roi.x, roi.y+j, roi.width, Math.min(LandscapeMetricAnalysis.tileYSize(), roi.height-j)));
 			for (float d : datas) {
 				if (d != 0 && d != Raster.getNoDataValue()) {
 					inValues.add(d);

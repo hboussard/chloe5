@@ -42,7 +42,12 @@ public class GBPCalculDistanceInfluenceBoisementFactory extends GrainBocagerProc
 
 	@Override
 	public GrainBocagerProcedure create(GrainBocagerManager manager) {
-		return new GBPCalculDistanceInfluenceBoisement(manager);
+		
+		if(manager.tile() == null){
+			return new GBPCalculDistanceInfluenceBoisement(manager);
+		}else{
+			return new HugeGBPCalculDistanceInfluenceBoisement(manager);
+		}
 	}
 
 }

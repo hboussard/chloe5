@@ -12,6 +12,7 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 import org.jumpmind.symmetric.csv.CsvReader;
 
+import fr.inrae.act.bagap.chloe.window.metric.basic.BasicMetric;
 import fr.inrae.act.bagap.chloe.window.metric.couple.CoupleMetric;
 import fr.inrae.act.bagap.chloe.window.metric.patch.PatchMetric;
 import fr.inrae.act.bagap.chloe.window.metric.quantitative.QuantitativeMetric;
@@ -242,7 +243,7 @@ public class MetricManager {
 	
 	public static boolean hasOnlyValueMetric(Set<Metric> metrics){
 		for(Metric m : metrics){
-			if(!(isOnlyValueMetric(m))){
+			if(!(isOnlyValueMetric(m)) && !(m instanceof BasicMetric)){
 				return false;
 			}
 			//if(!(m instanceof ValueMetric)){
@@ -267,7 +268,7 @@ public class MetricManager {
 	
 	public static boolean hasOnlyCoupleMetric(Set<Metric> metrics) {
 		for(Metric m : metrics){
-			if(!(isOnlyCoupleMetric(m))){
+			if(!(isOnlyCoupleMetric(m)) && !(m instanceof BasicMetric)){
 				return false;
 			}
 			//if(!(m instanceof CoupleMetric)){
@@ -292,7 +293,7 @@ public class MetricManager {
 	
 	public static boolean hasOnlyQuantitativeMetric(Set<Metric> metrics) {
 		for(Metric m : metrics){
-			if(!(m instanceof QuantitativeMetric)){
+			if(!(m instanceof QuantitativeMetric) && !(m instanceof BasicMetric)){
 				return false;
 			}
 		}
@@ -310,7 +311,7 @@ public class MetricManager {
 	
 	public static boolean hasOnlyPatchMetric(Set<Metric> metrics) {
 		for(Metric m : metrics){
-			if(!(m instanceof PatchMetric)){
+			if(!(m instanceof PatchMetric) && !(m instanceof BasicMetric)){
 				return false;
 			}
 		}

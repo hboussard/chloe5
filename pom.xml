@@ -4,7 +4,7 @@
 
   <groupId>fr.inra.sad.bagap.chloe</groupId>
   <artifactId>chloe5</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <packaging>jar</packaging>
 
   <name>chloe5</name>
@@ -113,7 +113,7 @@
 	    <artifactId>symmetric-csv</artifactId>
 	    <version>3.5.19</version>
 	</dependency>
-   <!-- 
+  <!-- 
     <dependency>
     	<groupId>fr.inrae.act.bagap</groupId>
     	<artifactId>apiland</artifactId>

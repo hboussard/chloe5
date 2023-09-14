@@ -200,13 +200,13 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 						roiPosMaxY = roiPosMinY + roiHeight * cellSize;
 						
 						// recuperation des valeurs initiales
-						inDatas = inCoverage.getDatas(new Rectangle(x, y, roiWidth, roiHeight));
+						inDatas = inCoverage.getData(new Rectangle(x, y, roiWidth, roiHeight));
 						
 						// donnees de sortie
 						outDatas = new float[roiHeight*roiWidth];
 						
 						// recuperation des valeurs de friction
-						frictionDatas = frictionCoverage.getDatas(new Rectangle(x, y, roiWidth, roiHeight));
+						frictionDatas = frictionCoverage.getData(new Rectangle(x, y, roiWidth, roiHeight));
 						
 						// analyse de distance
 						rcm = new TabRCMDistanceAnalysis(outDatas, inDatas, frictionDatas, roiWidth, roiHeight, cellSize, noDataValue, codes);
@@ -267,7 +267,7 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 							cov = null;
 							
 							// récupération des valeurs de friction
-							frictionDatas = frictionCoverage.getDatas(new Rectangle(x, y, roiWidth, roiHeight));
+							frictionDatas = frictionCoverage.getData(new Rectangle(x, y, roiWidth, roiHeight));
 							
 							rcm = new TabRCMDistanceAnalysis(outDatas, null, frictionDatas, roiWidth, roiHeight, cellSize, noDataValue, codes);
 							
@@ -469,7 +469,7 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 				//System.out.println("traitement de la tuile "+dx+" "+dy);
 						
 				localCoverage = CoverageManager.getCoverage(temp+"_"+dx+"-"+dy+".tif");
-				datas = localCoverage.getDatas();
+				datas = localCoverage.getData();
 				entete = localCoverage.getEntete();
 				localCoverage.dispose();
 				

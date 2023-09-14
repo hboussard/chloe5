@@ -27,7 +27,7 @@ public class HugeGBPDetectionTypeBoisement extends GrainBocagerProcedure {
 		System.out.println("détection des types de boisements");
 		
 		if(!manager().typeBoisement().equalsIgnoreCase("")){
-			
+			// TODO
 		}
 		
 		Coverage covTypeBoisement = HugeGrainBocager.detectionTypeBoisement(manager().typeBoisement(), manager().outputPath()+"TypeBoisementPhase1/", manager().outputPath()+"DistanceBoisement/", covHauteurBoisement, manager().tile(), manager().modeFast());

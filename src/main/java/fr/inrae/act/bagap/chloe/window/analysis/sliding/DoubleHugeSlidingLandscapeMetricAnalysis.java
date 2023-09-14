@@ -34,7 +34,7 @@ public class DoubleHugeSlidingLandscapeMetricAnalysis extends HugeSlidingLandsca
 		super.manageInDatas(roi);
 		
 		// gestion des entrees complémentaires
-		kernel().setInDatas2(coverage2.getDatas(roi));
+		kernel().setInDatas2(coverage2.getData(roi));
 	}
 
 }

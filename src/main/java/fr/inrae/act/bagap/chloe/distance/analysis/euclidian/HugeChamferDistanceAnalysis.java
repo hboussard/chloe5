@@ -161,7 +161,7 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 						roiPosMaxY = roiPosMinY + roiHeight * cellSize;
 						
 						// recuperation des valeurs initiales
-						inDatas = inCoverage.getDatas(new Rectangle(x, y, roiWidth, roiHeight));
+						inDatas = inCoverage.getData(new Rectangle(x, y, roiWidth, roiHeight));
 						
 						// donnees de sortie
 						outDatas = new float[roiHeight*roiWidth];
@@ -444,7 +444,7 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 				//System.out.println("traitement de la tuile "+dx+" "+dy);
 						
 				localCoverage = CoverageManager.getCoverage(temp+"_"+dx+"-"+dy+".tif");
-				datas = localCoverage.getDatas();
+				datas = localCoverage.getData();
 				entete = localCoverage.getEntete();
 				localCoverage.dispose();
 				

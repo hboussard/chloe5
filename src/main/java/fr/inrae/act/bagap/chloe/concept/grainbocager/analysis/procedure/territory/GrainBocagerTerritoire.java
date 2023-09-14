@@ -3,8 +3,7 @@ package fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.territo
 import org.locationtech.jts.geom.Envelope;
 
 import fr.inra.sad.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.GrainBocager;
-import fr.inrae.act.bagap.chloe.util.Util;
+//import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
@@ -52,7 +51,7 @@ public class GrainBocagerTerritoire {
 	public void run(){
 
 		// creation du repertoire de sortie
-		Util.createAccess(outputPath);
+		//Util.createAccess(outputPath);
 		
 		// récupération de l'entete du bocage
 		Coverage covBocage = CoverageManager.getCoverage(bocage);
@@ -82,9 +81,9 @@ public class GrainBocagerTerritoire {
 		
 		// calcul du grain bocager total
 		String size = ((int) outputCellSize)+"";
-		Coverage covGrainBocagerTotal = GrainBocager.allRun(dataHauteurBoisementTotal, entete, modeFast, outputPath+name, outputCellSize);
-		CoverageManager.writeGeotiff(outputPath+name+"_grain_bocager_"+size+"m.tif", covGrainBocagerTotal.getDatas(), covGrainBocagerTotal.getEntete());
-		covGrainBocagerTotal.dispose();
+		//Coverage covGrainBocagerTotal = GrainBocager.allRun(dataHauteurBoisementTotal, entete, modeFast, outputPath+name, outputCellSize);
+		//CoverageManager.writeGeotiff(outputPath+name+"_grain_bocager_"+size+"m.tif", covGrainBocagerTotal.getData(), covGrainBocagerTotal.getEntete());
+		//covGrainBocagerTotal.dispose();
 		
 	}
 	
@@ -95,7 +94,7 @@ public class GrainBocagerTerritoire {
 		//CoverageManager.writeGeotiff(outputPath+name+"_"+scenario+"_hauteur_boisement.tif", dataHauteurBoisementTotal, entete);
 		
 		Coverage covReplantation = ShapeFile2CoverageConverter.getLinearCoverage(replantationBocagere, "code", entete.cellsize(), entete.noDataValue(), entete.minx(), entete.maxx(), entete.miny(), entete.maxy(), 0, entete.cellsize());
-		float[] dataReplantation = covReplantation.getDatas();
+		float[] dataReplantation = covReplantation.getData();
 		covReplantation.dispose();
 		CoverageManager.writeGeotiff(outputPath+name+"_"+scenario+"_replantation.tif", dataReplantation, entete);
 		
@@ -110,9 +109,9 @@ public class GrainBocagerTerritoire {
 		
 		// calcul du grain bocager total
 		String size = ((int) outputCellSize)+"";
-		Coverage covGrainBocagerTotal = GrainBocager.allRun(dataHauteurBoisementTotal, entete, modeFast, outputPath+name+"_"+scenario, outputCellSize);
-		CoverageManager.writeGeotiff(outputPath+name+"_"+scenario+"_grain_bocager_"+size+"m.tif", covGrainBocagerTotal.getDatas(), covGrainBocagerTotal.getEntete());
-		covGrainBocagerTotal.dispose();
+		//Coverage covGrainBocagerTotal = GrainBocager.allRun(dataHauteurBoisementTotal, entete, modeFast, outputPath+name+"_"+scenario, outputCellSize);
+		//CoverageManager.writeGeotiff(outputPath+name+"_"+scenario+"_grain_bocager_"+size+"m.tif", covGrainBocagerTotal.getData(), covGrainBocagerTotal.getEntete());
+		//covGrainBocagerTotal.dispose();
 		
 	}
 	
@@ -122,7 +121,7 @@ public class GrainBocagerTerritoire {
 		
 		Coverage covBoisement = CoverageManager.getCoverage(bocage);
 		EnteteRaster enteteMNHC = covBoisement.getEntete();
-		float[] dataBoisement = covBoisement.getDatas(EnteteRaster.getROI(enteteMNHC, new Envelope(entete.minx(), entete.maxx(), entete.miny(), entete.maxy())));
+		float[] dataBoisement = covBoisement.getData(EnteteRaster.getROI(enteteMNHC, new Envelope(entete.minx(), entete.maxx(), entete.miny(), entete.maxy())));
 		covBoisement.dispose();
 		
 		return dataBoisement;

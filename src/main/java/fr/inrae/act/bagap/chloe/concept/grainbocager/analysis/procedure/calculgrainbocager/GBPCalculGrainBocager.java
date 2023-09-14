@@ -26,12 +26,14 @@ public class GBPCalculGrainBocager extends GrainBocagerProcedure {
 			covDistanceInfluenceBoisement = CoverageManager.getCoverage(manager().distanceInfluenceBoisement());
 		}
 		
-		System.out.println("calcul du grain bocager à "+manager().cellSize()+"m dans une fenêtre de "+manager().windowRadius()+"m");
+		System.out.println("calcul du grain bocager à "+manager().grainCellSize()+"m dans une fenêtre de "+manager().grainWindowRadius()+"m");
 		
-		Coverage covGrainBocager = GrainBocager.calculGrainBocager(covDistanceInfluenceBoisement, manager().windowRadius(), manager().cellSize());
+		//Coverage covGrainBocager = CoverageManager.getCoverage(manager().grainBocager());
+		
+		Coverage covGrainBocager = GrainBocager.calculGrainBocager(covDistanceInfluenceBoisement, manager().grainWindowRadius(), manager().grainCellSize());
 		
 		if(!manager().grainBocager().equalsIgnoreCase("")){
-			CoverageManager.write(manager().grainBocager(), covGrainBocager.getDatas(), covGrainBocager.getEntete());
+			CoverageManager.write(manager().grainBocager(), covGrainBocager.getData(), covGrainBocager.getEntete());
 			
 			try {
 				Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_grain_bocager.qml"), Tool.deleteExtension(manager().grainBocager())+".qml");
@@ -45,9 +47,11 @@ public class GBPCalculGrainBocager extends GrainBocagerProcedure {
 		
 		if(!manager().grainBocager4Classes().equalsIgnoreCase("")){
 			
-			Coverage covGrainBocager4Classes = GrainBocager.runClassificationNClasses(covGrainBocager, manager().seuils());
+			System.out.println("calcul des seuils du grain bocager");
 			
-			CoverageManager.write(manager().grainBocager4Classes(), covGrainBocager4Classes.getDatas(), covGrainBocager4Classes.getEntete());
+			Coverage covGrainBocager4Classes = GrainBocager.runClassificationNClasses(covGrainBocager, manager().entete().noDataValue(), manager().seuils());
+			
+			CoverageManager.write(manager().grainBocager4Classes(), covGrainBocager4Classes.getData(), covGrainBocager4Classes.getEntete());
 			
 			try {
 				Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_grain_bocager_4classes.qml"), Tool.deleteExtension(manager().grainBocager4Classes())+".qml");

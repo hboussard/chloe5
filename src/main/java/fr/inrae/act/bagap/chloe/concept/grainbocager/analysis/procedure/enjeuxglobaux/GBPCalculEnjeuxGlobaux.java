@@ -35,7 +35,7 @@ public class GBPCalculEnjeuxGlobaux extends GrainBocagerProcedure {
 		
 		if(!manager().zoneFragmentationGrainBocagerFonctionnel().equalsIgnoreCase("")){
 			
-			CoverageManager.write(manager().zoneFragmentationGrainBocagerFonctionnel(), covFragmentationGrainBocagerFonctionnel.getDatas(), covFragmentationGrainBocagerFonctionnel.getEntete());
+			CoverageManager.write(manager().zoneFragmentationGrainBocagerFonctionnel(), covFragmentationGrainBocagerFonctionnel.getData(), covFragmentationGrainBocagerFonctionnel.getEntete());
 			
 			try {
 				Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_fragmentation_grain_bocager_fonctionnel.qml"), Tool.deleteExtension(manager().zoneFragmentationGrainBocagerFonctionnel())+".qml");
@@ -56,7 +56,7 @@ public class GBPCalculEnjeuxGlobaux extends GrainBocagerProcedure {
 		
 		if(!manager().proportionGrainBocagerFonctionnel().equalsIgnoreCase("")){
 			
-			CoverageManager.write(manager().proportionGrainBocagerFonctionnel(), covProportionGrainBocagerFonctionnel.getDatas(), covProportionGrainBocagerFonctionnel.getEntete());
+			CoverageManager.write(manager().proportionGrainBocagerFonctionnel(), covProportionGrainBocagerFonctionnel.getData(), covProportionGrainBocagerFonctionnel.getEntete());
 			
 			try {
 				Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_proportion_grain_bocager_fonctionnel.qml"), Tool.deleteExtension(manager().proportionGrainBocagerFonctionnel())+".qml");

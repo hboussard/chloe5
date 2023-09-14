@@ -27,13 +27,13 @@ public class GBPClusterisationFonctionnalite extends GrainBocagerProcedure {
 			covGrainBocager = CoverageManager.getCoverage(manager().grainBocager());
 		}
 		
-		System.out.println("seuillage des zones fonctionnelles en utilsant le seuil "+manager().seuil());
+		System.out.println("seuillage des zones fonctionnelles en utilisant le seuil "+manager().seuil());
 		
 		Coverage covSeuillageFonctionnel = GrainBocager.runClassificationFonctionnelle(covGrainBocager, manager().seuil());
 		
 		if(!manager().grainBocagerFonctionnel().equalsIgnoreCase("")){
 			
-			CoverageManager.write(manager().grainBocagerFonctionnel(), covSeuillageFonctionnel.getDatas(), covSeuillageFonctionnel.getEntete());
+			CoverageManager.write(manager().grainBocagerFonctionnel(), covSeuillageFonctionnel.getData(), covSeuillageFonctionnel.getEntete());
 			
 			try {
 				Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_grain_bocager_fonctionnel.qml"), Tool.deleteExtension(manager().grainBocagerFonctionnel())+".qml");
@@ -50,7 +50,7 @@ public class GBPClusterisationFonctionnalite extends GrainBocagerProcedure {
 		
 		if(!manager().clusterGrainBocagerFonctionnel().equalsIgnoreCase("")){
 			
-			CoverageManager.write(manager().clusterGrainBocagerFonctionnel(), covClusterFonctionnel.getDatas(), covClusterFonctionnel.getEntete());
+			CoverageManager.write(manager().clusterGrainBocagerFonctionnel(), covClusterFonctionnel.getData(), covClusterFonctionnel.getEntete());
 			
 		}
 		

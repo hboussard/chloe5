@@ -58,7 +58,7 @@ public class TinySelectedLandscapeMetricAnalysis extends SelectedLandscapeMetric
 	@Override
 	protected void manageInDatas(Rectangle roi) {
 		// gestion des entrees
-		kernel().setInDatas(coverage().getDatas(roi));
+		kernel().setInDatas(coverage().getData(roi));
 		coverage().dispose();
 	}
 

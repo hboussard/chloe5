@@ -7,6 +7,13 @@ public class EntityQuantitativeKernel extends EntityLandscapeMetricKernel{
 	}	
 	
 	@Override
+	public void init(){
+		for(int ent : outDatas().keySet()){
+			outDatas().get(ent)[6] = Float.MAX_VALUE; // init minimum
+		}
+	}
+	
+	@Override
 	public void applyEntityWindow(){
 		
 		for(int y=0; y<height(); y++){

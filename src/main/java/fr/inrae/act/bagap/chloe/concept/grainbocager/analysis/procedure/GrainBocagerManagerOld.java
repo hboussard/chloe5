@@ -31,7 +31,7 @@ public class GrainBocagerManagerOld {
 	
 	private double[] seuils; 				// seuil d'observation du grain bocager
 	
-	public GrainBocagerManager(){
+	public GrainBocagerManagerOld(){
 		reset();
 	}
 
@@ -183,7 +183,7 @@ public class GrainBocagerManagerOld {
 		}
 		return ok;
 	}
-	
+	/*
 	public GrainBocagerDiagnostic build(){
 		
 		if(check()){
@@ -192,6 +192,6 @@ public class GrainBocagerManagerOld {
 		}
 		
 		throw new IllegalArgumentException("parameters are unconsistant");
-	}
+	}*/
 	
 }

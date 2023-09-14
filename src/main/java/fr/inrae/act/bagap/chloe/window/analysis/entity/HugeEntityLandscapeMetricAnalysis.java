@@ -51,9 +51,9 @@ public class HugeEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 			roi = new Rectangle(roiX(), localROIY, roiWidth(), tYs);
 			
 			// gestion des entrees
-			kernel().setInDatas(coverage().getDatas(roi));
+			kernel().setInDatas(coverage().getData(roi));
 			
-			kernel().setEntityDatas(entityCoverage().getDatas(roi));
+			kernel().setEntityDatas(entityCoverage().getData(roi));
 			
 			for(float f : kernel().entityDatas()){
 				if(f != 0 && f != Raster.getNoDataValue()){
@@ -66,9 +66,13 @@ public class HugeEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 				if(!kernel().outDatas().containsKey(aId)){
 					kernel().outDatas().put(aId, new double[nbValues()]);
 					kernel().outDatas().get(aId)[0] = 1; // filtre ok
-					kernel().outDatas().get(aId)[6] = Float.MAX_VALUE; // init minimum
+					
+					//kernel().outDatas().get(aId)[6] = Float.MAX_VALUE; // init minimum
 				}
 			}
+			
+			// initialisation du kernel
+			kernel().init();
 			
 			kernel().applyEntityWindow();	
 		}

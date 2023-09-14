@@ -66,7 +66,7 @@ public class HugeGridLandscapeMetricAnalysis extends GridLandscapeMetricAnalysis
 			//System.out.println(roiX()+" "+localROIY+" "+roiWidth()+" "+tYs);
 			
 			// gestion des entrees
-			kernel().setInDatas(coverage().getDatas(roi));
+			kernel().setInDatas(coverage().getData(roi));
 			
 			yGrid = 0;
 			for(int b=0; b<tYs; b+=buffer, yGrid++){

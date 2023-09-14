@@ -38,7 +38,7 @@ public class GrainBocager {
 	public static Coverage run(String rasterHauteurBoisement, double windowRadius, double outputCellSize, boolean modeFast){
 		
 		Coverage covHauteurBoisement = CoverageManager.getCoverage(rasterHauteurBoisement);
-		float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
+		float[] dataHauteurBoisement = covHauteurBoisement.getData();
 		EnteteRaster entete = covHauteurBoisement.getEntete();
 		covHauteurBoisement.dispose();
 		
@@ -63,7 +63,7 @@ public class GrainBocager {
 	
 	public static Coverage run(Coverage covHauteurBoisement, double windowRadius, double outputCellSize, boolean modeFast){
 		
-		float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
+		float[] dataHauteurBoisement = covHauteurBoisement.getData();
 		EnteteRaster entete = covHauteurBoisement.getEntete();
 		
 		return run(dataHauteurBoisement, entete, windowRadius, outputCellSize, modeFast);
@@ -91,7 +91,7 @@ public class GrainBocager {
 		Coverage covTypeBoisement = detectionTypeBoisement(dataHauteurBoisement, entete, modeFast);
 		
 		// calcul de distances ponderees
-		Coverage covDistanceInfluence = calculDistancesInfluences(dataHauteurBoisement, covTypeBoisement.getDatas(), entete, modeFast);
+		Coverage covDistanceInfluence = calculDistancesInfluences(dataHauteurBoisement, covTypeBoisement.getData(), entete, modeFast);
 		
 		// moyenne globale du grain bocager
 		return calculGrainBocager(covDistanceInfluence, windowRadius, outputCellSize);
@@ -103,7 +103,7 @@ public class GrainBocager {
 		
 		Coverage covHauteurBoisement = CoverageManager.getCoverage(bocage);
 		EnteteRaster enteteMNHC = covHauteurBoisement.getEntete();
-		float[] dataBoisement = covHauteurBoisement.getDatas(EnteteRaster.getROI(enteteMNHC, new Envelope(entete.minx(), entete.maxx(), entete.miny(), entete.maxy())));
+		float[] dataBoisement = covHauteurBoisement.getData(EnteteRaster.getROI(enteteMNHC, new Envelope(entete.minx(), entete.maxx(), entete.miny(), entete.maxy())));
 		covHauteurBoisement.dispose();
 		
 		return new TabCoverage(dataBoisement, entete);
@@ -118,7 +118,21 @@ public class GrainBocager {
 	
 	public static Coverage recuperationHauteurPlantation(String plantation, String attributHauteurPlantation, EnteteRaster entete) {
 		
-		Coverage covHauteurReplantation = ShapeFile2CoverageConverter.getLinearCoverage(plantation, attributHauteurPlantation, entete.cellsize(), entete.noDataValue(), entete.minx(), entete.maxx(), entete.miny(), entete.maxy(), 0, entete.cellsize());
+		Coverage covHauteurReplantation = null;
+		
+		if (ShapeFile2CoverageConverter.getShapeType(plantation).isPolygonType()) {
+			
+			covHauteurReplantation = ShapeFile2CoverageConverter.getSurfaceCoverage(plantation, attributHauteurPlantation, entete.cellsize(), entete.noDataValue(), entete.minx(), entete.maxx(), entete.miny(), entete.maxy(), 0);
+			
+		} else if (ShapeFile2CoverageConverter.getShapeType(plantation).isLineType()) {
+			
+			covHauteurReplantation = ShapeFile2CoverageConverter.getLinearCoverage(plantation, attributHauteurPlantation, entete.cellsize(), entete.noDataValue(), entete.minx(), entete.maxx(), entete.miny(), entete.maxy(), 0, entete.cellsize());
+			
+		} /*else if (ShapeFile2CoverageConverter.getShapeType(plantation).isPointType()) {
+			
+		} */else {
+			throw new IllegalArgumentException(plantation);
+		}
 		
 		return covHauteurReplantation;
 	}
@@ -129,8 +143,8 @@ public class GrainBocager {
 		
 		EnteteRaster entete = bocage.getEntete();
 		
-		float[] dataHauteurBoisement = bocage.getDatas();
-		float[] dataHauteurPlantation = plantation.getDatas();
+		float[] dataHauteurBoisement = bocage.getData();
+		float[] dataHauteurPlantation = plantation.getData();
 		
 		return ajouteHauteurPlantation(dataHauteurBoisement, dataHauteurPlantation, entete);
 	}
@@ -174,7 +188,7 @@ public class GrainBocager {
 	public static Coverage detectionTypeBoisement(String rasterHauteurBoisement, boolean modeFast) {
 		
 		Coverage covHauteurBoisement = CoverageManager.getCoverage(rasterHauteurBoisement);
-		float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
+		float[] dataHauteurBoisement = covHauteurBoisement.getData();
 		EnteteRaster entete = covHauteurBoisement.getEntete();
 		covHauteurBoisement.dispose();
 		
@@ -183,7 +197,7 @@ public class GrainBocager {
 	
 	public static Coverage detectionTypeBoisement(Coverage covHauteurBoisement, boolean modeFast) {
 	
-		float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
+		float[] dataHauteurBoisement = covHauteurBoisement.getData();
 		EnteteRaster entete = covHauteurBoisement.getEntete();
 		
 		return detectionTypeBoisement(dataHauteurBoisement, entete, modeFast);
@@ -208,7 +222,7 @@ public class GrainBocager {
 	public static Coverage detectionTypeBoisementPhase1(String rasterHauteurBoisement, boolean modeFast) {
 		
 		Coverage covHauteurBoisement = CoverageManager.getCoverage(rasterHauteurBoisement);
-		float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
+		float[] dataHauteurBoisement = covHauteurBoisement.getData();
 		EnteteRaster entete = covHauteurBoisement.getEntete();
 		covHauteurBoisement.dispose();
 		
@@ -217,7 +231,7 @@ public class GrainBocager {
 	
 	public static Coverage detectionTypeBoisementPhase1(Coverage covHauteurBoisement, boolean modeFast) {
 		
-		float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
+		float[] dataHauteurBoisement = covHauteurBoisement.getData();
 		EnteteRaster entete = covHauteurBoisement.getEntete();
 		
 		return detectionTypeBoisementPhase1(dataHauteurBoisement, entete, modeFast);
@@ -253,7 +267,7 @@ public class GrainBocager {
 	public static Coverage calculDistanceMassifsBoisesEuclidian(String rasterTypeBoisementPhase1){
 		
 		Coverage covTypeBoisementPhase1 = CoverageManager.getCoverage(rasterTypeBoisementPhase1);
-		float[] dataTypeBoisementPhase1 = covTypeBoisementPhase1.getDatas();
+		float[] dataTypeBoisementPhase1 = covTypeBoisementPhase1.getData();
 		EnteteRaster entete = covTypeBoisementPhase1.getEntete();
 		covTypeBoisementPhase1.dispose();
 		
@@ -262,7 +276,7 @@ public class GrainBocager {
 	
 	public static Coverage calculDistanceMassifsBoisesEuclidian(Coverage covTypeBoisementPhase1){
 		
-		float[] dataTypeBoisementPhase1 = covTypeBoisementPhase1.getDatas();
+		float[] dataTypeBoisementPhase1 = covTypeBoisementPhase1.getData();
 		EnteteRaster entete = covTypeBoisementPhase1.getEntete();
 		
 		return calculDistanceMassifsBoisesEuclidian(dataTypeBoisementPhase1, entete);
@@ -283,12 +297,12 @@ public class GrainBocager {
 	public static Coverage detectionTypeBoisementPhase2(String rasterTypeBoisementPhase1, String rasterDistanceMassif) {	
 		
 		Coverage covTypeBoisementPhase1 = CoverageManager.getCoverage(rasterTypeBoisementPhase1);
-		float[] dataTypeBoisementPhase1 = covTypeBoisementPhase1.getDatas();
+		float[] dataTypeBoisementPhase1 = covTypeBoisementPhase1.getData();
 		EnteteRaster entete = covTypeBoisementPhase1.getEntete();
 		covTypeBoisementPhase1.dispose();
 		
 		Coverage covDistanceMassif = CoverageManager.getCoverage(rasterDistanceMassif);
-		float[] dataDistanceMassif = covDistanceMassif.getDatas();
+		float[] dataDistanceMassif = covDistanceMassif.getData();
 		covDistanceMassif.dispose();
 		
 		return detectionTypeBoisementPhase2(dataTypeBoisementPhase1, dataDistanceMassif, entete);
@@ -296,10 +310,10 @@ public class GrainBocager {
 	
 	public static Coverage detectionTypeBoisementPhase2(Coverage covTypeBoisementPhase1, Coverage covDistanceMassif) {	
 		
-		float[] dataTypeBoisementPhase1 = covTypeBoisementPhase1.getDatas();
+		float[] dataTypeBoisementPhase1 = covTypeBoisementPhase1.getData();
 		EnteteRaster entete = covTypeBoisementPhase1.getEntete();
 		
-		float[] dataDistanceMassif = covDistanceMassif.getDatas();
+		float[] dataDistanceMassif = covDistanceMassif.getData();
 		
 		return detectionTypeBoisementPhase2(dataTypeBoisementPhase1, dataDistanceMassif, entete);
 	}
@@ -337,12 +351,12 @@ public class GrainBocager {
 	public static Coverage calculDistancesInfluences(String rasterHauteurBoisement, String rasterTypeBoisement, boolean modeFast) {
 		
 		Coverage covHauteurBoisement = CoverageManager.getCoverage(rasterHauteurBoisement);
-		float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
+		float[] dataHauteurBoisement = covHauteurBoisement.getData();
 		EnteteRaster entete = covHauteurBoisement.getEntete();
 		covHauteurBoisement.dispose();
 		
 		Coverage covTypeBoisement = CoverageManager.getCoverage(rasterTypeBoisement);
-		float[] dataTypeBoisement = covTypeBoisement.getDatas();
+		float[] dataTypeBoisement = covTypeBoisement.getData();
 		covTypeBoisement.dispose();
 		
 		return calculDistancesInfluences(dataHauteurBoisement, dataTypeBoisement, entete, modeFast);
@@ -350,10 +364,10 @@ public class GrainBocager {
 	
 	public static Coverage calculDistancesInfluences(Coverage covHauteurBoisement, Coverage covTypeBoisement, boolean modeFast) {
 		
-		float[] dataHauteurBoisement = covHauteurBoisement.getDatas();
+		float[] dataHauteurBoisement = covHauteurBoisement.getData();
 		EnteteRaster entete = covHauteurBoisement.getEntete();
 		
-		float[] dataTypeBoisement = covTypeBoisement.getDatas();
+		float[] dataTypeBoisement = covTypeBoisement.getData();
 		
 		return calculDistancesInfluences(dataHauteurBoisement, dataTypeBoisement, entete, modeFast);
 	}
@@ -387,7 +401,7 @@ public class GrainBocager {
 	public static Coverage calculGrainBocager(String rasterDistanceInfluence, double windowRadius, double outputCellSize) {
 		
 		Coverage covDistanceInfluence = CoverageManager.getCoverage(rasterDistanceInfluence);
-		float[] dataDistanceInfluence = covDistanceInfluence.getDatas();
+		float[] dataDistanceInfluence = covDistanceInfluence.getData();
 		EnteteRaster entete = covDistanceInfluence.getEntete();
 		covDistanceInfluence.dispose();
 		
@@ -395,11 +409,31 @@ public class GrainBocager {
 	}
 	
 	public static Coverage calculGrainBocager(Coverage covDistanceInfluence, double windowRadius, double outputCellSize) {
-		
+		/*
 		float[] dataDistanceInfluence = covDistanceInfluence.getDatas();
 		EnteteRaster entete = covDistanceInfluence.getEntete();
 		
 		return calculGrainBocager(dataDistanceInfluence, entete, windowRadius, outputCellSize);
+		*/
+		EnteteRaster entete = covDistanceInfluence.getEntete();
+		
+		int windowSize = LandscapeMetricAnalysis.getWindowSize(entete.cellsize(), windowRadius);
+		int displacement = LandscapeMetricAnalysis.getDisplacement(entete.cellsize(), outputCellSize);
+		
+		CoverageOutput covOutput = new CoverageOutput("average");
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setCoverage(covDistanceInfluence);
+		builder.setDisplacement(displacement); 
+		builder.addMetric("average");
+		builder.setWindowSize(windowSize);
+		builder.addCoverageOutput(covOutput);
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		return covOutput.getCoverage();
 	}
 	
 	public static Coverage calculGrainBocager(float[] dataDistanceInfluence, EnteteRaster entete, double windowRadius, double outputCellSize) {
@@ -426,25 +460,25 @@ public class GrainBocager {
 	
 	// classification en N classes definit par des seuils
 	
-	public static Coverage runClassificationNClasses(String rasterGrainBocager, double... seuils) {	
+	public static Coverage runClassificationNClasses(String rasterGrainBocager, float noDataValue, double... seuils) {	
 		
 		Coverage covGrainBocager = CoverageManager.getCoverage(rasterGrainBocager);
-		float[] dataGrainBocager = covGrainBocager.getDatas();
+		float[] dataGrainBocager = covGrainBocager.getData();
 		EnteteRaster entete = covGrainBocager.getEntete();
 		covGrainBocager.dispose();
 		
-		return runClassificationNClasses(dataGrainBocager, entete, seuils);
+		return runClassificationNClasses(dataGrainBocager, entete, noDataValue, seuils);
 	}
 
-	public static Coverage runClassificationNClasses(Coverage covGrainBocager, double... seuils) {	
+	public static Coverage runClassificationNClasses(Coverage covGrainBocager, float noDataValue, double... seuils) {	
 		
-		float[] dataGrainBocager = covGrainBocager.getDatas();
+		float[] dataGrainBocager = covGrainBocager.getData();
 		EnteteRaster entete = covGrainBocager.getEntete();
 		
-		return runClassificationNClasses(dataGrainBocager, entete, seuils);
+		return runClassificationNClasses(dataGrainBocager, entete, noDataValue, seuils);
 	}
 	
-	public static Coverage runClassificationNClasses(float[] dataGrainBocager, EnteteRaster entete, double... seuils) {	
+	public static Coverage runClassificationNClasses(float[] dataGrainBocager, EnteteRaster entete, float noDataValue, double... seuils) {	
 		
 		float[] data = new float[entete.width()*entete.height()];
 		
@@ -452,6 +486,9 @@ public class GrainBocager {
 			@Override
 			protected float doTreat(float[] v) {
 				float value = v[0];
+				if(value == noDataValue){
+					return noDataValue;
+				}
 				int classe = 1;
 				for(double s : seuils){
 					if(value <= s){
@@ -472,7 +509,7 @@ public class GrainBocager {
 	public static Coverage runClassificationFonctionnelle(String rasterGrainBocager, double seuil) {	
 		
 		Coverage covGrainBocager = CoverageManager.getCoverage(rasterGrainBocager);
-		float[] dataGrainBocager = covGrainBocager.getDatas();
+		float[] dataGrainBocager = covGrainBocager.getData();
 		EnteteRaster entete = covGrainBocager.getEntete();
 		covGrainBocager.dispose();
 		
@@ -481,7 +518,7 @@ public class GrainBocager {
 	
 	public static Coverage runClassificationFonctionnelle(Coverage covGrainBocager, double seuil) {	
 		
-		float[] dataGrainBocager = covGrainBocager.getDatas();
+		float[] dataGrainBocager = covGrainBocager.getData();
 		EnteteRaster entete = covGrainBocager.getEntete();
 		
 		return runClassificationFonctionnelle(dataGrainBocager, entete, seuil);
@@ -510,7 +547,7 @@ public class GrainBocager {
 	public static Coverage runClusterisationGrainFonctionnel(String rasterGrainBocagerFonctionnel){
 		
 		Coverage covGrainBocagerFonctionnel = CoverageManager.getCoverage(rasterGrainBocagerFonctionnel);
-		float[] dataGrainBocagerFonctionnel = covGrainBocagerFonctionnel.getDatas();
+		float[] dataGrainBocagerFonctionnel = covGrainBocagerFonctionnel.getData();
 		EnteteRaster entete = covGrainBocagerFonctionnel.getEntete();
 		covGrainBocagerFonctionnel.dispose();
 		
@@ -519,7 +556,7 @@ public class GrainBocager {
 	
 	public static Coverage runClusterisationGrainFonctionnel(Coverage covGrainBocagerFonctionnel){
 		
-		float[] dataGrainBocagerFonctionnel = covGrainBocagerFonctionnel.getDatas();
+		float[] dataGrainBocagerFonctionnel = covGrainBocagerFonctionnel.getData();
 		EnteteRaster entete = covGrainBocagerFonctionnel.getEntete();
 		
 		return runClusterisationGrainFonctionnel(dataGrainBocagerFonctionnel, entete);
@@ -538,7 +575,7 @@ public class GrainBocager {
 	public static Coverage runSHDIClusterGrainBocagerFonctionnel(String rasterClusterGrainFonctionnel, double windowRadius, double outputCellSize, boolean modeFast) {
 
 		Coverage covClusterGrainFonctionnel = CoverageManager.getCoverage(rasterClusterGrainFonctionnel);
-		float[] dataClusterGrainFonctionnel = covClusterGrainFonctionnel.getDatas();
+		float[] dataClusterGrainFonctionnel = covClusterGrainFonctionnel.getData();
 		EnteteRaster entete = covClusterGrainFonctionnel.getEntete();
 		covClusterGrainFonctionnel.dispose();
 		
@@ -547,7 +584,7 @@ public class GrainBocager {
 	
 	public static Coverage runSHDIClusterGrainBocagerFonctionnel(Coverage covClusterGrainFonctionnel, double windowRadius, double outputCellSize, boolean modeFast) {
 
-		float[] dataClusterGrainFonctionnel = covClusterGrainFonctionnel.getDatas();
+		float[] dataClusterGrainFonctionnel = covClusterGrainFonctionnel.getData();
 		EnteteRaster entete = covClusterGrainFonctionnel.getEntete();
 		
 		return runSHDIClusterGrainBocagerFonctionnel(dataClusterGrainFonctionnel, entete, windowRadius, outputCellSize, modeFast);
@@ -584,7 +621,7 @@ public class GrainBocager {
 	public static Coverage runProportionGrainBocagerFonctionnel(String rasterGrainBocagerFonctionnel, double windowRadius, double outputCellSize, boolean modeFast) {
 		
 		Coverage covGrainBocagerFonctionnel = CoverageManager.getCoverage(rasterGrainBocagerFonctionnel);
-		float[] dataGrainBocagerFonctionnel = covGrainBocagerFonctionnel.getDatas();
+		float[] dataGrainBocagerFonctionnel = covGrainBocagerFonctionnel.getData();
 		EnteteRaster entete = covGrainBocagerFonctionnel.getEntete();
 		covGrainBocagerFonctionnel.dispose();
 		
@@ -593,7 +630,7 @@ public class GrainBocager {
 	
 	public static Coverage runProportionGrainBocagerFonctionnel(Coverage covGrainBocagerFonctionnel, double windowRadius, double outputCellSize, boolean modeFast) {
 		
-		float[] dataGrainBocagerFonctionnel = covGrainBocagerFonctionnel.getDatas();
+		float[] dataGrainBocagerFonctionnel = covGrainBocagerFonctionnel.getData();
 		EnteteRaster entete = covGrainBocagerFonctionnel.getEntete();
 
 		return runProportionGrainBocagerFonctionnel(dataGrainBocagerFonctionnel, entete, windowRadius, outputCellSize, modeFast);

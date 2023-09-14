@@ -55,7 +55,7 @@ public class EntityTabOutput implements CountingObserver{
 	@Override
 	public void close(Counting c, Set<Metric> metrics){
 		Rectangle roi = new Rectangle(0, 0, width, height);
-		float[] entityDatas = entityCoverage.getDatas(roi);
+		float[] entityDatas = entityCoverage.getData(roi);
 		
 		int index = 0;
 		for(float ad : entityDatas){

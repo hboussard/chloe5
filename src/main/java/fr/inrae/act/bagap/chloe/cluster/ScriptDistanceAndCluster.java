@@ -16,7 +16,7 @@ public class ScriptDistanceAndCluster {
 		float[] tabCluster;
 		
 		Coverage cov = CoverageManager.getCoverage("H:/temp/test/ascii1.tif");
-		float[] data = cov.getDatas();
+		float[] data = cov.getData();
 		EnteteRaster entete = cov.getEntete();
 		cov.dispose();
 		
@@ -52,7 +52,7 @@ public class ScriptDistanceAndCluster {
 		//CoverageManager.writeGeotiff("H:/temp/test/clusterMais_eucl_300.tif", tabCluster, entete);
 		
 		Coverage covFriction = CoverageManager.getCoverage("H:/temp/test/friction.asc");
-		float[] dataFriction = covFriction.getDatas();
+		float[] dataFriction = covFriction.getData();
 		covFriction.dispose();
 		
 		TabRCMDistanceAnalysis da = new TabRCMDistanceAnalysis(dataDistance, data, dataFriction, entete.width(), entete.height(), entete.cellsize(), entete.noDataValue(), codes);

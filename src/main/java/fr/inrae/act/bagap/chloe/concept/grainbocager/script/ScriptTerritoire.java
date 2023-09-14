@@ -2,7 +2,7 @@ package fr.inrae.act.bagap.chloe.concept.grainbocager.script;
 
 
 import fr.inra.sad.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.GrainBocager;
+//import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.GrainBocager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.territory.GrainBocagerTerritoire;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.territory.GrainBocagerTerritoireBuilder;
 import fr.inrae.act.bagap.raster.Coverage;
@@ -40,23 +40,23 @@ public class ScriptTerritoire {
 		long end = System.currentTimeMillis();
 		System.out.println("time computing : "+(end - begin));
 		
-		Coverage cov4Classes5m = GrainBocager.runClassificationNClasses("H:/rennes_metropole/grain_bocager/rm_grain_bocager_5m.tif", 0.20, 0.33, 0.45);
-		CoverageManager.writeGeotiff("H:/rennes_metropole/grain_bocager/rm_grain_bocager_5m_4classes.tif", cov4Classes5m.getDatas(), cov4Classes5m.getEntete());
-		cov4Classes5m.dispose();
+		//Coverage cov4Classes5m = GrainBocager.runClassificationNClasses("H:/rennes_metropole/grain_bocager/rm_grain_bocager_5m.tif", 0.20, 0.33, 0.45);
+		//CoverageManager.writeGeotiff("H:/rennes_metropole/grain_bocager/rm_grain_bocager_5m_4classes.tif", cov4Classes5m.getData(), cov4Classes5m.getEntete());
+		//cov4Classes5m.dispose();
 		
 		/*
 		Coverage cov4Classes50m = GrainBocager.runClassificationNClasses("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m.tif", 0.20, 0.33, 0.45);
 		CoverageManager.writeGeotiff("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m_4classes.tif", cov4Classes50m.getDatas(), cov4Classes50m.getEntete());
 		cov4Classes50m.dispose();
 		*/
-		Coverage covClassif = GrainBocager.runClassificationFonctionnelle("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m.tif", 0.33);
-		CoverageManager.writeGeotiff("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m_fonctionnel.tif", covClassif.getDatas(), covClassif.getEntete());
-		covClassif.dispose();
+		//Coverage covClassif = GrainBocager.runClassificationFonctionnelle("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m.tif", 0.33);
+		//CoverageManager.writeGeotiff("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m_fonctionnel.tif", covClassif.getData(), covClassif.getEntete());
+		//covClassif.dispose();
 		
 		
-		Coverage covCluster = GrainBocager.runClusterisationGrainFonctionnel("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m_fonctionnel.tif");
-		CoverageManager.writeGeotiff("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m_cluster.tif", covCluster.getDatas(), covCluster.getEntete());
-		covCluster.dispose();
+		//Coverage covCluster = GrainBocager.runClusterisationGrainFonctionnel("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m_fonctionnel.tif");
+		//CoverageManager.writeGeotiff("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m_cluster.tif", covCluster.getData(), covCluster.getEntete());
+		//covCluster.dispose();
 		
 		/*
 		Coverage covSHDICluster = GrainBocager.runSHDIClusterGrainFonctionnel("H:/rennes_metropole/grain_bocager/rm_grain_bocager_50m_cluster.tif", 101);
@@ -95,11 +95,11 @@ public class ScriptTerritoire {
 		
 		Coverage covGrainBocager = CoverageManager.getCoverage("H:/questembert/grain_bocager/grain_bocager.tif");
 		EnteteRaster entete = covGrainBocager.getEntete();
-		float[] dataGrainBocager = covGrainBocager.getDatas();
+		float[] dataGrainBocager = covGrainBocager.getData();
 		covGrainBocager.dispose();
 		
 		Coverage covDistanceBoisement = CoverageManager.getCoverage("H:/questembert/grain_bocager/distance_boisement_questembert.tif");
-		float[] dataDistanceBoisement = covDistanceBoisement.getDatas();
+		float[] dataDistanceBoisement = covDistanceBoisement.getData();
 		covDistanceBoisement.dispose();
 		
 		float[] data = new float[entete.width()*entete.height()];

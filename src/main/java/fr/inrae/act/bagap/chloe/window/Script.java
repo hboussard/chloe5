@@ -223,7 +223,7 @@ public class Script {
 		Rectangle localRoi = new Rectangle(500, 1500, 2000, 2000);
 		
 		System.out.println("recuperation des donnees locales");
-		float[] roiDatas = cov.getDatas(localRoi);
+		float[] roiDatas = cov.getData(localRoi);
 		
 		System.out.println("recuperation de l'entete locale");
 		EnteteRaster roiEntete = EnteteRaster.getEntete(cov.getEntete(), localRoi);

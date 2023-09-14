@@ -34,7 +34,7 @@ public class GBPDetectionTypeBoisement extends GrainBocagerProcedure {
 		covHauteurBoisement.dispose();
 		
 		if(!manager().typeBoisement().equalsIgnoreCase("")){
-			CoverageManager.write(manager().typeBoisement(), covTypeBoisement.getDatas(), covTypeBoisement.getEntete());
+			CoverageManager.write(manager().typeBoisement(), covTypeBoisement.getData(), covTypeBoisement.getEntete());
 			
 			try {
 				Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_type_boisement.qml"), Tool.deleteExtension(manager().typeBoisement())+".qml");

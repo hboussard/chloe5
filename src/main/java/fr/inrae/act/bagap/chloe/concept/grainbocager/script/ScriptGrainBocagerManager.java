@@ -27,7 +27,7 @@ public class ScriptGrainBocagerManager {
 		gbManager.setHauteurBoisement("H:/rafcom/test_grain_bocager/hauteur_boisement.tif");
 		gbManager.setTypeBoisement("H:/rafcom/test_grain_bocager/type_boisement.tif");
 		gbManager.setDistanceInfluenceBoisement("H:/rafcom/test_grain_bocager/distance_influence.tif");
-		gbManager.setCellSize(50.0);
+		gbManager.setGrainCellSize(50.0);
 		gbManager.setGrainBocager("H:/rafcom/test_grain_bocager/grain_bocager_50m.tif");
 		gbManager.setGrainBocager4Classes("H:/rafcom/test_grain_bocager/grain_bocager_50m_4classes.tif");
 		gbManager.setGrainBocagerFonctionnel("H:/rafcom/test_grain_bocager/grain_bocager_fonctionnel.tif");
@@ -90,7 +90,7 @@ public class ScriptGrainBocagerManager {
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_grain_bocager");
 		gbManager.setModeFast(true);
 		gbManager.setDistanceInfluenceBoisement("H:/rafcom/test_grain_bocager/distance_influence.tif");
-		gbManager.setCellSize(50.0);
+		gbManager.setGrainCellSize(50.0);
 		gbManager.setGrainBocager("H:/rafcom/test_grain_bocager/grain_bocager_50m.tif");
 		
 		GrainBocagerProcedure gbProcedure = gbManager.build();

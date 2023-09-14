@@ -100,7 +100,7 @@ public class EntityMultipleAsciiGridOutput implements CountingObserver{
 			
 			Rectangle roi = new Rectangle(0, 0, width, height);
 			
-			float[] inDatas = entityCoverage.getDatas(roi);
+			float[] inDatas = entityCoverage.getData(roi);
 			
 			int index = 0;
 			for(float d : inDatas){

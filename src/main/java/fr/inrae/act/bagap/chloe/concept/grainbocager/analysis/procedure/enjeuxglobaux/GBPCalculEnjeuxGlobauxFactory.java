@@ -21,7 +21,13 @@ public class GBPCalculEnjeuxGlobauxFactory extends GrainBocagerProcedureFactory 
 
 	@Override
 	public GrainBocagerProcedure create(GrainBocagerManager manager) {
-		return new GBPCalculEnjeuxGlobaux(manager);
+		
+		if(manager.tile() == null){
+			return new GBPCalculEnjeuxGlobaux(manager);
+		}else{
+			return new HugeGBPCalculEnjeuxGlobaux(manager);
+		}
+		
 	}
 
 }

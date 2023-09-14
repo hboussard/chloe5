@@ -1,13 +1,18 @@
 package fr.inrae.act.bagap.chloe.concept.grainbocager.analysis;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenClusteringAnalysis;
+import fr.inrae.act.bagap.chloe.cluster.chess.TileQueenClusteringAnalysis;
 import fr.inrae.act.bagap.chloe.distance.analysis.euclidian.HugeChamferDistanceAnalysis;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
+import fr.inrae.act.bagap.chloe.window.output.CoverageOutput;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
+import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.raster.TabCoverage;
 import fr.inrae.act.bagap.raster.Tile;
 import fr.inrae.act.bagap.raster.TileCoverage;
 import fr.inrae.act.bagap.raster.analysis.Pixel2PixelTileCoverageCalculation;
@@ -15,7 +20,7 @@ import fr.inrae.act.bagap.raster.analysis.Pixel2PixelTileCoverageCalculation;
 public class HugeGrainBocager {
 
 
-	public static void scriptGrainBocager(String rasterHauteurBoisement, String folderGrainBocager){
+	public static void scriptGrainBocager(String rasterHauteurBoisement, String folderGrainBocager, boolean modeFast){
 		
 		long begin = System.currentTimeMillis();
 		
@@ -27,7 +32,7 @@ public class HugeGrainBocager {
 		String rasterTypeBoisementPhase1 = folderGrainBocager+"type_boisement_phase1/";
 		String rasterTypeBoisement = folderGrainBocager+"type_boisement/";
 		String rasterDistanceMassifs = folderGrainBocager+"distance_massif/";
-		detectionTypeBoisement(rasterHauteurBoisement, rasterTypeBoisementPhase1, rasterTypeBoisement, rasterDistanceMassifs, tile, false);
+		detectionTypeBoisement(rasterTypeBoisement, rasterTypeBoisementPhase1, rasterDistanceMassifs, rasterHauteurBoisement, tile, modeFast);
 		
 		// calcul de distances ponderees
 		String rasterDistancePonderee = folderGrainBocager+"distance_boisement/";
@@ -118,13 +123,13 @@ public class HugeGrainBocager {
 	public static Coverage detectionTypeBoisement(String rasterTypeBoisement, String rasterTypeBoisementPhase1, String rasterDistanceBoisement, Coverage covHauteurBoisement, Tile tile, boolean modeFast) {
 		
 		// detection des boisements phase 1
-		//Coverage covTypeBoisementPhase1 = detectionTypeBoisementPhase1(rasterTypeBoisementPhase1, covHauteurBoisement, tile, modeFast);
-		Coverage covTypeBoisementPhase1 = CoverageManager.getCoverage(rasterTypeBoisementPhase1);
+		Coverage covTypeBoisementPhase1 = detectionTypeBoisementPhase1(rasterTypeBoisementPhase1, covHauteurBoisement, tile, modeFast);
+		//Coverage covTypeBoisementPhase1 = CoverageManager.getCoverage(rasterTypeBoisementPhase1);
 		
 		// calcul de distance aux massifs boises
 		//Coverage covTypeBoisementDistanceBoisement = calculDistanceMassifsBoisesEuclidian(rasterDistanceBoisement, covTypeBoisementPhase1, tile);
-		//Coverage covTypeBoisementDistanceBoisement = calculDistanceMassifsBoisesEuclidian_2(rasterDistanceBoisement, covTypeBoisementPhase1, tile);
-		Coverage covTypeBoisementDistanceBoisement = CoverageManager.getCoverage(rasterDistanceBoisement);
+		Coverage covTypeBoisementDistanceBoisement = calculDistanceMassifsBoisesEuclidian_2(rasterDistanceBoisement, covTypeBoisementPhase1, tile);
+		//Coverage covTypeBoisementDistanceBoisement = CoverageManager.getCoverage(rasterDistanceBoisement);
 		
 		// detection des boisements phase 2
 		//Coverage covTypeBoisement = detectionTypeBoisementPhase2(rasterTypeBoisement, covTypeBoisementPhase1, covTypeBoisementDistanceBoisement);
@@ -283,6 +288,176 @@ public class HugeGrainBocager {
 		Coverage covTypeBoisement = CoverageManager.getCoverage(rasterTypeBoisement);
 		
 		return covTypeBoisement;
+	}
+	
+	// calcul des distances d'influence de boisement
+
+	public static Coverage calculDistancesInfluences(String rasterDistanceInfluenceBoisement, Coverage covHauteurBoisement, Coverage covTypeBoisement, Tile tile, boolean modeFast) {
+
+		Util.createAccess(rasterDistanceInfluenceBoisement);
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		if(modeFast){
+			builder.setWindowDistanceType(WindowDistanceType.FAST_SQUARE);
+		}
+		builder.setCoverage(covHauteurBoisement);
+		builder.setCoverage2(covTypeBoisement);
+		builder.addMetric("GBDistance");
+		builder.setWindowSize(121);
+		builder.addTileGeoTiffOutput("GBDistance", rasterDistanceInfluenceBoisement, tile);
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+
+		analysis.allRun();
+		
+		return CoverageManager.getCoverage(rasterDistanceInfluenceBoisement);
+		
+	}
+	
+	// calcul du grain bocager en fonction d'une taille de fenêtre et d'une taille de sortie
+	
+	public static Coverage calculGrainBocager(String rasterGrainBocager, Coverage covDistanceInfluence, EnteteRaster entete, double windowRadius, double outputCellSize, Tile tile) {
+		
+		Util.createAccess(rasterGrainBocager);
+		
+		int windowSize = LandscapeMetricAnalysis.getWindowSize(entete.cellsize(), windowRadius);
+		int displacement = LandscapeMetricAnalysis.getDisplacement(entete.cellsize(), outputCellSize);
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setCoverage(covDistanceInfluence);
+		builder.setDisplacement(displacement); 
+		builder.addMetric("average");
+		builder.setWindowSize(windowSize);
+		builder.addTileGeoTiffOutput("average", rasterGrainBocager, tile);
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		return CoverageManager.getCoverage(rasterGrainBocager);
+		
+	}
+	
+	// classification en N classes definit par des seuils
+	
+	public static Coverage runClassificationNClasses(String rasterGrainBocager4Classes, Coverage covGrainBocager, float noDataValue, double... seuils) {	
+		
+		Util.createAccess(rasterGrainBocager4Classes);
+		
+		Pixel2PixelTileCoverageCalculation pptcc = new Pixel2PixelTileCoverageCalculation(rasterGrainBocager4Classes, covGrainBocager){
+			@Override
+			protected float doTreat(float[] v) {
+				float value = v[0];
+				if(value == noDataValue){
+					return noDataValue;
+				}
+				int classe = 1;
+				for(double s : seuils){
+					if(value <= s){
+						return classe;
+					}
+					classe++;
+				}
+				return classe;
+			}
+		};
+		pptcc.run();
+		
+		Coverage covGrainBocager4Classes = CoverageManager.getCoverage(rasterGrainBocager4Classes);
+		
+		return covGrainBocager4Classes;
+	}
+	
+	// classification fonctionnelle a partir d'un seuil
+	
+	public static Coverage runClassificationFonctionnelle(String rasterGrainBocagerFonctionnel, Coverage covGrainBocager, double seuil) {	
+		
+		Util.createAccess(rasterGrainBocagerFonctionnel);
+		
+		Pixel2PixelTileCoverageCalculation pptcc = new Pixel2PixelTileCoverageCalculation(rasterGrainBocagerFonctionnel, covGrainBocager){
+			@Override
+			protected float doTreat(float[] v) {
+				if(v[0] <= seuil){
+					return 1;
+				}
+				return 0;
+			}
+		};
+		pptcc.run();
+	
+		Coverage covGrainBocagerFonctionnel = CoverageManager.getCoverage(rasterGrainBocagerFonctionnel);
+		
+		return covGrainBocagerFonctionnel;
+	}
+	
+	// clusterisation du grain fonctionnel
+	
+	public static Coverage runClusterisationGrainFonctionnel(String rasterClusterisationGrainBocagerFonctionnel, Coverage covGrainBocagerFonctionnel, int noDataValue){
+		
+		TileQueenClusteringAnalysis clustering = new TileQueenClusteringAnalysis(rasterClusterisationGrainBocagerFonctionnel, (TileCoverage) covGrainBocagerFonctionnel, new int[]{1}, noDataValue);
+		clustering.allRun();
+		
+		Coverage covClusterisationGrainBocagerFonctionnel = CoverageManager.getCoverage(rasterClusterisationGrainBocagerFonctionnel);
+		
+		return covClusterisationGrainBocagerFonctionnel;
+	}
+	
+	// SHDI sur les clusters fonctionnels en fonction d'une taille de fenetre
+	
+	public static Coverage runSHDIClusterGrainBocagerFonctionnel(String rasterZoneFragmentationGrainBocagerFonctionnel, Coverage covClusterGrainFonctionnel, EnteteRaster entete, double windowRadius, double outputCellSize, Tile tile, boolean modeFast) {
+
+		int windowSize = LandscapeMetricAnalysis.getWindowSize(entete.cellsize(), windowRadius);
+		int displacement = LandscapeMetricAnalysis.getDisplacement(entete.cellsize(), outputCellSize);
+		
+		//System.out.println(entete.width()+" "+entete.height()+" "+windowSize+" "+displacement);
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setCoverage(covClusterGrainFonctionnel);
+		if(modeFast){
+			builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		}else{
+			builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+		}
+		builder.addMetric("SHDI");
+		builder.setWindowSize(windowSize);
+		builder.setDisplacement(displacement);
+		builder.addTileGeoTiffOutput("SHDI", rasterZoneFragmentationGrainBocagerFonctionnel, tile);
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		Coverage covZoneFragmentationGrainBocagerFonctionnel = CoverageManager.getCoverage(rasterZoneFragmentationGrainBocagerFonctionnel);
+		
+		return covZoneFragmentationGrainBocagerFonctionnel;
+	}
+	
+	// proportion de grain fonctionnel en fonction d'une taille de fenetre
+	
+	public static Coverage runProportionGrainBocagerFonctionnel(String rasterProportionGrainBocagerFonctionnel, Coverage covGrainBocagerFonctionnel, EnteteRaster entete, double windowRadius, double outputCellSize, Tile tile, boolean modeFast) {
+		
+		int windowSize = LandscapeMetricAnalysis.getWindowSize(entete.cellsize(), windowRadius);
+		int displacement = LandscapeMetricAnalysis.getDisplacement(entete.cellsize(), outputCellSize);
+		
+		System.out.println(entete.width()+" "+entete.height()+" "+windowSize+" "+displacement);
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setCoverage(covGrainBocagerFonctionnel);
+		if(modeFast){
+			builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		}else{
+			builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+		}
+		builder.addMetric("pNV_1");
+		builder.setWindowSize(windowSize);
+		builder.setDisplacement(displacement);
+		builder.addTileGeoTiffOutput("pNV_1", rasterProportionGrainBocagerFonctionnel, tile);
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		Coverage covProportionGrainBocagerFonctionnel = CoverageManager.getCoverage(rasterProportionGrainBocagerFonctionnel);
+		
+		return covProportionGrainBocagerFonctionnel;
 	}
 
 }

@@ -5,11 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Properties;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
-import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.Tile;
 
 public class GrainBocagerAPI {
@@ -67,6 +65,7 @@ public class GrainBocagerAPI {
 		importName(manager, properties);
 		importModeFast(manager, properties);
 		importTerritoire(manager, properties);
+		importEnveloppe(manager, properties);
 		importBufferArea(manager, properties);
 		importBocage(manager, properties);
 		importSuppression(manager, properties);
@@ -130,6 +129,15 @@ public class GrainBocagerAPI {
 		if(properties.containsKey("territoire")){
 			String prop = properties.getProperty("territoire");
 			manager.setTerritoire(prop);
+			return true;
+		}
+		return false;
+	}
+	
+	private static boolean importEnveloppe(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("enveloppe")){
+			String prop = properties.getProperty("enveloppe");
+			manager.setEnveloppe(prop);
 			return true;
 		}
 		return false;
