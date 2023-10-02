@@ -18,6 +18,7 @@ import org.geotools.image.util.ImageUtilities;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.matrix.MatrixManager;
+import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.raster.Coverage;
@@ -29,7 +30,49 @@ import fr.inrae.act.bagap.raster.TileCoverage;
 public class Script {
 
 	public static void main(String[] args){
-		scriptTestErwan();
+		
+		//scriptSlope();
+		scriptSelected();
+	}
+	
+	private static void scriptSelected(){
+		
+		String path = "G:/chloe/winterschool/data/start/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(ChloeAnalysisType.SELECTED);
+		builder.setRasterFile(path+"za.tif");
+		builder.setPointsFilter(path+"points_id.csv");
+		builder.setWindowSize(21);
+		builder.addMetric("SHDI");
+		builder.addCsvOutput(path+"selected2/analyse.csv");
+		builder.setWindowsPath(path+"selected2/filters/");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+	}
+	
+	private static void scriptSlope(){
+		
+		long begin = System.currentTimeMillis();
+		
+		Tile tile = Tile.getTile("G:/data/sig/bd_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D035_2020-01-27/RGEALTI/1_DONNEES_LIVRAISON_2020-04-00197/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D035_geotiff/");
+		
+		//String path = "H:/temp/slope/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile("G:/data/sig/bd_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D035_2020-01-27/RGEALTI/1_DONNEES_LIVRAISON_2020-04-00197/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D035_geotiff/");
+		builder.setWindowShapeType(WindowShapeType.SQUARE);
+		builder.addMetric("slopedirection");
+		builder.addMetric("slopeintensity");
+		builder.setWindowSize(3);
+		//builder.addGeoTiffOutput("slopedirection", path);
+		builder.addTileGeoTiffOutput("slopedirection", "H:/temp/slope/direction/", tile);
+		builder.addTileGeoTiffOutput("slopeintensity", "H:/temp/slope/intensity/", tile);
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
 	}
 	
 	private static void scriptTestErwan(){
@@ -38,7 +81,7 @@ public class Script {
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
 		//builder.setAnalysisType(WindowAnalysisType.SLIDING);
-		builder.setAnalysisType(WindowAnalysisType.GRID);
+		builder.setAnalysisType(ChloeAnalysisType.GRID);
 		builder.setRasterFile(path+"za.tif");
 		builder.setWindowSize(201);
 		//builder.setDisplacement(20);
@@ -239,7 +282,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
 		builder.setRasterFile(path+"za.tif");
 		builder.setEntityRasterFile(path+"communes_za.asc");
 		
@@ -394,7 +437,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.SELECTED);
+		builder.setAnalysisType(ChloeAnalysisType.SELECTED);
 		builder.setPointsFilter("G:/chloe/winterschool/data/start/selected/points.csv");
 		builder.setRasterFile(path+"za.tif");
 		builder.setWindowSize(101);
@@ -418,7 +461,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.SLIDING);
+		builder.setAnalysisType(ChloeAnalysisType.SLIDING);
 		builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
 		builder.setRasterFile(path+"za.tif");
 		builder.setWindowSize(21);
@@ -443,7 +486,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.SLIDING);
+		builder.setAnalysisType(ChloeAnalysisType.SLIDING);
 		builder.setRasterFile(path+"za.tif");
 		builder.setWindowSize(201);
 		builder.setWindowSize(401);
@@ -471,7 +514,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.MAP);
+		builder.setAnalysisType(ChloeAnalysisType.MAP);
 		builder.setRasterFile(path+"za.tif");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); // doivent etre classees
 		
@@ -511,7 +554,7 @@ public class Script {
 		builder.setRasterFile(path+"za.tif");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); // doivent etre classees
 		
-		builder.setAnalysisType(WindowAnalysisType.GRID);
+		builder.setAnalysisType(ChloeAnalysisType.GRID);
 		builder.setWindowSize(10);
 		/*
 		builder.setAnalysisType(WindowAnalysisType.SLIDING);
@@ -1466,7 +1509,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
 		builder.setRasterFile(path+"mnt_standard_deviation_5p.asc");
 		builder.setEntityRasterFile(path+"parcellaire_toulouse_5m.asc");
 		//builder.addMetric("average");
@@ -1488,7 +1531,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
 		builder.setRasterFile(path+"T01alti25m.tif");
 		builder.setEntityRasterFile(path+"parcellaire_toulouse.asc");
 		builder.addMetric("standard_deviation");
@@ -1508,7 +1551,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
 		builder.setRasterFile(path+"MNT5mT01.tif");
 		builder.setEntityRasterFile(path+"parcellaire_toulouse_5m.asc");
 		builder.addMetric("average");
@@ -1548,7 +1591,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
 		builder.setRasterFile(path+"occsol_sitesecofriche1.tif");
 		builder.setEntityRasterFile(path+"unites_gestion_sites_ecofriche1.tif");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); 
@@ -1609,7 +1652,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
 		builder.setRasterFile("F:/data/sig/CGTV/cgtv_humide.tif");
 		builder.setEntityRasterFile(path+"rpg/select/"+period+".tif");
 		builder.setValues("1, 2"); 
@@ -1631,7 +1674,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
 		builder.setRasterFile("F:/data/sig/CGTV/cgtv.tif");
 		builder.setEntityRasterFile(path+"rpg/select/"+period+".tif");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ,14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27"); 
@@ -1656,7 +1699,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
 		builder.setRasterFile("F:/data/sig/CGTV/cgtv.tif");
 		builder.setEntityRasterFile(path+"rpg/select/"+period+".tif");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ,14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27"); 
@@ -1685,7 +1728,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
 		builder.setRasterFile("F:/data/sig/bretagne/Bretagne_2018_dispositif_bocage_reb_4.tif");
 		builder.setEntityRasterFile(path+"rpg/select/"+period+".tif");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); 
@@ -1710,7 +1753,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
 		builder.setRasterFile("F:/data/sig/bretagne/Bretagne_2018_dispositif_bocage_reb_4.tif");
 		builder.setEntityRasterFile(path+"rpg/select/"+period+".tif");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); 
@@ -2028,7 +2071,7 @@ public class Script {
 		long begin = System.currentTimeMillis();
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
 		builder.setRasterFile(path+"za.asc");
 		builder.setEntityRasterFile(path+"feature/feature_za.asc");
 		builder.setValues("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12"); 
@@ -2540,11 +2583,11 @@ public class Script {
 	private static void scriptMathilde(){
 		String path = "F:/woodnet/mathilde/Continuity/";
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.SELECTED);
+		builder.setAnalysisType(ChloeAnalysisType.SELECTED);
 		builder.setRasterFile(path+"PF.asc");
 		builder.setWindowSize(151);
 		builder.setPointsFilter(path+"points.csv");
-		builder.addAscExportWindowOutput(path+"filters");
+		//builder.addAscExportWindowOutput(path+"filters");
 		LandscapeMetricAnalysis analysis = builder.build();
 		
 		analysis.allRun();

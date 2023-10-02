@@ -4,6 +4,7 @@ import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class SelectedFunctionalCountValueAndCoupleKernel extends SelectedFunctionalKernel {
 	
@@ -13,8 +14,8 @@ public class SelectedFunctionalCountValueAndCoupleKernel extends SelectedFunctio
 	
 	private int[] mapValues;
 	
-	public SelectedFunctionalCountValueAndCoupleKernel(int windowSize, Set<Pixel> pixels, int noDataValue, int[] values, double cellSize, DistanceFunction function, double radius){		
-		super(windowSize, pixels, null, noDataValue, cellSize, function, radius);
+	public SelectedFunctionalCountValueAndCoupleKernel(int windowSize, Set<Pixel> pixels, EnteteRaster entete, int[] values, DistanceFunction function, double radius, String windowsPath){		
+		super(windowSize, pixels, null, entete, function, radius, windowsPath);
 	
 		this.nbValues = values.length;
 		int maxV = 0;

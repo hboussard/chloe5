@@ -4,13 +4,14 @@ import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class SelectedFunctionalCountValueKernel extends SelectedFunctionalKernel {
 
 	private int[] mapValues;
 	
-	public SelectedFunctionalCountValueKernel(int windowSize, Set<Pixel> pixels, int noDataValue, int[] values, double cellSize, DistanceFunction function, double radius){		
-		super(windowSize, pixels, null, noDataValue, cellSize, function, radius);
+	public SelectedFunctionalCountValueKernel(int windowSize, Set<Pixel> pixels, EnteteRaster entete, int[] values, DistanceFunction function, double radius, String windowsPath){		
+		super(windowSize, pixels, null, entete, function, radius, windowsPath);
 		int maxV = 0;
 		for(int v : values){
 			maxV = Math.max(v, maxV);

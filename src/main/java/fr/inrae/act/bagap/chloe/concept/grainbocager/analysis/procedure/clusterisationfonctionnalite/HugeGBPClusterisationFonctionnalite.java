@@ -18,7 +18,7 @@ public class HugeGBPClusterisationFonctionnalite extends GrainBocagerProcedure {
 	public Coverage run() {
 
 		Coverage covGrainBocager;
-		if(!new File(manager().grainBocager()).exists()){
+		if(manager().force() || !new File(manager().grainBocager()).exists()){
 			covGrainBocager = new HugeGBPCalculGrainBocager(manager()).run();
 		}else{
 			covGrainBocager = CoverageManager.getCoverage(manager().grainBocager());

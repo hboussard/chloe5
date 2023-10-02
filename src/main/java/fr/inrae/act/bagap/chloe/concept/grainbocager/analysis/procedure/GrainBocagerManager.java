@@ -71,6 +71,8 @@ public class GrainBocagerManager {
 	
 	private boolean modeFast; 			// mode FAST (imprecis mais rapide)
 	
+	private boolean force; 				// forcage des recalculations
+	
 	private double grainCellSize;			// taille du pixel du grain bocager
 	
 	private double grainWindowRadius;		// taille de la fenêtre d'analyse pour le grain bocager
@@ -128,6 +130,7 @@ public class GrainBocagerManager {
 		tile = null;
 		seuils = new double[]{0.2, 0.33, 0.45};
 		modeFast = false;
+		force = false;
 		grainCellSize = 5;
 		grainWindowRadius = 250.0;
 		enjeuxCellSize = 50;
@@ -142,6 +145,7 @@ public class GrainBocagerManager {
 		// attributs à redéfinir 
 		bocage = "";
 		territoire = "";
+		enveloppe = "";
 		outputPath = "";
 		name = "";
 		plantation = "";
@@ -375,6 +379,10 @@ public class GrainBocagerManager {
 		this.modeFast = modeFast;
 	}
 	
+	public void setForce(boolean force){
+		this.force = force;
+	}
+	
 	public void setAttributCodeEA(String attributeCodeEA) {
 		this.attributCodeEA = attributeCodeEA;
 	}
@@ -474,6 +482,10 @@ public class GrainBocagerManager {
 
 	public boolean modeFast() {
 		return modeFast;
+	}
+	
+	public boolean force() {
+		return force;
 	}
 
 	public double grainCellSize() {

@@ -3,13 +3,14 @@ package fr.inrae.act.bagap.chloe.window.kernel.selected;
 import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public abstract class DoubleSelectedLandscapeMetricKernel extends SelectedLandscapeMetricKernel {
 
 	private float[] inDatas2;
 	
-	protected DoubleSelectedLandscapeMetricKernel(int windowSize, Set<Pixel> pixels, float[] coeff, int noDataValue){
-		super(windowSize, pixels, coeff, noDataValue);
+	protected DoubleSelectedLandscapeMetricKernel(int windowSize, Set<Pixel> pixels, float[] coeff, EnteteRaster entete, String windowsPath){
+		super(windowSize, pixels, coeff, entete, windowsPath);
 	}
 	
 	public void setInDatas2(float[] inDatas2){

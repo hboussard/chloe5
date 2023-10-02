@@ -18,7 +18,7 @@ public class HugeGBPCalculDistanceInfluenceBoisement extends GrainBocagerProcedu
 	public Coverage run() {
 		
 		Coverage covTypeBoisement;
-		if(!new File(manager().typeBoisement()).exists()){
+		if(manager().force() || !new File(manager().typeBoisement()).exists()){
 			covTypeBoisement = new HugeGBPDetectionTypeBoisement(manager()).run();
 		}else{
 			covTypeBoisement = CoverageManager.getCoverage(manager().typeBoisement());

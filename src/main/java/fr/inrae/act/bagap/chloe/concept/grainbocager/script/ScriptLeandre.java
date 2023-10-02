@@ -1,11 +1,11 @@
 package fr.inrae.act.bagap.chloe.concept.grainbocager.script;
 
 import fr.inra.sad.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
+import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.HugeGrainBocager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.util.CompileMNHC;
-import fr.inrae.act.bagap.chloe.window.WindowAnalysisType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.raster.Coverage;
@@ -48,7 +48,7 @@ public class ScriptLeandre {
 		
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
 		builder.setRasterFile("H:/leandre/grain_bocager/grain_bocager_4Classes_50m.tif");
 		builder.setEntityRasterFile("H:/leandre/data/communes.tif");
 		
@@ -67,7 +67,7 @@ public class ScriptLeandre {
 		
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
 		builder.setRasterFile("H:/leandre/grain_bocager/grain_bocager_4Classes_50m_clean.tif");
 		builder.setEntityRasterFile("H:/leandre/data/communes.tif");
 		
@@ -87,7 +87,7 @@ public class ScriptLeandre {
 		
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
 		builder.setRasterFile("H:/leandre/grain_bocager/grain_bocager_50m.tif");
 		builder.setEntityRasterFile("H:/leandre/data/communes.tif");
 		
@@ -106,7 +106,7 @@ public class ScriptLeandre {
 		
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setAnalysisType(WindowAnalysisType.ENTITY);
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
 		builder.setRasterFile("H:/leandre/grain_bocager/grain_bocager_50m_clean.tif");
 		builder.setEntityRasterFile("H:/leandre/data/communes.tif");
 		

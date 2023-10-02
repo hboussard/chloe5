@@ -5,12 +5,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Set;
 
+import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.PixelWithID;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class SelectedCsvOutput implements CountingObserver{
 	
@@ -22,13 +24,13 @@ public class SelectedCsvOutput implements CountingObserver{
 	
 	private Set<Pixel> pixels;
 	
-	private int noDataValue;
+	private EnteteRaster entete;
 	
-	public SelectedCsvOutput(String csv, Set<Pixel> pixels, int noDataValue) {
+	public SelectedCsvOutput(String csv, Set<Pixel> pixels, EnteteRaster entete) {
 		
 		this.csv = csv;
 		this.pixels = pixels;
-		this.noDataValue = noDataValue;
+		this.entete = entete;
 		this.sb = new StringBuffer();
 	}
 	
@@ -71,12 +73,18 @@ public class SelectedCsvOutput implements CountingObserver{
 			try {
 				boolean export = true;
 				sb.setLength(0);
-				sb.append((((PixelWithID) pixel).getId())+";"+(((PixelWithID) pixel).getX())+";"+(((PixelWithID) pixel).getY()));
+				
+				if(pixel instanceof PixelWithID){
+					sb.append((((PixelWithID) pixel).getId())+";"+(((PixelWithID) pixel).getX())+";"+(((PixelWithID) pixel).getY()));
+				}else{
+					sb.append(CoordinateManager.getProjectedX(entete, pixel.x())+";"+CoordinateManager.getProjectedY(entete, pixel.y()));
+				}
+				
 				
 				double v;
 				for(Metric m : metrics){
 					v = m.value();
-					if(v == noDataValue){
+					if(v == entete.noDataValue()){
 						export = false;
 						break;
 					}

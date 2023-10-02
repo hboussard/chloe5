@@ -5,17 +5,15 @@ import java.util.Set;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inrae.act.bagap.chloe.cluster.TabClusteringOutput;
 import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenClusteringAnalysis;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class SelectedPatchKernel extends SelectedLandscapeMetricKernel {
 
 	private int[] values;
 	
-	private double cellSize;
-	
-	public SelectedPatchKernel(int windowSize, Set<Pixel> pixels, float[] coeff, int noDataValue, int[] values, double cellSize){		
-		super(windowSize, pixels, coeff, noDataValue);
+	public SelectedPatchKernel(int windowSize, Set<Pixel> pixels, float[] coeff, EnteteRaster entete, int[] values, String windowsPath){		
+		super(windowSize, pixels, coeff, entete, windowsPath);
 		this.values = values;
-		this.cellSize = cellSize;
 	}
 	
 	@Override
@@ -56,7 +54,7 @@ public class SelectedPatchKernel extends SelectedLandscapeMetricKernel {
 		TabQueenClusteringAnalysis ca = new TabQueenClusteringAnalysis(tabCover, windowSize(), windowSize(), values, noDataValue());
 		int[] tabCluster = (int[]) ca.allRun();
 			
-		TabClusteringOutput cto = new TabClusteringOutput(tabCluster, tabCover, values, cellSize);
+		TabClusteringOutput cto = new TabClusteringOutput(tabCluster, tabCover, values, cellSize());
 		cto.allRun();
 			
 		outDatas().get(p)[4] = cto.getNbPatch();

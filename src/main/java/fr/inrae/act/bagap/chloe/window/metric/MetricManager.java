@@ -16,12 +16,13 @@ import fr.inrae.act.bagap.chloe.window.metric.basic.BasicMetric;
 import fr.inrae.act.bagap.chloe.window.metric.couple.CoupleMetric;
 import fr.inrae.act.bagap.chloe.window.metric.patch.PatchMetric;
 import fr.inrae.act.bagap.chloe.window.metric.quantitative.QuantitativeMetric;
+import fr.inrae.act.bagap.chloe.window.metric.slope.SlopeMetric;
 import fr.inrae.act.bagap.chloe.window.metric.value.ValueMetric;
 
 public class MetricManager {
 
 	private static Map<String, String> metrics;
-	
+	/*
 	private static Set<String> valuesMetrics;
 	
 	private static Set<String> couplesMetrics;
@@ -32,16 +33,19 @@ public class MetricManager {
 	
 	private static Set<String> diversityMetrics;
 	
+	private static Set<String> slopeMetrics;
+	
 	private static Set<String> grainMetrics;
 	
 	private static Set<String> quantitativeMetrics;
-	
+	*/
 	private static Set<String> processValueMetrics;
 	
 	private static Set<String> processCoupleMetrics;
 	
 	static {
 		metrics = new HashMap<String, String>();
+		/*
 		valuesMetrics = new HashSet<String>();
 		couplesMetrics = new HashSet<String>();
 		patchMetrics = new HashSet<String>();
@@ -49,7 +53,7 @@ public class MetricManager {
 		diversityMetrics = new HashSet<String>();
 		grainMetrics = new HashSet<String>();
 		quantitativeMetrics = new TreeSet<String>();
-		
+		*/
 		processValueMetrics = new HashSet<String>();
 		processCoupleMetrics = new HashSet<String>();
 		
@@ -64,7 +68,7 @@ public class MetricManager {
 				if(!cr.get("name").startsWith("#")){
 					
 					metrics.put(cr.get("name"), cr.get("class"));
-					
+					/*
 					switch(cr.get("type")){
 					case "value" :
 						valuesMetrics.add(cr.get("name"));
@@ -88,7 +92,7 @@ public class MetricManager {
 						quantitativeMetrics.add(cr.get("name"));
 						break;
 					}
-					
+					*/
 					switch(cr.get("process")){
 					case "value" : 
 						processValueMetrics.add(cr.get("name"));
@@ -98,6 +102,7 @@ public class MetricManager {
 						break;
 						default : // do nothing
 					}
+					
 				}
 			}
 			buf.close();
@@ -219,14 +224,14 @@ public class MetricManager {
 		}
 		throw new IllegalArgumentException();
 	}
-	
+	/*
 	public static boolean isValueMetric(String m){
 		return valuesMetrics.contains(m) || isProcessValueMetric(m);
 	}
 	
 	public static boolean isCoupleMetric(String m){
 		return couplesMetrics.contains(m) || isProcessCoupleMetric(m);
-	}
+	}*/
 	
 	public static boolean hasValueMetric(Set<Metric> metrics) {
 		for(Metric m : metrics){
@@ -294,6 +299,15 @@ public class MetricManager {
 	public static boolean hasOnlyQuantitativeMetric(Set<Metric> metrics) {
 		for(Metric m : metrics){
 			if(!(m instanceof QuantitativeMetric) && !(m instanceof BasicMetric)){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean hasOnlySlopeMetric(Set<Metric> metrics) {
+		for(Metric m : metrics){
+			if(!(m instanceof SlopeMetric) && !(m instanceof BasicMetric)){
 				return false;
 			}
 		}

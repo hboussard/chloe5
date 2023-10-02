@@ -4,18 +4,18 @@ import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inrae.act.bagap.chloe.window.kernel.selected.DoubleSelectedLandscapeMetricKernel;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class GrainBocagerSelectedDistanceBocageKernel extends DoubleSelectedLandscapeMetricKernel{
 	
-	private float cellSize; // = 5; // la taille du pixel en metre (IGN)
+	//private float cellSize; // = 5; // la taille du pixel en metre (IGN)
 	
 	private float minHauteur; // = 3; // 3 metres minimum 
 	
 	private float seuilMax; // = 30; // 30 metres maximum
 	
-	public GrainBocagerSelectedDistanceBocageKernel(int windowSize, Set<Pixel> pixels, float[] coeff, int noDataValue, float cellSize, float minHauteur, float seuilMax) {
-		super(windowSize, pixels, coeff, noDataValue);
-		this.cellSize = cellSize;
+	public GrainBocagerSelectedDistanceBocageKernel(int windowSize, Set<Pixel> pixels, float[] coeff, EnteteRaster entete, String windowsPath, float minHauteur, float seuilMax) {
+		super(windowSize, pixels, coeff, entete, windowsPath);
 		this.minHauteur = minHauteur;
 		this.seuilMax = seuilMax;
 	}
@@ -50,7 +50,7 @@ public class GrainBocagerSelectedDistanceBocageKernel extends DoubleSelectedLand
 									if(v > seuilMax){
 										v = seuilMax;
 									}
-									r = cellSize*Math.sqrt((dx*dx)+(dy*dy));
+									r = cellSize()*Math.sqrt((dx*dx)+(dy*dy));
 									R = v * inDatas2()[((y + dy) * width()) + (x + dx)];
 									if(r < R){
 										min = Math.min(min, r/R);

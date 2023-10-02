@@ -3,17 +3,18 @@ package fr.inrae.act.bagap.chloe.window.kernel.selected;
 import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class SelectedQuantitativeKernel extends SelectedLandscapeMetricKernel {
 	
 	private final float threshold;
 	
-	public SelectedQuantitativeKernel(int windowSize, Set<Pixel> pixels, float[] coeff, int noDataValue){
-		this(windowSize, pixels, coeff, noDataValue, -1);
+	public SelectedQuantitativeKernel(int windowSize, Set<Pixel> pixels, float[] coeff, EnteteRaster entete, String windowsPath){
+		this(windowSize, pixels, coeff, entete, windowsPath, -1);
 	}
 		
-	public SelectedQuantitativeKernel(int windowSize, Set<Pixel> pixels, float[] coeff, int noDataValue, float threshold){
-		super(windowSize, pixels, coeff, noDataValue);
+	public SelectedQuantitativeKernel(int windowSize, Set<Pixel> pixels, float[] coeff, EnteteRaster entete, String windowsPath, float threshold){
+		super(windowSize, pixels, coeff, entete, windowsPath);
 		this.threshold = threshold;
 	}
 	

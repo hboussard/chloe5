@@ -21,7 +21,7 @@ public class GBPCalculEnjeuxGlobaux extends GrainBocagerProcedure {
 	public Coverage run() {
 
 		Coverage covClusterFonctionnel;
-		if(!new File(manager().clusterGrainBocagerFonctionnel()).exists()){
+		if(manager().force() || !new File(manager().clusterGrainBocagerFonctionnel()).exists()){
 			covClusterFonctionnel = new GBPClusterisationFonctionnalite(manager()).run();
 		}else{
 			covClusterFonctionnel = CoverageManager.getCoverage(manager().clusterGrainBocagerFonctionnel());

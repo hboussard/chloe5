@@ -44,3 +44,5 @@ AI2m;couple;value;fr.inrae.act.bagap.chloe.window.metric.couple.AggregationIndex
 EMS;value;other;fr.inrae.act.bagap.chloe.window.metric.value.EffectiveMeshSizeMetric
 EMS-class;value;value;fr.inrae.act.bagap.chloe.window.metric.value.EffectiveMeshSizeClassMetric
 Majority;value;other;fr.inrae.act.bagap.chloe.window.metric.value.MajorityClassMetric
+slopedirection;slope;other;fr.inrae.act.bagap.chloe.window.metric.slope.SlopeDirectionMetric
+slopeintensity;slope;other;fr.inrae.act.bagap.chloe.window.metric.slope.SlopeIntensityMetric

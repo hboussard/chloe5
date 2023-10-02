@@ -124,6 +124,10 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 		Set<Pixel> pixels = null;
 		if(builder.getRefPixels() != null){
 			pixels = builder.getRefPixels();
+		}else if(builder.getPixelsFilter() != null){
+			pixels = CoordinateManager.initWithPixels(builder.getPixelsFilter());
+		}else if(builder.getRefPoints() != null){
+			// TODO
 		}else{
 			pixels = CoordinateManager.initWithPoints(builder.getPointsFilter(), coverage.getEntete());
 		}
@@ -131,7 +135,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 		// observers
 		Set<CountingObserver> observers = builder.getObservers();
 		if(builder.getCsv() != null){
-			SelectedCsvOutput csvOutput = new SelectedCsvOutput(builder.getCsv(), pixels, Raster.getNoDataValue());
+			SelectedCsvOutput csvOutput = new SelectedCsvOutput(builder.getCsv(), pixels, coverage.getEntete());
 			observers.add(csvOutput);
 		}
 		/*if(builder.getDatas() != null){
@@ -152,11 +156,11 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 			
 			if(metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("MD")){
 				
-				kernel = new SelectedQuantitativeKernel(windowSize, pixels, coeffs, Raster.getNoDataValue(), 100);
+				kernel = new SelectedQuantitativeKernel(windowSize, pixels, coeffs, coverage.getEntete(), builder.getWindowsPath(), 100);
 				
 			}else if (metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("GBDistance")) {
 
-				kernel = new GrainBocagerSelectedDistanceBocageKernel(windowSize, pixels, coeffs, Raster.getNoDataValue(), 5, 3, 30);
+				kernel = new GrainBocagerSelectedDistanceBocageKernel(windowSize, pixels, coeffs, coverage.getEntete(), builder.getWindowsPath(), 3, 30);
 
 				Coverage coverageBocage = null;
 				if (builder.getRasterFile2() != null) {
@@ -188,7 +192,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 				kernel = new GrainBocagerSelectedDetectionBocageKernel(windowSize, pixels, coeffs, Raster.getNoDataValue());
 				
 			}*/ else{
-				kernel = new SelectedQuantitativeKernel(windowSize, pixels, coeffs, Raster.getNoDataValue());
+				kernel = new SelectedQuantitativeKernel(windowSize, pixels, coeffs, coverage.getEntete(), builder.getWindowsPath());
 			}
 			
 			counting = new QuantitativeCounting(theoreticalSize);
@@ -254,7 +258,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 					
 					if (builder.getWindowShapeType() == WindowShapeType.FUNCTIONAL) {
 
-						kernel = new SelectedFunctionalCountValueKernel(windowSize, pixels, Raster.getNoDataValue(), values, inCellSize, function, dMax);
+						kernel = new SelectedFunctionalCountValueKernel(windowSize, pixels, coverage.getEntete(), values, function, dMax, builder.getWindowsPath());
 
 						Coverage coverageFriction = null;
 						if (builder.getRasterFile2() != null) {
@@ -268,7 +272,8 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 						return createDouble(coverage, coverageFriction, pixels, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
 
 					} else {
-						kernel = new SelectedCountValueKernel(windowSize, pixels, coeffs, Raster.getNoDataValue(), values);
+						
+						kernel = new SelectedCountValueKernel(windowSize, pixels, coeffs, coverage.getEntete(), values, builder.getWindowsPath());
 						
 						// analysis
 						return createSingle(coverage, pixels, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
@@ -295,7 +300,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 					
 					if (builder.getWindowShapeType() == WindowShapeType.FUNCTIONAL) {
 						
-						kernel = new SelectedFunctionalCountCoupleKernel(windowSize, pixels, Raster.getNoDataValue(), values, inCellSize, function, dMax);
+						kernel = new SelectedFunctionalCountCoupleKernel(windowSize, pixels, coverage.getEntete(), values, function, dMax, builder.getWindowsPath());
 
 						Coverage coverageFriction = null;
 						if (builder.getRasterFile2() != null) {
@@ -310,7 +315,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 						
 					}else{
 						
-						kernel = new SelectedCountCoupleKernel(windowSize, pixels, coeffs, Raster.getNoDataValue(), values);
+						kernel = new SelectedCountCoupleKernel(windowSize, pixels, coeffs, coverage.getEntete(), values, builder.getWindowsPath());
 						
 						// analysis
 						return createSingle(coverage, pixels, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
@@ -336,7 +341,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 					
 					if (builder.getWindowShapeType() == WindowShapeType.FUNCTIONAL) {
 						
-						kernel = new SelectedFunctionalCountValueAndCoupleKernel(windowSize, pixels, Raster.getNoDataValue(), values, inCellSize, function, dMax);
+						kernel = new SelectedFunctionalCountValueAndCoupleKernel(windowSize, pixels, coverage.getEntete(), values, function, dMax, builder.getWindowsPath());
 
 						Coverage coverageFriction = null;
 						if (builder.getRasterFile2() != null) {
@@ -351,7 +356,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 						
 					}else{
 						
-						kernel = new SelectedCountValueAndCoupleKernel(windowSize, pixels, coeffs, Raster.getNoDataValue(), values);
+						kernel = new SelectedCountValueAndCoupleKernel(windowSize, pixels, coeffs, coverage.getEntete(), values, builder.getWindowsPath());
 
 						// analysis
 						return createSingle(coverage, pixels, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
@@ -363,7 +368,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 					
 				nbValues = 7 + 3 * values.length;
 				
-				kernel = new SelectedPatchKernel(windowSize, pixels, coeffs, Raster.getNoDataValue(), values, inCellSize);
+				kernel = new SelectedPatchKernel(windowSize, pixels, coeffs, coverage.getEntete(), values, builder.getWindowsPath());
 				
 				counting =  new PatchCounting(values, theoreticalSize);
 					

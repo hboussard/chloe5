@@ -6,13 +6,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
+import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysis;
+import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisBuilder;
+import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.api.GrainBocagerAPI;
-import fr.inrae.act.bagap.chloe.window.WindowAnalysisType;
+import fr.inrae.act.bagap.chloe.util.analysis.ChloeUtilAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
-import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 
 public class ChloeAPI {
@@ -42,6 +46,8 @@ public class ChloeAPI {
 				String treatment = properties.getProperty("treatment");
 				switch(treatment){
 				case "sliding" : launchSliding(properties); break;
+				case "selected" : launchSelected(properties); break;
+				case "combine" : launchCombine(properties); break;
 				default :
 					throw new IllegalArgumentException("treatment "+treatment+" is not implemented yet");
 				}
@@ -52,14 +58,37 @@ public class ChloeAPI {
 			ex.printStackTrace();
 		}
 	}
+	
+	private static void launchCombine(Properties properties) {
+		
+		try{
+			long begin = System.currentTimeMillis();
+			
+			ChloeAnalysisBuilder builder = new ChloeUtilAnalysisBuilder();
+			builder.setAnalysisType(ChloeAnalysisType.COMBINE);
+				
+			importCombination(builder, properties);
+			importInputNamesAndRasters(builder, properties);
+			importOutputRaster(builder, properties);
+			
+			ChloeAnalysis analysis = builder.build();
+			analysis.allRun();
+				
+			long end = System.currentTimeMillis();
+			System.out.println("time computing : "+(end - begin));
+			
+		} catch (NoParameterException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private static void launchSliding(Properties properties) {
 		
 		try{
 			long begin = System.currentTimeMillis();
 			
-			LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-			builder.setAnalysisType(WindowAnalysisType.SLIDING);
+			ChloeAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+			builder.setAnalysisType(ChloeAnalysisType.SLIDING);
 				
 			importInputRaster(builder, properties);
 			importWindowShape(builder, properties);
@@ -70,23 +99,22 @@ public class ChloeAPI {
 			importWindowDistanceType(builder, properties);
 			importWindowDistanceFunction(builder, properties);
 			importFrictionRaster(builder, properties);
+			importFilters(builder, properties);
 			importUnfilters(builder, properties);
-			importXOrigin(builder, properties);
-			importYOrigin(builder, properties);
+			importMaximumNoValueRate(builder, properties);
 			
-			// TODO
-			//importMaximumNoValueRate(builder, properties);
-			//importFrictionFile(builder, properties);
-			//importFilters(builder, properties);
+			//importXOrigin(builder, properties); // finalement abandonné
+			//importYOrigin(builder, properties); // finalement abandonné
+			//importFrictionFile(builder, properties); // finalement abandonné
 			
 			if(properties.containsKey("output_folder")){
-				importOutputFolderForSliding(builder, properties);
+				importOutputFolderForCenteredWindow(builder, properties);
 			}else{
 				importOutputRaster(builder, properties);
 				importOutputCsv(builder, properties);
 			}
 			
-			LandscapeMetricAnalysis analysis = builder.build();
+			ChloeAnalysis analysis = builder.build();
 			analysis.allRun();
 				
 			long end = System.currentTimeMillis();
@@ -97,8 +125,45 @@ public class ChloeAPI {
 		}
 	}
 	
+	private static void launchSelected(Properties properties) {
+		
+		try{
+			long begin = System.currentTimeMillis();
+			
+			ChloeAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+			builder.setAnalysisType(ChloeAnalysisType.SELECTED);
+				
+			importInputRaster(builder, properties);
+			importWindowShape(builder, properties);
+			importWindowSizes(builder, properties);
+			importMetrics(builder, properties);
+			importWindowDistanceType(builder, properties);
+			importWindowDistanceFunction(builder, properties);
+			importFrictionRaster(builder, properties);
+			importPointsFilter(builder, properties);
+			importPixelsFilter(builder, properties);
+			importWindowsPath(builder, properties);
+			
+			if(properties.containsKey("output_folder")){
+				importOutputFolderForCenteredWindow(builder, properties);
+			}else{
+				importOutputRaster(builder, properties);
+				importOutputCsv(builder, properties);
+			}
+			
+			ChloeAnalysis analysis = builder.build();
+			analysis.allRun();
+				
+			long end = System.currentTimeMillis();
+			System.out.println("time computing : "+(end - begin));
+			
+		} catch (NoParameterException e) {
+			e.printStackTrace();
+		}
+	}	
+	
 	// required 
-	public static void importInputRaster(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importInputRaster(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("input_raster")){
 			String prop = properties.getProperty("input_raster");
 			if(new File(prop).isFile()){
@@ -110,7 +175,7 @@ public class ChloeAPI {
 	}
 	
 	// required
-	public static void importWindowSizes(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importWindowSizes(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("sizes")){
 			String prop = properties.getProperty("sizes");
 			prop = prop.replace("{", "").replace("}", "").replace(" ", "");
@@ -124,7 +189,7 @@ public class ChloeAPI {
 	}
 	
 	// required
-	public static void importMetrics(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importMetrics(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("metrics")){
 			String prop = properties.getProperty("metrics");
 			prop = prop.replace("{", "").replace("}", "").replace(" ", "");
@@ -139,7 +204,7 @@ public class ChloeAPI {
 	
 	// not required
 	// default parameter : "CIRCLE"
-	public static void importWindowShape(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importWindowShape(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("shape")){
 			builder.setWindowShapeType(WindowShapeType.valueOf(properties.getProperty("shape")));
 		}		
@@ -147,7 +212,7 @@ public class ChloeAPI {
 	
 	// not required
 	// default parameter : "THRESHOLD"
-	public static void importWindowDistanceType(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importWindowDistanceType(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("distance_type")){
 			builder.setWindowDistanceType(WindowDistanceType.valueOf(properties.getProperty("distance_type")));
 		}		
@@ -155,7 +220,7 @@ public class ChloeAPI {
 	
 	// not required
 	// default parameter : gaussienne par default
-	public static void importWindowDistanceFunction(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importWindowDistanceFunction(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("distance_function")){
 			builder.setWindowDistanceFunction(properties.getProperty("distance_function"));
 		}		
@@ -163,7 +228,7 @@ public class ChloeAPI {
 	
 	// not required
 	// default parameter : "1"
-	public static void importDisplacement(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importDisplacement(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("displacement")){
 			builder.setDisplacement(Integer.parseInt(properties.getProperty("displacement")));
 		}
@@ -171,21 +236,36 @@ public class ChloeAPI {
 	
 	// not required
 	// default parameter : "FALSE"
-	public static void importInterpolation(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importInterpolation(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("interpolation")){
 			builder.setInterpolation(Boolean.parseBoolean(properties.getProperty("interpolation")));
 		}
 	}
 	
 	// not required
-	public static void importFrictionRaster(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importFrictionRaster(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("friction_raster")){
 			builder.setRasterFile2(properties.getProperty("friction_raster"));
 		}
 	}
 	
 	// not required
-	public static void importUnfilters(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importFilters(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("filters")){
+			String prop = properties.getProperty("filters");
+			prop = prop.replace("{", "").replace("}", "").replace(" ", "");
+			String[] fs = prop.split(";");
+			int[] filters = new int[fs.length];
+			int index=0;
+			for(String f : fs){
+				filters[index++] = Integer.parseInt(f);
+			}
+			builder.setFilters(filters);
+		}
+	}
+	
+	// not required
+	public static void importUnfilters(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("unfilters")){
 			String prop = properties.getProperty("unfilters");
 			prop = prop.replace("{", "").replace("}", "").replace(" ", "");
@@ -200,7 +280,7 @@ public class ChloeAPI {
 	}
 	
 	// not required 
-	public static void importOutputRaster(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importOutputRaster(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("output_raster")){
 			String prop = properties.getProperty("output_raster");
 			if(prop.endsWith(".asc")){
@@ -214,14 +294,21 @@ public class ChloeAPI {
 	}	
 		
 	// not required 
-	public static void importOutputCsv(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importOutputCsv(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("output_csv")){
 			builder.addCsvOutput(properties.getProperty("output_csv"));
 		}
 	}
 	
+	// not required 
+	public static void importWindowsPath(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("windows_path")){
+			builder.setWindowsPath(properties.getProperty("windows_path"));
+		}
+	}
+	
 	// not required
-	public static void importOutputFolderForSliding(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importOutputFolderForCenteredWindow(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("output_folder")){
 			String prop = properties.getProperty("output_folder");
 			String input = properties.getProperty("input_raster");
@@ -251,17 +338,68 @@ public class ChloeAPI {
 	}
 	
 	// not required
-	public static void importXOrigin(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importXOrigin(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("x_origin")){
 			builder.setROIX(Integer.parseInt(properties.getProperty("x_origin")));
 		}
 	}
 		
 	// not required
-	public static void importYOrigin(LandscapeMetricAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importYOrigin(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("y_origin")){
 			builder.setROIY(Integer.parseInt(properties.getProperty("y_origin")));
 		}
+	}
+	
+	// not required
+	public static void importMaximumNoValueRate(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("maximum_rate_nodata_value")){
+			builder.setMinRate(1.0 / (Double.parseDouble(properties.getProperty("maximum_rate_nodata_value"))/100.0));
+		}
+	}
+	
+	// not required
+	public static void importPointsFilter(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("points")){
+			builder.setPointsFilter(properties.getProperty("points"));
+		}
+	}
+	
+	// not required
+	public static void importPixelsFilter(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("pixels")){
+			builder.setPointsFilter(properties.getProperty("pixels"));
+		}
+	}
+	
+	// required 
+	public static void importInputNamesAndRasters(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("factors")){
+			String prop = properties.getProperty("factors").replace("{", "").replace("}", "");
+			String[] ds = prop.split(";");
+		
+			Map<String, String> factors = new TreeMap<String, String>();
+			for(String d : ds){
+				d = d.replace("(", "").replace(")", "");
+				String[] dd = d.split(",");
+				factors.put(dd[1], dd[0]);
+			}
+			
+			builder.setNamesAndRasters(factors);
+			
+			return;
+		}
+		throw new NoParameterException("factors");
+	}
+	
+	// required 
+	private static void importCombination(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("combination")){
+			builder.setCombination(properties.getProperty("combination"));
+			
+			return;
+		}
+		throw new NoParameterException("combination");
 	}
 	
 }

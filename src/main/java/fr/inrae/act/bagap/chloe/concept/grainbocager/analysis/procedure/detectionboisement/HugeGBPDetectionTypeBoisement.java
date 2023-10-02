@@ -18,7 +18,7 @@ public class HugeGBPDetectionTypeBoisement extends GrainBocagerProcedure {
 	public Coverage run() {
 		
 		Coverage covHauteurBoisement = null;
-		if(!new File(manager().hauteurBoisement()).exists()){
+		if(manager().force() || !new File(manager().hauteurBoisement()).exists()){
 			//covHauteurBoisement = new HugeGBPRecuperationHauteurBoisement(manager()).run();
 		}else{
 			covHauteurBoisement = CoverageManager.getCoverage(manager().hauteurBoisement());

@@ -3,6 +3,7 @@ package fr.inrae.act.bagap.chloe.window.kernel.selected;
 import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class SelectedCountCoupleKernel extends SelectedLandscapeMetricKernel {
 	
@@ -10,8 +11,8 @@ public class SelectedCountCoupleKernel extends SelectedLandscapeMetricKernel {
 	
 	private int[] mapValues;
 	
-	public SelectedCountCoupleKernel(int windowSize, Set<Pixel> pixels, float[] coeff, int noDataValue, int[] values){
-		super(windowSize, pixels, coeff, noDataValue);
+	public SelectedCountCoupleKernel(int windowSize, Set<Pixel> pixels, float[] coeff, EnteteRaster entete, int[] values, String windowsPath){
+		super(windowSize, pixels, coeff, entete, windowsPath);
 		
 		int maxV = 0;
 		for(int v : values){

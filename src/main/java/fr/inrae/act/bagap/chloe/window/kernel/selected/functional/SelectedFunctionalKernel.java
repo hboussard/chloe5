@@ -11,18 +11,16 @@ import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceF
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.window.kernel.selected.DoubleSelectedLandscapeMetricKernel;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public abstract class SelectedFunctionalKernel extends DoubleSelectedLandscapeMetricKernel {
-
-	private double cellSize;
 	
 	private double radius;
 	
 	private DistanceFunction function;
 	
-	protected SelectedFunctionalKernel(int windowSize, Set<Pixel> pixels, float[] coeff, int noDataValue, double cellSize, DistanceFunction function, double radius){	
-		super(windowSize, pixels, coeff, noDataValue);
-		this.cellSize = cellSize;
+	protected SelectedFunctionalKernel(int windowSize, Set<Pixel> pixels, float[] coeff, EnteteRaster entete, DistanceFunction function, double radius, String windowsPath){	
+		super(windowSize, pixels, coeff, entete, windowsPath);
 		this.radius = radius;
 		this.function = function;
 	}
@@ -96,7 +94,7 @@ public abstract class SelectedFunctionalKernel extends DoubleSelectedLandscapeMe
 			}
 		}
 		
-		ArrayRCMDistanceAnalysis rcm = new ArrayRCMDistanceAnalysis(distance, resistance, windowSize(), windowSize(), (float) cellSize, waits);
+		ArrayRCMDistanceAnalysis rcm = new ArrayRCMDistanceAnalysis(distance, resistance, windowSize(), windowSize(), (float) cellSize(), waits);
 		rcm.allRun();
 		
 		return distance;

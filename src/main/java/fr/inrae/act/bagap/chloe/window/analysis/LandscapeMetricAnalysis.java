@@ -1,18 +1,12 @@
 package fr.inrae.act.bagap.chloe.window.analysis;
 
-import fr.inra.sad.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysis;
 
-public abstract class LandscapeMetricAnalysis extends Analysis {
-	
-	private static int maxTile = 500000000;
+public abstract class LandscapeMetricAnalysis extends ChloeAnalysis {
 	
 	private static int tileYSize = 1000;
 	
 	private static int bufferSize = 200;
-	
-	public static int maxTile(){
-		return maxTile;
-	}
 	
 	public static int tileYSize(){
 		return tileYSize;

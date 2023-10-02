@@ -11,8 +11,9 @@ import java.util.TreeSet;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 //import fr.inra.sad.bagap.apiland.core.space.impl.raster.PixelWithID;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.RefPoint;
+import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisBuilder;
+import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.util.Util;
-import fr.inrae.act.bagap.chloe.window.WindowAnalysisType;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
@@ -25,9 +26,7 @@ import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 import fr.inrae.act.bagap.raster.Tile;
 
-public class LandscapeMetricAnalysisBuilder {
-
-	private WindowAnalysisType analysisType;
+public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder {
 	
 	private WindowShapeType shapeType;
 	
@@ -55,7 +54,7 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	private Set<CountingObserver> observers;
 
-	private String csv, points, pixels, exportWindowPath, asciiGridFolder, geoTiffFolder;
+	private String csv, points, pixels, windowsPath, asciiGridFolder, geoTiffFolder;
 	
 	private Set<RefPoint> refPoints;
 	
@@ -77,18 +76,15 @@ public class LandscapeMetricAnalysisBuilder {
 	
 	//private int bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax;
 	
-	private int[] values, unfilters;
+	private int[] values, filters, unfilters;
 	
 	private Map<RefPoint, Float> datas;
 	
 	private Set<CoverageOutput> coverageOutputs;
 	
-	public LandscapeMetricAnalysisBuilder(){
-		reset();
-	}
-	
+	@Override
 	public void reset(){
-		this.analysisType = WindowAnalysisType.SLIDING;
+		setAnalysisType(ChloeAnalysisType.SLIDING);
 		this.shapeType = WindowShapeType.CIRCLE;
 		this.distanceType = WindowDistanceType.THRESHOLD;
 		this.distanceFunction = "exp(-pow(distance, 2)/pow(dmax/2, 2))";
@@ -124,7 +120,7 @@ public class LandscapeMetricAnalysisBuilder {
 		this.pixels = null;
 		this.refPoints = null;
 		this.refPixels = null;
-		this.exportWindowPath = null;
+		this.windowsPath = null;
 		this.values = null;
 		this.asciiOutputs = new TreeMap<Integer, Map<String, String>>();
 		this.geotiffOutputs = new TreeMap<Integer, Map<String, String>>();
@@ -132,66 +128,77 @@ public class LandscapeMetricAnalysisBuilder {
 		this.tileAsciiOutputs = null;
 		this.tileGeoTiffOutputs = null;
 		this.unfilters = null;
+		this.filters = null;
 		this.datas = null;
 		this.coverageOutputs = new HashSet<CoverageOutput>();
 	}
-
-	public void setAnalysisType(WindowAnalysisType analysisType) {
-		this.analysisType = analysisType;
-	}
 	
+	@Override
 	public void setWindowShapeType(WindowShapeType shapeType) {
 		this.shapeType = shapeType;
 	}
 	
+	@Override
 	public void setWindowDistanceType(WindowDistanceType distanceType) {
 		this.distanceType = distanceType;
 	}
 	
+	@Override
 	public void setWindowDistanceFunction(String function) {
 		this.distanceFunction = function;
 	}
 	
+	@Override
 	public void setCoverage(Coverage coverage){
 		this.coverage = coverage;
 	}
 	
+	@Override
 	public void setCoverage2(Coverage coverage2){
 		this.coverage2 = coverage2;
 	}
 	
+	@Override
 	public void setRasterTile(String rasterTile) {
 		this.rasterTile = rasterTile;
 	}
 
+	@Override
 	public void setRasterFile(String rasterFile) {
 		this.rasterFile = rasterFile;
 	}
 	
+	@Override
 	public void setRasterFile2(String rasterFile2) {
 		this.rasterFile2 = rasterFile2;
 	}
 	
+	@Override
 	public void setRasterTab(float[] inputDatas) {
 		this.rasterTab = inputDatas;
 	}
 	
+	@Override
 	public void setRasterTab2(float[] inputDatas) {
 		this.rasterTab2 = inputDatas;
 	}
 	
+	@Override
 	public void setEntete(EnteteRaster entete){
 		this.entete = entete;
 	}
 	
+	@Override
 	public void setEntityRasterFile(String entityRasterFile) {
 		this.entityRasterFile = entityRasterFile;
 	}
 	
+	@Override
 	public void setEntityRasterTab(float[] entityRasterTab) {
 		this.entityRasterTab = entityRasterTab;
 	}
 
+	@Override
 	public void setValues(String sValues){
 		String[] s = sValues.split(",");
 		values = new int[s.length];
@@ -200,53 +207,70 @@ public class LandscapeMetricAnalysisBuilder {
 		}
 	}
 	
+	@Override
 	public void setWindowSize(int windowSize) {
 		addWindowSize(windowSize);
 	}
 
+	@Override
 	public void setWindowRadius(double radius){
 		addWindowRadius(radius);
 	}
 	
+	@Override
 	public void addWindowSize(int windowSize) {
 		this.windowSizes.add(windowSize);
 		this.windowSize = windowSize;
 	}
 	
+	@Override
 	public void addWindowRadius(double radius){
 		this.windowRadius.add(radius);
 		this.radius = radius;
 	}
 	
+	@Override
 	public void setWindowSizes(int[] windowSizes) {
 		for(int ws : windowSizes){
 			addWindowSize(ws);
 		}
 	}
 	
+	@Override
 	public void setWindowRadius(double[] radius){
 		for(double r : radius){
 			addWindowRadius(r);	
 		}
 	}
 	
+	@Override
 	public void setDisplacement(int displacement) {
 		this.displacement = displacement;
 	}
 	
+	@Override
 	public void setInterpolation(boolean interpolation){
 		this.interpolation = interpolation;
 	}
 
+	@Override
 	public void setUnfilters(int[] unfilters){
 		this.unfilters = unfilters;
 	}
 	
+	@Override
+	public void setFilters(int[] filters){
+		this.filters = filters;
+	}
+	
+	@Override
 	public void addMetric(Metric metric){
 		this.metrics.add(metric);
 	}
 	
+	@Override
 	public void addMetric(String metric){
+		System.out.println(metric);
 		if(MetricManager.hasMetric(metric)){
 			this.metrics.add(MetricManager.get(metric));
 		}else{
@@ -254,39 +278,47 @@ public class LandscapeMetricAnalysisBuilder {
 		}
 	}
 	
+	@Override
 	public void setMetrics(Set<Metric> metrics) {
 		this.metrics = metrics;
 	}
 
+	@Override
 	public void addCsvOutput(String csv){
 		Util.createAccess(csv);
 		this.csv = csv;
 	}
 	
+	@Override
 	public void addCoverageOutput(CoverageOutput coverageOutput){
 		this.coverageOutputs.add(coverageOutput);
 	}
 	
+	@Override
 	public void addAsciiGridFolderOutput(String asciiGridFolder){
 		Util.createAccess(asciiGridFolder);
 		this.asciiGridFolder = asciiGridFolder;
 	}
 	
+	@Override
 	public void addGeoTiffFolderOutput(String geoTiffFolder){
 		Util.createAccess(geoTiffFolder);
 		this.geoTiffFolder = geoTiffFolder;
 	}
 	
+	@Override
 	public void addAsciiGridOutput(String ascii){
 		Metric metric = this.metrics.iterator().next();
 		addAsciiGridOutput(metric.getName(), ascii);
 	}
 	
+	@Override
 	public void addAsciiGridOutput(String metric, String ascii){
 		int size = this.windowSizes.iterator().next();
 		addAsciiGridOutput(size, metric, ascii);
 	}
 
+	@Override
 	public void addAsciiGridOutput(int size, String metric, String ascii){
 		Util.createAccess(ascii);
 		if(!this.asciiOutputs.containsKey(size)){
@@ -295,16 +327,19 @@ public class LandscapeMetricAnalysisBuilder {
 		this.asciiOutputs.get(size).put(metric, ascii);
 	}
 	
+	@Override
 	public void addTabOutput(float[] tab){
 		Metric metric = this.metrics.iterator().next();
 		addTabOutput(metric.getName(), tab);
 	}
 
+	@Override
 	public void addTabOutput(String metric, float[] tab){
 		int size = this.windowSizes.iterator().next();
 		addTabOutput(size, metric, tab);
 	}
 	
+	@Override
 	public void addTabOutput(int size, String metric, float[] tab){
 		if(!this.tabOutputs.containsKey(size)){
 			this.tabOutputs.put(size, new HashMap<String, float[]>());
@@ -312,16 +347,19 @@ public class LandscapeMetricAnalysisBuilder {
 		this.tabOutputs.get(size).put(metric, tab);
 	}
 	
+	@Override
 	public void addGeoTiffOutput(String geotiff){
 		Metric metric = this.metrics.iterator().next();
 		addGeoTiffOutput(metric.getName(), geotiff);
 	}
 	
+	@Override
 	public void addGeoTiffOutput(String metric, String geotiff){
 		int size = this.windowSizes.iterator().next();
 		addGeoTiffOutput(size, metric, geotiff);
 	}
 	
+	@Override
 	public void addGeoTiffOutput(int size, String metric, String geotiff){
 		Util.createAccess(geotiff);
 		if(!this.geotiffOutputs.containsKey(size)){
@@ -330,14 +368,17 @@ public class LandscapeMetricAnalysisBuilder {
 		this.geotiffOutputs.get(size).put(metric, geotiff);
 	}
 	
+	@Override
 	public void addDataOutput(String metric, Map<RefPoint, Float> datas){
 		this.datas = datas;
 	}
 	
+	@Override
 	public void addDataOutput(DataOutput dout){
 		observers.add(dout);
 	}
 	
+	@Override
 	public void addTileAsciiGridOutput(String metric, String pathTile, Tile tile){
 		Util.createAccess(pathTile);
 		if(this.tileAsciiOutputs == null){
@@ -349,6 +390,7 @@ public class LandscapeMetricAnalysisBuilder {
 		this.tileAsciiOutputs.get(tile).put(metric, pathTile);
 	}
 	
+	@Override
 	public void addTileGeoTiffOutput(String metric, String pathTile, Tile tile){
 		Util.createAccess(pathTile);
 		if(this.tileGeoTiffOutputs == null){
@@ -360,30 +402,38 @@ public class LandscapeMetricAnalysisBuilder {
 		this.tileGeoTiffOutputs.get(tile).put(metric, pathTile);
 	}
 	
+	@Override
 	public void setPointsFilter(String points) {
 		this.points = points;
 	}
 	
+	@Override
 	public void setPointsFilter(Set<RefPoint> points){
 		this.refPoints = points;
 	}
 	
+	@Override
 	public void setPixelsFilter(String pixels) {
 		this.pixels = pixels;
 	}
 	
+	@Override
 	public void setPixelsFilter(Set<? extends Pixel> pixels) {
 		this.refPixels = pixels;
 	}
 
-	public void addAscExportWindowOutput(String windowPath) {
-		this.exportWindowPath = windowPath;
+	@Override
+	public void setWindowsPath(String windowsPath) {
+		Util.createAccess(windowsPath);
+		this.windowsPath = windowsPath;
 	}
 	
+	@Override
 	public void addObserver(CountingObserver observer){
 		this.observers.add(observer);
 	}
 	
+	@Override
 	public void setObservers(Set<CountingObserver> observers) {
 		this.observers = observers;
 	}
@@ -413,35 +463,38 @@ public class LandscapeMetricAnalysisBuilder {
 	}
 	*/
 	
+	@Override
 	public void setBufferSize(int buffSize){
 		LandscapeMetricAnalysis.setBufferSize(buffSize);
 	}
-	 
+	
+	@Override
 	public void setROIX(int roiX){
 		this.roiX = roiX;
 	}
 	
+	@Override
 	public void setROIY(int roiY){
 		this.roiY = roiY;
 	}
 	
+	@Override
 	public void setROIWidth(int roiWidth){
 		this.roiWidth = roiWidth;
 	}
 	
+	@Override
 	public void setROIHeight(int roiHeight){
 		this.roiHeight = roiHeight;
 	}
 	
+	@Override
 	// affectation statique
 	public void setMinRate(double min){
 		Counting.setMinRate(min/100.0);
 	}
 	
-	public WindowAnalysisType getAnalysisType() {
-		return analysisType;
-	}
-	
+	@Override
 	public WindowShapeType getWindowShapeType() {
 		return shapeType;
 	}
@@ -498,6 +551,7 @@ public class LandscapeMetricAnalysisBuilder {
 		return values;
 	}
 
+	@Override
 	public int getWindowSize(){
 		return this.windowSize;
 	}
@@ -620,6 +674,10 @@ public class LandscapeMetricAnalysisBuilder {
 		return unfilters;
 	}
 	
+	public int[] getFilters(){
+		return filters;
+	}
+	
 	public String getPixelsFilter(){
 		return pixels;
 	}
@@ -636,11 +694,16 @@ public class LandscapeMetricAnalysisBuilder {
 		return (Set<Pixel>) refPixels;
 	}
 	
+	public String getWindowsPath(){
+		return windowsPath;
+	}
+	
+	@Override
 	public LandscapeMetricAnalysis build(){
 		LandscapeMetricAnalysis analysis = null;
 		try{
 			
-			if(analysisType.equals(WindowAnalysisType.SLIDING) || analysisType.equals(WindowAnalysisType.SELECTED)){
+			if(getAnalysisType().equals(ChloeAnalysisType.SLIDING) || getAnalysisType().equals(ChloeAnalysisType.SELECTED)){
 				
 				if(windowSizes.size() == 0){
 					// TODO gestion en radius

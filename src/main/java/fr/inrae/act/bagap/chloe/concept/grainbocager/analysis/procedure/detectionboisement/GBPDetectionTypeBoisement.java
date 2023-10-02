@@ -21,7 +21,7 @@ public class GBPDetectionTypeBoisement extends GrainBocagerProcedure {
 	public Coverage run() {
 		
 		Coverage covHauteurBoisement;
-		if(!new File(manager().hauteurBoisement()).exists()){
+		if(manager().force() || !new File(manager().hauteurBoisement()).exists()){
 			covHauteurBoisement = new GBPRecuperationHauteurBoisement(manager()).run();
 		}else{
 			covHauteurBoisement = CoverageManager.getCoverage(manager().hauteurBoisement());

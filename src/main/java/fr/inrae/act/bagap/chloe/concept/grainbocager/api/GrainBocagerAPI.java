@@ -64,6 +64,7 @@ public class GrainBocagerAPI {
 		importOutputPath(manager, properties);
 		importName(manager, properties);
 		importModeFast(manager, properties);
+		importForce(manager, properties);
 		importTerritoire(manager, properties);
 		importEnveloppe(manager, properties);
 		importBufferArea(manager, properties);
@@ -120,6 +121,15 @@ public class GrainBocagerAPI {
 		if(properties.containsKey("mode_fast")){
 			boolean modeFast = Boolean.parseBoolean(properties.getProperty("mode_fast"));
 			manager.setModeFast(modeFast);
+			return true;
+		}
+		return false;
+	}
+	
+	private static boolean importForce(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("force")){
+			boolean force = Boolean.parseBoolean(properties.getProperty("force"));
+			manager.setForce(force);
 			return true;
 		}
 		return false;

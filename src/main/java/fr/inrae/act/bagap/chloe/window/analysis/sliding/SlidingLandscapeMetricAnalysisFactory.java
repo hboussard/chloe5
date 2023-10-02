@@ -4,6 +4,8 @@ import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -20,6 +22,7 @@ import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.counting.CoupleCounting;
 import fr.inrae.act.bagap.chloe.window.counting.PatchCounting;
 import fr.inrae.act.bagap.chloe.window.counting.QuantitativeCounting;
+import fr.inrae.act.bagap.chloe.window.counting.SlopeCounting;
 import fr.inrae.act.bagap.chloe.window.counting.ValueAndCoupleCounting;
 import fr.inrae.act.bagap.chloe.window.counting.ValueCounting;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingCountCoupleKernel;
@@ -28,6 +31,7 @@ import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingCountValueKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingPatchKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingQuantitativeKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.slope.SlidingSlopeKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.gaussian.FastGaussianWeightedCountCoupleKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.gaussian.FastGaussianWeightedCountValueAndCoupleKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.gaussian.FastGaussianWeightedCountValueKernel;
@@ -365,7 +369,28 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 		int nbValues = -1;
 
 		// gestion specifiques des analyses quantitatives ou qualitatives
-		if (MetricManager.hasOnlyQuantitativeMetric(metrics)) { // quantitative
+		if (MetricManager.hasOnlySlopeMetric(metrics)) { // slope
+			
+			nbValues = 8;
+			
+			kernel = new SlidingSlopeKernel(Raster.getNoDataValue(), inCellSize);
+			
+			counting = new SlopeCounting(theoreticalSize);
+
+			// add metrics to counting
+			for (Metric m : metrics) {
+				counting.addMetric(m);
+			}
+
+			// observers
+			for (CountingObserver co : observers) {
+				counting.addObserver(co);
+			}
+
+			// analysis
+			return createSingle(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+			
+		}else if (MetricManager.hasOnlyQuantitativeMetric(metrics)) { // quantitative
 
 			nbValues = 8;
 			
@@ -421,7 +446,28 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 					kernel = new GrainBocagerSlidingDetectionBocageKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), unfilters, 3);
 				}
 				
-			} else {
+			} /*else if (metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("slope")) {
+				
+				System.out.println("slope");
+				
+				kernel = new SlidingSlopeKernel(Raster.getNoDataValue());
+				
+				counting = new SlopeCounting();
+
+				// add metrics to counting
+				for (Metric m : metrics) {
+					counting.addMetric(m);
+				}
+
+				// observers
+				for (CountingObserver co : observers) {
+					counting.addObserver(co);
+				}
+
+				// analysis
+				return createSingle(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+				
+			} */else {
 				if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN) {
 					
 					kernel = new FastGaussianWeightedQuantitativeKernel(windowSize, displacement, Raster.getNoDataValue(), unfilters);
@@ -458,6 +504,51 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			if (values == null) {
 				values = readValues(coverage, new Rectangle(roiX, roiY, roiWidth, roiHeight));
 			}
+			
+			// les non-filtres
+			int[] filters = builder.getFilters();
+			if(filters != null){
+				
+				Set<Integer> inverseFilters = new TreeSet<Integer>();
+				
+				if(unfilters != null){
+					for(int uf : unfilters){
+						inverseFilters.add(uf);
+					}
+				}
+				
+				for(int v : values){
+					boolean ok = false;
+					for(int f : filters){
+						if(v == f){
+							ok = true;
+							break;
+						}
+					}
+					if(!ok){
+						inverseFilters.add(v);
+					}
+				}
+				
+				boolean ok = false;
+				for(int f : filters){
+					if(coverage.getEntete().noDataValue() == f){
+						ok = true;
+						break;
+					}
+					if(!ok){
+						inverseFilters.add(coverage.getEntete().noDataValue());
+					}
+				}
+				
+				unfilters = new int[inverseFilters.size()];
+				Iterator<Integer> ite = inverseFilters.iterator();
+				for(int i=0; i<inverseFilters.size(); i++){
+					unfilters[i] = ite.next();
+				}
+			}
+			
+			
 			
 			if (MetricManager.hasOnlyQualitativeMetric(metrics)) { // qualitative
 				

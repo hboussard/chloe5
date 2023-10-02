@@ -11,7 +11,8 @@ public abstract class Counting implements
 	ValueCountingInterface,
 	CoupleCountingInterface,
 	QuantitativeCountingInterface,
-	PatchCountingInterface{//,
+	PatchCountingInterface,
+	SlopeCountingInterface{//,
 	//MetricObserver {
 	
 	/**
@@ -64,7 +65,7 @@ public abstract class Counting implements
 	public void setCounts(double[] counts){
 		
 		if(counts[0] == 1){
-			
+		
 			totalValues = counts[2];
 			validValues = totalValues - counts[3];
 			
@@ -140,9 +141,11 @@ public abstract class Counting implements
 		minRate = min;
 	}
 	
+	/*
 	public static double minRate(){
 		return minRate;
 	}
+	*/
 	
 	public void calculate(){
 		for(CountingObserver co : observers) {
@@ -351,6 +354,16 @@ public abstract class Counting implements
 
 	@Override
 	public double maxSurface(int v){
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public double slopeDirection(){
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public double slopeIntensity(){
 		throw new UnsupportedOperationException();
 	}
 }

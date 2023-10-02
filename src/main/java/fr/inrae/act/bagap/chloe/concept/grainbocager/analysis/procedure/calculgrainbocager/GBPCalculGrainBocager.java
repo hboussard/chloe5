@@ -20,7 +20,7 @@ public class GBPCalculGrainBocager extends GrainBocagerProcedure {
 	public Coverage run() {
 		
 		Coverage covDistanceInfluenceBoisement;
-		if(!new File(manager().distanceInfluenceBoisement()).exists()){
+		if(manager().force() || !new File(manager().distanceInfluenceBoisement()).exists()){
 			covDistanceInfluenceBoisement = new GBPCalculDistanceInfluenceBoisement(manager()).run();
 		}else{
 			covDistanceInfluenceBoisement = CoverageManager.getCoverage(manager().distanceInfluenceBoisement());

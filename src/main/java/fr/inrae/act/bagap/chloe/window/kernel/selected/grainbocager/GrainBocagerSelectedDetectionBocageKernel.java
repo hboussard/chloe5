@@ -4,13 +4,14 @@ import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inrae.act.bagap.chloe.window.kernel.selected.SelectedLandscapeMetricKernel;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class GrainBocagerSelectedDetectionBocageKernel extends SelectedLandscapeMetricKernel {
 
 	private float minHauteur; // = 3; // hauteur en metres minimum de l'element boise pour etre pris en compte
 	
-	public GrainBocagerSelectedDetectionBocageKernel(int windowSize, Set<Pixel> pixels, float[] coeff, int noDataValue, float minHauteur) {
-		super(windowSize, pixels, coeff, noDataValue);
+	public GrainBocagerSelectedDetectionBocageKernel(int windowSize, Set<Pixel> pixels, float[] coeff, EnteteRaster entete, String windowsPath, float minHauteur) {
+		super(windowSize, pixels, coeff, entete, windowsPath);
 		this.minHauteur = minHauteur;
 	}
 

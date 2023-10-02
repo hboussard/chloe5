@@ -17,6 +17,7 @@ import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.raster.CoverageManager;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class GeoTiffOutput implements CountingObserver{
 
@@ -78,7 +79,7 @@ public class GeoTiffOutput implements CountingObserver{
 				
 		//GridCoverage2D outC = CoverageManager.getEmptyCoverage(width, height, outMinX, outMaxX, outMinY, outMaxY, cellSize);
 		//((WritableRenderedImage) outC.getRenderedImage()).setData(raster);
-				
+		/*	
 		GridCoverage2D outC = CoverageManager.getCoverageFromData(datas, width, height, outMinX, outMinY, cellSize);
 				
 		//System.out.println("ecriture sur fichier");
@@ -94,6 +95,9 @@ public class GeoTiffOutput implements CountingObserver{
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+		*/
+		
+		CoverageManager.writeGeotiff(file, datas, new EnteteRaster(width, height, outMinX, outMaxX, outMinY, outMaxY, (float) cellSize, noDataValue));
 	}
 	
 	protected String format(double v){

@@ -2,7 +2,7 @@ package fr.inrae.act.bagap.chloe.window.analysis;
 
 import java.io.IOException;
 
-import fr.inrae.act.bagap.chloe.window.WindowAnalysisType;
+import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.window.analysis.entity.HugeEntityLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.window.analysis.entity.TinyEntityLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.window.analysis.grid.HugeGridLandscapeMetricAnalysisFactory;
@@ -88,7 +88,7 @@ public class LandscapeMetricAnalysisFactory {
 		int roiWidth = builder.getROIWidth();
 		int roiHeight = builder.getROIHeight();
 		
-		if(builder.getAnalysisType() == WindowAnalysisType.SLIDING){
+		if(builder.getAnalysisType() == ChloeAnalysisType.SLIDING){
 				
 			// windowSize
 			int windowSize = -1;
@@ -122,7 +122,7 @@ public class LandscapeMetricAnalysisFactory {
 				return new HugeSlidingLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}
 			
-		}else if(builder.getAnalysisType() == WindowAnalysisType.SELECTED){
+		}else if(builder.getAnalysisType() == ChloeAnalysisType.SELECTED){
 			
 			// windowSize
 			int windowSize = -1;
@@ -154,7 +154,7 @@ public class LandscapeMetricAnalysisFactory {
 				
 				return new HugeSelectedLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}
-		}else if(builder.getAnalysisType() == WindowAnalysisType.ENTITY){
+		}else if(builder.getAnalysisType() == ChloeAnalysisType.ENTITY){
 			
 			int maxWidth = inWidth;
 			int maxHeight = inHeight;
@@ -175,7 +175,7 @@ public class LandscapeMetricAnalysisFactory {
 				return new HugeEntityLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}
 			
-		}else if(builder.getAnalysisType() == WindowAnalysisType.GRID){
+		}else if(builder.getAnalysisType() == ChloeAnalysisType.GRID){
 		
 			int maxWidth = inWidth;
 			int maxHeight = inHeight;
@@ -194,7 +194,7 @@ public class LandscapeMetricAnalysisFactory {
 				
 				return new HugeGridLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}
-		}else if(builder.getAnalysisType() == WindowAnalysisType.MAP){
+		}else if(builder.getAnalysisType() == ChloeAnalysisType.MAP){
 		
 			int maxWidth = inWidth;
 			int maxHeight = inHeight;
