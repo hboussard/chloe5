@@ -519,6 +519,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder {
 		return rasterTile;
 	}
 
+	@Override
 	public String getRasterFile() {
 		return rasterFile;
 	}

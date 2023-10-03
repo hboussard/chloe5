@@ -25,7 +25,7 @@ public class CombineAnalysis extends ChloeUtilAnalysis {
 	
 	private String outputRaster;
 	
-	public CombineAnalysis(String combination, Map<String, String> factors, String outputRaster){
+	public CombineAnalysis(String outputRaster, Map<String, String> factors, String combination){
 		this.combination = combination;
 		this.factors = factors;
 		this.outputRaster = outputRaster;
@@ -64,7 +64,8 @@ public class CombineAnalysis extends ChloeUtilAnalysis {
 	@Override
 	protected void doClose() {
 		
-		CoverageManager.write(outputRaster, outData, entete);
+		CoverageManager.write(outputRaster, outData, entete); // export sur fichier
+		
 		combination = null;
 		outputRaster = null;
 		entete = null;

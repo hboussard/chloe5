@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -48,6 +49,7 @@ public class ChloeAPI {
 				case "sliding" : launchSliding(properties); break;
 				case "selected" : launchSelected(properties); break;
 				case "combine" : launchCombine(properties); break;
+				case "search_and_replace" : launchSearchAndReplace(properties); break;
 				default :
 					throw new IllegalArgumentException("treatment "+treatment+" is not implemented yet");
 				}
@@ -59,29 +61,6 @@ public class ChloeAPI {
 		}
 	}
 	
-	private static void launchCombine(Properties properties) {
-		
-		try{
-			long begin = System.currentTimeMillis();
-			
-			ChloeAnalysisBuilder builder = new ChloeUtilAnalysisBuilder();
-			builder.setAnalysisType(ChloeAnalysisType.COMBINE);
-				
-			importCombination(builder, properties);
-			importInputNamesAndRasters(builder, properties);
-			importOutputRaster(builder, properties);
-			
-			ChloeAnalysis analysis = builder.build();
-			analysis.allRun();
-				
-			long end = System.currentTimeMillis();
-			System.out.println("time computing : "+(end - begin));
-			
-		} catch (NoParameterException e) {
-			e.printStackTrace();
-		}
-	}
-
 	private static void launchSliding(Properties properties) {
 		
 		try{
@@ -160,7 +139,54 @@ public class ChloeAPI {
 		} catch (NoParameterException e) {
 			e.printStackTrace();
 		}
-	}	
+	}
+	
+	private static void launchCombine(Properties properties) {
+		
+		try{
+			long begin = System.currentTimeMillis();
+			
+			ChloeAnalysisBuilder builder = new ChloeUtilAnalysisBuilder();
+			builder.setAnalysisType(ChloeAnalysisType.COMBINE);
+				
+			importCombination(builder, properties);
+			importInputNamesAndRasters(builder, properties);
+			importOutputRaster(builder, properties);
+			
+			ChloeAnalysis analysis = builder.build();
+			analysis.allRun();
+				
+			long end = System.currentTimeMillis();
+			System.out.println("time computing : "+(end - begin));
+			
+		} catch (NoParameterException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void launchSearchAndReplace(Properties properties) {
+		
+		try{
+			long begin = System.currentTimeMillis();
+			
+			ChloeAnalysisBuilder builder = new ChloeUtilAnalysisBuilder();
+			builder.setAnalysisType(ChloeAnalysisType.SEARCHANDREPLACE);
+				
+			importInputRaster(builder, properties);
+			importChanges(builder, properties);
+			importNoDataValue(builder, properties);
+			importOutputRaster(builder, properties);
+			
+			ChloeAnalysis analysis = builder.build();
+			analysis.allRun();
+				
+			long end = System.currentTimeMillis();
+			System.out.println("time computing : "+(end - begin));
+			
+		} catch (NoParameterException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	// required 
 	public static void importInputRaster(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
@@ -400,6 +426,32 @@ public class ChloeAPI {
 			return;
 		}
 		throw new NoParameterException("combination");
+	}
+	
+	// required 
+	public static void importChanges(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("changes")){
+			String prop = properties.getProperty("changes").replace("{", "").replace("}", "");
+			String[] cc = prop.split(";");
+			String[] vv;
+			Map<Float, Float> changes = new HashMap<Float, Float>();
+			for(String c : cc){
+				c = c.replace("(", "").replace(")", "");
+				vv = c.split(",");
+				changes.put(Float.parseFloat(vv[0]), Float.parseFloat(vv[1]));
+			}
+			builder.setChanges(changes);
+			
+			return;
+		}
+		throw new NoParameterException("changes");
+	}
+	
+	// not required
+	public static void importNoDataValue(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("nodata_value")){
+			builder.setNoDataValue(Integer.parseInt(properties.getProperty("nodata_value")));
+		}
 	}
 	
 }

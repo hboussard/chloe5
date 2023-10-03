@@ -273,6 +273,14 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 	
+	public void setChanges(Map<Float, Float> changes) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setNoDataValue(int noDataValue) {
+		throw new UnsupportedOperationException();
+	}
+	
 	// getters
 	
 	public WindowShapeType getWindowShapeType() {
@@ -284,6 +292,10 @@ public abstract class ChloeAnalysisBuilder {
 	}
 	
 	public int getDisplacement() {
+		throw new UnsupportedOperationException();
+	}
+
+	public String getRasterFile() {
 		throw new UnsupportedOperationException();
 	}
 }

@@ -10,7 +10,12 @@ public class ChloeUtilAnalysisFactory {
 
 		if(builder.getAnalysisType() == ChloeAnalysisType.COMBINE){
 			
-			CombineAnalysis analysis = new CombineAnalysis(builder.getCombination(), builder.getNamesAndRasters(), builder.getOutputRaster());
+			CombineAnalysis analysis = new CombineAnalysis(builder.getOutputRaster(), builder.getNamesAndRasters(), builder.getCombination());
+			return analysis;
+		}
+		if(builder.getAnalysisType() == ChloeAnalysisType.SEARCHANDREPLACE){
+			
+			SearchAndReplaceAnalysis analysis = new SearchAndReplaceAnalysis(builder.getOutputRaster(), builder.getRasterFile(), builder.getNoDataValue(), builder.getChanges());
 			return analysis;
 		}
 
