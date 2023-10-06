@@ -2,20 +2,17 @@ package fr.inrae.act.bagap.chloe.util.analysis;
 
 import java.util.Map;
 
-import fr.inra.sad.bagap.apiland.analysis.tab.SearchAndReplacePixel2PixelTabCalculation;
+import fr.inra.sad.bagap.apiland.analysis.tab.ClassificationPixel2PixelTabCalculation;
+import fr.inra.sad.bagap.apiland.domain.Domain;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 
-public class SearchAndReplaceAnalysis extends ChloeUtilAnalysis {
+public class ClassificationAnalysis extends ChloeUtilAnalysis {
 
 	private String inputRaster;
 	
 	private String outputRaster;
-	
-	private Map<Float, Float> sarMap;
-	
-	private int noDataValue;
 	
 	private float[] inData;
 	
@@ -23,11 +20,12 @@ public class SearchAndReplaceAnalysis extends ChloeUtilAnalysis {
 	
 	private EnteteRaster entete;
 	
-	public SearchAndReplaceAnalysis(String outputRaster, String inputRaster, int noDataValue, Map<Float, Float> sarMap){
+	private Map<Domain<Float, Float>, Integer> domains;
+	
+	public ClassificationAnalysis(String outputRaster, String inputRaster, Map<Domain<Float, Float>, Integer> domains){
 		this.outputRaster = outputRaster;
 		this.inputRaster = inputRaster;
-		this.noDataValue = noDataValue;
-		this.sarMap = sarMap;
+		this.domains = domains;
 	}
 	
 	@Override
@@ -36,8 +34,6 @@ public class SearchAndReplaceAnalysis extends ChloeUtilAnalysis {
 		entete = cov.getEntete();
 		inData = cov.getData();
 		cov.dispose();
-
-		entete.setNoDataValue(noDataValue); // changement du noDataValue
 		
 		outData = new float[entete.width()*entete.height()];
 	}
@@ -45,7 +41,7 @@ public class SearchAndReplaceAnalysis extends ChloeUtilAnalysis {
 	@Override
 	protected void doRun() {
 
-		SearchAndReplacePixel2PixelTabCalculation cal = new SearchAndReplacePixel2PixelTabCalculation(outData, inData, sarMap);
+		ClassificationPixel2PixelTabCalculation cal = new ClassificationPixel2PixelTabCalculation(outData, inData, entete.noDataValue(), domains);
 		cal.run();
 	}
 
@@ -57,8 +53,8 @@ public class SearchAndReplaceAnalysis extends ChloeUtilAnalysis {
 		inputRaster = null;
 		outputRaster = null;
 		entete = null;
-		sarMap.clear();
-		sarMap = null;
+		domains.clear();
+		domains = null;
 		inData = null;
 		outData = null; // a voir, peut-etre a mettre dans setResult()
 	}

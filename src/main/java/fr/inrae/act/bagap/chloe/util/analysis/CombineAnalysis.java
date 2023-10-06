@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import fr.inra.sad.bagap.apiland.analysis.combination.CombinationExpressionFactory;
-import fr.inra.sad.bagap.apiland.analysis.tab.Pixel2PixelCombinationExpressionTabCalculation;
+import fr.inra.sad.bagap.apiland.analysis.tab.CombinationExpressionPixel2PixelTabCalculation;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
@@ -57,7 +57,7 @@ public class CombineAnalysis extends ChloeUtilAnalysis {
 
 	@Override
 	protected void doRun() {
-		Pixel2PixelCombinationExpressionTabCalculation cal = CombinationExpressionFactory.createPixel2PixelTabCalculation(outData, combination, entete.noDataValue(), names, tabs);
+		CombinationExpressionPixel2PixelTabCalculation cal = CombinationExpressionFactory.createPixel2PixelTabCalculation(outData, combination, entete.noDataValue(), names, tabs);
 		cal.run();
 	}
 

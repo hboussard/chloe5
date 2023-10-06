@@ -18,6 +18,11 @@ public class ChloeUtilAnalysisFactory {
 			SearchAndReplaceAnalysis analysis = new SearchAndReplaceAnalysis(builder.getOutputRaster(), builder.getRasterFile(), builder.getNoDataValue(), builder.getChanges());
 			return analysis;
 		}
+		if(builder.getAnalysisType() == ChloeAnalysisType.CLASSIFICATION){
+			
+			ClassificationAnalysis analysis = new ClassificationAnalysis(builder.getOutputRaster(), builder.getRasterFile(), builder.getDomains());
+			return analysis;
+		}
 
 		throw new IllegalArgumentException(builder.getAnalysisType()+" is not a recognized analysis type");
 	}

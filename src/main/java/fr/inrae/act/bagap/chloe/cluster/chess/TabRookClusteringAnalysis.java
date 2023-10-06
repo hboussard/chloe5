@@ -5,9 +5,11 @@ import java.util.Map;
 
 public class TabRookClusteringAnalysis extends TabChessClusteringAnalysis {
 	
+	/*
 	public TabRookClusteringAnalysis(int[] inDatas, int width, int height, int[] interest, int noDataValue){		
 		super(inDatas, width, height, interest, noDataValue);
 	}
+	*/
 	
 	public TabRookClusteringAnalysis(float[] inDatas, int width, int height, int[] interest, int noDataValue){	
 		super(inDatas, width, height, interest, noDataValue);

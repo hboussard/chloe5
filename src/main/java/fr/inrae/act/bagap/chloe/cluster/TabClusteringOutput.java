@@ -18,9 +18,9 @@ public class TabClusteringOutput extends Analysis {
 	
 	private int nbPatch;
 	
-	private int[] tabCluster;
+	private float[] tabCluster;
 	
-	private int[] tabCover;
+	private float[] tabCover;
 	
 	private double cellSize;
 	
@@ -30,22 +30,27 @@ public class TabClusteringOutput extends Analysis {
 	
 	private double[] maxSurfaces;
 	
+	private int noDataValue;
+	
+	/*
 	public TabClusteringOutput(int[] tabCluster, int[] tabCover, int[] initValues, double cellSize){
 		this.tabCluster = tabCluster;
 		this.tabCover = tabCover;
 		this.initValues = initValues;
 		this.cellSize = cellSize;
-	}
+	}*/
 	
-	public TabClusteringOutput(int[] tabCluster, float[] tabCover, int[] initValues, double cellSize){
+	public TabClusteringOutput(float[] tabCluster, float[] tabCover, int[] initValues, double cellSize, int noDataValue){
 		this.tabCluster = tabCluster;
-		this.tabCover = new int[tabCover.length];
+		this.tabCover = tabCover;
+		/*this.tabCover = new int[tabCover.length];
 		int ind = 0;
 		for(float tc : tabCover){
 			this.tabCover[ind++] = (int) tc;
-		}
+		}*/
 		this.initValues = initValues;
 		this.cellSize = cellSize;
+		this.noDataValue = noDataValue;
 	}
 	
 	public int getNbPatch(){
@@ -77,9 +82,9 @@ public class TabClusteringOutput extends Analysis {
 		nbPatch = 0;
 		totalSurface = 0;
 		int vMax = 0;
-		for(int vC : tabCluster){
-			if(vC != 0){
-				vMax = Math.max(vMax, vC);
+		for(float vC : tabCluster){
+			if(vC != noDataValue && vC != 0){
+				vMax = Math.max(vMax, (int) vC);
 			}
 		}
 		
@@ -103,13 +108,13 @@ public class TabClusteringOutput extends Analysis {
 		int nbPixel = 0;
 		int ind = 0;
 		int cover;
-		for(int vC : tabCluster){
-			if(vC != 0){
-				counts[vC] = 1;
+		for(float vC : tabCluster){
+			if(vC != noDataValue && vC != 0){
+				counts[(int) vC] = 1;
 				nbPixel++;
-				sizes[vC]++;
-				cover = tabCover[ind];
-				values[vC] = cover;
+				sizes[(int) vC]++;
+				cover = (int) tabCover[ind];
+				values[(int) vC] = cover;
 				
 				totalSurfaces[cover]++;
 			}

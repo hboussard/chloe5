@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
+import fr.inra.sad.bagap.apiland.domain.Domain;
+import fr.inra.sad.bagap.apiland.domain.DomainFactory;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysis;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
@@ -48,8 +50,11 @@ public class ChloeAPI {
 				switch(treatment){
 				case "sliding" : launchSliding(properties); break;
 				case "selected" : launchSelected(properties); break;
+				case "grid" : launchGrid(properties); break;
+				case "map" : launchMap(properties); break;
 				case "combine" : launchCombine(properties); break;
 				case "search_and_replace" : launchSearchAndReplace(properties); break;
+				case "classification" : launchClassification(properties); break;
 				default :
 					throw new IllegalArgumentException("treatment "+treatment+" is not implemented yet");
 				}
@@ -141,6 +146,60 @@ public class ChloeAPI {
 		}
 	}
 	
+	private static void launchGrid(Properties properties) {
+		
+		try{
+			long begin = System.currentTimeMillis();
+			
+			ChloeAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+			builder.setAnalysisType(ChloeAnalysisType.GRID);
+				
+			importInputRaster(builder, properties);
+			importWindowSizes(builder, properties);
+			importMetrics(builder, properties);
+			importMaximumNoValueRate(builder, properties);
+			
+			if(properties.containsKey("output_folder")){
+				importOutputFolderForCenteredWindow(builder, properties);
+			}else{
+				importOutputRaster(builder, properties);
+				importOutputCsv(builder, properties);
+			}
+			
+			ChloeAnalysis analysis = builder.build();
+			analysis.allRun();
+				
+			long end = System.currentTimeMillis();
+			System.out.println("time computing : "+(end - begin));
+			
+		} catch (NoParameterException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void launchMap(Properties properties) {
+		
+		try{
+			long begin = System.currentTimeMillis();
+			
+			ChloeAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+			builder.setAnalysisType(ChloeAnalysisType.MAP);
+				
+			importInputRaster(builder, properties);
+			importMetrics(builder, properties);
+			importOutputCsv(builder, properties);
+			
+			ChloeAnalysis analysis = builder.build();
+			analysis.allRun();
+				
+			long end = System.currentTimeMillis();
+			System.out.println("time computing : "+(end - begin));
+			
+		} catch (NoParameterException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private static void launchCombine(Properties properties) {
 		
 		try{
@@ -188,6 +247,29 @@ public class ChloeAPI {
 		}
 	}
 	
+	private static void launchClassification(Properties properties) {
+		
+		try{
+			long begin = System.currentTimeMillis();
+			
+			ChloeAnalysisBuilder builder = new ChloeUtilAnalysisBuilder();
+			builder.setAnalysisType(ChloeAnalysisType.CLASSIFICATION);
+				
+			importInputRaster(builder, properties);
+			importDomains(builder, properties);
+			importOutputRaster(builder, properties);
+			
+			ChloeAnalysis analysis = builder.build();
+			analysis.allRun();
+				
+			long end = System.currentTimeMillis();
+			System.out.println("time computing : "+(end - begin));
+			
+		} catch (NoParameterException e) {
+			e.printStackTrace();
+		}
+	}
+
 	// required 
 	public static void importInputRaster(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("input_raster")){
@@ -452,6 +534,24 @@ public class ChloeAPI {
 		if(properties.containsKey("nodata_value")){
 			builder.setNoDataValue(Integer.parseInt(properties.getProperty("nodata_value")));
 		}
+	}
+	
+	// required
+	private static void importDomains(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("domains")){
+			String prop = properties.getProperty("domains").replace("{", "").replace("}", "");
+			String[] ds = prop.split(";");
+			Map<Domain<Float, Float>, Integer> domains = new HashMap<Domain<Float, Float>, Integer>();
+			for(String d : ds){
+				d = d.replace("(", "").replace(")", "");
+				String[] dd = d.split("-");
+				domains.put(DomainFactory.getFloatDomain(dd[0]), Integer.parseInt(dd[1]));
+			}
+			builder.setDomains(domains);
+			
+			return;
+		}
+		throw new NoParameterException("domains");
 	}
 	
 }

@@ -21,16 +21,18 @@ public class MeanPatchSizeMultipleIndex extends Metric implements PatchMetric {
 
 	@Override
 	protected void doCalculate(Counting co) {
-		double totalSurface = 0.0;
-		int nbPatches = 0;
-		for(short vv : v){
-			totalSurface += co.totalSurface(vv);
-			nbPatches += co.nbPatches(vv);
-		}
-		if(nbPatches > 0){
-			value = (double) totalSurface / nbPatches;
-		}else{
-			value = 0;
+		if(co.validValues() > 0){
+			double totalSurface = 0.0;
+			int nbPatches = 0;
+			for(short vv : v){
+				totalSurface += co.totalSurface(vv);
+				nbPatches += co.nbPatches(vv);
+			}
+			if(nbPatches > 0){
+				value = (double) totalSurface / nbPatches;
+			}else{
+				value = 0;
+			}
 		}
 	}
 

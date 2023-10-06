@@ -2,6 +2,7 @@ package fr.inrae.act.bagap.chloe.window.analysis.grid;
 
 import java.awt.Rectangle;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -88,7 +89,8 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 		Set<Metric> metrics = builder.getMetrics();
 			
 		// observers
-		Set<CountingObserver> observers = builder.getObservers();
+		//Set<CountingObserver> observers = builder.getObservers();
+		Set<CountingObserver> observers = new HashSet<CountingObserver>();
 		
 		if(builder.getCsv() != null){
 			CsvOutput csvOutput = new CsvOutput(builder.getCsv(), outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, Raster.getNoDataValue());

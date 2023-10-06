@@ -16,17 +16,19 @@ import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
+import fr.inrae.act.bagap.chloe.window.analysis.map.MultipleMapLandscapeMetricAnalysis;
+import fr.inrae.act.bagap.chloe.window.analysis.sliding.MultipleSlidingLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
-import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
+//import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.CoverageOutput;
-import fr.inrae.act.bagap.chloe.window.output.DataOutput;
+//import fr.inrae.act.bagap.chloe.window.output.DataOutput;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 import fr.inrae.act.bagap.raster.Tile;
 
-public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder {
+public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*implements Cloneable*/ {
 	
 	private WindowShapeType shapeType;
 	
@@ -52,7 +54,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder {
 	
 	private Set<Metric> metrics;
 	
-	private Set<CountingObserver> observers;
+	//private Set<CountingObserver> observers;
 
 	private String csv, points, pixels, windowsPath, asciiGridFolder, geoTiffFolder;
 	
@@ -82,6 +84,19 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder {
 	
 	private Set<CoverageOutput> coverageOutputs;
 	
+	/*
+	@Override
+	public LandscapeMetricAnalysisBuilder clone() {
+		LandscapeMetricAnalysisBuilder builder = null;
+	    try {
+	    	builder = (LandscapeMetricAnalysisBuilder) super.clone();
+	    } catch(CloneNotSupportedException cnse) {
+	        cnse.printStackTrace(System.err);
+	    }
+	    return builder;
+	}
+	*/
+	
 	@Override
 	public void reset(){
 		setAnalysisType(ChloeAnalysisType.SLIDING);
@@ -89,7 +104,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder {
 		this.distanceType = WindowDistanceType.THRESHOLD;
 		this.distanceFunction = "exp(-pow(distance, 2)/pow(dmax/2, 2))";
 		this.metrics = new HashSet<Metric>();
-		this.observers = new HashSet<CountingObserver>();
+		//this.observers = new HashSet<CountingObserver>();
 		this.displacement = 1;
 		this.interpolation = false;
 		this.windowSize = 0;
@@ -270,7 +285,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder {
 	
 	@Override
 	public void addMetric(String metric){
-		System.out.println(metric);
+		//System.out.println(metric);
 		if(MetricManager.hasMetric(metric)){
 			this.metrics.add(MetricManager.get(metric));
 		}else{
@@ -373,10 +388,12 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder {
 		this.datas = datas;
 	}
 	
+	/*
 	@Override
 	public void addDataOutput(DataOutput dout){
 		observers.add(dout);
 	}
+	*/
 	
 	@Override
 	public void addTileAsciiGridOutput(String metric, String pathTile, Tile tile){
@@ -428,6 +445,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder {
 		this.windowsPath = windowsPath;
 	}
 	
+	/*
 	@Override
 	public void addObserver(CountingObserver observer){
 		this.observers.add(observer);
@@ -437,6 +455,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder {
 	public void setObservers(Set<CountingObserver> observers) {
 		this.observers = observers;
 	}
+	*/
 	
 	/*
 	public void setBufferROI(int bufferROI){
@@ -581,9 +600,11 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder {
 		return metrics;
 	}
 
+	/*
 	public Set<CountingObserver> getObservers() {
 		return observers;
 	}
+	*/
 
 	public String getCsv() {
 		return csv;
@@ -704,18 +725,53 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder {
 		LandscapeMetricAnalysis analysis = null;
 		try{
 			
-			if(getAnalysisType().equals(ChloeAnalysisType.SLIDING) || getAnalysisType().equals(ChloeAnalysisType.SELECTED)){
+			if(getAnalysisType().equals(ChloeAnalysisType.SLIDING)){
 				
+				if((windowSizes.size() == 1 || windowRadius.size() == 1)
+						&& MetricManager.hasCoherence(metrics)){
+					
+					analysis = LandscapeMetricAnalysisFactory.create(this);
+					
+				}else{
+					
+					analysis = new MultipleSlidingLandscapeMetricAnalysis(this);
+					
+				}
+				/*
 				if(windowSizes.size() == 0){
 					// TODO gestion en radius
 				}else if(windowSizes.size() == 1){
 					analysis = LandscapeMetricAnalysisFactory.create(this);
 				}else{
-					analysis = new MultipleLandscapeMetricAnalysis();
+					
 					for(int ws : windowSizes){
 						this.windowSize = ws;
 						((MultipleLandscapeMetricAnalysis) analysis).add(LandscapeMetricAnalysisFactory.create(this));
 					}
+				}
+				*/
+			}else if(getAnalysisType().equals(ChloeAnalysisType.SELECTED)){
+			
+				if(windowSizes.size() == 1 || windowRadius.size() == 1){
+					
+					analysis = LandscapeMetricAnalysisFactory.create(this);
+					/*
+				}else{
+					
+					analysis = new MultipleSelectedLandscapeMetricAnalysis(this);
+					*/
+				}
+				
+			}else if(getAnalysisType().equals(ChloeAnalysisType.MAP)){
+			
+				if(MetricManager.hasCoherence(metrics)){
+					
+					analysis = LandscapeMetricAnalysisFactory.create(this);
+					
+				}else{
+					
+					analysis = new MultipleMapLandscapeMetricAnalysis(this);
+					
 				}
 				
 			}else{
@@ -726,7 +782,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder {
 		}catch(IOException ex){
 			ex.printStackTrace();
 		}finally{
-			reset();
+			//reset();
 		}
 		return analysis;
 	}

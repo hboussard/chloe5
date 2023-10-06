@@ -2,13 +2,13 @@ package fr.inrae.act.bagap.chloe.window.analysis.selected;
 
 import java.awt.Rectangle;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.analysis.combination.CombinationExpressionFactory;
 import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
 import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
@@ -133,7 +133,9 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 		}
 			
 		// observers
-		Set<CountingObserver> observers = builder.getObservers();
+		//Set<CountingObserver> observers = builder.getObservers();
+		Set<CountingObserver> observers = new HashSet<CountingObserver>();
+		
 		if(builder.getCsv() != null){
 			SelectedCsvOutput csvOutput = new SelectedCsvOutput(builder.getCsv(), pixels, coverage.getEntete());
 			observers.add(csvOutput);

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -164,7 +165,8 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 		Set<Metric> metrics = builder.getMetrics();
 
 		// observers
-		Set<CountingObserver> observers = builder.getObservers();
+		//Set<CountingObserver> observers = builder.getObservers();
+		Set<CountingObserver> observers = new HashSet<CountingObserver>();
 		
 		if(builder.getCoverageOutputs() != null){
 			for(CoverageOutput coverageOutput : builder.getCoverageOutputs()) {
@@ -202,8 +204,10 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 							break;
 						}
 					}
-					TileAsciiGridOutput tileAsciiOutput = new TileAsciiGridOutput(entry2.getValue(), metric, entry.getKey(), outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
-					observers.add(tileAsciiOutput);
+					if(metric != null){
+						TileAsciiGridOutput tileAsciiOutput = new TileAsciiGridOutput(entry2.getValue(), metric, entry.getKey(), outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
+						observers.add(tileAsciiOutput);
+					}
 				}
 			}
 		}
@@ -218,8 +222,10 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 							break;
 						}
 					}
-					TileGeoTiffOutput tileGeoTiffOutput = new TileGeoTiffOutput(entry2.getValue(), metric, entry.getKey(), outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
-					observers.add(tileGeoTiffOutput);
+					if(metric != null){
+						TileGeoTiffOutput tileGeoTiffOutput = new TileGeoTiffOutput(entry2.getValue(), metric, entry.getKey(), outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
+						observers.add(tileGeoTiffOutput);
+					}
 				}
 			}
 		}
@@ -233,16 +239,18 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 						break;
 					}
 				}
-				if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
-					AsciiGridOutput asciiOutput = new AsciiGridOutput(entry.getValue(), metric, outWidth, outHeight,
-							outMinX, outMinY, outCellSize, Raster.getNoDataValue());
-					observers.add(asciiOutput);
-				} else {
-					InterpolateSplineLinearAsciiGridOutput asciiOutput = new InterpolateSplineLinearAsciiGridOutput(
-							entry.getValue(), metric, roiWidth, roiHeight, inMinX + (roiX * inCellSize),
-							inMinY + ((inHeight - roiY) * inCellSize) - (roiHeight * inCellSize), inCellSize,
-							Raster.getNoDataValue(), displacement);
-					observers.add(asciiOutput);
+				if(metric != null){
+					if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
+						AsciiGridOutput asciiOutput = new AsciiGridOutput(entry.getValue(), metric, outWidth, outHeight,
+								outMinX, outMinY, outCellSize, Raster.getNoDataValue());
+						observers.add(asciiOutput);
+					} else {
+						InterpolateSplineLinearAsciiGridOutput asciiOutput = new InterpolateSplineLinearAsciiGridOutput(
+								entry.getValue(), metric, roiWidth, roiHeight, inMinX + (roiX * inCellSize),
+								inMinY + ((inHeight - roiY) * inCellSize) - (roiHeight * inCellSize), inCellSize,
+								Raster.getNoDataValue(), displacement);
+						observers.add(asciiOutput);
+					}
 				}
 			}
 		}
@@ -295,12 +303,15 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 						break;
 					}
 				}
-				if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
-					GeoTiffOutput geotiffOutput = new GeoTiffOutput(entry.getValue(), metric, outWidth, outHeight, outMinX,
-							outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
-					observers.add(geotiffOutput);
-				} else {
-					// TODO
+				if(metric != null){
+					//System.out.println("tiff for "+metric);
+					if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
+						GeoTiffOutput geotiffOutput = new GeoTiffOutput(entry.getValue(), metric, outWidth, outHeight, outMinX,
+								outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
+						observers.add(geotiffOutput);
+					} else {
+						// TODO
+					}
 				}
 			}
 		}
@@ -349,13 +360,15 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 						break;
 					}
 				}
-				if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
-					TabOutput tabOutput = new TabOutput(entry.getValue(), metric, outWidth, displacement);
-					observers.add(tabOutput);
-				} else {
-					InterpolateSplineLinearTabOutput tabOutput = new InterpolateSplineLinearTabOutput(entry.getValue(),
-							metric, roiWidth, displacement);
-					observers.add(tabOutput);
+				if(metric != null){
+					if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
+						TabOutput tabOutput = new TabOutput(entry.getValue(), metric, outWidth, displacement);
+						observers.add(tabOutput);
+					} else {
+						InterpolateSplineLinearTabOutput tabOutput = new InterpolateSplineLinearTabOutput(entry.getValue(),
+								metric, roiWidth, displacement);
+						observers.add(tabOutput);
+					}
 				}
 			}
 		}
@@ -734,6 +747,8 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			} else if (MetricManager.hasOnlyPatchMetric(metrics)) { // patch
 				
 
+				System.out.println("comptage des patchs");
+				
 				nbValues = 7 + 3 * values.length;
 
 				kernel = new SlidingPatchKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), values, inCellSize, unfilters);

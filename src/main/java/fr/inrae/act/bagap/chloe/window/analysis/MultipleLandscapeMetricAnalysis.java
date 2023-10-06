@@ -5,13 +5,16 @@ import java.util.Set;
 
 public class MultipleLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
 
-	private Set<LandscapeMetricAnalysis> analyses;
+	protected LandscapeMetricAnalysisBuilder builder;
 	
-	public MultipleLandscapeMetricAnalysis(){
+	protected Set<LandscapeMetricAnalysis> analyses;
+	
+	public MultipleLandscapeMetricAnalysis(LandscapeMetricAnalysisBuilder builder){
+		this.builder = builder;
 		analyses = new HashSet<LandscapeMetricAnalysis>();
 	}
 	
-	public void add(LandscapeMetricAnalysis analysis){
+	protected void add(LandscapeMetricAnalysis analysis){
 		analyses.add(analysis);
 	}
 

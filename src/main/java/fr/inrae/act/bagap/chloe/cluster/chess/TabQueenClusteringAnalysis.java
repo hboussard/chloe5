@@ -5,9 +5,10 @@ import java.util.Map;
 
 public class TabQueenClusteringAnalysis extends TabChessClusteringAnalysis {
 
+	/*
 	public TabQueenClusteringAnalysis(int[] inDatas, int width, int height, int[] interest, int noDataValue){		
 		super(inDatas, width, height, interest, noDataValue);
-	}
+	}*/
 	
 	public TabQueenClusteringAnalysis(float[] inDatas, int width, int height, int[] interest, int noDataValue){	
 		super(inDatas, width, height, interest, noDataValue);

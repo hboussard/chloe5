@@ -1,17 +1,9 @@
 package fr.inrae.act.bagap.chloe.window.output;
 
-import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Set;
 
-import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.coverage.grid.io.AbstractGridFormat;
-import org.geotools.gce.geotiff.GeoTiffFormat;
-import org.geotools.gce.geotiff.GeoTiffWriteParams;
-import org.geotools.gce.geotiff.GeoTiffWriter;
-import org.opengis.parameter.GeneralParameterValue;
-import org.opengis.parameter.ParameterValueGroup;
 
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
@@ -63,6 +55,7 @@ public class GeoTiffOutput implements CountingObserver{
 	
 	@Override
 	public void postrun(Counting c, int i, int j, Set<Metric> metrics) {
+		//System.out.println(metric+" "+format(metric.value()));
 		datas[ind++] = Float.parseFloat(format(metric.value()));
 	}
 	

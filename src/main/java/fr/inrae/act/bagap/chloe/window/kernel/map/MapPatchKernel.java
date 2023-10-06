@@ -19,9 +19,11 @@ public class MapPatchKernel extends MapLandscapeMetricKernel {
 	public void applyMapWindow(int theY) {
 			
 		TabQueenClusteringAnalysis ca = new TabQueenClusteringAnalysis(inDatas(), width(), height(), values, noDataValue());
-		int[] tabCluster = (int[]) ca.allRun();
+		//TabRookClusteringAnalysis ca = new TabRookClusteringAnalysis(inDatas(), width(), height(), values, noDataValue());
+		//int[] tabCluster = (int[]) ca.allRun();
+		float[] tabCluster = (float[]) ca.allRun();
 		
-		TabClusteringOutput cto = new TabClusteringOutput(tabCluster, inDatas(), values, cellSize);
+		TabClusteringOutput cto = new TabClusteringOutput(tabCluster, inDatas(), values, cellSize, noDataValue());
 		cto.allRun();
 		
 		outDatas()[2] = inDatas().length;

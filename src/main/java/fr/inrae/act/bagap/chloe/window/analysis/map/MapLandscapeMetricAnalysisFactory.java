@@ -3,6 +3,7 @@ package fr.inrae.act.bagap.chloe.window.analysis.map;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
@@ -73,7 +74,8 @@ public abstract class MapLandscapeMetricAnalysisFactory {
 		Set<Metric> metrics = builder.getMetrics();
 			
 		// observers
-		Set<CountingObserver> observers = builder.getObservers();
+		//Set<CountingObserver> observers = builder.getObservers();
+		Set<CountingObserver> observers = new HashSet<CountingObserver>();
 		
 		if(builder.getCsv() != null){
 			String name = new File(builder.getRasterFile()).getName();

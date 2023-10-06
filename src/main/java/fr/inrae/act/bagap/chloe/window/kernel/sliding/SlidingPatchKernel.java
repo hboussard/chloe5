@@ -39,7 +39,7 @@ public class SlidingPatchKernel extends AbstractSlidingLandscapeMetricKernel {
 				float coeff;
 				float nb = 0;
 				float nb_nodata = 0;
-				int[] tabCover = new int[windowSize()*windowSize()];
+				float[] tabCover = new float[windowSize()*windowSize()];
 				for (int dy = -mid; dy <= mid; dy += 1) {
 					if(((y + dy) >= 0) && ((y + dy) < height())){
 						for (int dx = -mid; dx <= mid; dx += 1) {
@@ -62,9 +62,9 @@ public class SlidingPatchKernel extends AbstractSlidingLandscapeMetricKernel {
 				}
 				
 				TabQueenClusteringAnalysis ca = new TabQueenClusteringAnalysis(tabCover, windowSize(), windowSize(), values, noDataValue());
-				int[] tabCluster = (int[]) ca.allRun();
+				float[] tabCluster = (float[]) ca.allRun();
 				
-				TabClusteringOutput cto = new TabClusteringOutput(tabCluster, tabCover, values, cellSize);
+				TabClusteringOutput cto = new TabClusteringOutput(tabCluster, tabCover, values, cellSize, noDataValue());
 				cto.allRun();
 				
 				outDatas()[ind][2] = nb;

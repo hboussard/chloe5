@@ -12,12 +12,13 @@ public abstract class TabChessClusteringAnalysis extends Analysis{
 	
 	protected int nbNoDataValue;
 	
-	protected int[] inDatas;
+	protected float[] inDatas;
 	
 	protected int height, width;
 	
 	protected Set<Float> interest;
 	
+	/*
 	public TabChessClusteringAnalysis(int[] inDatas, int width, int height, int[] interest, int noDataValue){		
 		this.inDatas = inDatas;
 		this.height = height;
@@ -28,13 +29,17 @@ public abstract class TabChessClusteringAnalysis extends Analysis{
 		}
 		this.noDataValue = noDataValue;
 	}
+	*/
 	
 	public TabChessClusteringAnalysis(float[] inDatas, int width, int height, int[] interest, int noDataValue){	
+		this.inDatas = inDatas;
+		/*
 		this.inDatas = new int[inDatas.length];
 		int ind = 0;
 		for(float tc : inDatas){
 			this.inDatas[ind++] = (int) tc;
 		}
+		*/
 		this.height = height;
 		this.width = width;
 		this.interest = new HashSet<Float>();

@@ -1,7 +1,7 @@
 package fr.inrae.act.bagap.chloe.script;
 
 import fr.inra.sad.bagap.apiland.analysis.combination.CombinationExpressionFactory;
-import fr.inra.sad.bagap.apiland.analysis.tab.Pixel2PixelCombinationExpressionTabCalculation;
+import fr.inra.sad.bagap.apiland.analysis.tab.CombinationExpressionPixel2PixelTabCalculation;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
@@ -42,7 +42,7 @@ public class ScriptCombine {
 		String[] names = new String[]{"m1", "m2"};
 		float[][] tabs = new float[][]{data1, data2};
 		
-		Pixel2PixelCombinationExpressionTabCalculation cal = CombinationExpressionFactory.createPixel2PixelTabCalculation(data, formula, entete.noDataValue(), names, tabs);
+		CombinationExpressionPixel2PixelTabCalculation cal = CombinationExpressionFactory.createPixel2PixelTabCalculation(data, formula, entete.noDataValue(), names, tabs);
 		cal.run();
 		
 		CoverageManager.write(path+"comb2_2018_10m.tif", data, entete);	

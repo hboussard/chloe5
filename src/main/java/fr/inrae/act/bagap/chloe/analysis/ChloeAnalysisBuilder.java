@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Set;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.RefPoint;
+import fr.inra.sad.bagap.apiland.domain.Domain;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
@@ -296,6 +297,10 @@ public abstract class ChloeAnalysisBuilder {
 	}
 
 	public String getRasterFile() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setDomains(Map<Domain<Float, Float>, Integer> domains) {
 		throw new UnsupportedOperationException();
 	}
 }

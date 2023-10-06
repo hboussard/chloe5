@@ -11,7 +11,9 @@ public class LargestPatchIndex extends Metric implements PatchMetric {
 
 	@Override
 	protected void doCalculate(Counting co) {
-		value = co.maxSurface();
+		if(co.validValues() > 0){
+			value = co.maxSurface();
+		}
 	}
 
 }

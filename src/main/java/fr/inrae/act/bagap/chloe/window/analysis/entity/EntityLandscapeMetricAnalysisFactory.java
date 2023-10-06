@@ -2,6 +2,7 @@ package fr.inrae.act.bagap.chloe.window.analysis.entity;
 
 import java.awt.Rectangle;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
@@ -70,7 +71,9 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 		Set<Metric> metrics = builder.getMetrics();
 					
 		// observers
-		Set<CountingObserver> observers = builder.getObservers();
+		//Set<CountingObserver> observers = builder.getObservers();
+		Set<CountingObserver> observers = new HashSet<CountingObserver>();
+		
 		if(builder.getCsv() != null){
 			EntityCsvOutput csvOutput = new EntityCsvOutput(builder.getCsv());
 			observers.add(csvOutput);

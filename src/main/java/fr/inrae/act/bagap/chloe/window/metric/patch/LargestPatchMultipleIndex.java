@@ -21,9 +21,12 @@ public class LargestPatchMultipleIndex extends Metric implements PatchMetric {
 	
 	@Override
 	protected void doCalculate(Counting co) {
-		for(short vv : v){
-			value = Math.max(value, co.maxSurface(vv));
+		if(co.validValues() > 0){
+			for(short vv : v){
+				value = Math.max(value, co.maxSurface(vv));
+			}
 		}
+		
 	}
 	
 }

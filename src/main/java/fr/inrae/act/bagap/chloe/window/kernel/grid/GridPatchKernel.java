@@ -25,7 +25,7 @@ public class GridPatchKernel extends GridLandscapeMetricKernel {
 		}
 			
 		int v;	
-		int[] tabCover = new int[gridSize()*gridSize()];
+		float[] tabCover = new float[gridSize()*gridSize()];
 		for(int y=0; y<gridSize(); y++) {
 			if((theY+y) < height()){
 				for(int lx=0; lx<gridSize(); lx++) {
@@ -43,9 +43,9 @@ public class GridPatchKernel extends GridLandscapeMetricKernel {
 		}
 		
 		TabQueenClusteringAnalysis ca = new TabQueenClusteringAnalysis(tabCover, gridSize(), gridSize(), values, noDataValue());
-		int[] tabCluster = (int[]) ca.allRun();
+		float[] tabCluster = (float[]) ca.allRun();
 		
-		TabClusteringOutput cto = new TabClusteringOutput(tabCluster, tabCover, values, cellSize);
+		TabClusteringOutput cto = new TabClusteringOutput(tabCluster, tabCover, values, cellSize, noDataValue());
 		cto.allRun();
 		
 		outDatas()[x][4] = cto.getNbPatch();

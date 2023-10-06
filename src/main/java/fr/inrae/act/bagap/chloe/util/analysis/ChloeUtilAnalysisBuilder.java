@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inra.sad.bagap.apiland.domain.Domain;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysis;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisBuilder;
 
@@ -21,6 +22,8 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	
 	private int noDataValue;
 	
+	private Map<Domain<Float, Float>, Integer> domains;
+	
 	@Override
 	public void reset() {
 		factors = null;
@@ -29,6 +32,7 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 		combination = null;
 		changes = null;
 		noDataValue = Raster.getNoDataValue();
+		domains = null;
 	}
 	
 	@Override
@@ -70,6 +74,13 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 		this.noDataValue = noDataValue;
 	}
 	
+	@Override
+	public void setDomains(Map<Domain<Float, Float>, Integer> domains) {
+		this.domains= domains;
+	}
+	
+	// getters
+	
 	public Map<String, String> getNamesAndRasters(){
 		return factors;
 	}
@@ -93,6 +104,10 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	
 	public int getNoDataValue(){
 		return noDataValue;
+	}
+	
+	public Map<Domain<Float, Float>, Integer> getDomains(){
+		return domains;
 	}
 	
 	@Override

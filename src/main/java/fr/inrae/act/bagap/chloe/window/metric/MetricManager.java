@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import org.jumpmind.symmetric.csv.CsvReader;
 
@@ -22,6 +23,8 @@ import fr.inrae.act.bagap.chloe.window.metric.value.ValueMetric;
 public class MetricManager {
 
 	private static Map<String, String> metrics;
+	
+	private static Map<String, Integer> coherences;
 	/*
 	private static Set<String> valuesMetrics;
 	
@@ -45,6 +48,7 @@ public class MetricManager {
 	
 	static {
 		metrics = new HashMap<String, String>();
+		coherences = new HashMap<String, Integer>();
 		/*
 		valuesMetrics = new HashSet<String>();
 		couplesMetrics = new HashSet<String>();
@@ -68,6 +72,8 @@ public class MetricManager {
 				if(!cr.get("name").startsWith("#")){
 					
 					metrics.put(cr.get("name"), cr.get("class"));
+					coherences.put(cr.get("name"), Integer.parseInt(cr.get("coherence")));
+					
 					/*
 					switch(cr.get("type")){
 					case "value" :
@@ -332,5 +338,36 @@ public class MetricManager {
 		return true;
 	}
 
+	public static boolean hasCoherence(Set<Metric> metrics){
+		int ic = 0;
+		int c;
+		for(Metric m : metrics){
+			c = coherences.get(m.getName().split("_")[0]);
+			if(ic != c && ic != 0 && c != 0){
+				return false;
+			}else{
+				ic = c;
+			}
+		}
+		return true;
+	}
+	
+	public static Set<Integer> getCoherences(Set<Metric> metrics){
+		Set<Integer> cIndex = new TreeSet<Integer>();
+		for(Metric m : metrics){
+			cIndex.add(coherences.get(m.getName().split("_")[0]));
+		}
+		return cIndex;
+	}
+	
+	public static Set<Metric> getMetricsByCoherence(Set<Metric> metrics, int coherence){
+		Set<Metric> cMetrics = new HashSet<Metric>();
+		for(Metric m : metrics){
+			if(coherences.get(m.getName().split("_")[0]) == coherence){
+				cMetrics.add(m);
+			}
+		}
+		return cMetrics;
+	}
 	
 }

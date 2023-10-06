@@ -30,9 +30,36 @@ import fr.inrae.act.bagap.raster.TileCoverage;
 public class Script {
 
 	public static void main(String[] args){
+
+		scriptMultipleSliding();
+	}
+	
+	private static void scriptMultipleSliding(){
 		
-		//scriptSlope();
-		scriptSelected();
+		long begin = System.currentTimeMillis();
+		
+		String path = "C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(ChloeAnalysisType.SLIDING);
+		//builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		builder.setRasterFile(path+"pf_2018_10m.tif");
+		builder.addMetric("SHDI");
+		builder.addMetric("HET");
+		builder.addMetric("NP");
+		builder.addMetric("LPI");
+		builder.addMetric("MPS");
+		builder.setWindowSize(41);
+		builder.setDisplacement(4);
+		builder.addGeoTiffOutput("SHDI", path+"sliding_c5/shdi1.tif");
+		builder.addGeoTiffOutput("NP", path+"sliding_c5/np1.tif");
+		builder.addCsvOutput(path+"sliding_c5/sliding_pf_2018.csv");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+		
 	}
 	
 	private static void scriptSelected(){

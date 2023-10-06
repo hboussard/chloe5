@@ -31,7 +31,7 @@ public class SelectedPatchKernel extends SelectedLandscapeMetricKernel {
 		int ic;
 		int v;
 		float coeff;
-		int[] tabCover = new int[windowSize()*windowSize()];
+		float[] tabCover = new float[windowSize()*windowSize()];
 		for (int dy = -mid; dy <= mid; dy += 1) {
 			if(((y + dy) >= 0) && ((y + dy) < height())){
 				for (int dx = -mid; dx <= mid; dx += 1) {
@@ -52,9 +52,9 @@ public class SelectedPatchKernel extends SelectedLandscapeMetricKernel {
 		}
 			
 		TabQueenClusteringAnalysis ca = new TabQueenClusteringAnalysis(tabCover, windowSize(), windowSize(), values, noDataValue());
-		int[] tabCluster = (int[]) ca.allRun();
+		float[] tabCluster = (float[]) ca.allRun();
 			
-		TabClusteringOutput cto = new TabClusteringOutput(tabCluster, tabCover, values, cellSize());
+		TabClusteringOutput cto = new TabClusteringOutput(tabCluster, tabCover, values, cellSize(), noDataValue());
 		cto.allRun();
 			
 		outDatas().get(p)[4] = cto.getNbPatch();
