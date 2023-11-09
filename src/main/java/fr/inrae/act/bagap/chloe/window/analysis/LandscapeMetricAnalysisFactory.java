@@ -29,43 +29,27 @@ public class LandscapeMetricAnalysisFactory {
 		if(builder.getCoverage() != null){
 		
 			coverage = builder.getCoverage();
+			builder.setEntete(coverage.getEntete());
 			inWidth = coverage.getEntete().width();
 			inHeight = coverage.getEntete().height();
 			inCellSize = coverage.getEntete().cellsize();
 		
-		}else if(builder.getRasterFile() != null){
+		}else if(builder.getRasterTile() != null){
 			
-			coverage = CoverageManager.getCoverage(builder.getRasterFile());
+			coverage = CoverageManager.getCoverage(builder.getRasterTile());
+			builder.setEntete(coverage.getEntete());
 			inWidth = coverage.getEntete().width();
 			inHeight = coverage.getEntete().height();
 			inCellSize = coverage.getEntete().cellsize();
 			
-			/*
-			// coverage et infos associees
-			GridCoverage2DReader reader;
-			if(builder.getRasterFile().endsWith(".asc")){
-				File file = new File(builder.getRasterFile());
-				reader = new ArcGridReader(file);
-			}else if(builder.getRasterFile().endsWith(".tif")){
-				File file = new File(builder.getRasterFile());
-				reader = new GeoTiffReader(file);
-			}else{
-				throw new IllegalArgumentException(builder.getRasterFile()+" is not a recognize raster");
-			}
-			GridCoverage2D coverage2D = (GridCoverage2D) reader.read(null);
-			reader.dispose(); 
+		}else if(builder.getRasterFile() != null){
 			
-			inWidth = (Integer) coverage2D.getProperty("image_width");
-			inHeight = (Integer) coverage2D.getProperty("image_height");
-			double inMinX = coverage2D.getEnvelope().getMinimum(0);
-			double inMinY = coverage2D.getEnvelope().getMinimum(1);
-			double inMaxX = coverage2D.getEnvelope().getMaximum(0);
-			double inMaxY = coverage2D.getEnvelope().getMaximum(1);
-			inCellSize = (float) ((java.awt.geom.AffineTransform) coverage2D.getGridGeometry().getGridToCRS2D()).getScaleX();
+			coverage = CoverageManager.getCoverage(builder.getRasterFile());
+			builder.setEntete(coverage.getEntete());
+			inWidth = coverage.getEntete().width();
+			inHeight = coverage.getEntete().height();
+			inCellSize = coverage.getEntete().cellsize();
 			
-			EnteteRaster entete = new EnteteRaster(inWidth, inHeight, inMinX, inMaxX, inMinY, inMaxY, inCellSize, -1);
-			coverage = new FileCoverage(coverage2D, entete);
-			*/
 		}else if(builder.getRasterTab() != null){
 			
 			inWidth = builder.getEntete().width();
@@ -73,13 +57,6 @@ public class LandscapeMetricAnalysisFactory {
 			inCellSize = builder.getEntete().cellsize();
 			
 			coverage = new TabCoverage(builder.getRasterTab(), builder.getEntete());
-			
-		}else if(builder.getRasterTile() != null){
-			
-			coverage = CoverageManager.getCoverage(builder.getRasterTile());
-			inWidth = coverage.getEntete().width();
-			inHeight = coverage.getEntete().height();
-			inCellSize = coverage.getEntete().cellsize();
 			
 		}else{
 			throw new IllegalArgumentException("no raster declared");

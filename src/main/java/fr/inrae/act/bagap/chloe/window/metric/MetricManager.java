@@ -14,6 +14,7 @@ import java.util.TreeSet;
 import org.jumpmind.symmetric.csv.CsvReader;
 
 import fr.inrae.act.bagap.chloe.window.metric.basic.BasicMetric;
+import fr.inrae.act.bagap.chloe.window.metric.continuity.ContinuityMetric;
 import fr.inrae.act.bagap.chloe.window.metric.couple.CoupleMetric;
 import fr.inrae.act.bagap.chloe.window.metric.patch.PatchMetric;
 import fr.inrae.act.bagap.chloe.window.metric.quantitative.QuantitativeMetric;
@@ -302,6 +303,15 @@ public class MetricManager {
 		return false;
 	}
 	
+	public static boolean hasOnlyBasicMetric(Set<Metric> metrics) {
+		for(Metric m : metrics){
+			if(!(m instanceof BasicMetric)){
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	public static boolean hasOnlyQuantitativeMetric(Set<Metric> metrics) {
 		for(Metric m : metrics){
 			if(!(m instanceof QuantitativeMetric) && !(m instanceof BasicMetric)){
@@ -322,7 +332,7 @@ public class MetricManager {
 	
 	public static boolean hasOnlyQualitativeMetric(Set<Metric> metrics) {
 		for(Metric m : metrics){
-			if(!(m instanceof QualitativeMetric)){
+			if(!(m instanceof QualitativeMetric) && !(m instanceof BasicMetric)){
 				return false;
 			}
 		}
@@ -332,6 +342,15 @@ public class MetricManager {
 	public static boolean hasOnlyPatchMetric(Set<Metric> metrics) {
 		for(Metric m : metrics){
 			if(!(m instanceof PatchMetric) && !(m instanceof BasicMetric)){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean hasOnlyContinuityMetric(Set<Metric> metrics) {
+		for(Metric m : metrics){
+			if(!(m instanceof ContinuityMetric) && !(m instanceof BasicMetric)){
 				return false;
 			}
 		}
@@ -369,5 +388,7 @@ public class MetricManager {
 		}
 		return cMetrics;
 	}
+
+
 	
 }

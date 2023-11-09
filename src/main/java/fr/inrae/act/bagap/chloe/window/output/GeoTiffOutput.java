@@ -1,10 +1,8 @@
 package fr.inrae.act.bagap.chloe.window.output;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.Set;
 
-
+import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
@@ -12,8 +10,6 @@ import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class GeoTiffOutput implements CountingObserver{
-
-	private final DecimalFormat format;
 	
 	private final String file;
 	
@@ -39,9 +35,6 @@ public class GeoTiffOutput implements CountingObserver{
 		this.cellSize = cellSize;
 		this.noDataValue = noDataValue;
 		this.datas = new float[height*width];
-		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-		symbols.setDecimalSeparator('.');
-		format = new DecimalFormat("0.00000", symbols);
 	}
 	
 	@Override
@@ -56,7 +49,7 @@ public class GeoTiffOutput implements CountingObserver{
 	@Override
 	public void postrun(Counting c, int i, int j, Set<Metric> metrics) {
 		//System.out.println(metric+" "+format(metric.value()));
-		datas[ind++] = Float.parseFloat(format(metric.value()));
+		datas[ind++] = Float.parseFloat(Util.format(metric.value()));
 	}
 	
 	@Override
@@ -91,14 +84,6 @@ public class GeoTiffOutput implements CountingObserver{
 		*/
 		
 		CoverageManager.writeGeotiff(file, datas, new EnteteRaster(width, height, outMinX, outMaxX, outMinY, outMaxY, (float) cellSize, noDataValue));
-	}
-	
-	protected String format(double v){
-		int f = new Double(Math.floor(v)).intValue();
-		if(v == f){
-			return f+"";
-		}
-		return format.format(v);
 	}
 
 }

@@ -8,13 +8,13 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class InterpolateSplineLinearCsvOutput implements CountingObserver{
-
+	
 	private BufferedWriter bw;
 	
 	private final String csv;
@@ -68,7 +68,7 @@ public class InterpolateSplineLinearCsvOutput implements CountingObserver{
 			values.put(wm.getName(), new TreeMap<Integer, double[]>());
 			values.get(wm.getName()).put(0, new double[width]);
 			for(int i=0; i<width; i++){
-				values.get(wm.getName()).get(0)[i] = (double) Raster.getNoDataValue();
+				values.get(wm.getName()).get(0)[i] = (double) noDataValue;
 			}
 			values_d.put(wm.getName(), new double[width]);
 		}
@@ -121,7 +121,7 @@ public class InterpolateSplineLinearCsvOutput implements CountingObserver{
 				for(int yv=1; yv<=delta; yv++){
 					values.get(metric).put(j-delta+yv, new double[width]);
 					for(int ii=0; ii<width; ii++){
-						values.get(metric).get(j-delta+yv)[ii] = (double) Raster.getNoDataValue();
+						values.get(metric).get(j-delta+yv)[ii] = (double) noDataValue;
 					}
 				}
 			}
@@ -164,7 +164,7 @@ public class InterpolateSplineLinearCsvOutput implements CountingObserver{
 				if(i == 0){ // on est sur la premiÃ¨re valeur de la ligne
 					// les autres valeurs sont vides
 					for(int ii=1; ii<width; ii++){
-						values.get(m).get(0)[ii] = (double) Raster.getNoDataValue();
+						values.get(m).get(0)[ii] = (double) noDataValue;
 					}
 				}else{ // on n'est pas sur la premiere valeur de la ligne
 					v = values.get(m).get(0)[i];
@@ -218,7 +218,7 @@ public class InterpolateSplineLinearCsvOutput implements CountingObserver{
 				for(int ii=0; ii<width; ii++){
 					im = 0;
 					for(String m : values.keySet()){
-						vv[im++] = Raster.getNoDataValue();
+						vv[im++] = noDataValue;
 					}
 					write(vv, ii, jj);
 				}
@@ -236,23 +236,32 @@ public class InterpolateSplineLinearCsvOutput implements CountingObserver{
 	}
 	
 	private double droite(double v_delta, double v, double yv){
-		if(v == Raster.getNoDataValue() || v_delta == Raster.getNoDataValue()){
-			return Raster.getNoDataValue();
+		if(v == noDataValue || v_delta == noDataValue){
+			return noDataValue;
 		}
 		return yv*(v-v_delta)/delta + v_delta;
 	}
 	
 	private void write(double[] vv, int i, int j){
-		try {
-			bw.write(CoordinateManager.getProjectedX(minX, cellSize, i)+";");
-			bw.write(CoordinateManager.getProjectedY(minY, cellSize, height, j)+"");
-			
-			for(double v : vv){
-				bw.write(";"+v);
+		boolean export = false;
+		for(double v : vv){
+			if(v != noDataValue){
+				export = true;
+				break;
 			}
-			bw.newLine();
-		} catch (IOException e) {
-			e.printStackTrace();
+		}
+		if(export){
+			try {
+				bw.write(CoordinateManager.getProjectedX(minX, cellSize, i)+";");
+				bw.write(CoordinateManager.getProjectedY(minY, cellSize, height, j)+"");
+				
+				for(double v : vv){
+					bw.write(";"+Util.format(v));
+				}
+				bw.newLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

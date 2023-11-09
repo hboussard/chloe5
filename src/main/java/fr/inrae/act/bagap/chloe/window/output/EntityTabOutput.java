@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
@@ -49,7 +50,7 @@ public class EntityTabOutput implements CountingObserver{
 	@Override
 	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// stockage de la valeur
-		internalDatas.put(id, new Double(metric.value()).floatValue());
+		internalDatas.put(id, Float.parseFloat(Util.format(metric.value())));
 	}
 	
 	@Override

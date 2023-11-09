@@ -60,16 +60,16 @@ public class Script {
 
 		CoverageManager.writeGeotiff(permGO2021, data, entete);
 		*/
-		/*
+		
 		String inGO2021 = "H:/temp/cont/GO_2021_ebr.tif";
 		Coverage covGO = CoverageManager.getCoverage(inGO2021);
-		float[] dataGo = covGO.getDatas();
+		float[] dataGo = covGO.getData();
 		EnteteRaster entete = covGO.getEntete();
 		covGO.dispose();
 		
 		String permGO2021 = "H:/temp/cont/permeability.tif";
 		Coverage covPerm = CoverageManager.getCoverage(permGO2021);
-		float[] dataPerm = covPerm.getDatas();
+		float[] dataPerm = covPerm.getData();
 		covPerm.dispose();
 		
 		float[] data = new float[entete.width()*entete.height()];
@@ -79,7 +79,7 @@ public class Script {
 		
 		String rasterCont = "H:/temp/cont/continuity.tif";
 		CoverageManager.writeGeotiff(rasterCont, data, entete);
-		*/
+		
 		
 		//scriptHeterogeneity();
 	}

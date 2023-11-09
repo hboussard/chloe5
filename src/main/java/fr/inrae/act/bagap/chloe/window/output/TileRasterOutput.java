@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.locationtech.jts.geom.Envelope;
 
+import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
@@ -99,7 +100,7 @@ public abstract class TileRasterOutput implements CountingObserver {
 		if(!actives[t] && v != noDataValue){
 			actives[t] = true;
 		}
-		tabs[t][theY*tileSize + x] = (float) v;
+		tabs[t][theY*tileSize + x] = Float.parseFloat(Util.format(v));
 		theX++;
 		if((theX-initMinX) >= width){
 			for(x++; x<tileSize; x++){

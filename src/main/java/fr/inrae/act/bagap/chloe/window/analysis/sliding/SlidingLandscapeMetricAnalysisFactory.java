@@ -12,12 +12,13 @@ import java.util.Map.Entry;
 
 import fr.inra.sad.bagap.apiland.analysis.combination.CombinationExpressionFactory;
 import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
+import fr.inrae.act.bagap.chloe.window.counting.BasicCounting;
+import fr.inrae.act.bagap.chloe.window.counting.ContinuityCounting;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.counting.CoupleCounting;
@@ -26,6 +27,7 @@ import fr.inrae.act.bagap.chloe.window.counting.QuantitativeCounting;
 import fr.inrae.act.bagap.chloe.window.counting.SlopeCounting;
 import fr.inrae.act.bagap.chloe.window.counting.ValueAndCoupleCounting;
 import fr.inrae.act.bagap.chloe.window.counting.ValueCounting;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingBasicKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingCountCoupleKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingCountValueAndCoupleKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingCountValueKernel;
@@ -43,6 +45,8 @@ import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.square.FastSquareCoun
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.square.FastSquareCountValueKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.square.FastSquareGrainBocagerDistanceBocageKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.square.FastSquareQuantitativeKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.functional.SlidingFunctionalBasicKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.functional.SlidingFunctionalContinuityKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.functional.SlidingFunctionalCountCoupleKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.functional.SlidingFunctionalCountValueAndCoupleKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.functional.SlidingFunctionalCountValueKernel;
@@ -53,7 +57,9 @@ import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.AsciiGridOutput;
 import fr.inrae.act.bagap.chloe.window.output.CoverageOutput;
 import fr.inrae.act.bagap.chloe.window.output.CsvOutput;
+//import fr.inrae.act.bagap.chloe.window.output.CsvOutput2;
 import fr.inrae.act.bagap.chloe.window.output.GeoTiffOutput;
+import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineGeoTiffOutput;
 import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineLinearAsciiGridOutput;
 import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineLinearCsvOutput;
 import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineLinearTabOutput;
@@ -123,8 +129,15 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 		// window coeff and distance
 		float[] coeffs = new float[windowSize * windowSize];
 
-		double dMax = midWindowSize * inCellSize;
-		DistanceFunction function = CombinationExpressionFactory.createDistanceFunction(builder.getWindowDistanceFunction(), dMax);
+		double dMax = builder.getDMax();
+		if(dMax == -1){
+			dMax = midWindowSize * inCellSize;
+		}
+		
+		DistanceFunction function = null;
+		if (builder.getWindowDistanceType() == WindowDistanceType.WEIGHTED) {
+			function = CombinationExpressionFactory.createDistanceFunction(builder.getWindowDistanceFunction(), dMax);
+		}
 		
 		double theoreticalSize = 0;
 		int theoreticalCoupleSize = 0;
@@ -170,25 +183,23 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 		
 		if(builder.getCoverageOutputs() != null){
 			for(CoverageOutput coverageOutput : builder.getCoverageOutputs()) {
-				coverageOutput.setEntete(new EnteteRaster(outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, (float) outCellSize, Raster.getNoDataValue()));
+				coverageOutput.setEntete(new EnteteRaster(outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, (float) outCellSize, coverage.getEntete().noDataValue()));
 				observers.add(coverageOutput);
 			}
 		}
 		
 		if (builder.getCsv() != null) {
 			if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
-				// CsvOutput2 csvOutput = new CsvOutput2(builder.getCsv(),
-				// outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight,
-				// outCellSize, Raster.getNoDataValue());
-				CsvOutput csvOutput = new CsvOutput(builder.getCsv(), outMinX, outMaxX, outMinY, outMaxY, outWidth,
-						outHeight, outCellSize, Raster.getNoDataValue());
+				//CsvOutput2 csvOutput = new CsvOutput2(builder.getCsv(), outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight,
+				 //outCellSize, Raster.getNoDataValue());
+				CsvOutput csvOutput = new CsvOutput(builder.getCsv(), outMinX, outMaxX, outMinY, outMaxY, outWidth,	outHeight, outCellSize, coverage.getEntete().noDataValue());
 				observers.add(csvOutput);
 			} else {
 				InterpolateSplineLinearCsvOutput csvOutput = new InterpolateSplineLinearCsvOutput(builder.getCsv(),
 						inMinX + (roiX * inCellSize),
 						inMaxX - ((inWidth - roiX) * inCellSize) + (roiWidth * inCellSize),
 						inMinY + ((inHeight - roiY) * inCellSize) - (roiHeight * inCellSize),
-						inMaxY - (roiY * inCellSize), roiWidth, roiHeight, inCellSize, Raster.getNoDataValue(),
+						inMaxY - (roiY * inCellSize), roiWidth, roiHeight, inCellSize, coverage.getEntete().noDataValue(),
 						displacement);
 				observers.add(csvOutput);
 			}
@@ -205,7 +216,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 						}
 					}
 					if(metric != null){
-						TileAsciiGridOutput tileAsciiOutput = new TileAsciiGridOutput(entry2.getValue(), metric, entry.getKey(), outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
+						TileAsciiGridOutput tileAsciiOutput = new TileAsciiGridOutput(entry2.getValue(), metric, entry.getKey(), outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize, coverage.getEntete().noDataValue());
 						observers.add(tileAsciiOutput);
 					}
 				}
@@ -223,7 +234,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 						}
 					}
 					if(metric != null){
-						TileGeoTiffOutput tileGeoTiffOutput = new TileGeoTiffOutput(entry2.getValue(), metric, entry.getKey(), outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
+						TileGeoTiffOutput tileGeoTiffOutput = new TileGeoTiffOutput(entry2.getValue(), metric, entry.getKey(), outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize, coverage.getEntete().noDataValue());
 						observers.add(tileGeoTiffOutput);
 					}
 				}
@@ -242,13 +253,13 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				if(metric != null){
 					if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
 						AsciiGridOutput asciiOutput = new AsciiGridOutput(entry.getValue(), metric, outWidth, outHeight,
-								outMinX, outMinY, outCellSize, Raster.getNoDataValue());
+								outMinX, outMinY, outCellSize, coverage.getEntete().noDataValue());
 						observers.add(asciiOutput);
 					} else {
 						InterpolateSplineLinearAsciiGridOutput asciiOutput = new InterpolateSplineLinearAsciiGridOutput(
 								entry.getValue(), metric, roiWidth, roiHeight, inMinX + (roiX * inCellSize),
 								inMinY + ((inHeight - roiY) * inCellSize) - (roiHeight * inCellSize), inCellSize,
-								Raster.getNoDataValue(), displacement);
+								coverage.getEntete().noDataValue(), displacement);
 						observers.add(asciiOutput);
 					}
 				}
@@ -266,29 +277,21 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				
 				StringBuffer sb = new StringBuffer();
 				sb.append(new File(builder.getRasterFile()).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
-				if(builder.getWindowShapeType() == WindowShapeType.CIRCLE){
-					sb.append("_cr");
-				}else if(builder.getWindowShapeType() == WindowShapeType.SQUARE){
-					sb.append("_sq");
-				}else if (builder.getWindowShapeType() == WindowShapeType.FUNCTIONAL) {
-					sb.append("_fu");
-				}
-				sb.append("_w"+builder.getWindowSize());
 				sb.append("_"+m.getName());
-				sb.append("_d_"+builder.getDisplacement());
+				sb.append("_"+builder.getWindowSize());
 				sb.append(".asc");
 				
 				asciiFile = asciiFolder+sb.toString();
 				
 				if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
 					AsciiGridOutput asciiOutput = new AsciiGridOutput(asciiFile, m, outWidth, outHeight,
-							outMinX, outMinY, outCellSize, Raster.getNoDataValue());
+							outMinX, outMinY, outCellSize, coverage.getEntete().noDataValue());
 					observers.add(asciiOutput);
 				} else {
 					InterpolateSplineLinearAsciiGridOutput asciiOutput = new InterpolateSplineLinearAsciiGridOutput(
 							asciiFile, m, roiWidth, roiHeight, inMinX + (roiX * inCellSize),
 							inMinY + ((inHeight - roiY) * inCellSize) - (roiHeight * inCellSize), inCellSize,
-							Raster.getNoDataValue(), displacement);
+							coverage.getEntete().noDataValue(), displacement);
 					observers.add(asciiOutput);
 				}
 			}
@@ -307,10 +310,14 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 					//System.out.println("tiff for "+metric);
 					if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
 						GeoTiffOutput geotiffOutput = new GeoTiffOutput(entry.getValue(), metric, outWidth, outHeight, outMinX,
-								outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
+								outMaxX, outMinY, outMaxY, outCellSize, coverage.getEntete().noDataValue());
 						observers.add(geotiffOutput);
 					} else {
-						// TODO
+						InterpolateSplineGeoTiffOutput geotiffOutput = new InterpolateSplineGeoTiffOutput(entry.getValue(), metric, roiWidth, roiHeight, inMinX + (roiX * inCellSize),
+								inMaxX - ((inWidth - roiX) * inCellSize) + (roiWidth * inCellSize),
+								inMinY + ((inHeight - roiY) * inCellSize) - (roiHeight * inCellSize),
+								inMaxY - (roiY * inCellSize), inCellSize, coverage.getEntete().noDataValue(), displacement);
+						observers.add(geotiffOutput);
 					}
 				}
 			}
@@ -327,26 +334,22 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				
 				StringBuffer sb = new StringBuffer();
 				sb.append(new File(builder.getRasterFile()).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
-				if(builder.getWindowShapeType() == WindowShapeType.CIRCLE){
-					sb.append("_cr");
-				}else if(builder.getWindowShapeType() == WindowShapeType.SQUARE){
-					sb.append("_sq");
-				}else if (builder.getWindowShapeType() == WindowShapeType.FUNCTIONAL) {
-					sb.append("_fu");
-				}
-				sb.append("_w"+builder.getWindowSize());
 				sb.append("_"+m.getName());
-				sb.append("_d_"+builder.getDisplacement());
+				sb.append("_"+builder.getWindowSize());
 				sb.append(".tif");
 				
 				tifFile = tifFolder+sb.toString();
 				
 				if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
 					GeoTiffOutput geotiffOutput = new GeoTiffOutput(tifFile, m, outWidth, outHeight, outMinX,
-							outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
+							outMaxX, outMinY, outMaxY, outCellSize, coverage.getEntete().noDataValue());
 					observers.add(geotiffOutput);
 				} else {
-					// TODO
+					InterpolateSplineGeoTiffOutput geotiffOutput = new InterpolateSplineGeoTiffOutput(tifFile, m, roiWidth, roiHeight, inMinX + (roiX * inCellSize),
+							inMaxX - ((inWidth - roiX) * inCellSize) + (roiWidth * inCellSize),
+							inMinY + ((inHeight - roiY) * inCellSize) - (roiHeight * inCellSize),
+							inMaxY - (roiY * inCellSize), inCellSize, coverage.getEntete().noDataValue(), displacement);
+					observers.add(geotiffOutput);
 				}
 			}
 		}
@@ -365,8 +368,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 						TabOutput tabOutput = new TabOutput(entry.getValue(), metric, outWidth, displacement);
 						observers.add(tabOutput);
 					} else {
-						InterpolateSplineLinearTabOutput tabOutput = new InterpolateSplineLinearTabOutput(entry.getValue(),
-								metric, roiWidth, displacement);
+						InterpolateSplineLinearTabOutput tabOutput = new InterpolateSplineLinearTabOutput(entry.getValue(), metric, roiWidth, displacement, coverage.getEntete().noDataValue());
 						observers.add(tabOutput);
 					}
 				}
@@ -380,13 +382,54 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 		SlidingLandscapeMetricKernel kernel = null;
 		Counting counting = null;
 		int nbValues = -1;
-
+		
 		// gestion specifiques des analyses quantitatives ou qualitatives
-		if (MetricManager.hasOnlySlopeMetric(metrics)) { // slope
+		if(MetricManager.hasOnlyBasicMetric(metrics)){
 			
-			nbValues = 8;
+			nbValues = 4;
 			
-			kernel = new SlidingSlopeKernel(Raster.getNoDataValue(), inCellSize);
+			counting = new BasicCounting(theoreticalSize);
+
+			// add metrics to counting
+			for (Metric m : metrics) {
+				counting.addMetric(m);
+			}
+
+			// observers
+			for (CountingObserver co : observers) {
+				counting.addObserver(co);
+			}
+			
+			if (builder.getWindowShapeType() == WindowShapeType.FUNCTIONAL) {
+
+				kernel = new SlidingFunctionalBasicKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, inCellSize, function, dMax);
+
+				Coverage coverageFriction = null;
+				if (builder.getRasterFile2() != null) {
+					coverageFriction = CoverageManager.getCoverage(builder.getRasterFile2());
+				} else if (builder.getRasterTab2() != null) {
+					coverageFriction = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
+				} else if (builder.getCoverage2() != null) {
+					coverageFriction = builder.getCoverage2();
+				} else {
+					throw new IllegalArgumentException("no raster2 declared");
+				}
+
+				return createDouble(coverage, coverageFriction, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+
+			} else {
+				
+				kernel = new SlidingBasicKernel(windowSize, displacement, coeffs, coverage.getEntete().noDataValue(), unfilters);
+				
+				// analysis
+				return createSingle(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+			}
+			
+		}else if (MetricManager.hasOnlySlopeMetric(metrics)) { // slope
+			
+			nbValues = 6;
+			
+			kernel = new SlidingSlopeKernel(coverage.getEntete().noDataValue(), inCellSize);
 			
 			counting = new SlopeCounting(theoreticalSize);
 
@@ -409,17 +452,17 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			
 			if (metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("MD")) {
 				
-				kernel = new SlidingQuantitativeKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), 100, unfilters);
+				kernel = new SlidingQuantitativeKernel(windowSize, displacement, coeffs, coverage.getEntete().noDataValue(), 100, unfilters);
 				
 			} else if (metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("GBDistance")) {
 
 				if (builder.getWindowDistanceType() == WindowDistanceType.FAST_SQUARE){
 					
-					kernel = new FastSquareGrainBocagerDistanceBocageKernel(windowSize, displacement, Raster.getNoDataValue(), unfilters, 5, 3, 30);
+					kernel = new FastSquareGrainBocagerDistanceBocageKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, 5, 3, 30);
 					
 				}else{
 					
-					kernel = new GrainBocagerSlidingDistanceBocageKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), unfilters, 5, 3, 30);
+					kernel = new GrainBocagerSlidingDistanceBocageKernel(windowSize, displacement, coeffs, coverage.getEntete().noDataValue(), unfilters, 5, 3, 30);
 				}
 
 				Coverage coverageBocage = null;
@@ -453,46 +496,25 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				
 				if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN){
 					
-					kernel = new FastGaussianWeightedGrainBocagerDetectionBocageKernel(windowSize, displacement, Raster.getNoDataValue(), unfilters, 3);
+					kernel = new FastGaussianWeightedGrainBocagerDetectionBocageKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, 3);
 				}else{
 					
-					kernel = new GrainBocagerSlidingDetectionBocageKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), unfilters, 3);
+					kernel = new GrainBocagerSlidingDetectionBocageKernel(windowSize, displacement, coeffs, coverage.getEntete().noDataValue(), unfilters, 3);
 				}
 				
-			} /*else if (metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("slope")) {
+			} else {
 				
-				System.out.println("slope");
-				
-				kernel = new SlidingSlopeKernel(Raster.getNoDataValue());
-				
-				counting = new SlopeCounting();
-
-				// add metrics to counting
-				for (Metric m : metrics) {
-					counting.addMetric(m);
-				}
-
-				// observers
-				for (CountingObserver co : observers) {
-					counting.addObserver(co);
-				}
-
-				// analysis
-				return createSingle(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
-				
-			} */else {
 				if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN) {
 					
-					kernel = new FastGaussianWeightedQuantitativeKernel(windowSize, displacement, Raster.getNoDataValue(), unfilters);
+					kernel = new FastGaussianWeightedQuantitativeKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters);
 				
 				} else if (builder.getWindowDistanceType() == WindowDistanceType.FAST_SQUARE) {
 					
-					kernel = new FastSquareQuantitativeKernel(windowSize, displacement, Raster.getNoDataValue(), unfilters);
+					kernel = new FastSquareQuantitativeKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters);
 				
 				} else{
 					
-					kernel = new SlidingQuantitativeKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), unfilters);
-					
+					kernel = new SlidingQuantitativeKernel(windowSize, displacement, coeffs, coverage.getEntete().noDataValue(), unfilters);
 				}
 			}
 			
@@ -511,7 +533,39 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			// analysis
 			return createSingle(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 
-		} else{
+		}else if (MetricManager.hasOnlyContinuityMetric(metrics) && builder.getWindowShapeType() == WindowShapeType.FUNCTIONAL) { // continuity 
+		
+			nbValues = 6;
+			
+			kernel = new SlidingFunctionalContinuityKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, inCellSize, function, dMax);
+			
+			counting = new ContinuityCounting(theoreticalSize);
+
+			// add metrics to counting
+			for (Metric m : metrics) {
+				counting.addMetric(m);
+			}
+
+			// observers
+			for (CountingObserver co : observers) {
+				counting.addObserver(co);
+			}
+
+			Coverage coverageFriction = null;
+			if (builder.getRasterFile2() != null) {
+				coverageFriction = CoverageManager.getCoverage(builder.getRasterFile2());
+			} else if (builder.getRasterTab2() != null) {
+				coverageFriction = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
+			} else if (builder.getCoverage2() != null) {
+				coverageFriction = builder.getCoverage2();
+			} else {
+				throw new IllegalArgumentException("no raster2 declared");
+			}
+
+			return createDouble(coverage, coverageFriction, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+			
+		}else{ // qualitative or patch
+			
 			// recuperation des valeurs
 			int[] values = builder.getValues();
 			if (values == null) {
@@ -602,7 +656,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 
 					if (builder.getWindowShapeType() == WindowShapeType.FUNCTIONAL) {
 
-						kernel = new SlidingFunctionalCountValueKernel(windowSize, displacement, Raster.getNoDataValue(), values, unfilters, inCellSize, function, dMax);
+						kernel = new SlidingFunctionalCountValueKernel(windowSize, displacement, coverage.getEntete().noDataValue(), values, unfilters, inCellSize, function, dMax);
 
 						Coverage coverageFriction = null;
 						if (builder.getRasterFile2() != null) {
@@ -620,15 +674,15 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 					} else {
 						if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN){
 							
-							kernel = new FastGaussianWeightedCountValueKernel(windowSize, displacement, Raster.getNoDataValue(), values, unfilters);
+							kernel = new FastGaussianWeightedCountValueKernel(windowSize, displacement, coverage.getEntete().noDataValue(), values, unfilters);
 						
 						} else if (builder.getWindowDistanceType() == WindowDistanceType.FAST_SQUARE){
 							
-							kernel = new FastSquareCountValueKernel(windowSize, displacement, Raster.getNoDataValue(), values, unfilters);
+							kernel = new FastSquareCountValueKernel(windowSize, displacement, coverage.getEntete().noDataValue(), values, unfilters);
 						
 						} else {
 							
-							kernel = new SlidingCountValueKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), values, unfilters);
+							kernel = new SlidingCountValueKernel(windowSize, displacement, coeffs, coverage.getEntete().noDataValue(), values, unfilters);
 						}
 
 						// analysis
@@ -655,7 +709,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 					
 					if (builder.getWindowShapeType() == WindowShapeType.FUNCTIONAL) {
 						
-						kernel = new SlidingFunctionalCountCoupleKernel(windowSize, displacement, Raster.getNoDataValue(), values, unfilters, inCellSize, function, dMax);
+						kernel = new SlidingFunctionalCountCoupleKernel(windowSize, displacement, coverage.getEntete().noDataValue(), values, unfilters, inCellSize, function, dMax);
 
 						Coverage coverageFriction = null;
 						if (builder.getRasterFile2() != null) {
@@ -674,15 +728,15 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 						
 						if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN) {
 							
-							kernel = new FastGaussianWeightedCountCoupleKernel(windowSize, displacement, Raster.getNoDataValue(), values, unfilters);
+							kernel = new FastGaussianWeightedCountCoupleKernel(windowSize, displacement, coverage.getEntete().noDataValue(), values, unfilters);
 						
 						} else if (builder.getWindowDistanceType() == WindowDistanceType.FAST_SQUARE) {
 							
-							kernel = new FastSquareCountCoupleKernel(windowSize, displacement, Raster.getNoDataValue(), values, unfilters);
+							kernel = new FastSquareCountCoupleKernel(windowSize, displacement, coverage.getEntete().noDataValue(), values, unfilters);
 						
 						} else {
 							
-							kernel = new SlidingCountCoupleKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), values, unfilters);
+							kernel = new SlidingCountCoupleKernel(windowSize, displacement, coeffs, coverage.getEntete().noDataValue(), values, unfilters);
 						}
 						
 						// analysis
@@ -709,7 +763,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 					
 					if (builder.getWindowShapeType() == WindowShapeType.FUNCTIONAL) {
 					
-						kernel = new SlidingFunctionalCountValueAndCoupleKernel(windowSize, displacement, Raster.getNoDataValue(), values, unfilters, inCellSize, function, dMax);
+						kernel = new SlidingFunctionalCountValueAndCoupleKernel(windowSize, displacement, coverage.getEntete().noDataValue(), values, unfilters, inCellSize, function, dMax);
 
 						Coverage coverageFriction = null;
 						if (builder.getRasterFile2() != null) {
@@ -728,15 +782,15 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 						
 						if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN) {
 							
-							kernel = new FastGaussianWeightedCountValueAndCoupleKernel(windowSize, displacement, Raster.getNoDataValue(), values, unfilters);
+							kernel = new FastGaussianWeightedCountValueAndCoupleKernel(windowSize, displacement, coverage.getEntete().noDataValue(), values, unfilters);
 						
 						} else if (builder.getWindowDistanceType() == WindowDistanceType.FAST_SQUARE) {
 							
-							kernel = new FastSquareCountValueAndCoupleKernel(windowSize, displacement, Raster.getNoDataValue(), values, unfilters);
+							kernel = new FastSquareCountValueAndCoupleKernel(windowSize, displacement, coverage.getEntete().noDataValue(), values, unfilters);
 						
 						} else {
 							
-							kernel = new SlidingCountValueAndCoupleKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), values, unfilters);
+							kernel = new SlidingCountValueAndCoupleKernel(windowSize, displacement, coeffs, coverage.getEntete().noDataValue(), values, unfilters);
 						}
 
 						// analysis
@@ -751,7 +805,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				
 				nbValues = 7 + 3 * values.length;
 
-				kernel = new SlidingPatchKernel(windowSize, displacement, coeffs, Raster.getNoDataValue(), values, inCellSize, unfilters);
+				kernel = new SlidingPatchKernel(windowSize, displacement, coeffs, coverage.getEntete().noDataValue(), values, inCellSize, unfilters);
 				
 				counting = new PatchCounting(values, theoreticalSize);
 

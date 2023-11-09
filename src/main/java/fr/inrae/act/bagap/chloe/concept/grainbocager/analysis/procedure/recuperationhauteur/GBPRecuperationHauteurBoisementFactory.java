@@ -10,7 +10,6 @@ public class GBPRecuperationHauteurBoisementFactory extends GrainBocagerProcedur
 
 	@Override
 	public boolean check(GrainBocagerManager manager) {
-		
 		if(new File(manager.bocage()).exists()){
 			return true;
 		}else{

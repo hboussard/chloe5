@@ -8,7 +8,7 @@ public class ScriptJacques {
 
 	public static void main(String[] args) {
 		
-		//scriptCompile();
+		scriptCompile();
 		
 	}
 	
@@ -29,12 +29,20 @@ public class ScriptJacques {
 		
 		CoverageManager.write("H:/IGN/data/29_2018_5m/mnhc_29_2018_5m.tif", data, entete);
 		*/
+		/*
 		Coverage cov = CoverageManager.getCoverage("H:/IGN/data/56_2019_5m/mean/");
 		float[] data = cov.getData();
 		EnteteRaster entete = cov.getEntete();
 		cov.dispose();
 		
 		CoverageManager.write("H:/IGN/data/56_2019_5m/mnhc_56_2019_5m.tif", data, entete);
+		*/
+		Coverage cov = CoverageManager.getCoverage("H:/IGN/data/35_2020_5m/mean/");
+		float[] data = cov.getData();
+		EnteteRaster entete = cov.getEntete();
+		cov.dispose();
+		
+		CoverageManager.write("H:/IGN/data/35_2020_5m/mnhc_35_2020_5m.tif", data, entete);
 		
 	}
 	

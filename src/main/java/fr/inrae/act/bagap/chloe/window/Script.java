@@ -31,7 +31,99 @@ public class Script {
 
 	public static void main(String[] args){
 
-		scriptMultipleSliding();
+		scriptMultipleSelected();
+	}
+	
+	private static void scriptMultipleSelected(){
+		
+		long begin = System.currentTimeMillis();
+		
+		String path = "C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(ChloeAnalysisType.SELECTED);
+		builder.setRasterFile(path+"pf_2018_10m.tif");
+		builder.addMetric("SHDI");
+		builder.addMetric("HET");
+		//builder.addMetric("NP");
+		//builder.addMetric("LPI");
+		//builder.addMetric("MPS");
+		
+		// analyse avec une seule taille de fenêtre
+		builder.setWindowSize(31);
+		
+		// 1
+		//builder.setPixelsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/pixels_pf.csv");
+		//builder.addCsvOutput(path+"selected/output/selected_pixels.csv");
+		// les points sont sortis 
+		// mais :
+		// pb : ce ne sont pas les pixels
+		
+		// 2
+		//builder.setPixelsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/pixels_pf_ID.csv");
+		//builder.addCsvOutput(path+"selected/output/selected_pixels_ID.csv");
+		// les points sont exportés 
+		// mais :
+		// pb : ce ne sont pas les pixels
+		// pb : les identifiants sont manquants
+		
+		// 3
+		builder.setPointsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/points_pf.csv");
+		builder.addCsvOutput(path+"selected/output/selected_points.csv");
+		// les points demandés sont exportés 
+		// mais :
+		// pb : avec des identifiants non demandés
+		
+		// 4
+		//builder.setPointsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/points_pf_decal.csv");
+		//builder.addCsvOutput(path+"selected/output/selected_points_decal.csv");
+		// les points décalés demandés sont exportés 
+		// mais,
+		// pb : avec des identifiants non demandés
+		
+		// 5
+		//builder.setPointsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/points_pf_ID.csv");
+		//builder.addCsvOutput(path+"selected/output/selected_points_ID.csv");
+		// les points demandés sont exportés avec les identifiants demandés
+		
+		// 6
+		//builder.setPointsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/points_pf_ID_decal.csv");
+		//builder.addCsvOutput(path+"selected/output/selected_points_ID_decal.csv");
+		// les points décalés demandés sont exportés avec les identifiants demandés
+		
+		// analyse avec plusieurs tailles de fenêtre
+		//builder.setWindowSizes(new int[]{31,51});
+		
+		// 1
+		//builder.setPixelsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/pixels_pf.csv");
+		//builder.addCsvOutput(path+"selected/output/combines/selected_pixels.csv");
+			
+		// 2
+		//builder.setPixelsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/pixels_pf_ID.csv");
+		//builder.addCsvOutput(path+"selected/output/combines/selected_pixels_ID.csv");
+			
+		// 3
+		//builder.setPointsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/points_pf.csv");
+		//builder.addCsvOutput(path+"selected/output/combines/selected_points.csv");
+		
+		// 4
+		//builder.setPointsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/points_pf_decal.csv");
+		//builder.addCsvOutput(path+"selected/output/combines/selected_points_decal.csv");
+		
+		// 5
+		//builder.setPointsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/points_pf_ID.csv");
+		//builder.addCsvOutput(path+"selected/output/combines/selected_points_ID.csv");
+			
+		// 6
+		//builder.setPointsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/points_pf_ID_decal.csv");
+		//builder.addCsvOutput(path+"selected/output/combines/selected_points_ID_decal.csv");
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
+		
 	}
 	
 	private static void scriptMultipleSliding(){
@@ -48,10 +140,15 @@ public class Script {
 		builder.addMetric("NP");
 		builder.addMetric("LPI");
 		builder.addMetric("MPS");
-		builder.setWindowSize(41);
+		//builder.setWindowSize(41);
+		builder.setWindowSizes(new int[]{31,51});
+		builder.setUnfilters(new int[]{-1});
 		builder.setDisplacement(4);
-		builder.addGeoTiffOutput("SHDI", path+"sliding_c5/shdi1.tif");
-		builder.addGeoTiffOutput("NP", path+"sliding_c5/np1.tif");
+		//builder.setInterpolation(true);
+		builder.addGeoTiffOutput(31, "SHDI", path+"sliding_c5/shdi_31p.tif");
+		builder.addGeoTiffOutput(31, "NP", path+"sliding_c5/np_31p.tif");
+		builder.addGeoTiffOutput(51, "SHDI", path+"sliding_c5/shdi_51p.tif");
+		builder.addGeoTiffOutput(51, "NP", path+"sliding_c5/np_51p.tif");
 		builder.addCsvOutput(path+"sliding_c5/sliding_pf_2018.csv");
 		LandscapeMetricAnalysis analysis = builder.build();
 		
@@ -320,7 +417,7 @@ public class Script {
 		
 		//builder.addAsciiGridOutput("pNV_1", path+"area/pnv1.asc"); // marche pas...
 		
-		builder.addAsciiGridFolderOutput(path+"communes/");
+		builder.setAsciiGridFolderOutput(path+"communes/");
 		//builder.addAsciiGridFolderOutput(path+"communes/double/");
 		//builder.addCsvOutput(path+"area/analyse_communes_za.csv");
 		
@@ -378,7 +475,7 @@ public class Script {
 		}
 		//builder.addCsvOutput(path+"output/analyse_za_5km.csv");
 		//builder.addAsciiGridFolderOutput(path+"output2");
-		builder.addGeoTiffFolderOutput(path+"output4/");
+		builder.setGeoTiffFolderOutput(path+"output4/");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 		
@@ -1562,7 +1659,7 @@ public class Script {
 		builder.setRasterFile(path+"T01alti25m.tif");
 		builder.setEntityRasterFile(path+"parcellaire_toulouse.asc");
 		builder.addMetric("standard_deviation");
-		builder.addAsciiGridFolderOutput(path+"mnt_standard_deviation/");
+		builder.setAsciiGridFolderOutput(path+"mnt_standard_deviation/");
 		builder.addCsvOutput(path+"mnt_standard_deviation/parcelles_standard_deviation_mnt_bis.csv");
 		LandscapeMetricAnalysis analysis = builder.build();
 		
@@ -1626,7 +1723,7 @@ public class Script {
 		builder.addMetric("pNV_4");
 		builder.addMetric("pNV_5");
 		builder.addMetric("pNV_6");
-		builder.addAsciiGridFolderOutput(path+"prop/");
+		builder.setAsciiGridFolderOutput(path+"prop/");
 		builder.addCsvOutput(path+"entites_composition_bis.csv");
 		LandscapeMetricAnalysis analysis = builder.build();
 		

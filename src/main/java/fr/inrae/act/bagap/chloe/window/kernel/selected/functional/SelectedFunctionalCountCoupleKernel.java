@@ -53,11 +53,9 @@ public class SelectedFunctionalCountCoupleKernel extends SelectedFunctionalKerne
 				
 		final int mid = windowSize() / 2;
 				
-		float[] image = generateImage(x, y, mid);
-				
 		float[] resistance = generateResistance(x, y, mid);
 		
-		float[] distance = calculateDistance(image, resistance);
+		float[] distance = calculateDistance(resistance);
 				
 		generateCoeff(distance);
 				

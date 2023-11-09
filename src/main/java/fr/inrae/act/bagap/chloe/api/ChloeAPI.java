@@ -55,6 +55,7 @@ public class ChloeAPI {
 				case "combine" : launchCombine(properties); break;
 				case "search_and_replace" : launchSearchAndReplace(properties); break;
 				case "classification" : launchClassification(properties); break;
+				case "raster_from_csv" : launchRasterFromCsv(properties); break;
 				default :
 					throw new IllegalArgumentException("treatment "+treatment+" is not implemented yet");
 				}
@@ -160,7 +161,7 @@ public class ChloeAPI {
 			importMaximumNoValueRate(builder, properties);
 			
 			if(properties.containsKey("output_folder")){
-				importOutputFolderForCenteredWindow(builder, properties);
+				importOutputFolderForGridWindow(builder, properties);
 			}else{
 				importOutputRaster(builder, properties);
 				importOutputCsv(builder, properties);
@@ -269,6 +270,40 @@ public class ChloeAPI {
 			e.printStackTrace();
 		}
 	}
+	
+	private static void launchRasterFromCsv(Properties properties) {
+		try{
+			long begin = System.currentTimeMillis();
+			
+			ChloeAnalysisBuilder builder = new ChloeUtilAnalysisBuilder();
+			builder.setAnalysisType(ChloeAnalysisType.RASTER_FROM_CSV);
+				
+			importInputCsv(builder, properties);
+			importOutputRaster(builder, properties);
+			importOutputPrefix(builder, properties);
+			importOutputFolder(builder, properties);
+			importOutputSuffix(builder, properties);
+			importTypeMime(builder, properties);
+			importVariables(builder, properties);
+			importNCols(builder, properties);
+			importNRows(builder, properties);
+			importXMin(builder, properties);
+			importYMin(builder, properties);
+			importCellSize(builder, properties);
+			importNoDataValue(builder, properties);
+			
+			ChloeAnalysis analysis = builder.build();
+			analysis.allRun();
+				
+			long end = System.currentTimeMillis();
+			System.out.println("time computing : "+(end - begin));
+			
+		} catch (NoParameterException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// importations
 
 	// required 
 	public static void importInputRaster(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
@@ -280,6 +315,18 @@ public class ChloeAPI {
 			}
 		}
 		throw new NoParameterException("input_raster");
+	}
+	
+	// required 
+	public static void importInputCsv(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("input_csv")){
+			String prop = properties.getProperty("input_csv");
+			if(new File(prop).isFile()){
+				builder.setCsvFile(prop);
+				return;
+			}
+		}
+		throw new NoParameterException("input_csv");
 	}
 	
 	// required
@@ -308,6 +355,20 @@ public class ChloeAPI {
 			return;
 		}
 		throw new NoParameterException("metrics");
+	}
+	
+	// required
+	public static void importVariables(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("variables")){
+			String prop = properties.getProperty("variables");
+			prop = prop.replace("{", "").replace("}", "").replace(" ", "");
+			String[] ms = prop.split(";");
+			for(String m : ms){
+				builder.addVariable(m);
+			}
+			return;
+		}
+		throw new NoParameterException("variables");
 	}
 	
 	// not required
@@ -415,15 +476,39 @@ public class ChloeAPI {
 		}
 	}
 	
+	public static void importOutputPrefix(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("output_prefix")){
+			builder.setOutputPrefix(properties.getProperty("output_prefix"));
+		}
+	}
+	
+	public static void importOutputFolder(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("output_folder")){
+			builder.setOutputFolder(properties.getProperty("output_folder"));
+		}
+	}
+	
+	public static void importOutputSuffix(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("output_suffix")){
+			builder.setOutputSuffix(properties.getProperty("output_suffix"));
+		}
+	}
+	
+	public static void importTypeMime(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("type_mime")){
+			builder.setTypeMime(properties.getProperty("type_mime"));
+		}
+	}
+	
 	// not required
 	public static void importOutputFolderForCenteredWindow(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("output_folder")){
 			String prop = properties.getProperty("output_folder");
 			String input = properties.getProperty("input_raster");
 			if(input.endsWith(".asc")){
-				builder.addAsciiGridFolderOutput(prop);
+				builder.setAsciiGridFolderOutput(prop);
 			}else if(input.endsWith(".tif")){
-				builder.addGeoTiffFolderOutput(prop);
+				builder.setGeoTiffFolderOutput(prop);
 			}else{
 				throw new NoParameterException("output_raster : "+input+" extension problem");
 			}
@@ -441,6 +526,28 @@ public class ChloeAPI {
 			sb.append("_d_"+builder.getDisplacement());
 			sb.append(".csv");
 			
+			builder.addCsvOutput(prop+sb.toString());
+		}
+	}
+	
+	// not required
+	public static void importOutputFolderForGridWindow(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("output_folder")){
+			String prop = properties.getProperty("output_folder");
+			String input = properties.getProperty("input_raster");
+			if(input.endsWith(".asc")){
+				builder.setAsciiGridFolderOutput(prop);
+			}else if(input.endsWith(".tif")){
+				builder.setGeoTiffFolderOutput(prop);
+			}else{
+				throw new NoParameterException("output_raster : "+input+" extension problem");
+			}
+				
+			StringBuffer sb = new StringBuffer();
+			sb.append(new File(input).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
+			sb.append("_w"+builder.getWindowSize());
+			sb.append(".csv");
+				
 			builder.addCsvOutput(prop+sb.toString());
 		}
 	}
@@ -533,6 +640,47 @@ public class ChloeAPI {
 	public static void importNoDataValue(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("nodata_value")){
 			builder.setNoDataValue(Integer.parseInt(properties.getProperty("nodata_value")));
+		}
+	}
+	
+	// not required
+	public static void importCellSize(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("cellsize")){
+			builder.setCellSize(Float.parseFloat(properties.getProperty("cellsize")));
+		}
+	}
+	
+	// not required
+	public static void importNRows(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("nrows")){
+			builder.setNRows(Integer.parseInt(properties.getProperty("nrows")));
+		}
+	}
+	
+	// not required
+	public static void importNCols(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("ncols")){
+			builder.setNCols(Integer.parseInt(properties.getProperty("ncols")));
+		}
+	}
+	
+	// not required
+	public static void importXMin(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("xMin")){
+			builder.setXMin(Double.parseDouble(properties.getProperty("xMin")));
+		}
+		if(properties.containsKey("xllcorner")){
+			builder.setXMin(Double.parseDouble(properties.getProperty("xllcorner")));
+		}
+	}
+	
+	// not required
+	public static void importYMin(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("yMin")){
+			builder.setYMin(Double.parseDouble(properties.getProperty("yMin")));
+		}
+		if(properties.containsKey("yllcorner")){
+			builder.setYMin(Double.parseDouble(properties.getProperty("yllcorner")));
 		}
 	}
 	

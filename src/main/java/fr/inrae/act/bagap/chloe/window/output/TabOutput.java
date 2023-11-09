@@ -2,12 +2,13 @@ package fr.inrae.act.bagap.chloe.window.output;
 
 import java.util.Set;
 
+import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class TabOutput implements CountingObserver{
-
+	
 	private final float[] datas;
 	
 	private final Metric metric;
@@ -43,8 +44,7 @@ public class TabOutput implements CountingObserver{
 
 	@Override
 	public void postrun(Counting c, int i, int j, Set<Metric> metrics) {
-		//System.out.println(i+" "+j);
-		datas[(j/displacement)*width+(i/displacement)] = (float) metric.value();
+		datas[(j/displacement)*width+(i/displacement)] = Float.parseFloat(Util.format(metric.value()));
 	}
 
 	@Override

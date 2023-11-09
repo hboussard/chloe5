@@ -11,7 +11,7 @@ import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class CsvOutput implements CountingObserver{
-
+	
 	private BufferedWriter bw;
 	
 	private String csv;
@@ -127,5 +127,6 @@ public class CsvOutput implements CountingObserver{
 	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// do nothing
 	}
+
 
 }

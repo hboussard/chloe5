@@ -46,3 +46,5 @@ EMS-class;value;value;fr.inrae.act.bagap.chloe.window.metric.value.EffectiveMesh
 Majority;value;other;fr.inrae.act.bagap.chloe.window.metric.value.MajorityClassMetric;1
 slopedirection;slope;other;fr.inrae.act.bagap.chloe.window.metric.slope.SlopeDirectionMetric;6
 slopeintensity;slope;other;fr.inrae.act.bagap.chloe.window.metric.slope.SlopeIntensityMetric;6
+surface;continuity;other;fr.inrae.act.bagap.chloe.window.metric.continuity.SurfaceAccessibilityMetric;7
+volume;continuity;other;fr.inrae.act.bagap.chloe.window.metric.continuity.VolumeMovementMetric;7

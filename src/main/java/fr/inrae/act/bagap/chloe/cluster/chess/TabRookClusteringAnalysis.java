@@ -133,7 +133,7 @@ public class TabRookClusteringAnalysis extends TabChessClusteringAnalysis {
 			}
 		}
 		
-		setResult(tabCluster);
+		setResult(lisseNumerotation(tabCluster, (int) noDataValue));
 	}
 
 }

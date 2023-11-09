@@ -5,8 +5,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,14 +13,13 @@ import java.util.Set;
 import fr.inra.sad.bagap.apiland.core.element.manager.DynamicLayerFactory;
 import fr.inra.sad.bagap.apiland.core.element.manager.Tool;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.matrix.MatrixManager;
+import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.raster.Coverage;
 
 public class EntityMultipleAsciiGridOutput implements CountingObserver{
-
-	private final DecimalFormat format;
 	
 	private final String folder;
 	
@@ -43,10 +40,6 @@ public class EntityMultipleAsciiGridOutput implements CountingObserver{
 		this.yllCorner = yllCorner;
 		this.cellSize = cellSize;
 		this.noDataValue = noDataValue;
-		
-		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-		symbols.setDecimalSeparator('.');
-		format = new DecimalFormat("0.00000", symbols);
 	}
 
 	@Override
@@ -123,7 +116,7 @@ public class EntityMultipleAsciiGridOutput implements CountingObserver{
 						if(!datas.containsKey((int) d)){
 							writers.get(m.getName()).write("0 ");
 						}else{
-							writers.get(m.getName()).write(format.format(datas.get((int) d).get(m))+" ");
+							writers.get(m.getName()).write(Util.format(datas.get((int) d).get(m))+" ");
 						}
 					}
 				}

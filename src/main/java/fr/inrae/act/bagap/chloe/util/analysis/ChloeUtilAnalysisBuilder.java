@@ -1,12 +1,17 @@
 package fr.inrae.act.bagap.chloe.util.analysis;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inra.sad.bagap.apiland.domain.Domain;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysis;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisBuilder;
+import fr.inrae.act.bagap.chloe.api.RasterTypeMime;
+import fr.inrae.act.bagap.chloe.util.Util;
 
 public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	
@@ -14,25 +19,50 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	
 	private String outputRaster;
 	
+	private String outputFolder;
+	
 	private String inputRaster;
+	
+	private String outputPrefix, outputSuffix;
+	
+	private String csv;
 	
 	private String combination;
 	
 	private Map<Float, Float> changes;
 	
-	private int noDataValue;
+	private float cellSize;
+	
+	private int ncols, nrows, noDataValue;
+	
+	private double xMin, yMin;
 	
 	private Map<Domain<Float, Float>, Integer> domains;
+	
+	private Set<String> variables;
+	
+	private RasterTypeMime typeMime;
 	
 	@Override
 	public void reset() {
 		factors = null;
 		outputRaster = null;
+		outputFolder = null;
 		inputRaster = null;
+		outputPrefix = "";
+		outputSuffix = "";
+		typeMime = RasterTypeMime.GEOTIFF;
+		csv = null;
 		combination = null;
 		changes = null;
+		cellSize = -1;
+		ncols = -1;
+		nrows = -1;
+		xMin = 0;
+		yMin = 0;
 		noDataValue = Raster.getNoDataValue();
 		domains = null;
+		variables = new HashSet<String>();
 	}
 	
 	@Override
@@ -79,6 +109,67 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 		this.domains= domains;
 	}
 	
+	@Override
+	public void setCsvFile(String csvFile) {
+		this.csv = csvFile;
+	}
+	
+	@Override
+	public void addVariable(String variable){
+		this.variables.add(variable);
+	}
+	
+	@Override
+	public void setCellSize(float cellSize) {
+		this.cellSize = cellSize;
+	}
+	
+	@Override
+	public void setNCols(int ncols) {
+		this.ncols = ncols;
+	}
+	
+	@Override
+	public void setNRows(int nrows) {
+		this.nrows = nrows;
+	}
+	
+	@Override
+	public void setXMin(double xMin) {
+		this.xMin = xMin;
+	}
+	
+	@Override
+	public void setYMin(double yMin) {
+		this.yMin = yMin;
+	}
+	
+	@Override
+	public void setOutputPrefix(String outputPrefix) {
+		this.outputPrefix = outputPrefix;
+	}
+	
+	@Override
+	public void setOutputFolder(String folder) {
+		Util.createAccess(folder);
+		this.outputFolder = new File(folder).getAbsolutePath()+"/";
+	}
+	
+	@Override
+	public void setOutputSuffix(String outputSuffix) {
+		this.outputSuffix = outputSuffix;
+	}
+	
+	@Override
+	public void setTypeMime(String typeMime) {
+		this.typeMime = RasterTypeMime.valueOf(typeMime);
+	}
+	
+	@Override
+	public void setTypeMime(RasterTypeMime typeMime) {
+		this.typeMime = typeMime;
+	}
+	
 	// getters
 	
 	public Map<String, String> getNamesAndRasters(){
@@ -89,9 +180,29 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 		return outputRaster;
 	}
 	
+	public String getOutputPrefix(){
+		return outputPrefix;
+	}
+	
+	public String getOutputFolder(){
+		return outputFolder;
+	}
+	
+	public String getOutputSuffix(){
+		return outputSuffix;
+	}
+	
 	@Override
 	public String getRasterFile() {
 		return inputRaster;
+	}
+	
+	public String getCsvFile(){
+		return csv;
+	}
+	
+	public Set<String> getVariables(){
+		return variables;
 	}
 	
 	public String getCombination(){
@@ -106,8 +217,32 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 		return noDataValue;
 	}
 	
+	public int getNCols(){
+		return ncols;
+	}
+	
+	public int getNRows(){
+		return nrows;
+	}
+	
+	public double getXMin(){
+		return xMin;
+	}
+
+	public double getYMin(){
+		return yMin;
+	}
+	
+	public float getCellSize(){
+		return cellSize;
+	}
+	
 	public Map<Domain<Float, Float>, Integer> getDomains(){
 		return domains;
+	}
+	
+	public RasterTypeMime getTypeMime(){
+		return this.typeMime;
 	}
 	
 	@Override

@@ -23,6 +23,24 @@ public class ChloeUtilAnalysisFactory {
 			ClassificationAnalysis analysis = new ClassificationAnalysis(builder.getOutputRaster(), builder.getRasterFile(), builder.getDomains());
 			return analysis;
 		}
+		if(builder.getAnalysisType() == ChloeAnalysisType.RASTER_FROM_CSV){
+			
+			ChloeUtilAnalysis analysis = null;
+			
+			if(builder.getVariables().size() == 1){
+				
+				analysis = new RasterFromCsvAnalysis(builder.getOutputRaster(), builder.getCsvFile(), builder.getVariables().iterator().next(), 
+						builder.getNCols(), builder.getNRows(), builder.getXMin(), builder.getYMin(), builder.getCellSize(), builder.getNoDataValue());
+				
+			}else{
+				
+				analysis = new MultipleRasterFromCsvAnalysis(builder.getOutputFolder(), builder.getOutputPrefix(), builder.getOutputSuffix(), builder.getTypeMime(), builder.getCsvFile(), builder.getVariables(), 
+						builder.getNCols(), builder.getNRows(), builder.getXMin(), builder.getYMin(), builder.getCellSize(), builder.getNoDataValue());
+				
+			}
+			
+			return analysis;
+		}
 
 		throw new IllegalArgumentException(builder.getAnalysisType()+" is not a recognized analysis type");
 	}

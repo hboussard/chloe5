@@ -31,12 +31,10 @@ public class SelectedFunctionalCountValueKernel extends SelectedFunctionalKernel
 		outDatas().get(p)[1] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
 			
 		final int mid = windowSize() / 2;
-				
-		float[] image = generateImage(x, y, mid);
-				
+						
 		float[] resistance = generateResistance(x, y, mid);
 				
-		float[] distance = calculateDistance(image, resistance);
+		float[] distance = calculateDistance(resistance);
 				
 		generateCoeff(distance);
 				

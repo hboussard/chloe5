@@ -5,6 +5,7 @@ import java.util.Set;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.RefPoint;
 import fr.inra.sad.bagap.apiland.domain.Domain;
+import fr.inrae.act.bagap.chloe.api.RasterTypeMime;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
@@ -55,6 +56,10 @@ public abstract class ChloeAnalysisBuilder {
 	}
 	
 	public void setWindowDistanceFunction(String function){
+		throw new UnsupportedOperationException();
+	}
+	
+	public void addRasterFile(String rasterFile){
 		throw new UnsupportedOperationException();
 	}
 	
@@ -154,6 +159,10 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 	
+	public void addVariable(String variable){
+		throw new UnsupportedOperationException();
+	}
+	
 	public void addCsvOutput(String csv){
 		throw new UnsupportedOperationException();
 	}
@@ -162,11 +171,11 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 	
-	public void addAsciiGridFolderOutput(String asciiGridFolder){
+	public void setAsciiGridFolderOutput(String asciiGridFolder){
 		throw new UnsupportedOperationException();
 	}
 	
-	public void addGeoTiffFolderOutput(String geoTiffFolder){
+	public void setGeoTiffFolderOutput(String geoTiffFolder){
 		throw new UnsupportedOperationException();
 	}
 	
@@ -282,6 +291,54 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 	
+	public void setDomains(Map<Domain<Float, Float>, Integer> domains) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setCsvFile(String prop) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setCellSize(float parseFloat) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setNCols(int parseInt) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setNRows(int parseInt) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setXMin(double xMin) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setYMin(double yMin) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setOutputPrefix(String prefix) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setOutputFolder(String folder) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setOutputSuffix(String suffix) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setTypeMime(String typeMime) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setTypeMime(RasterTypeMime typeMime) {
+		throw new UnsupportedOperationException();
+	}
+
 	// getters
 	
 	public WindowShapeType getWindowShapeType() {
@@ -300,7 +357,6 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 
-	public void setDomains(Map<Domain<Float, Float>, Integer> domains) {
-		throw new UnsupportedOperationException();
-	}
+	
+	
 }

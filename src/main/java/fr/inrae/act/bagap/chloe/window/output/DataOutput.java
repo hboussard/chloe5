@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.PixelWithID;
+import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
@@ -43,7 +44,7 @@ public class DataOutput implements CountingObserver{
 		// stockage de la valeur
 		for(PixelWithID rp : pixels){
 			if(rp.x() == x && rp.y() == y){
-				internalDatas.put(rp, new Double(metric.value()).floatValue());
+				internalDatas.put(rp, Float.parseFloat(Util.format(metric.value())));
 				break;
 			}
 		}

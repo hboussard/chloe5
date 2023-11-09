@@ -8,6 +8,7 @@ public class SlidingFunctionalCountValueKernel extends SlidingFunctionalKernel {
 	
 	public SlidingFunctionalCountValueKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters, double cellSize, DistanceFunction function, double radius){		
 		super(windowSize, displacement, null, noDataValue, unfilters, cellSize, function, radius);
+		
 		int maxV = 0;
 		for(int v : values){
 			maxV = Math.max(v, maxV);
@@ -21,7 +22,7 @@ public class SlidingFunctionalCountValueKernel extends SlidingFunctionalKernel {
 	
 	@Override
 	protected void processPixel(int x, int y, int localY) {
-		
+		//System.out.println(x+" "+y+" "+localY);
 		if((x-bufferROIXMin())%displacement() == 0 && (y-bufferROIYMin())%displacement() == 0){
 			
 			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
@@ -38,11 +39,9 @@ public class SlidingFunctionalCountValueKernel extends SlidingFunctionalKernel {
 				
 				final int mid = windowSize() / 2;
 				
-				float[] image = generateImage(x, y, mid);
-				
 				float[] resistance = generateResistance(x, y, mid);
 				
-				float[] distance = calculateDistance(image, resistance);
+				float[] distance = calculateDistance(resistance);
 				
 				generateCoeff(distance);
 				
@@ -61,13 +60,10 @@ public class SlidingFunctionalCountValueKernel extends SlidingFunctionalKernel {
 								coeff = coeff()[ic];
 								if(coeff > 0){
 									v = (int) inDatas()[((y + dy) * width()) + (x + dx)];
-									//outDatas()[ind][2] += coeff;
 									nb += coeff;
 									if(v == noDataValue()){
-										//outDatas()[ind][3] += coeff;
 										nb_nodata += coeff;
 									}else if(v == 0){
-										//outDatas()[ind][4] += coeff;
 										nb_zero += coeff;
 									}else{
 										mv = mapValues[v];

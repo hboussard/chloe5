@@ -1,19 +1,18 @@
 package fr.inrae.act.bagap.chloe.window.kernel.selected.functional;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
-import fr.inra.sad.bagap.apiland.analysis.matrix.ArrayRCMDistanceAnalysis;
 import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inrae.act.bagap.chloe.distance.analysis.functional.ArrayRCMDistanceAnalysis;
 import fr.inrae.act.bagap.chloe.window.kernel.selected.DoubleSelectedLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public abstract class SelectedFunctionalKernel extends DoubleSelectedLandscapeMetricKernel {
+	
+	private double cellSize;
 	
 	private double radius;
 	
@@ -21,21 +20,13 @@ public abstract class SelectedFunctionalKernel extends DoubleSelectedLandscapeMe
 	
 	protected SelectedFunctionalKernel(int windowSize, Set<Pixel> pixels, float[] coeff, EnteteRaster entete, DistanceFunction function, double radius, String windowsPath){	
 		super(windowSize, pixels, coeff, entete, windowsPath);
+		this.cellSize = entete.cellsize();
 		this.radius = radius;
 		this.function = function;
 	}
 
-	protected void generateCoeff(float[] distance) {
-		float[] coeff = new float[windowSize()*windowSize()];
-		for(int ind=0; ind<distance.length; ind++){
-			if(distance[ind] <= radius){
-				coeff[ind] = (float) function.interprete(distance[ind]);
-			}else{
-				coeff[ind] = 0;
-			}
-		}
-		
-		setCoeff(coeff);
+	protected double radius(){
+		return radius;
 	}
 
 	protected float[] generateImage(int x, int y, int mid){
@@ -76,29 +67,34 @@ public abstract class SelectedFunctionalKernel extends DoubleSelectedLandscapeMe
 		return resistance;
 	}
 	
-	protected float[] calculateDistance(float[] image, float[] resistance) {
-		
-		// pour la gestion des pixels a traiter en ordre croissant de distance
-		Map<Float, Set<Pixel>> waits = new TreeMap<Float, Set<Pixel>>();
-		waits.put(0f, new HashSet<Pixel>());
+	protected float[] calculateDistance(float[] resistance) {
 		
 		float[] distance = new float[windowSize()*windowSize()];
-		for(int ind=0; ind<image.length; ind++){
-			if(image[ind] == Raster.getNoDataValue()){
-				distance[ind] = -1;
-			}else if(ind == ((windowSize()*windowSize())-1)/2){ // pixel central source de diffusion
-				distance[ind] = 0;
-				waits.get(0f).add(new Pixel((windowSize()-1)/2, (windowSize()-1)/2));
-			}else{
-				distance[ind] = -2; // to be computed
-			}
-		}
 		
-		ArrayRCMDistanceAnalysis rcm = new ArrayRCMDistanceAnalysis(distance, resistance, windowSize(), windowSize(), (float) cellSize(), waits);
+		ArrayRCMDistanceAnalysis rcm = new ArrayRCMDistanceAnalysis(distance, resistance, windowSize(), windowSize(), (float) cellSize, noDataValue(), radius);
 		rcm.allRun();
 		
 		return distance;
 	}
+	
+	protected void generateCoeff(float[] distance) {
+		float[] coeff = new float[windowSize()*windowSize()];
+		for(int ind=0; ind<distance.length; ind++){
+			float dist = distance[ind];
+			if(dist >= 0 && dist <= radius){
+				if(function == null){
+					coeff[ind] = 1;
+				}else{
+					coeff[ind] = (float) function.interprete(distance[ind]);
+				}
+			}else{
+				coeff[ind] = 0;
+			}
+		}
+		
+		setCoeff(coeff);
+	}
+
 	
 	@Override
 	public void dispose(){

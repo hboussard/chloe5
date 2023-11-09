@@ -1,19 +1,18 @@
 package fr.inrae.act.bagap.chloe.distance.analysis.functional;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Map.Entry;
-
+import java.util.ArrayList;
+import java.util.List;
 import fr.inra.sad.bagap.apiland.analysis.Analysis;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 
 public class TabRCMDistanceAnalysis extends Analysis {
 
-	private float[] outDatas, inDatas, frictionDatas;
+	//private int indexG = 0;
+	
+	private static final float sqrt2 = (float) Math.sqrt(2);
+	
+	private static final float coeffReg = 314.0f;
+	
+	private float[] outDatas, inDatas, frictionDatas, everDatas;
 	
 	private int[] codes;
 
@@ -25,15 +24,15 @@ public class TabRCMDistanceAnalysis extends Analysis {
 	
 	private int noDataValue;
 	
+	private List<Integer>[] waits;
+	
 	private boolean hasValue;
 	
-	private Map<Float, Set<Pixel>> waits;
-
 	public TabRCMDistanceAnalysis(float[] outDatas, float[] inDatas, float[] frictionDatas, int width, int height, float cellSize, int noDataValue, int[] codes) {
 		this(outDatas, inDatas, frictionDatas, width, height, cellSize, noDataValue, codes, noDataValue);
 	}
 	
-	public TabRCMDistanceAnalysis(float[] outDatas, float[] inDatas, float[] frictionDatas, int width, int height, float cellSize, int noDataValue, int[] codes, int threshold) {
+	public TabRCMDistanceAnalysis(float[] outDatas, float[] inDatas, float[] frictionDatas, int width, int height, float cellSize, int noDataValue, int[] codes, double threshold) {
 		this.outDatas = outDatas;
 		this.inDatas = inDatas;
 		this.frictionDatas = frictionDatas;
@@ -43,19 +42,25 @@ public class TabRCMDistanceAnalysis extends Analysis {
 		this.noDataValue = noDataValue;
 		this.codes = codes;
 		if(threshold == noDataValue){
-			this.threshold = Integer.MAX_VALUE;
+			this.threshold = 20000;
 		}else{
 			this.threshold = threshold;
 		}
-		this.waits = new TreeMap<Float, Set<Pixel>>();
 	}
 	
 	public boolean hasValue(){
 		return hasValue;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void doInit() {
+
+		everDatas = new float[outDatas.length];
+		
+		waits = new ArrayList[(int) ((threshold * coeffReg)/cellSize)];
+		waits[0] = new ArrayList<Integer>();
+		
 		hasValue = false;
 		boolean ok;
 		float v;
@@ -63,7 +68,7 @@ public class TabRCMDistanceAnalysis extends Analysis {
 			for (int xt = 0; xt < width; xt++) {
 				v = inDatas[yt*width+xt];
 				ok = false;
-				if (v != Raster.getNoDataValue()) {
+				if (v != noDataValue) {
 					for (int c : codes) {
 						if (c == v) {
 							ok = true;
@@ -84,22 +89,24 @@ public class TabRCMDistanceAnalysis extends Analysis {
 		}
 		inDatas = null;
 		
-		// afin de limiter le nombre de calculs de diffusion, ne diffuser qu'à partir des bords d'habitats
-		boolean maj;
-		for (int yt = 0; yt < height; yt++) {
-			for (int xt = 0; xt < width; xt++) {
-				if (outDatas[yt * width + xt] == 0) {
-					maj = true;
-					if(xt == 0 || outDatas[(xt-1)+yt*width] == 0){
-						if(xt == 0 || yt == 0 || outDatas[(xt-1)+(yt-1)*width] == 0){
-							if(yt == 0 || outDatas[xt+(yt-1)*width] == 0){
-								if(xt == (width-1) || yt == 0 || outDatas[(xt+1)+(yt-1)*width] == 0){
-									if(xt == (width-1) || outDatas[(xt+1)+yt*width] == 0){
-										if(xt == (width-1) || yt == (height-1) || outDatas[(xt+1)+(yt+1)*width] == 0){
-											if(yt == (height-1) || outDatas[xt+(yt+1)*width] == 0){
-												if(xt == 0 || yt == (height-1) || outDatas[(xt-1)+(yt+1)*width] == 0){
-													// do nothing
-													maj = false;
+		if(hasValue){
+			// afin de limiter le nombre de calculs de diffusion, ne diffuser qu'à partir des bords d'habitats
+			boolean maj;
+			for (int yt = 0; yt < height; yt++) {
+				for (int xt = 0; xt < width; xt++) {
+					if (outDatas[yt * width + xt] == 0) {
+						maj = true;
+						if(xt == 0 || outDatas[(xt-1)+yt*width] == 0){
+							if(xt == 0 || yt == 0 || outDatas[(xt-1)+(yt-1)*width] == 0){
+								if(yt == 0 || outDatas[xt+(yt-1)*width] == 0){
+									if(xt == (width-1) || yt == 0 || outDatas[(xt+1)+(yt-1)*width] == 0){
+										if(xt == (width-1) || outDatas[(xt+1)+yt*width] == 0){
+											if(xt == (width-1) || yt == (height-1) || outDatas[(xt+1)+(yt+1)*width] == 0){
+												if(yt == (height-1) || outDatas[xt+(yt+1)*width] == 0){
+													if(xt == 0 || yt == (height-1) || outDatas[(xt-1)+(yt+1)*width] == 0){
+														// do nothing
+														maj = false;
+													}
 												}
 											}
 										}
@@ -107,112 +114,179 @@ public class TabRCMDistanceAnalysis extends Analysis {
 								}
 							}
 						}
+						if(maj){
+							setPixelAndValue(yt * width + xt, 0.0f);
+						}
 					}
-					if(maj){
-						setPixelAndValue(new Pixel(xt, yt), 0.0f);
-					}
+					
 				}
-				
 			}
 		}
+		
 	}
 
 	@Override
 	public void doRun() {
-
-		// diffusion
-		
-		while (waits.size() > 0) {
-			diffusionPaquet();
+		if(hasValue){
+			
+			List<Integer> wait;
+			// diffusion
+			for(int d=0; d<threshold*coeffReg/cellSize; d++){
+				wait = waits[d];
+				if(wait != null){
+					waits[d] = null;
+					diffusionPaquet(d, wait);
+					d--;
+				}
+			}
 			
 		}
-		
+		//System.out.println("nombre de diffusions = "+indexG);
 		setResult(outDatas);
 	}
-
-	public void setPixelAndValue(Pixel pixel, float value) {
-		value = (float) (Math.floor(value * 100.0)/100.0);
-		if (!waits.containsKey(value)) {
-			waits.put(value, new HashSet<Pixel>());
+	
+	private void diffusionPaquet(int dd, List<Integer> wait){
+		for(int p : wait){
+			diffusion(p, dd/coeffReg);
 		}
-		waits.get(value).add(pixel);
 	}
 
-	private void diffusionPaquet(){
-		
-		Iterator<Entry<Float, Set<Pixel>>> iteEntry = waits.entrySet().iterator();
-		Entry<Float, Set<Pixel>> entry = iteEntry.next(); // récupération des pixels à diffuser
-		iteEntry.remove();
-		
-		if(entry.getValue().size() != 0){
-			double dd = entry.getKey(); // récupération de la valeur de diffusion 
-			
-			Iterator<Pixel> itePixel = entry.getValue().iterator();
-			Pixel p;
-			while(itePixel.hasNext()){
-				p = itePixel.next();
-				itePixel.remove();
-				
-				diffusion(p, dd);
+	public void setPixelAndValue(int pixel, float dist) {
+		if(dist < threshold/cellSize){
+			if (waits[(int) (dist*coeffReg)] == null) {
+				waits[(int) (dist*coeffReg)] = new ArrayList<Integer>();
 			}
+			waits[(int) (dist*coeffReg)].add(pixel);
 		}
 	}
 	
-	private void diffusion(Pixel p, double dd) {
-		if (threshold > dd) { 
-			double vd = outDatas[p.x()+p.y()*width];  // valeur au point de diffusion
-			if (vd != Raster.getNoDataValue()) {
-				double fd = frictionDatas[p.x()+p.y()*width]; // friction au point de diffusion
+	private void diffusion(int p, double dd) {
+		//++indexG;
+		
+		if (everDatas[p] != 1 && threshold/cellSize > dd) {
+			
+			everDatas[p] = 1; // marquage de diffusion du pixel
+			
+			if (outDatas[p] != noDataValue) {
+				float fd = frictionDatas[p]; // friction au point de diffusion
+				int np;
+				float v, fc, d;
 				
-				Pixel np;
-				float v, d;
-				Iterator<Pixel> ite = p.getCardinalMargins(); // pour chaque pixel cardinal (4)
-				while (ite.hasNext()) {
-					np = ite.next();
-						
-					if(np.x() >= 0 && np.x() < width && np.y() >= 0 && np.y() < height){
-						v = outDatas[np.x()+np.y()*width]; // valeur au point cardinal
-						if (v != Raster.getNoDataValue()) {
-							float fc = frictionDatas[np.x()+np.y()*width];
-							d = (float) (dd + (cellSize / 2) * fd + (cellSize / 2) * fc); // distance au point cardinal
-							if (v == -2 || d < v) { // MAJ ?
-								outDatas[np.x()+np.y()*width] = (float) d;
-								
-								/*if(v != -2){
-									waits.get(v).remove(np);
-								}*/
-								setPixelAndValue(np, (float) d);
-							}
+				int x = p%width;
+				int y = p/width;
+				
+				// en haut à gauche
+				np = p - width - 1;
+				if(x > 0 && y > 0 && everDatas[np] != 1){
+					v = outDatas[np]; // valeur au point cardinal
+					if (v != noDataValue) {
+						fc = frictionDatas[np];
+						d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
+						if (v == -2 || d * cellSize < v) { // MAJ ?
+							outDatas[np] = d * cellSize;
+							setPixelAndValue(np, d);
 						}
 					}
 				}
-				ite = p.getDiagonalMargins(); // pour chaque pixel diagonal (4)
-				while (ite.hasNext()) {
-					np = ite.next();
-						
-					if(np.x() >= 0 && np.x() < width && np.y() >= 0 && np.y() < height){
-						v = outDatas[np.x()+np.y()*width]; // valeur au point cardinal
-						if (v != Raster.getNoDataValue()) {
-							float fc = frictionDatas[np.x()+np.y()*width];
-							d = (float) (dd + (cellSize * Math.sqrt(2) / 2) * fd + (cellSize * Math.sqrt(2) / 2) * fc); // distance au point diagonal
-							if (v == -2 || d < v) { // MAJ ?
-								outDatas[np.x()+np.y()*width] = (float) d;
-								
-								/*if(v != -2){
-									waits.get(v).remove(np);
-								}*/
-								setPixelAndValue(np, (float) d);
-							}
+				// en haut
+				np = p - width;
+				if(y > 0 && everDatas[np] != 1){
+					v = outDatas[np]; // valeur au point cardinal
+					if (v != noDataValue) {
+						fc = frictionDatas[np];
+						d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
+						if (v == -2 || d * cellSize < v) { // MAJ ?
+							outDatas[np] = d * cellSize;
+							setPixelAndValue(np, d);
 						}
 					}
-				}	
+				}
+				// en haut à droite
+				np = p - width + 1;
+				if(x < (width-1) && y > 0 && everDatas[np] != 1){
+					v = outDatas[np]; // valeur au point cardinal
+					if (v != noDataValue) {
+						fc = frictionDatas[np];
+						d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
+						if (v == -2 || d * cellSize < v) { // MAJ ?
+							outDatas[np] = d * cellSize;
+							setPixelAndValue(np, d);
+						}
+					}
+				}
+				// à gauche
+				np = p - 1;
+				if(x > 0 && everDatas[np] != 1){
+					v = outDatas[np]; // valeur au point cardinal
+					if (v != noDataValue) {
+						fc = frictionDatas[np];
+						d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
+						if (v == -2 || d * cellSize < v) { // MAJ ?
+							outDatas[np] = d * cellSize;
+							setPixelAndValue(np, d);
+						}
+					}
+				}
+				// à droite
+				np = p + 1;
+				if(x < (width-1) && everDatas[np] != 1){
+					v = outDatas[np]; // valeur au point cardinal
+					if (v != noDataValue) {
+						fc = frictionDatas[np];
+						d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
+						if (v == -2 || d * cellSize < v) { // MAJ ?
+							outDatas[np] = d * cellSize;
+							setPixelAndValue(np, d);
+						}
+					}
+				}
+				// en bas à gauche
+				np = p + width - 1;
+				if(x > 0 && y < (height-1) && everDatas[np] != 1){
+					v = outDatas[np]; // valeur au point cardinal
+					if (v != noDataValue) {
+						fc = frictionDatas[np];
+						d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
+						if (v == -2 || d * cellSize < v) { // MAJ ?
+							outDatas[np] = d * cellSize;
+							setPixelAndValue(np, d);
+						}
+					}
+				}
+				// en bas
+				np = p + width;
+				if(y < (height-1) && everDatas[np] != 1){
+					v = outDatas[np]; // valeur au point cardinal
+					if (v != noDataValue) {
+						fc = frictionDatas[np];
+						d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
+						if (v == -2 || d * cellSize < v) { // MAJ ?
+							outDatas[np] = d * cellSize;
+							setPixelAndValue(np, d);
+						}
+					}
+				}
+				// en bas à droite
+				np = p + width + 1;
+				if(x < (width-1) && y < (height-1) && everDatas[np] != 1){
+					v = outDatas[np]; // valeur au point cardinal
+					if (v != noDataValue) {
+						fc = frictionDatas[np];
+						d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
+						if (v == -2 || d * cellSize < v) { // MAJ ?
+							outDatas[np] = d * cellSize;
+							setPixelAndValue(np, d);
+						}
+					}
+				}
 			}
 		}
 	}
 
+
 	@Override
 	protected void doClose() {
-		waits = null;
+		// TODO Auto-generated method stub
 	}
 
 }

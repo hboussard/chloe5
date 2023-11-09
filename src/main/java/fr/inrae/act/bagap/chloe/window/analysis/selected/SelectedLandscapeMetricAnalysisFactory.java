@@ -14,6 +14,7 @@ import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
+import fr.inrae.act.bagap.chloe.window.counting.BasicCounting;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.counting.CoupleCounting;
@@ -21,6 +22,7 @@ import fr.inrae.act.bagap.chloe.window.counting.PatchCounting;
 import fr.inrae.act.bagap.chloe.window.counting.QuantitativeCounting;
 import fr.inrae.act.bagap.chloe.window.counting.ValueAndCoupleCounting;
 import fr.inrae.act.bagap.chloe.window.counting.ValueCounting;
+import fr.inrae.act.bagap.chloe.window.kernel.selected.SelectedBasicKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.selected.SelectedCountCoupleKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.selected.SelectedCountValueAndCoupleKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.selected.SelectedCountValueKernel;
@@ -79,9 +81,16 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 		// window coeff and distance
 		float[] coeffs = new float[windowSize * windowSize];
 
-		double dMax = midWindowSize * inCellSize;
-		DistanceFunction function = CombinationExpressionFactory.createDistanceFunction(builder.getWindowDistanceFunction(), dMax);
-				
+		double dMax = builder.getDMax();
+		if(dMax == -1){
+			dMax = midWindowSize * inCellSize;
+		}
+		
+		DistanceFunction function = null;
+		if (builder.getWindowDistanceType() == WindowDistanceType.WEIGHTED) {
+			function = CombinationExpressionFactory.createDistanceFunction(builder.getWindowDistanceFunction(), dMax);
+		}
+		
 		double theoreticalSize = 0;
 		int theoreticalCoupleSize = 0;
 		if(builder.getWindowShapeType() == WindowShapeType.SQUARE) {
@@ -126,10 +135,12 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 			pixels = builder.getRefPixels();
 		}else if(builder.getPixelsFilter() != null){
 			pixels = CoordinateManager.initWithPixels(builder.getPixelsFilter());
+			builder.setPixelsFilter(pixels);
 		}else if(builder.getRefPoints() != null){
-			// TODO
+			throw new IllegalArgumentException();
 		}else{
 			pixels = CoordinateManager.initWithPoints(builder.getPointsFilter(), coverage.getEntete());
+			builder.setPixelsFilter(pixels);
 		}
 			
 		// observers
@@ -137,6 +148,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 		Set<CountingObserver> observers = new HashSet<CountingObserver>();
 		
 		if(builder.getCsv() != null){
+			
 			SelectedCsvOutput csvOutput = new SelectedCsvOutput(builder.getCsv(), pixels, coverage.getEntete());
 			observers.add(csvOutput);
 		}
@@ -150,9 +162,30 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 		SelectedLandscapeMetricKernel kernel = null;
 		Counting counting = null;
 		int nbValues = -1;
-			
+		
 		// gestion specifiques des analyses quantitatives ou qualitatives
-		if(MetricManager.hasOnlyQuantitativeMetric(metrics)){ // quantitative
+		if(MetricManager.hasOnlyBasicMetric(metrics)){
+			
+			nbValues = 4;
+			
+			kernel = new SelectedBasicKernel(windowSize, pixels, coeffs, coverage.getEntete(), builder.getWindowsPath());
+			
+			counting = new BasicCounting(theoreticalSize);
+
+			// add metrics to counting
+			for (Metric m : metrics) {
+				counting.addMetric(m);
+			}
+
+			// observers
+			for (CountingObserver co : observers) {
+				counting.addObserver(co);
+			}
+
+			// analysis
+			return createSingle(coverage, pixels, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
+			
+		}else if(MetricManager.hasOnlyQuantitativeMetric(metrics)){ // quantitative
 			
 			nbValues = 8;
 			

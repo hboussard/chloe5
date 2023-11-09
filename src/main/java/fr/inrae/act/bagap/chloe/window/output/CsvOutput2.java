@@ -5,9 +5,9 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Set;
 
+import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
@@ -97,7 +97,7 @@ public class CsvOutput2 implements CountingObserver{
 			double v;
 			for(Metric m : metrics){
 				v = m.value();
-				bout.write((";"+v).getBytes());
+				bout.write((";"+Util.format(v)).getBytes());
 			}
 			bout.write("\n".getBytes());
 		} catch (IOException e) {

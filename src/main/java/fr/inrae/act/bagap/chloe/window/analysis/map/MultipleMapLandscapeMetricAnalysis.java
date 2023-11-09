@@ -2,8 +2,9 @@ package fr.inrae.act.bagap.chloe.window.analysis.map;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import fr.inrae.act.bagap.apiland.util.SpatialCsvManager;
@@ -22,7 +23,7 @@ public class MultipleMapLandscapeMetricAnalysis extends MultipleLandscapeMetricA
 	
 	private Set<Integer> coherences;
 	
-	private Set<String> csvOutputs;
+	private List<String> csvOutputs;
 	
 	public MultipleMapLandscapeMetricAnalysis(LandscapeMetricAnalysisBuilder builder) {
 		super(builder);
@@ -35,24 +36,59 @@ public class MultipleMapLandscapeMetricAnalysis extends MultipleLandscapeMetricA
 		
 			totalMetrics = builder.getMetrics();
 			totalCsvOutput = builder.getCsv();
-			String path = new File(totalCsvOutput).getParent();
-			csvOutputs = new HashSet<String>();
+			
+			String path = null;
+			if(totalCsvOutput != null){
+				path = new File(totalCsvOutput).getParent();
+				csvOutputs = new ArrayList<String>();
+			}
+			
+			
 			coherences = MetricManager.getCoherences(totalMetrics);
 			Set<Metric> metrics = new HashSet<Metric>();
-			for(int coherence : coherences){
-				metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
-				if(coherence == 0){
-					continue;
-				}
-				builder.setMetrics(metrics);
-				builder.addCsvOutput(path+"/map_"+coherence+".csv");
-				csvOutputs.add(path+"/map_"+coherence+".csv");
-				
-				add(LandscapeMetricAnalysisFactory.create(builder));
 			
-				metrics = new HashSet<Metric>();
+			if(builder.getRasterFiles().size() == 0 || builder.getRasterFiles().size() == 1){
+				
+				for(int coherence : coherences){
+					metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
+					if(coherence == 0){
+						continue;
+					}
+					builder.setMetrics(metrics);
+					
+					if(totalCsvOutput != null){
+						builder.addCsvOutput(path+"/map_"+coherence+".csv");
+						csvOutputs.add(path+"/map_"+coherence+".csv");
+					}
+					
+					add(LandscapeMetricAnalysisFactory.create(builder));
+				
+					metrics = new HashSet<Metric>();
+				}
+			}else{
+				for(String rasterFile : builder.getRasterFiles()){
+					String name = new File(rasterFile).getName().replace(".tif", "").replace(".asc", "");
+					builder.setRasterFile(rasterFile);
+					
+					for(int coherence : coherences){
+						metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
+						if(coherence == 0){
+							continue;
+						}
+						builder.setMetrics(metrics);
+						
+						if(totalCsvOutput != null){
+							builder.addCsvOutput(path+"/"+name+"_map_"+coherence+".csv");
+							csvOutputs.add(path+"/"+name+"_map_"+coherence+".csv");
+						}
+						
+						add(LandscapeMetricAnalysisFactory.create(builder));
+					
+						metrics = new HashSet<Metric>();
+					}
+					
+				}
 			}
-		
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -69,10 +105,10 @@ public class MultipleMapLandscapeMetricAnalysis extends MultipleLandscapeMetricA
 	@Override
 	protected void doClose() {
 		
-		SpatialCsvManager.merge(totalCsvOutput, csvOutputs.toArray(new String[csvOutputs.size()]), new HashSet<String>(Arrays.asList(new String[]{"name"})));
+		SpatialCsvManager.merge(totalCsvOutput, csvOutputs.toArray(new String[csvOutputs.size()]));
 		
 		for(String csvOut : csvOutputs){
-			new File(csvOut).delete();
+			//new File(csvOut).delete();
 		}
 		
 		totalMetrics = null;

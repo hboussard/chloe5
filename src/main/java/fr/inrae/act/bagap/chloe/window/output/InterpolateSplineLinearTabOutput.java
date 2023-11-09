@@ -1,11 +1,9 @@
 package fr.inrae.act.bagap.chloe.window.output;
 
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
@@ -20,15 +18,18 @@ public class InterpolateSplineLinearTabOutput implements CountingObserver{
 	
 	private int maxI;
 	
-	private double[] line;
+	private float[] line;
 	
-	private double[] oldLine;
+	private float[] oldLine;
 	
-	public InterpolateSplineLinearTabOutput(float[] datas, Metric metric, int width, int displacement){
+	private int noDataValue;
+	
+	public InterpolateSplineLinearTabOutput(float[] datas, Metric metric, int width, int displacement, int noDataValue){
 		this.datas = datas;
 		this.metric = metric;
 		this.width = width;
 		this.delta = displacement;
+		this.noDataValue = noDataValue;
 	}
 	
 	public Metric getMetric(){
@@ -38,10 +39,10 @@ public class InterpolateSplineLinearTabOutput implements CountingObserver{
 	@Override
 	public void init(Counting c, Set<Metric> metrics) {
 		
-		Arrays.fill(datas, Raster.getNoDataValue());
+		Arrays.fill(datas, noDataValue);
 		
-		line = new double[width];
-		Arrays.fill(line, Raster.getNoDataValue());
+		line = new float[width];
+		Arrays.fill(line, noDataValue);
 		
 		maxI = getMaxI(width, delta);
 	}
@@ -58,26 +59,26 @@ public class InterpolateSplineLinearTabOutput implements CountingObserver{
 	@Override
 	public void postrun(Counting c, int i, int j, Set<Metric> metrics) {
 		
-		line[i] = metric.value();
+		line[i] = (float) metric.value();
 		if(i > 0){
 			for(int x=1; x<delta; x++){
-				line[i-delta+x] = splineValue(line[i-delta], line[i], x);
+				line[i-delta+x] = Float.parseFloat(Util.format(droite(line[i-delta], line[i], x)));
 			}
 			
 			if(i == maxI){
 				if(j != 0){
 					for(int y=1; y<delta; y++){			
 						for(int x=0; x<width; x++){
-							datas[(j-delta+y)*width+x] = (float) splineValue(oldLine[x], line[x], y);
+							datas[(j-delta+y)*width+x] = Float.parseFloat(Util.format(droite(oldLine[x], line[x], y)));
 						}
 					}
 				}
 				for(int x=0; x<width; x++){
-					datas[j*width+x] = (float) line[x];	
+					datas[j*width+x] = line[x];	
 				}
 				
 				oldLine = line.clone(); // stockage
-				Arrays.fill(line, Raster.getNoDataValue()); // nettoyage
+				Arrays.fill(line, noDataValue); // nettoyage
 			}
 		}
 	}
@@ -92,9 +93,9 @@ public class InterpolateSplineLinearTabOutput implements CountingObserver{
 		// do nothing
 	}
 	
-	private double splineValue(double v, double v_delta, double x){
-		if(v == Raster.getNoDataValue() || v_delta == Raster.getNoDataValue()){
-			return Raster.getNoDataValue();
+	private double droite(double v, double v_delta, double x){
+		if(v == noDataValue || v_delta == noDataValue){
+			return noDataValue;
 		}
 		return x*(v_delta-v)/delta + v;
 	}

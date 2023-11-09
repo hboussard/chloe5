@@ -280,7 +280,8 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										bord = bords.get(p).get("left");
 										for(int j=0; j<roiHeight; j++){
 											outDatas[j*roiWidth+0] = bord[j]; 
-											rcm.setPixelAndValue(new Pixel(0, j), bord[j]);
+											rcm.setPixelAndValue(j*roiWidth+0, bord[j]);
+											//rcm.setPixelAndValue(new Pixel(0, j), bord[j]);
 										}
 									}
 								}
@@ -289,7 +290,8 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										bord = bords.get(p).get("north");
 										for(int i=0; i<roiWidth; i++){
 											outDatas[i] = bord[i];
-											rcm.setPixelAndValue(new Pixel(i, 0), bord[i]);
+											rcm.setPixelAndValue(i, bord[i]);
+											//rcm.setPixelAndValue(new Pixel(i, 0), bord[i]);
 										}
 									}
 								}
@@ -298,7 +300,8 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										bord = bords.get(p).get("right");
 										for(int j=0; j<roiHeight; j++){
 											outDatas[j*roiWidth + (roiWidth-1)] = bord[j];
-											rcm.setPixelAndValue(new Pixel(roiWidth-1, j), bord[j]);
+											rcm.setPixelAndValue(j*roiWidth + (roiWidth-1), bord[j]);
+											//rcm.setPixelAndValue(new Pixel(roiWidth-1, j), bord[j]);
 										}
 									}
 								}
@@ -307,7 +310,8 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										bord = bords.get(p).get("south");
 										for(int i=0; i<roiWidth; i++){
 											outDatas[(roiHeight-1)*roiWidth + i] = bord[i];
-											rcm.setPixelAndValue(new Pixel(i, roiHeight-1), bord[i]);
+											rcm.setPixelAndValue((roiHeight-1)*roiWidth + i, bord[i]);
+											//rcm.setPixelAndValue(new Pixel(i, roiHeight-1), bord[i]);
 										}
 									}
 								}
@@ -318,7 +322,8 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 									for(int j=0; j<roiHeight; j++){
 										if(bord[j] < outDatas[j*roiWidth+0]){
 											outDatas[j*roiWidth+0] = bord[j]; 
-											rcm.setPixelAndValue(new Pixel(0, j), bord[j]);
+											rcm.setPixelAndValue(j*roiWidth+0, bord[j]);
+											//rcm.setPixelAndValue(new Pixel(0, j), bord[j]);
 										}
 									}
 								}
@@ -327,7 +332,8 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 									for(int i=0; i<roiWidth; i++){
 										if(bord[i] < outDatas[i]){
 											outDatas[i] = bord[i];
-											rcm.setPixelAndValue(new Pixel(i, 0), bord[i]);
+											rcm.setPixelAndValue(i, bord[i]);
+											//rcm.setPixelAndValue(new Pixel(i, 0), bord[i]);
 										}
 									}
 								}
@@ -336,7 +342,8 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 									for(int j=0; j<roiHeight; j++){
 										if(bord[j] < outDatas[j*roiWidth + (roiWidth-1)]){
 											outDatas[j*roiWidth + (roiWidth-1)] = bord[j];
-											rcm.setPixelAndValue(new Pixel(roiWidth-1, j), bord[j]);
+											rcm.setPixelAndValue(j*roiWidth + (roiWidth-1), bord[j]);
+											//rcm.setPixelAndValue(new Pixel(roiWidth-1, j), bord[j]);
 										}
 									}
 								}
@@ -345,7 +352,8 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 									for(int i=0; i<roiWidth; i++){
 										if(bord[i] < outDatas[(roiHeight-1)*roiWidth + i]){
 											outDatas[(roiHeight-1)*roiWidth + i] = bord[i];
-											rcm.setPixelAndValue(new Pixel(i, roiHeight-1), bord[i]);
+											rcm.setPixelAndValue((roiHeight-1)*roiWidth + i, bord[i]);
+											//rcm.setPixelAndValue(new Pixel(i, roiHeight-1), bord[i]);
 										}
 									}
 								}

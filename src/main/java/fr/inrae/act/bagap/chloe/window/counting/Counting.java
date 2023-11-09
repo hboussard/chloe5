@@ -12,7 +12,8 @@ public abstract class Counting implements
 	CoupleCountingInterface,
 	QuantitativeCountingInterface,
 	PatchCountingInterface,
-	SlopeCountingInterface{//,
+	SlopeCountingInterface,
+	ContinuityCountingInterface{//,
 	//MetricObserver {
 	
 	/**
@@ -364,6 +365,16 @@ public abstract class Counting implements
 	
 	@Override
 	public double slopeIntensity(){
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public double surface(){
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public double volume(){
 		throw new UnsupportedOperationException();
 	}
 }

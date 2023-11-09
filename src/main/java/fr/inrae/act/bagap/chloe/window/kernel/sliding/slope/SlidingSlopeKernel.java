@@ -7,7 +7,7 @@ public class SlidingSlopeKernel extends AbstractSlidingLandscapeMetricKernel {
 	private double cellSize;
 	
 	public SlidingSlopeKernel(int noDataValue, double cellSize){
-		super(3, 1, null, noDataValue, null);
+		super(3, 1, null, noDataValue, null); // can be more generic !
 		this.cellSize = cellSize;
 	}
 	
@@ -36,31 +36,34 @@ public class SlidingSlopeKernel extends AbstractSlidingLandscapeMetricKernel {
 					final int mid = 1;
 					float v;
 					float slopeDirection = 0;
-					double slopeIntensity = 90;
-					double min = 90;
-					
+					double slopeIntensity;
+					double minSlopeIntensity = 180;
 					for (int dy = -mid; dy <= mid; dy += 1) {
 						if(((y + dy) >= 0) && ((y + dy) < height())){
 							for (int dx = -mid; dx <= mid; dx += 1) {
 								if(((x + dx) >= 0) && ((x + dx) < width())){
 									
-									v = inDatas()[((y + dy) * width()) + (x + dx)];
-									
-									if(v != noDataValue()) {
-										
-										if(v < vc){
-											double diffHauteur = Math.abs(vc - v);
+									if(!(dx == 0 && dy == 0)){
+										v = inDatas()[((y + dy) * width()) + (x + dx)];
+										if(v != noDataValue()) {
+											
+											double diffHauteur = vc - v;
 											double diffDistance = dy==0||dx==0?cellSize:cellSize*Math.sqrt(2);
-											
+												
 											double tangente = diffDistance/diffHauteur;
-											slopeIntensity = Math.toDegrees(Math.atan(tangente));
-											
-											if(slopeIntensity < min){
-											
-												min = slopeIntensity;
-												slopeDirection = (dx+2) + (dy+1)*3;
-												if(slopeDirection > 4){
-													slopeDirection--;
+												
+											//slopeIntensity = Math.toDegrees(Math.atan(tangente));
+											slopeIntensity = ((90 + (90 + Math.toDegrees(Math.atan(tangente))))%180.0);
+												
+											if(slopeIntensity < minSlopeIntensity){
+												
+												minSlopeIntensity = slopeIntensity;
+												
+												if(tangente > 0 && slopeIntensity != 90){
+													slopeDirection = (dx+2) + (dy+1)*3;
+													if(slopeDirection > 4){
+														slopeDirection--;
+													}
 												}
 											}
 										}
@@ -71,7 +74,7 @@ public class SlidingSlopeKernel extends AbstractSlidingLandscapeMetricKernel {
 					}
 					
 					outDatas()[ind][4] = slopeDirection;
-					outDatas()[ind][5] = slopeIntensity;
+					outDatas()[ind][5] = minSlopeIntensity;
 					
 				}
 			}else{

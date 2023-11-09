@@ -59,11 +59,9 @@ public class SlidingFunctionalCountCoupleKernel extends SlidingFunctionalKernel 
 				
 				final int mid = windowSize() / 2;
 				
-				float[] image = generateImage(x, y, mid);
-				
 				float[] resistance = generateResistance(x, y, mid);
 				
-				float[] distance = calculateDistance(image, resistance);
+				float[] distance = calculateDistance(resistance);
 				
 				generateCoeff(distance);
 				
@@ -84,10 +82,8 @@ public class SlidingFunctionalCountCoupleKernel extends SlidingFunctionalKernel 
 								coeff = coeff()[ic];
 								if(coeff > 0){
 									v = (short) inDatas()[((y + dy) * width()) + (x + dx)];
-									//outDatas()[ind][2] += coeff;
 									nb += coeff;
 									if(v == noDataValue()){
-										//outDatas()[ind][3] += coeff;
 										nb_nodata += coeff;
 									}
 									
@@ -95,13 +91,10 @@ public class SlidingFunctionalCountCoupleKernel extends SlidingFunctionalKernel 
 										ic_V = ((dy+mid-1) * windowSize()) + (dx+mid);
 										if(coeff()[ic_V] > 0){
 											v_V = (short) inDatas()[((y + dy - 1) * width()) + (x + dx)];
-											//outDatas()[ind][4] += coeff;
 											nbC += coeff;
 											if(v == noDataValue() || v_V == noDataValue()){
-												//outDatas()[ind][5] += coeff;
 												nbC_nodata += coeff;
 											}else if(v == 0 || v_V == 0){
-												//outDatas()[ind][6] += coeff;
 												nbC_zero += coeff;
 											}else{
 												mc = mapCouples[mapValues[v]][mapValues[v_V]];
@@ -114,13 +107,10 @@ public class SlidingFunctionalCountCoupleKernel extends SlidingFunctionalKernel 
 										ic_H = ((dy+mid) * windowSize()) + (dx+mid-1);
 										if(coeff()[ic_H] > 0){
 											v_H = (short) inDatas()[((y + dy) * width()) + (x + dx - 1)];
-											//outDatas()[ind][4] += coeff;
 											nbC += coeff;
 											if(v == noDataValue() || v_H == noDataValue()){
-												//outDatas()[ind][5] += coeff;
 												nbC_nodata += coeff;
 											}else if(v == 0 || v_H == 0){
-												//outDatas()[ind][6] += coeff;
 												nbC_zero += coeff;
 											}else{
 												mc = mapCouples[mapValues[v]][mapValues[v_H]];

@@ -27,7 +27,7 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	/**
 	 * partie specifique :
 	 * 4 : nombre de "0"
-	 * à partir de 8 jusqu'au nombre de valeurs + 8 : les occurences de valeurs dans l'ordre numérique
+	 * à partir de 5 jusqu'au nombre de valeurs + 5 : les occurences de valeurs dans l'ordre numérique
 	 */
 	@Override
 	public void doSetCounts(double[] counts){

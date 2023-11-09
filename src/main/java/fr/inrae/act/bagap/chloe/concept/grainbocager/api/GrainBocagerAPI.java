@@ -165,6 +165,7 @@ public class GrainBocagerAPI {
 	private static boolean importBocage(GrainBocagerManager manager, Properties properties) {
 		if(properties.containsKey("bocage")){
 			String prop = properties.getProperty("bocage");
+			System.out.println(prop);
 			manager.setBocage(prop);
 			return true;
 		}

@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import fr.inra.sad.bagap.apiland.core.element.manager.DynamicLayerFactory;
 import fr.inra.sad.bagap.apiland.core.element.manager.Tool;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.matrix.MatrixManager;
+import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
@@ -88,7 +88,7 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 				values.get(0)[0] = v;
 				// les autres valeurs sont vides
 				for(int i=1; i<width; i++){
-					values.get(0)[i] = (double) Raster.getNoDataValue();
+					values.get(0)[i] = (double) noDataValue;
 				}
 			}else{ // on n'est pas sur la premiere valeur de la ligne
 				// j'affecte la nouvelle valeur
@@ -126,7 +126,7 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 				for(int yv=1; yv<=delta; yv++){
 					values.put(y-delta+yv, new double[width]);
 					for(int i=0; i<width; i++){
-						values.get(y-delta+yv)[i] = (double) Raster.getNoDataValue();
+						values.get(y-delta+yv)[i] = (double) noDataValue;
 					}
 				}
 				// j'affecte la nouvelle valeur
@@ -163,7 +163,7 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 					// ecriture des valeurs suivantes
 					for(int j=maxHeight+1; j<height; j++){
 						for(int i=0; i<width; i++){
-							write(Raster.getNoDataValue(), j);
+							write(noDataValue, j);
 						}
 					}
 				}
@@ -188,8 +188,8 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 	}
 	
 	private double droite(double v_delta, double v, double yv){
-		if(v == Raster.getNoDataValue() || v_delta == Raster.getNoDataValue()){
-			return Raster.getNoDataValue();
+		if(v == noDataValue || v_delta == noDataValue){
+			return noDataValue;
 		}
 		return yv*(v-v_delta)/delta + v_delta;
 	}
@@ -197,14 +197,14 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 	private void write(double v, int y){
 		try {
 			if(yGlobal == -1){
-				writer.write(v+"");
+				writer.write(Util.format(v));
 				yGlobal = 0;
 			}else if(y != yGlobal){
 				writer.newLine();
-				writer.write(v+"");
+				writer.write(Util.format(v));
 				yGlobal = y;
 			}else{
-				writer.write(" "+v);
+				writer.write(" "+Util.format(v));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

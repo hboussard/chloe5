@@ -3,29 +3,21 @@ package fr.inrae.act.bagap.chloe.window.output;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Map;
 import java.util.Set;
 
+import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class EntityCsvOutput implements CountingObserver{
 
-	private final DecimalFormat format;
-	
 	private BufferedWriter bw;
 	
 	private String csv;
 	
 	public EntityCsvOutput(String csv) {
 		this.csv = csv;
-		
-		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-		symbols.setDecimalSeparator('.');
-		format = new DecimalFormat("0.00000", symbols);
 	}
 	
 	@Override
@@ -60,7 +52,7 @@ public class EntityCsvOutput implements CountingObserver{
 			double v;
 			for(Metric m : metrics){
 				v = m.value();
-				bw.write((";"+format.format(v)));
+				bw.write((";"+Util.format(v)));
 			}
 			bw.newLine();
 		} catch (IOException e) {
