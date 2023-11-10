@@ -285,8 +285,8 @@ public class ChloeAPI {
 			importOutputSuffix(builder, properties);
 			importTypeMime(builder, properties);
 			importVariables(builder, properties);
-			importNCols(builder, properties);
-			importNRows(builder, properties);
+			importWidth(builder, properties);
+			importHeight(builder, properties);
 			importXMin(builder, properties);
 			importYMin(builder, properties);
 			importCellSize(builder, properties);
@@ -651,36 +651,30 @@ public class ChloeAPI {
 	}
 	
 	// not required
-	public static void importNRows(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
-		if(properties.containsKey("nrows")){
-			builder.setNRows(Integer.parseInt(properties.getProperty("nrows")));
+	public static void importHeight(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("height")){
+			builder.setHeight(Integer.parseInt(properties.getProperty("height")));
 		}
 	}
 	
 	// not required
-	public static void importNCols(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
-		if(properties.containsKey("ncols")){
-			builder.setNCols(Integer.parseInt(properties.getProperty("ncols")));
+	public static void importWidth(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("width")){
+			builder.setWidth(Integer.parseInt(properties.getProperty("width")));
 		}
 	}
 	
 	// not required
 	public static void importXMin(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
-		if(properties.containsKey("xMin")){
-			builder.setXMin(Double.parseDouble(properties.getProperty("xMin")));
-		}
-		if(properties.containsKey("xllcorner")){
-			builder.setXMin(Double.parseDouble(properties.getProperty("xllcorner")));
+		if(properties.containsKey("xmin")){
+			builder.setXMin(Double.parseDouble(properties.getProperty("xmin")));
 		}
 	}
 	
 	// not required
 	public static void importYMin(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
-		if(properties.containsKey("yMin")){
-			builder.setYMin(Double.parseDouble(properties.getProperty("yMin")));
-		}
-		if(properties.containsKey("yllcorner")){
-			builder.setYMin(Double.parseDouble(properties.getProperty("yllcorner")));
+		if(properties.containsKey("ymin")){
+			builder.setYMin(Double.parseDouble(properties.getProperty("ymin")));
 		}
 	}
 	

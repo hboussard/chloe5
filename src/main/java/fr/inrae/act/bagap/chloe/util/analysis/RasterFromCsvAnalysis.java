@@ -14,7 +14,7 @@ public class RasterFromCsvAnalysis extends ChloeUtilAnalysis {
 	
 	private String outputRaster;
 	
-	private  int ncols, nrows, noDataValue;
+	private  int width, height, noDataValue;
 	
 	private float cellSize;
 	
@@ -22,12 +22,12 @@ public class RasterFromCsvAnalysis extends ChloeUtilAnalysis {
 	
 	private EnteteRaster entete;
 
-	public RasterFromCsvAnalysis(String outputRaster, String csvFile, String variable, int ncols, int nrows, double xMin, double yMin, float cellSize, int noDataValue){
+	public RasterFromCsvAnalysis(String outputRaster, String csvFile, String variable, int width, int height, double xMin, double yMin, float cellSize, int noDataValue){
 		this.csvFile = csvFile;
 		this.variable = variable;
 		this.outputRaster = outputRaster;
-		this.ncols = ncols;
-		this.nrows = nrows;
+		this.width = width;
+		this.height = height;
 		this.xMin = xMin;
 		this.yMin = yMin;
 		this.cellSize = cellSize;
@@ -37,9 +37,9 @@ public class RasterFromCsvAnalysis extends ChloeUtilAnalysis {
 	@Override
 	protected void doInit() {
 		
-		double xMax = xMin + ncols*cellSize;
-		double yMax = yMin + nrows*cellSize;
-		entete = new EnteteRaster(ncols, nrows, xMin, xMax, yMin, yMax, cellSize, noDataValue);
+		double xMax = xMin + width*cellSize;
+		double yMax = yMin + height*cellSize;
+		entete = new EnteteRaster(width, height, xMin, xMax, yMin, yMax, cellSize, noDataValue);
 		
 		outData = new float[entete.width()*entete.height()];
 		

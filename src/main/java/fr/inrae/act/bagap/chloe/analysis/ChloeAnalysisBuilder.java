@@ -303,11 +303,11 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 	
-	public void setNCols(int parseInt) {
+	public void setWidth(int parseInt) {
 		throw new UnsupportedOperationException();
 	}
 	
-	public void setNRows(int parseInt) {
+	public void setHeight(int parseInt) {
 		throw new UnsupportedOperationException();
 	}
 	

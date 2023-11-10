@@ -33,7 +33,7 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	
 	private float cellSize;
 	
-	private int ncols, nrows, noDataValue;
+	private int width, height, noDataValue;
 	
 	private double xMin, yMin;
 	
@@ -56,8 +56,8 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 		combination = null;
 		changes = null;
 		cellSize = -1;
-		ncols = -1;
-		nrows = -1;
+		width = -1;
+		height = -1;
 		xMin = 0;
 		yMin = 0;
 		noDataValue = Raster.getNoDataValue();
@@ -125,13 +125,13 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	}
 	
 	@Override
-	public void setNCols(int ncols) {
-		this.ncols = ncols;
+	public void setWidth(int width) {
+		this.width = width;
 	}
 	
 	@Override
-	public void setNRows(int nrows) {
-		this.nrows = nrows;
+	public void setHeight(int height) {
+		this.height = height;
 	}
 	
 	@Override
@@ -217,12 +217,12 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 		return noDataValue;
 	}
 	
-	public int getNCols(){
-		return ncols;
+	public int getWidth(){
+		return width;
 	}
 	
-	public int getNRows(){
-		return nrows;
+	public int getHeight(){
+		return height;
 	}
 	
 	public double getXMin(){

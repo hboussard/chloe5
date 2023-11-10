@@ -9,6 +9,7 @@ import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class CsvOutput implements CountingObserver{
 	
@@ -57,6 +58,9 @@ public class CsvOutput implements CountingObserver{
 	}
 	
 	private void writeHeader(){
+		EnteteRaster entete = new EnteteRaster(width, height, minX, maxX, minY, maxY, (float) cellSize, noDataValue);
+		EnteteRaster.export(entete, csv.replace(".csv", "_header.txt"));
+		/*
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(csv.replace(".csv", "_header.txt")));
 			writer.write("ncols "+width);
@@ -74,7 +78,7 @@ public class CsvOutput implements CountingObserver{
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	@Override

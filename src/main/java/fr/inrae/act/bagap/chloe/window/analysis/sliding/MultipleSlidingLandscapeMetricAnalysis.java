@@ -139,7 +139,7 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 				
 				String rasterFile = builder.getRasterFile();
 					
-				EnteteRaster entete = EnteteRaster.readFromAsciiGridHeader(csvOutputs.get(rasterFile).iterator().next().replace(".csv", "_header.txt"));
+				EnteteRaster entete = EnteteRaster.read(csvOutputs.get(rasterFile).iterator().next().replace(".csv", "_header.txt"));
 				SpatialCsvManager.mergeXY(totalCsvOutput, csvOutputs.get(rasterFile).toArray(new String[csvOutputs.size()]), suffixMetrics.get(rasterFile).toArray(new String[suffixMetrics.get(rasterFile).size()]), "X", "Y", entete);
 					
 				for(String csvOut : csvOutputs.get(rasterFile)){
@@ -155,7 +155,7 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 					String name = new File(rasterFile).getName().replace(".tif", "").replace(".asc", "");
 					String localCsvOutput = totalCsvOutput.replace(".csv", "")+"_"+name+".csv";
 					
-					EnteteRaster entete = EnteteRaster.readFromAsciiGridHeader(csvOutputs.get(rasterFile).iterator().next().replace(".csv", "_header.txt"));
+					EnteteRaster entete = EnteteRaster.read(csvOutputs.get(rasterFile).iterator().next().replace(".csv", "_header.txt"));
 					SpatialCsvManager.mergeXY(localCsvOutput, csvOutputs.get(rasterFile).toArray(new String[csvOutputs.size()]), suffixMetrics.get(rasterFile).toArray(new String[suffixMetrics.get(rasterFile).size()]), "X", "Y", entete);
 					
 					for(String csvOut : csvOutputs.get(rasterFile)){

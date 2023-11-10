@@ -30,12 +30,12 @@ public class ChloeUtilAnalysisFactory {
 			if(builder.getVariables().size() == 1){
 				
 				analysis = new RasterFromCsvAnalysis(builder.getOutputRaster(), builder.getCsvFile(), builder.getVariables().iterator().next(), 
-						builder.getNCols(), builder.getNRows(), builder.getXMin(), builder.getYMin(), builder.getCellSize(), builder.getNoDataValue());
+						builder.getWidth(), builder.getHeight(), builder.getXMin(), builder.getYMin(), builder.getCellSize(), builder.getNoDataValue());
 				
 			}else{
 				
 				analysis = new MultipleRasterFromCsvAnalysis(builder.getOutputFolder(), builder.getOutputPrefix(), builder.getOutputSuffix(), builder.getTypeMime(), builder.getCsvFile(), builder.getVariables(), 
-						builder.getNCols(), builder.getNRows(), builder.getXMin(), builder.getYMin(), builder.getCellSize(), builder.getNoDataValue());
+						builder.getWidth(), builder.getHeight(), builder.getXMin(), builder.getYMin(), builder.getCellSize(), builder.getNoDataValue());
 				
 			}
 			
