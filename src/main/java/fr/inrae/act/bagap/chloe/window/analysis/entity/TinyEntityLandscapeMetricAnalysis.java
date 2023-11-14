@@ -43,9 +43,9 @@ public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 		//System.out.println("nombre de features "+areaNumbers.size());
 		
 		// gestion des sorties
-		kernel().setOutDatas(new HashMap<Integer, double[]>());
+		kernel().setOutDatas(new HashMap<Integer, float[]>());
 		for(int aId : entityIds){
-			kernel().outDatas().put(aId, new double[nbValues()]);
+			kernel().outDatas().put(aId, new float[nbValues()]);
 			kernel().outDatas().get(aId)[0] = 1; // filtre ok
 			//kernel().outDatas().get(aId)[6] = Float.MAX_VALUE; // init minimum
 		}
@@ -61,7 +61,7 @@ public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 	protected void doRun() {
 		kernel().applyEntityWindow();
 		
-		for(Entry<Integer, double[]> e : kernel().outDatas().entrySet()){
+		for(Entry<Integer, float[]> e : kernel().outDatas().entrySet()){
 			counting().setCounts(e.getValue());
 			counting().calculate();
 			counting().export(e.getKey());

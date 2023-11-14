@@ -2,11 +2,11 @@ package fr.inrae.act.bagap.chloe.window.counting;
 
 public class ContinuityCounting extends Counting implements ContinuityCountingInterface {
 
-	private double surface;
+	private float surface;
 	
-	private double volume;
+	private float volume;
 	
-	public ContinuityCounting(double theoreticalSize){
+	public ContinuityCounting(float theoreticalSize){
 		super(theoreticalSize);
 	}
 	/*
@@ -20,19 +20,19 @@ public class ContinuityCounting extends Counting implements ContinuityCountingIn
 	 * 5 : volume
 	 */
 	@Override
-	public void doSetCounts(double[] counts){
+	public void doSetCounts(float[] counts){
 	
 		surface = counts[4];
 		volume = counts[5];
 	}
 	
 	@Override
-	public double surface(){
+	public float surface(){
 		return surface;
 	}
 	
 	@Override
-	public double volume(){
+	public float volume(){
 		return volume;
 	}
 	

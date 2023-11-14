@@ -91,7 +91,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 			function = CombinationExpressionFactory.createDistanceFunction(builder.getWindowDistanceFunction(), dMax);
 		}
 		
-		double theoreticalSize = 0;
+		float theoreticalSize = 0;
 		int theoreticalCoupleSize = 0;
 		if(builder.getWindowShapeType() == WindowShapeType.SQUARE) {
 			theoreticalSize = windowSize * windowSize;

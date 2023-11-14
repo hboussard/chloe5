@@ -39,7 +39,7 @@ public class GrainBocagerSlidingDistanceBocageKernel extends AbstractDoubleSlidi
 				float v, coeff;
 				float nb_nodata = 0;
 				float nb = 0;
-				double min = 1.0;
+				float min = 1.0f;
 				double r, R;
 				for (int dy = -mid; dy <= mid; dy += 1) {
 					if(((y + dy) >= 0) && ((y + dy) < height())){
@@ -64,7 +64,7 @@ public class GrainBocagerSlidingDistanceBocageKernel extends AbstractDoubleSlidi
 											R = v * inDatas2()[((y + dy) * width()) + (x + dx)];	
 											
 											if(r < R){
-												min = Math.min(min, r/R);
+												min = (float) Math.min(min, r/R);
 											}
 										}
 									}

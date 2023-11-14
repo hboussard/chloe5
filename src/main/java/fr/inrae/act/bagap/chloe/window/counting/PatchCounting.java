@@ -7,24 +7,24 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
 	
 	private int[] values;
 	
-	private double totalSurface;
+	private float totalSurface;
 	
 	private int nbPatch;
 	
-	private double maxSurface; 
+	private float maxSurface; 
 	
 	private Map<Integer, Integer> nbPatches;
 	
-	private Map<Integer, Double> totalSurfaces;
+	private Map<Integer, Float> totalSurfaces;
 	
-	private Map<Integer, Double> maxSurfaces;
+	private Map<Integer, Float> maxSurfaces;
 	
- 	public PatchCounting(int[] values, double theoreticalSize){
+ 	public PatchCounting(int[] values, float theoreticalSize){
 		super(theoreticalSize);
 		this.values = values;
 		nbPatches = new HashMap<Integer, Integer>();
-		totalSurfaces = new HashMap<Integer, Double>();
-		maxSurfaces = new HashMap<Integer, Double>();
+		totalSurfaces = new HashMap<Integer, Float>();
+		maxSurfaces = new HashMap<Integer, Float>();
 	}
  	
  	public PatchCounting(int[] values){
@@ -41,7 +41,7 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
 	 * à partir de 2*nombre de valeurs + 7 jusqu'à 3*nombre de valeurs + 7 : les maximum de surfaces par classe
 	 */
  	@Override
-	public void doSetCounts(double[] counts) {
+	public void doSetCounts(float[] counts) {
 		
  		nbPatch = (int) counts[4];
  		totalSurface = counts[5];
@@ -62,7 +62,7 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
 	}
 
 	@Override
-	public double totalSurface() {
+	public float totalSurface() {
 		return totalSurface;
 	}
 
@@ -72,7 +72,7 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
 	}
 	
 	@Override
-	public double maxSurface(){
+	public float maxSurface(){
 		return maxSurface;
 	}
 	
@@ -82,12 +82,12 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
 	}
 
 	@Override
-	public double totalSurface(int v){
+	public float totalSurface(int v){
 		return totalSurfaces.get(v);
 	}
 
 	@Override
-	public double maxSurface(int v){
+	public float maxSurface(int v){
 		return maxSurfaces.get(v);
 	}
 	

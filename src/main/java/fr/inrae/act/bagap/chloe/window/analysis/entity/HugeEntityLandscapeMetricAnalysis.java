@@ -35,7 +35,7 @@ public class HugeEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 		Set<Integer> entityIds = new HashSet<Integer>();
 		
 		// gestion des sorties
-		kernel().setOutDatas(new HashMap<Integer, double[]>());
+		kernel().setOutDatas(new HashMap<Integer, float[]>());
 		
 		int tYs;
 		Rectangle roi;
@@ -64,7 +64,7 @@ public class HugeEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 			// gestion des sorties
 			for(int aId : entityIds){
 				if(!kernel().outDatas().containsKey(aId)){
-					kernel().outDatas().put(aId, new double[nbValues()]);
+					kernel().outDatas().put(aId, new float[nbValues()]);
 					kernel().outDatas().get(aId)[0] = 1; // filtre ok
 					
 					//kernel().outDatas().get(aId)[6] = Float.MAX_VALUE; // init minimum
@@ -77,7 +77,7 @@ public class HugeEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 			kernel().applyEntityWindow();	
 		}
 		
-		for(Entry<Integer, double[]> e : kernel().outDatas().entrySet()){
+		for(Entry<Integer, float[]> e : kernel().outDatas().entrySet()){
 			counting().setCounts(e.getValue());
 			counting().calculate();
 			counting().export(e.getKey());

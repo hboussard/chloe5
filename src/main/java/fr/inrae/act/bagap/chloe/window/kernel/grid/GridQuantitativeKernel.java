@@ -15,7 +15,7 @@ public class GridQuantitativeKernel extends GridLandscapeMetricKernel {
 		float nb_nodata = 0;
 		float nb = 0;
 		float sum = 0;
-		double square_sum = 0;
+		float square_sum = 0;
 		float min = Float.MAX_VALUE;
 		float max = Float.MIN_VALUE;			
 		for(int y=0; y<gridSize(); y++) {

@@ -36,7 +36,7 @@ public class SlidingQuantitativeKernel extends AbstractSlidingLandscapeMetricKer
 				float nb = 0;
 				float nb_nodata = 0;
 				float sum = 0;
-				double square_sum = 0;
+				float square_sum = 0;
 				float min = Float.MAX_VALUE;
 				float max = Float.MIN_VALUE;
 				if(threshold != -1){

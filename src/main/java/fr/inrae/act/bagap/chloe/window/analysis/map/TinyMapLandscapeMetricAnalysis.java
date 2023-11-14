@@ -29,7 +29,7 @@ public class TinyMapLandscapeMetricAnalysis extends MapLandscapeMetricAnalysis {
 		coverage().dispose();
 		
 		// gestion des sorties
-		kernel().setOutDatas(new double[nbValues()]);
+		kernel().setOutDatas(new float[nbValues()]);
 		kernel().outDatas()[0] = 1; // filtre ok
 		
 		// initialisation du comptage

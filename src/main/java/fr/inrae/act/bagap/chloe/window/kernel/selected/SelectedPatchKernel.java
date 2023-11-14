@@ -58,19 +58,19 @@ public class SelectedPatchKernel extends SelectedLandscapeMetricKernel {
 		cto.allRun();
 			
 		outDatas().get(p)[4] = cto.getNbPatch();
-		outDatas().get(p)[5] = cto.getTotalSurface();
-		outDatas().get(p)[6] = cto.getMaxSurface();
+		outDatas().get(p)[5] = (float) cto.getTotalSurface();
+		outDatas().get(p)[6] = (float) cto.getMaxSurface();
 			
 		for(int i=0; i<values.length; i++){
 			outDatas().get(p)[i+7] = cto.getNbPatch(values[i]);
 		}
 			
 		for(int i=0; i<values.length; i++){
-			outDatas().get(p)[i+7+values.length] = cto.getTotalSurface(values[i]);
+			outDatas().get(p)[i+7+values.length] = (float) cto.getTotalSurface(values[i]);
 		}
 			
 		for(int i=0; i<values.length; i++){
-			outDatas().get(p)[i+7+2*values.length] = cto.getMaxSurface(values[i]);
+			outDatas().get(p)[i+7+2*values.length] = (float) cto.getMaxSurface(values[i]);
 		}
 	}
 	

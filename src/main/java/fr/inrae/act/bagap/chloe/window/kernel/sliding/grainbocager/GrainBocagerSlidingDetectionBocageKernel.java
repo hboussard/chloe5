@@ -45,7 +45,7 @@ public class GrainBocagerSlidingDetectionBocageKernel extends AbstractSlidingLan
 					float v, coeff;
 					float nb_nodata = 0;
 					float nb_value = 0;
-					double sum = 0;
+					float sum = 0;
 					for (int dy = -mid; dy <= mid; dy += 1) {
 						if(((y + dy) >= 0) && ((y + dy) < height())){
 							for (int dx = -mid; dx <= mid; dx += 1) {

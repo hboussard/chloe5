@@ -58,7 +58,7 @@ public class HugeSlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 			manageInDatas(roi);
 			
 			// gestion des sorties
-			kernel().setOutDatas(new double[((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1))][nbValues()]);
+			kernel().setOutDatas(new float[((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1))][nbValues()]);
 			
 			int nextJ = 0;
 			int index;

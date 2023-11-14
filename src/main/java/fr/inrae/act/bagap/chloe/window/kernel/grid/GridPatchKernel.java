@@ -49,19 +49,19 @@ public class GridPatchKernel extends GridLandscapeMetricKernel {
 		cto.allRun();
 		
 		outDatas()[x][4] = cto.getNbPatch();
-		outDatas()[x][5] = cto.getTotalSurface();
-		outDatas()[x][6] = cto.getMaxSurface();
+		outDatas()[x][5] = (float) cto.getTotalSurface();
+		outDatas()[x][6] = (float) cto.getMaxSurface();
 		
 		for(int i=0; i<values.length; i++){
 			outDatas()[x][i+7] = cto.getNbPatch(values[i]);
 		}
 		
 		for(int i=0; i<values.length; i++){
-			outDatas()[x][i+7+values.length] = cto.getTotalSurface(values[i]);
+			outDatas()[x][i+7+values.length] = (float) cto.getTotalSurface(values[i]);
 		}
 		
 		for(int i=0; i<values.length; i++){
-			outDatas()[x][i+7+2*values.length] = cto.getMaxSurface(values[i]);
+			outDatas()[x][i+7+2*values.length] = (float) cto.getMaxSurface(values[i]);
 		}
 	}
 	

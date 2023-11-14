@@ -26,7 +26,7 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel implements La
 	
 	private float[] inDatas;
 	
-	private Map<Pixel, double[]> outDatas;
+	private Map<Pixel, float[]> outDatas;
 	
 	private int localROIY;
 	
@@ -122,11 +122,11 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel implements La
 		return inDatas;
 	}
 	
-	public void setOutDatas(Map<Pixel, double[]> outDatas){
+	public void setOutDatas(Map<Pixel, float[]> outDatas){
 		this.outDatas = outDatas;
 	}
 	
-	public Map<Pixel, double[]> outDatas(){
+	public Map<Pixel, float[]> outDatas(){
 		return outDatas;
 	}
 	

@@ -2,11 +2,11 @@ package fr.inrae.act.bagap.chloe.window.counting;
 
 public class SlopeCounting extends Counting implements QuantitativeCountingInterface {
 	
-	private double slopeDirection;
+	private float slopeDirection;
 	
-	private double slopeIntensity;
+	private float slopeIntensity;
 	
-	public SlopeCounting(double theoreticalSize) {
+	public SlopeCounting(float theoreticalSize) {
 		super(theoreticalSize);
 	}
 	
@@ -16,18 +16,18 @@ public class SlopeCounting extends Counting implements QuantitativeCountingInter
 	 * 5 : intensite de la pente
 	 */
 	@Override
-	public void doSetCounts(double[] counts){
+	public void doSetCounts(float[] counts){
 		slopeDirection = counts[4];
 		slopeIntensity = counts[5];
 	}
 
 	@Override
-	public double slopeDirection(){
+	public float slopeDirection(){
 		return slopeDirection;
 	}
 	
 	@Override
-	public double slopeIntensity(){
+	public float slopeIntensity(){
 		return slopeIntensity;
 	}
 

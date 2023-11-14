@@ -6,18 +6,18 @@ import java.util.Map;
 public class ValueCounting extends Counting implements ValueCountingInterface {
 
 	/** the count of values */
-	private Map<Integer, Double> countValues;
+	private Map<Integer, Float> countValues;
 	
 	private int[] values;
 	
-	private double totalCountValues;
+	private float totalCountValues;
 	
 	private int countClass;
 	
-	public ValueCounting(int[] values, double theoreticalSize){
+	public ValueCounting(int[] values, float theoreticalSize){
 		super(theoreticalSize);
 		this.values = values;
-		this.countValues = new HashMap<Integer, Double>();
+		this.countValues = new HashMap<Integer, Float>();
 	}
 	
 	public ValueCounting(int[] values){
@@ -30,7 +30,7 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	 * à partir de 5 jusqu'au nombre de valeurs + 5 : les occurences de valeurs dans l'ordre numérique
 	 */
 	@Override
-	public void doSetCounts(double[] counts){
+	public void doSetCounts(float[] counts){
 	
 		totalCountValues = validValues() - counts[4];
 		
@@ -45,7 +45,7 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	}
 	
 	@Override
-	public double countValues() {
+	public float countValues() {
 		return totalCountValues;
 	}
 	
@@ -55,7 +55,7 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	}
 	
 	@Override
-	public double countValue(int v){
+	public float countValue(int v){
 		return countValues.get(v);	
 	}
 

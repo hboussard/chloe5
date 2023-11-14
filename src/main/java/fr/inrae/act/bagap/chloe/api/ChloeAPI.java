@@ -126,7 +126,7 @@ public class ChloeAPI {
 			importWindowDistanceFunction(builder, properties);
 			importFrictionRaster(builder, properties);
 			importPointsFilter(builder, properties);
-			importPixelsFilter(builder, properties);
+			//importPixelsFilter(builder, properties); // finalement abandonné
 			importWindowsPath(builder, properties);
 			
 			if(properties.containsKey("output_folder")){

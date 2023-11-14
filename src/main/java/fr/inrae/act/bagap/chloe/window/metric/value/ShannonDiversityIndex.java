@@ -15,11 +15,15 @@ public class ShannonDiversityIndex extends Metric implements ValueMetric {
 			value = 0;
 			double p; 
 			for(int v : co.values()){
-				//System.out.println(v+" "+co.countValue(v));
+				
 				p = co.countValue(v) / co.validValues();
 				if(p != 0){
+					if(p > 1){
+						p = 1;
+					}
 					value += p*Math.log(p);
 				}
+				
 			}
 			if(value != 0){
 				value *= -1;

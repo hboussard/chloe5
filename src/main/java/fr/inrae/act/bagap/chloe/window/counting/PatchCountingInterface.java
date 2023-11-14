@@ -12,13 +12,13 @@ public interface PatchCountingInterface {
 	 * the total surface of patches in hectares
 	 * @return the total surface of patches
 	 */
-	double totalSurface();
+	float totalSurface();
 	
 	/**
 	 * the max surface of largest patch in hectares
 	 * @return the maximum surface of largest patch
 	 */
-	double maxSurface();
+	float maxSurface();
 	
 	/**
 	 * the number of distinct patches according to 8 neigbourhood
@@ -30,12 +30,12 @@ public interface PatchCountingInterface {
 	 * the total surface of patches in hectares
 	 * @return the total surface of patches of type v
 	 */
-	double totalSurface(int v);
+	float totalSurface(int v);
 	
 	/**
 	 * the max surface of largest patch in hectares
 	 * @return the maximum surface of largest patch of type v
 	 */
-	double maxSurface(int v);
+	float maxSurface(int v);
 	
 }

@@ -82,7 +82,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 		double inMinY = coverage.miny();
 		double inMaxX = coverage.maxx();
 		double inMaxY = coverage.maxy();
-		double inCellSize = coverage.cellsize();
+		float inCellSize = (float) coverage.cellsize();
 
 		// displacement
 		int displacement = builder.getDisplacement();
@@ -139,7 +139,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			function = CombinationExpressionFactory.createDistanceFunction(builder.getWindowDistanceFunction(), dMax);
 		}
 		
-		double theoreticalSize = 0;
+		float theoreticalSize = 0;
 		int theoreticalCoupleSize = 0;
 		if(builder.getWindowShapeType() == WindowShapeType.SQUARE || builder.getWindowDistanceType() == WindowDistanceType.FAST_SQUARE) {
 			theoreticalSize = windowSize * windowSize;

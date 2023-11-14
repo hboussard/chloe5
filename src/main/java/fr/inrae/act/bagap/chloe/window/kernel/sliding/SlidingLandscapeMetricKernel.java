@@ -24,9 +24,9 @@ public interface SlidingLandscapeMetricKernel extends LandscapeMetricKernel {
 	
 	void setTheY(int theY);
 
-	void setOutDatas(double[][] outDatas);
+	void setOutDatas(float[][] outDatas);
 	
-	double[][] outDatas();
+	float[][] outDatas();
 	
 	int bufferROIXMin();
 	

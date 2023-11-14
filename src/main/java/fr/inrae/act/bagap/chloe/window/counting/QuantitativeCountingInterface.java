@@ -6,36 +6,36 @@ public interface QuantitativeCountingInterface {
 	 * to get the average value
 	 * @return the average of values
 	 */
-	double average();
+	float average();
 	
 	/**
 	 * to get the sum
 	 * @return the sum of values
 	 */
-	double sum();
+	float sum();
 	
 	/**
 	 * to get the squaresum
 	 * @return the square sum of values
 	 */
-	double squareSum();
+	float squareSum();
 	
 	/**
 	 * to get the standard deviation
 	 * @return the standard deviation of values
 	 */
-	double standardDeviation();
+	float standardDeviation();
 	
 	/**
 	 * to get the minimum
 	 * @return the minimum of values
 	 */
-	double minimum();
+	float minimum();
 	
 	/**
 	 * to get the maximum
 	 * @return the maximum of values
 	 */
-	double maximum();
+	float maximum();
 
 }

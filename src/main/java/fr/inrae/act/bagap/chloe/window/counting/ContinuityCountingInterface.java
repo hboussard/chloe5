@@ -6,11 +6,11 @@ public interface ContinuityCountingInterface {
 	 * la surface d'accessibilité
 	 * @return la surface d'accessibilité
 	 */
-	double surface();
+	float surface();
 	
 	/**
 	 * le volume de déplacement
 	 * @return le volume de déplacement
 	 */
-	double volume();
+	float volume();
 }

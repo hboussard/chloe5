@@ -70,19 +70,19 @@ public class SlidingPatchKernel extends AbstractSlidingLandscapeMetricKernel {
 				outDatas()[ind][2] = nb;
 				outDatas()[ind][3] = nb_nodata;
 				outDatas()[ind][4] = cto.getNbPatch();
-				outDatas()[ind][5] = cto.getTotalSurface();
-				outDatas()[ind][6] = cto.getMaxSurface();
+				outDatas()[ind][5] = (float) cto.getTotalSurface();
+				outDatas()[ind][6] = (float) cto.getMaxSurface();
 				
 				for(int i=0; i<values.length; i++){
 					outDatas()[ind][i+7] = cto.getNbPatch(values[i]);
 				}
 				
 				for(int i=0; i<values.length; i++){
-					outDatas()[ind][i+7+values.length] = cto.getTotalSurface(values[i]);
+					outDatas()[ind][i+7+values.length] = (float) cto.getTotalSurface(values[i]);
 				}
 				
 				for(int i=0; i<values.length; i++){
-					outDatas()[ind][i+7+2*values.length] = cto.getMaxSurface(values[i]);
+					outDatas()[ind][i+7+2*values.length] = (float) cto.getMaxSurface(values[i]);
 				}
 				
 			}else{

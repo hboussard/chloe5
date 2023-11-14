@@ -33,9 +33,9 @@ public class TinySelectedLandscapeMetricAnalysis extends SelectedLandscapeMetric
 		manageInDatas(roi);
 		
 		// gestion des sorties
-		Map<Pixel, double[]> outDatas = new HashMap<Pixel, double[]>();
+		Map<Pixel, float[]> outDatas = new HashMap<Pixel, float[]>();
 		for(Pixel p : pixels()){
-			outDatas.put(p, new double[nbValues()]);
+			outDatas.put(p, new float[nbValues()]);
 		}
 		kernel().setOutDatas(outDatas);
 		

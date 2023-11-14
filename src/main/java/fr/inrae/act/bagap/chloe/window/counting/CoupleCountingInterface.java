@@ -12,21 +12,21 @@ public interface CoupleCountingInterface {
 	 * the total count of couples
 	 * @return the total count of couples
 	 */
-	double totalCouples();
+	float totalCouples();
 	
 	/**
 	 * the total count of valid couples
 	 * a couple value is different to Raster.noDataValue()
 	 * @return the total count of valid couples
 	 */
-	double validCouples();
+	float validCouples();
 	
 	/**
 	 * the count of couples
 	 * a couple is different to 0 and to Raster.noDataValue()
 	 * @return the count of couples
 	 */
-	double countCouples();
+	float countCouples();
 	
 	/**
 	 * the count of couples
@@ -34,7 +34,7 @@ public interface CoupleCountingInterface {
 	 * when both values are identical
 	 * @return the count of couples
 	 */
-	double countHomogeneousCouples();
+	float countHomogeneousCouples();
 	
 	/**
 	 * the count of couples
@@ -42,7 +42,7 @@ public interface CoupleCountingInterface {
 	 * when values are different
 	 * @return the count of couples
 	 */
-	double countHeterogenousCouples();
+	float countHeterogenousCouples();
 	
 	/**
 	 * to get couples of the map
@@ -55,7 +55,7 @@ public interface CoupleCountingInterface {
 	 * @param c : type of couple
 	 * @return the count of c
 	 */
-	double countCouple(float c);
+	float countCouple(float c);
 	
 	/**
 	 * to count couple of type v1/v2
@@ -63,7 +63,7 @@ public interface CoupleCountingInterface {
 	 * @param v2 : value 2
 	 * @return the count of v1/v2
 	 */
-	double countCouple(short v1, short v2);
+	float countCouple(short v1, short v2);
 	
 	/**
 	 * to count the classes
