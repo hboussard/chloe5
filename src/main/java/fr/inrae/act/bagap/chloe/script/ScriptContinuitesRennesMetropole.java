@@ -49,10 +49,11 @@ public class ScriptContinuitesRennesMetropole {
 		
 		//testIndiceContinuite2();
 		
-		classifFonctionnelleBoise();
-		clusterFonctionnelBoise();
-		proportionFonctionnelleBoise();
-		fragmentationFonctionnelleBoise();
+		int volumeMin = 30000000;
+		classifFonctionnelleBoise(volumeMin);
+		clusterFonctionnelBoise(volumeMin);
+		proportionFonctionnelleBoise(volumeMin);
+		fragmentationFonctionnelleBoise(volumeMin);
 		
 		//classifFonctionnelleHumide();
 		//clusterFonctionnelHumide();
@@ -109,7 +110,7 @@ public class ScriptContinuitesRennesMetropole {
 		
 	}
 	
-	private static void classifFonctionnelleHumide(){
+	private static void classifFonctionnelleHumide(int volume_max){
 		
 		
 		Coverage covVolume = CoverageManager.getCoverage("H:/rennes_metropole/test/volume_deplacement_humide_2.tif");
@@ -124,7 +125,7 @@ public class ScriptContinuitesRennesMetropole {
 			@Override
 			protected float doTreat(float[] v) {
 				float value = v[0];
-				if(value > 10000000){
+				if(value > volume_max){
 					return 1;
 				}
 				return 0;
@@ -167,15 +168,15 @@ public class ScriptContinuitesRennesMetropole {
 	}
 	
 	
-	private static void fragmentationFonctionnelleBoise(){
+	private static void fragmentationFonctionnelleBoise(int volumeMin){
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setRasterFile("H:/rennes_metropole/test/cluster_volume_deplacement_boise_9_3.tif");
+		builder.setRasterFile("H:/rennes_metropole/test/cluster_volume_deplacement_boise_9_"+volumeMin+".tif");
 		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
 		builder.setWindowSize(201);
 		builder.setDisplacement(10);
 		builder.addMetric("SHDI");
-		builder.addGeoTiffOutput("SHDI", "H:/rennes_metropole/test/fragmentation_volume_deplacement_boise_9_3.tif");
+		builder.addGeoTiffOutput("SHDI", "H:/rennes_metropole/test/fragmentation_volume_deplacement_boise_9_"+volumeMin+".tif");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 	
@@ -183,15 +184,15 @@ public class ScriptContinuitesRennesMetropole {
 		
 	}
 	
-	private static void proportionFonctionnelleBoise(){
+	private static void proportionFonctionnelleBoise(int volumeMin){
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setRasterFile("H:/rennes_metropole/test/classif_volume_deplacement_boise_9_3.tif");
+		builder.setRasterFile("H:/rennes_metropole/test/classif_volume_deplacement_boise_9_"+volumeMin+".tif");
 		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
 		builder.setWindowSize(201);
 		builder.setDisplacement(10);
 		builder.addMetric("pNV_1");
-		builder.addGeoTiffOutput("pNV_1", "H:/rennes_metropole/test/proportion_volume_deplacement_boise_9_3.tif");
+		builder.addGeoTiffOutput("pNV_1", "H:/rennes_metropole/test/proportion_volume_deplacement_boise_9_"+volumeMin+".tif");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 	
@@ -199,20 +200,20 @@ public class ScriptContinuitesRennesMetropole {
 		
 	}
 	
-	private static void clusterFonctionnelBoise(){
+	private static void clusterFonctionnelBoise(int volumeMin){
 		
-		Coverage cov = CoverageManager.getCoverage("H:/rennes_metropole/test/classif_volume_deplacement_boise_9_3.tif");
+		Coverage cov = CoverageManager.getCoverage("H:/rennes_metropole/test/classif_volume_deplacement_boise_9_"+volumeMin+".tif");
 		float[] data = cov.getData();
 		EnteteRaster entete = cov.getEntete();
 		cov.dispose();
 
 		TabQueenClusteringAnalysis ca = new TabQueenClusteringAnalysis(data, entete.width(), entete.height(), new int[]{1}, entete.noDataValue());
 		float[] dataCluster = (float[]) ca.allRun();
-		CoverageManager.writeGeotiff("H:/rennes_metropole/test/cluster_volume_deplacement_boise_9_3.tif", dataCluster, entete);
+		CoverageManager.writeGeotiff("H:/rennes_metropole/test/cluster_volume_deplacement_boise_9_"+volumeMin+".tif", dataCluster, entete);
 		
 	}
 	
-	private static void classifFonctionnelleBoise(){
+	private static void classifFonctionnelleBoise(int volumeMin){
 		
 		
 		Coverage covVolume = CoverageManager.getCoverage("H:/rennes_metropole/test/volume_deplacement_boise_9.tif");
@@ -227,7 +228,7 @@ public class ScriptContinuitesRennesMetropole {
 			@Override
 			protected float doTreat(float[] v) {
 				float value = v[0];
-				if(value > 50000000){
+				if(value > volumeMin){
 					return 1;
 				}
 				return 0;
@@ -235,7 +236,7 @@ public class ScriptContinuitesRennesMetropole {
 		};
 		cal.run();
 		
-		CoverageManager.write("H:/rennes_metropole/test/classif_volume_deplacement_boise_9_3.tif", outData, entete);
+		CoverageManager.write("H:/rennes_metropole/test/classif_volume_deplacement_boise_9_"+volumeMin+".tif", outData, entete);
 		
 	}
 	
