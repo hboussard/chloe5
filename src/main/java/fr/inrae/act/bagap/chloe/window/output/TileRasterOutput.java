@@ -3,6 +3,7 @@ package fr.inrae.act.bagap.chloe.window.output;
 import java.util.Set;
 
 import org.locationtech.jts.geom.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
@@ -39,7 +40,9 @@ public abstract class TileRasterOutput implements CountingObserver {
 	
 	private int tY;
 	
-	public TileRasterOutput(String folder, Metric metric, Tile tile, int width, int height, double minX, double maxX, double minY, double maxY, double cellSize, int noDataValue){
+	private final CoordinateReferenceSystem crs;
+	
+	public TileRasterOutput(String folder, Metric metric, Tile tile, int width, int height, double minX, double maxX, double minY, double maxY, double cellSize, int noDataValue, CoordinateReferenceSystem crs){
 		this.folder = folder;
 		this.metric = metric;
 		
@@ -55,6 +58,7 @@ public abstract class TileRasterOutput implements CountingObserver {
 		
 		this.cellSize = cellSize;
 		this.noDataValue = noDataValue;
+		this.crs = crs;
 	}
 
 	@Override
@@ -149,7 +153,7 @@ public abstract class TileRasterOutput implements CountingObserver {
 	private void exportTab(int tX) {
 		if(tile.hasTile(tX, tY)){
 			Envelope e = tile.getEnvelope(tX, tY);
-			EnteteRaster entete = new EnteteRaster(tileSize, tileSize, e.getMinX(), e.getMaxX(), e.getMinY(), e.getMaxY(), (float) cellSize, noDataValue);
+			EnteteRaster entete = new EnteteRaster(tileSize, tileSize, e.getMinX(), e.getMaxX(), e.getMinY(), e.getMaxY(), (float) cellSize, noDataValue, crs);
 			writeRaster(folder+metric.getName()+"_"+((int) e.getMinX()/1000)+"_"+((int) e.getMaxY()/1000), tabs[tX], entete);
 		}
 	}

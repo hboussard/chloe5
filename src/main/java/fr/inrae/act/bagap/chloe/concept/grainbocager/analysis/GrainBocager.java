@@ -122,11 +122,11 @@ public class GrainBocager {
 		
 		if (ShapeFile2CoverageConverter.getShapeType(plantation).isPolygonType()) {
 			
-			covHauteurReplantation = ShapeFile2CoverageConverter.getSurfaceCoverage(plantation, attributHauteurPlantation, entete.cellsize(), entete.noDataValue(), entete.minx(), entete.maxx(), entete.miny(), entete.maxy(), 0);
+			covHauteurReplantation = ShapeFile2CoverageConverter.getSurfaceCoverage(plantation, attributHauteurPlantation, entete.cellsize(), entete.noDataValue(), entete.crs(), entete.minx(), entete.maxx(), entete.miny(), entete.maxy(), 0);
 			
 		} else if (ShapeFile2CoverageConverter.getShapeType(plantation).isLineType()) {
 			
-			covHauteurReplantation = ShapeFile2CoverageConverter.getLinearCoverage(plantation, attributHauteurPlantation, entete.cellsize(), entete.noDataValue(), entete.minx(), entete.maxx(), entete.miny(), entete.maxy(), 0, entete.cellsize());
+			covHauteurReplantation = ShapeFile2CoverageConverter.getLinearCoverage(plantation, attributHauteurPlantation, entete.cellsize(), entete.noDataValue(), entete.crs(), entete.minx(), entete.maxx(), entete.miny(), entete.maxy(), 0, entete.cellsize());
 			
 		} /*else if (ShapeFile2CoverageConverter.getShapeType(plantation).isPointType()) {
 			

@@ -93,7 +93,7 @@ public class GrainBocagerTerritoire {
 		float[] dataHauteurBoisementTotal = getElementsBoises(bocage, entete);
 		//CoverageManager.writeGeotiff(outputPath+name+"_"+scenario+"_hauteur_boisement.tif", dataHauteurBoisementTotal, entete);
 		
-		Coverage covReplantation = ShapeFile2CoverageConverter.getLinearCoverage(replantationBocagere, "code", entete.cellsize(), entete.noDataValue(), entete.minx(), entete.maxx(), entete.miny(), entete.maxy(), 0, entete.cellsize());
+		Coverage covReplantation = ShapeFile2CoverageConverter.getLinearCoverage(replantationBocagere, "code", entete.cellsize(), entete.noDataValue(), entete.crs(), entete.minx(), entete.maxx(), entete.miny(), entete.maxy(), 0, entete.cellsize());
 		float[] dataReplantation = covReplantation.getData();
 		covReplantation.dispose();
 		CoverageManager.writeGeotiff(outputPath+name+"_"+scenario+"_replantation.tif", dataReplantation, entete);

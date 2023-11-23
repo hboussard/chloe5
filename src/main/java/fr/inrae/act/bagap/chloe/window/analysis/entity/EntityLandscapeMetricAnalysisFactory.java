@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.util.Couple;
@@ -22,7 +23,10 @@ import fr.inrae.act.bagap.chloe.window.kernel.entity.EntityQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.EntityCsvOutput;
+import fr.inrae.act.bagap.chloe.window.output.EntityGeoTiffOutput;
 import fr.inrae.act.bagap.chloe.window.output.EntityMultipleAsciiGridOutput;
+import fr.inrae.act.bagap.chloe.window.output.GeoTiffOutput;
+import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineGeoTiffOutput;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.TabCoverage;
@@ -88,6 +92,24 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 				observers.add(tabOutput);
 			}
 		}*/
+		
+		if(builder.getGeoTiffOutputs(0) != null){
+			for (Entry<String, String> entry : builder.getGeoTiffOutputs(0).entrySet()) {
+				Metric metric = null;
+				for (Metric m : metrics) {
+					if (m.getName().equalsIgnoreCase(entry.getKey())) {
+						metric = m;
+						break;
+					}
+				}
+				if(metric != null){
+					
+					EntityGeoTiffOutput geotiffOutput = new EntityGeoTiffOutput(entry.getValue(), metric, entityCoverage, coverage.getEntete().noDataValue());
+					observers.add(geotiffOutput);
+					
+				}
+			}
+		}
 			
 		// kernel and counting
 		EntityLandscapeMetricKernel kernel;

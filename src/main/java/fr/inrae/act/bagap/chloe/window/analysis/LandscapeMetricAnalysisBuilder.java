@@ -388,7 +388,10 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	
 	@Override
 	public void addGeoTiffOutput(String metric, String geotiff){
-		int size = this.windowSizes.iterator().next();
+		int size = 0;
+		if(this.windowSizes.size() > 0){
+			size = this.windowSizes.iterator().next();
+		}
 		addGeoTiffOutput(size, metric, geotiff);
 	}
 	

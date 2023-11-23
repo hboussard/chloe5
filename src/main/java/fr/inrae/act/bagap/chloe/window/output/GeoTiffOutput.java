@@ -2,6 +2,8 @@ package fr.inrae.act.bagap.chloe.window.output;
 
 import java.util.Set;
 
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
@@ -20,10 +22,12 @@ public class GeoTiffOutput implements CountingObserver{
 	private final int width, height, noDataValue;
 	
 	private final double outMinX, outMaxX, outMinY, outMaxY, cellSize;
+
+	private final CoordinateReferenceSystem crs;
 	
 	private int ind;
 	
-	public GeoTiffOutput(String file, Metric metric, int width, int height, double outMinX, double outMaxX, double outMinY, double outMaxY, double cellSize, int noDataValue){
+	public GeoTiffOutput(String file, Metric metric, int width, int height, double outMinX, double outMaxX, double outMinY, double outMaxY, double cellSize, int noDataValue, CoordinateReferenceSystem crs){
 		this.file = file;
 		this.metric = metric;
 		this.width = width;
@@ -34,6 +38,7 @@ public class GeoTiffOutput implements CountingObserver{
 		this.outMaxY = outMaxY;
 		this.cellSize = cellSize;
 		this.noDataValue = noDataValue;
+		this.crs = crs;
 		this.datas = new float[height*width];
 	}
 	
@@ -83,7 +88,7 @@ public class GeoTiffOutput implements CountingObserver{
 		}
 		*/
 		
-		CoverageManager.writeGeotiff(file, datas, new EnteteRaster(width, height, outMinX, outMaxX, outMinY, outMaxY, (float) cellSize, noDataValue));
+		CoverageManager.writeGeotiff(file, datas, new EnteteRaster(width, height, outMinX, outMaxX, outMinY, outMaxY, (float) cellSize, noDataValue, crs));
 	}
 
 }

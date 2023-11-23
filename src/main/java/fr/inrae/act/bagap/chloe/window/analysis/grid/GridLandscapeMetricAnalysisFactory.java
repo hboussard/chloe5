@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
@@ -93,7 +92,7 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 		Set<CountingObserver> observers = new HashSet<CountingObserver>();
 		
 		if(builder.getCsv() != null){
-			CsvOutput csvOutput = new CsvOutput(builder.getCsv(), outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, Raster.getNoDataValue());
+			CsvOutput csvOutput = new CsvOutput(builder.getCsv(), outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, coverage.getEntete().noDataValue(), coverage.getEntete().crs());
 			observers.add(csvOutput);	
 		}
 		
@@ -106,7 +105,7 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 						break;
 					}
 				}
-				AsciiGridOutput asciiOutput = new AsciiGridOutput(entry.getValue(), metric, outWidth, outHeight, outMinX, outMinY, outCellSize, Raster.getNoDataValue());
+				AsciiGridOutput asciiOutput = new AsciiGridOutput(entry.getValue(), metric, outWidth, outHeight, outMinX, outMinY, outCellSize, coverage.getEntete().noDataValue());
 				observers.add(asciiOutput);
 			}
 		}
@@ -120,7 +119,7 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 						break;
 					}
 				}
-				GeoTiffOutput geotiffOutput = new GeoTiffOutput(entry.getValue(), metric, outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize, Raster.getNoDataValue());
+				GeoTiffOutput geotiffOutput = new GeoTiffOutput(entry.getValue(), metric, outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize, coverage.getEntete().noDataValue(), coverage.getEntete().crs());
 				observers.add(geotiffOutput);
 			}
 		}
@@ -148,7 +147,7 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 			
 			nbValues = 8;
 			
-			kernel = new GridQuantitativeKernel(gridSize, Raster.getNoDataValue());
+			kernel = new GridQuantitativeKernel(gridSize, coverage.getEntete().noDataValue());
 				
 			counting = new QuantitativeCounting(theoreticalSize);
 			
@@ -186,7 +185,7 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 						
 					nbValues = 5 + values.length;
 						
-					kernel = new GridCountValueKernel(gridSize, Raster.getNoDataValue(), values);
+					kernel = new GridCountValueKernel(gridSize, coverage.getEntete().noDataValue(), values);
 							
 					counting = new ValueCounting(values, theoreticalSize);	
 						
@@ -196,7 +195,7 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 						
 					nbValues = 3 + couples.length;
 						
-					kernel = new GridCountCoupleKernel(gridSize, Raster.getNoDataValue(), values);
+					kernel = new GridCountCoupleKernel(gridSize, coverage.getEntete().noDataValue(), values);
 						
 					counting = new CoupleCounting(values.length, couples, theoreticalSize, theoreticalCoupleSize);
 					
@@ -206,7 +205,7 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 
 					nbValues = 5 + values.length + 3 + couples.length;
 						
-					kernel = new GridCountValueAndCoupleKernel(gridSize, Raster.getNoDataValue(), values);
+					kernel = new GridCountValueAndCoupleKernel(gridSize, coverage.getEntete().noDataValue(), values);
 										
 					counting = new ValueAndCoupleCounting(values, couples, theoreticalSize, theoreticalCoupleSize);
 					
@@ -217,7 +216,7 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 					
 				nbValues = 7 + 3*values.length;
 						
-				kernel = new GridPatchKernel(gridSize, Raster.getNoDataValue(), values, inCellSize);
+				kernel = new GridPatchKernel(gridSize, coverage.getEntete().noDataValue(), values, inCellSize);
 					
 				counting = new PatchCounting(values, theoreticalSize);
 					

@@ -2385,7 +2385,7 @@ public class Script {
 		long end = System.currentTimeMillis();
 		System.out.println("time computing : "+(end - begin));
 	}
-	
+	/*
 	private static void test(){
 		String path = "F:/chloe/chloe5/data/";
 		//String raster = path+"za.asc";
@@ -2444,7 +2444,7 @@ public class Script {
 		System.out.println(inDatas2[0]+" "+inDatas2[1]+" "+inDatas2[2]+" "+inDatas2[3]);
 		System.out.println(inDatas2[100]+" "+inDatas2[101]+" "+inDatas2[102]+" "+inDatas2[103]);
 		System.out.println(inDatas2[200]+" "+inDatas2[201]+" "+inDatas2[202]+" "+inDatas2[203]);
-	}
+	}*/
 	
 	private static void scriptLea(){
 		

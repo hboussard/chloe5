@@ -2,6 +2,9 @@ package fr.inrae.act.bagap.chloe.window.output;
 
 import java.util.Arrays;
 import java.util.Set;
+
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
@@ -21,13 +24,15 @@ public class InterpolateSplineGeoTiffOutput implements CountingObserver{
 	
 	private final double outMinX, outMaxX, outMinY, outMaxY, cellSize;
 	
+	private final CoordinateReferenceSystem crs;
+	
 	private int maxI;
 	
 	private float[] line;
 	
 	private float[] oldLine;
 	
-	public InterpolateSplineGeoTiffOutput(String file, Metric metric, int width, int height, double outMinX, double outMaxX, double outMinY, double outMaxY, double cellSize, int noDataValue, int displacement){
+	public InterpolateSplineGeoTiffOutput(String file, Metric metric, int width, int height, double outMinX, double outMaxX, double outMinY, double outMaxY, double cellSize, int noDataValue, CoordinateReferenceSystem crs, int displacement){
 		this.file = file;
 		this.metric = metric;
 		this.width = width;
@@ -38,6 +43,7 @@ public class InterpolateSplineGeoTiffOutput implements CountingObserver{
 		this.outMaxY = outMaxY;
 		this.cellSize = cellSize;
 		this.noDataValue = noDataValue;
+		this.crs = crs;
 		this.delta = displacement; 
 		this.datas = new float[height*width];
 	}
@@ -120,7 +126,7 @@ public class InterpolateSplineGeoTiffOutput implements CountingObserver{
 		}
 		*/
 		
-		CoverageManager.writeGeotiff(file, datas, new EnteteRaster(width, height, outMinX, outMaxX, outMinY, outMaxY, (float) cellSize, noDataValue));
+		CoverageManager.writeGeotiff(file, datas, new EnteteRaster(width, height, outMinX, outMaxX, outMinY, outMaxY, (float) cellSize, noDataValue, crs));
 	}
 	
 	private double droite(double v, double v_delta, double x){

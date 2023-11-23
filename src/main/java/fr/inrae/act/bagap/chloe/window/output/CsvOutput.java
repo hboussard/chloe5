@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Set;
 
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
@@ -23,7 +25,9 @@ public class CsvOutput implements CountingObserver{
 	
 	private final int width, height, noDataValue;
 	
-	public CsvOutput(String csv, double minX, double maxX, double minY, double maxY, int width, int height, double cellSize, int noDataValue) {
+	private final CoordinateReferenceSystem crs;
+	
+	public CsvOutput(String csv, double minX, double maxX, double minY, double maxY, int width, int height, double cellSize, int noDataValue, CoordinateReferenceSystem crs) {
 		
 		this.csv = csv;
 		this.minX = minX;
@@ -34,6 +38,7 @@ public class CsvOutput implements CountingObserver{
 		this.height = height;
 		this.cellSize = cellSize;
 		this.noDataValue = noDataValue;
+		this.crs = crs;
 	}
 	
 	@Override
@@ -58,7 +63,7 @@ public class CsvOutput implements CountingObserver{
 	}
 	
 	private void writeHeader(){
-		EnteteRaster entete = new EnteteRaster(width, height, minX, maxX, minY, maxY, (float) cellSize, noDataValue);
+		EnteteRaster entete = new EnteteRaster(width, height, minX, maxX, minY, maxY, (float) cellSize, noDataValue, crs);
 		EnteteRaster.export(entete, csv.replace(".csv", "_header.txt"));
 		/*
 		try {

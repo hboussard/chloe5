@@ -7,11 +7,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class InterpolateSplineLinearCsvOutput implements CountingObserver{
 	
@@ -25,11 +28,13 @@ public class InterpolateSplineLinearCsvOutput implements CountingObserver{
 	
 	private final int width, height, noDataValue, delta, maxWidth, maxHeight;
 	
+	private final CoordinateReferenceSystem crs;
+	
 	private Map<String, double[]> values_d;
 	
 	private Map<String, Map<Integer, double[]>> values;
 	
-	public InterpolateSplineLinearCsvOutput(String csv, double minX, double maxX, double minY, double maxY, int width, int height, double cellSize, int noDataValue, int displacement) {
+	public InterpolateSplineLinearCsvOutput(String csv, double minX, double maxX, double minY, double maxY, int width, int height, double cellSize, int noDataValue, CoordinateReferenceSystem crs, int displacement) {
 		this.csv = csv;
 		this.x = minX;
 		this.y = maxY;
@@ -42,6 +47,7 @@ public class InterpolateSplineLinearCsvOutput implements CountingObserver{
 		this.height = height;
 		this.delta = displacement;
 		this.noDataValue = noDataValue;
+		this.crs = crs;
 		this.maxWidth = width - ((width-1)%delta) - 1;
 		this.maxHeight = height - ((height-1)%delta) - 1;
 	}
@@ -77,6 +83,10 @@ public class InterpolateSplineLinearCsvOutput implements CountingObserver{
 	}
 	
 	private void writeHeader(){
+		
+		EnteteRaster entete = new EnteteRaster(width, height, minX, maxX, minY, maxY, (float) cellSize, noDataValue, crs);
+		EnteteRaster.export(entete, csv.replace(".csv", "_header.txt"));
+		/*
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(csv.replace(".csv", "_header.txt")));
 			writer.write("ncols "+width);
@@ -95,6 +105,7 @@ public class InterpolateSplineLinearCsvOutput implements CountingObserver{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 	
 	@Override
