@@ -56,6 +56,7 @@ public class ChloeAPI {
 				case "search_and_replace" : launchSearchAndReplace(properties); break;
 				case "classification" : launchClassification(properties); break;
 				case "raster_from_csv" : launchRasterFromCsv(properties); break;
+				case "raster_from_shapefile" : launchRasterFromShapefile(properties); break;
 				default :
 					throw new IllegalArgumentException("treatment "+treatment+" is not implemented yet");
 				}
@@ -302,8 +303,47 @@ public class ChloeAPI {
 			e.printStackTrace();
 		}
 	}
+	
+	private static void launchRasterFromShapefile(Properties properties) {
+		try{
+			long begin = System.currentTimeMillis();
+			
+			ChloeAnalysisBuilder builder = new ChloeUtilAnalysisBuilder();
+			builder.setAnalysisType(ChloeAnalysisType.RASTER_FROM_SHAPEFILE);
+				
+			importInputShapefile(builder, properties);
+			importOutputRaster(builder, properties);
+			importAttribute(builder, properties);
+			importXMin(builder, properties);
+			importXMax(builder, properties);
+			importYMin(builder, properties);
+			importYMax(builder, properties);
+			importCellSize(builder, properties);
+			importNoDataValue(builder, properties);
+			importFillValue(builder, properties);
+			
+			ChloeAnalysis analysis = builder.build();
+			analysis.allRun();
+				
+			long end = System.currentTimeMillis();
+			System.out.println("time computing : "+(end - begin));
+			
+		} catch (NoParameterException e) {
+			e.printStackTrace();
+		}
+	}
 
 	// importations
+
+	// required 
+	private static void importAttribute(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("attribute")){
+			String prop = properties.getProperty("attribute");
+			builder.setAttribute(prop);
+			return;
+		}
+		throw new NoParameterException("attribute");
+	}
 
 	// required 
 	public static void importInputRaster(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
@@ -315,6 +355,18 @@ public class ChloeAPI {
 			}
 		}
 		throw new NoParameterException("input_raster");
+	}
+	
+	// required 
+	public static void importInputShapefile(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("input_shapefile")){
+			String prop = properties.getProperty("input_shapefile");
+			if(new File(prop).isFile() && prop.endsWith(".shp")){
+				builder.setShapefile(prop);
+				return;
+			}
+		}
+		throw new NoParameterException("input_shapefile");
 	}
 	
 	// required 
@@ -644,6 +696,13 @@ public class ChloeAPI {
 	}
 	
 	// not required
+	public static void importFillValue(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("fill_value")){
+			builder.setFillValue(Float.parseFloat(properties.getProperty("fill_value")));
+		}
+	}	
+	
+	// not required
 	public static void importCellSize(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("cellsize")){
 			builder.setCellSize(Float.parseFloat(properties.getProperty("cellsize")));
@@ -672,9 +731,23 @@ public class ChloeAPI {
 	}
 	
 	// not required
+	public static void importXMax(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("xmax")){
+			builder.setXMax(Double.parseDouble(properties.getProperty("xmax")));
+		}
+	}
+	
+	// not required
 	public static void importYMin(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("ymin")){
 			builder.setYMin(Double.parseDouble(properties.getProperty("ymin")));
+		}
+	}
+	
+	// not required
+	public static void importYMax(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("ymax")){
+			builder.setYMax(Double.parseDouble(properties.getProperty("ymax")));
 		}
 	}
 	

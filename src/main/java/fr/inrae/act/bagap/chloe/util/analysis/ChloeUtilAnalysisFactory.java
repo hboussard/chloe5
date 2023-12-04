@@ -10,17 +10,17 @@ public class ChloeUtilAnalysisFactory {
 
 		if(builder.getAnalysisType() == ChloeAnalysisType.COMBINE){
 			
-			CombineAnalysis analysis = new CombineAnalysis(builder.getOutputRaster(), builder.getNamesAndRasters(), builder.getCombination());
+			ChloeUtilAnalysis analysis = new CombineAnalysis(builder.getOutputRaster(), builder.getNamesAndRasters(), builder.getCombination());
 			return analysis;
 		}
 		if(builder.getAnalysisType() == ChloeAnalysisType.SEARCHANDREPLACE){
 			
-			SearchAndReplaceAnalysis analysis = new SearchAndReplaceAnalysis(builder.getOutputRaster(), builder.getRasterFile(), builder.getNoDataValue(), builder.getChanges());
+			ChloeUtilAnalysis analysis = new SearchAndReplaceAnalysis(builder.getOutputRaster(), builder.getRasterFile(), builder.getNoDataValue(), builder.getChanges());
 			return analysis;
 		}
 		if(builder.getAnalysisType() == ChloeAnalysisType.CLASSIFICATION){
 			
-			ClassificationAnalysis analysis = new ClassificationAnalysis(builder.getOutputRaster(), builder.getRasterFile(), builder.getDomains());
+			ChloeUtilAnalysis analysis = new ClassificationAnalysis(builder.getOutputRaster(), builder.getRasterFile(), builder.getDomains());
 			return analysis;
 		}
 		if(builder.getAnalysisType() == ChloeAnalysisType.RASTER_FROM_CSV){
@@ -38,6 +38,13 @@ public class ChloeUtilAnalysisFactory {
 						builder.getWidth(), builder.getHeight(), builder.getXMin(), builder.getYMin(), builder.getCellSize(), builder.getNoDataValue());
 				
 			}
+			
+			return analysis;
+		}
+		if(builder.getAnalysisType() == ChloeAnalysisType.RASTER_FROM_SHAPEFILE){
+			
+			ChloeUtilAnalysis analysis = new RasterFromShapefileAnalysis(builder.getOutputRaster(), builder.getShapefile(), builder.getAttribute(),
+					builder.getXMin(), builder.getXMax(), builder.getYMin(), builder.getYMax(), builder.getCellSize(), builder.getNoDataValue(), builder.getFillValue());
 			
 			return analysis;
 		}

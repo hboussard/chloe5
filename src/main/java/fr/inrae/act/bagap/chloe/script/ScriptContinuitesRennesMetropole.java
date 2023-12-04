@@ -56,15 +56,6 @@ public class ScriptContinuitesRennesMetropole {
 		//proportionFonctionnelleBoise(volumeMin);
 		//fragmentationFonctionnelleBoise(volumeMin);
 		
-		//classifFonctionnelleHumide();
-		//clusterFonctionnelHumide();
-		//proportionFonctionnelleHumide();
-		//fragmentationFonctionnelleHumide();
-		//testIndiceContinuiteHumide();
-		
-		//rasterizeCodeMNIE();
-		//noteMNIE("humide", 125);
-		
 		//calculIndiceAccessibilite("boise", 125);
 		//calculIndiceAccessibilite("humide", 125);
 		//calculIndiceAccessibilite("boise", 250);
@@ -83,10 +74,157 @@ public class ScriptContinuitesRennesMetropole {
 		//sumProportionContinuites(250);
 		//sumProportionContinuites(500);
 		
+		//calculIndiceDeplacement("boise", 125);
+		//calculIndiceDeplacement("humide", 125);
+		calculIndiceDeplacement("boise", 250);
+		calculIndiceDeplacement("humide", 250);
+		calculIndiceDeplacement("boise", 500);
+		calculIndiceDeplacement("humide", 500);
+		
+		//calculIndiceContinuite("boise", 125);
+		//calculIndiceContinuite("humide", 125);
+		//calculIndiceContinuite("boise", 250);
+		//calculIndiceContinuite("humide", 250);
+		//calculIndiceContinuite("boise", 500);
+		//calculIndiceContinuite("humide", 500);
+		
+		//classifFonctionnelle("boise", 125, "continuite", 1);
+		//classifFonctionnelle("humide", 125, "continuite", 1);
+		//classifFonctionnelle("boise", 250, "continuite", 1);
+		//classifFonctionnelle("humide", 250, "continuite", 1);
+		//classifFonctionnelle("boise", 500, "continuite", 1);
+		//classifFonctionnelle("humide", 500, "continuite", 1);
+		
+		//clusterFonctionnel("boise", 125, "continuite", 1);
+		//clusterFonctionnel("humide", 125, "continuite", 1);
+		//clusterFonctionnel("boise", 250, "continuite", 1);
+		//clusterFonctionnel("humide", 250, "continuite", 1);
+		//clusterFonctionnel("boise", 500, "continuite", 1);
+		//clusterFonctionnel("humide", 500, "continuite", 1);
+		
+		//proportionFonctionnelle("boise", 125, "continuite", 1, 2500);
+		//proportionFonctionnelle("humide", 125, "continuite", 1, 2500);
+		//proportionFonctionnelle("boise", 250, "continuite", 1, 2500);
+		//proportionFonctionnelle("humide", 250, "continuite", 1, 2500);
+		//proportionFonctionnelle("boise", 500, "continuite", 1, 2500);
+		//proportionFonctionnelle("humide", 500, "continuite", 1, 2500);
+		
+		//fragmentationFonctionnelle("boise", 125, "continuite", 1, 2500);
+		//fragmentationFonctionnelle("humide", 125, "continuite", 1, 2500);
+		//fragmentationFonctionnelle("boise", 250, "continuite", 1, 2500);
+		//fragmentationFonctionnelle("humide", 250, "continuite", 1, 2500);
+		//fragmentationFonctionnelle("boise", 500, "continuite", 1, 2500);
+		//fragmentationFonctionnelle("humide", 500, "continuite", 1, 2500);
+		
+		//rasterizeCodeMNIE();		
+		//noteEntity("mnie", "boise", 125, "continuite", "maximum");
+		//noteEntity("mnie", "humide", 125, "continuite", "maximum");
+		//noteEntity("mnie", "boise", 250, "continuite", "maximum");
+		//noteEntity("mnie", "humide", 250, "continuite", "maximum");
+		//noteEntity("mnie", "boise", 500, "continuite", "maximum");
+		//noteEntity("mnie", "humide", 500, "continuite", "maximum");
+		
+		//noteEntity("mnie", "boise", 125, "continuite", "average");
+		//noteEntity("mnie", "humide", 125, "continuite", "average");
+		//noteEntity("mnie", "boise", 250, "continuite", "average");
+		//noteEntity("mnie", "humide", 250, "continuite", "average");
+		//noteEntity("mnie", "boise", 500, "continuite", "average");
+		//noteEntity("mnie", "humide", 500, "continuite", "average");
+		
+		//rasterizeCodeCommune();		
+		//noteEntity("commune", "boise", 125, "continuite", "average");
+		//noteEntity("commune", "humide", 125, "continuite", "average");
+		//noteEntity("commune", "boise", 250, "continuite", "average");
+		//noteEntity("commune", "humide", 250, "continuite", "average");
+		//noteEntity("commune", "boise", 500, "continuite", "average");
+		//noteEntity("commune", "humide", 500, "continuite", "average");
+		
+		//noteEntity("commune", "boise", 125, "continuite", "sum");
+		//noteEntity("commune", "humide", 125, "continuite", "sum");
+		//noteEntity("commune", "boise", 250, "continuite", "sum");
+		//noteEntity("commune", "humide", 250, "continuite", "sum");
+		//noteEntity("commune", "boise", 500, "continuite", "sum");
+		//noteEntity("commune", "humide", 500, "continuite", "sum");
+		
+		//rasterizeCodeSecteur();	
+		//noteEntity("secteur", "boise", 125, "continuite", "average");
+		//noteEntity("secteur", "humide", 125, "continuite", "average");
+		//noteEntity("secteur", "boise", 250, "continuite", "average");
+		//noteEntity("secteur", "humide", 250, "continuite", "average");
+		//noteEntity("secteur", "boise", 500, "continuite", "average");
+		//noteEntity("secteur", "humide", 500, "continuite", "average");
+		
+		//noteEntity("secteur", "boise", 125, "continuite", "sum");
+		//noteEntity("secteur", "humide", 125, "continuite", "sum");
+		//noteEntity("secteur", "boise", 250, "continuite", "sum");
+		//noteEntity("secteur", "humide", 250, "continuite", "sum");
+		//noteEntity("secteur", "boise", 500, "continuite", "sum");
+		//noteEntity("secteur", "humide", 500, "continuite", "sum");
+		
+		//testIndiceContinuite("boise", 125);
+		
+		//classifFonctionnelle("boise", 250, "deplacement", 0.5f);
+		//clusterFonctionnel("boise", 250, "deplacement", 0.5f);		
+		//proportionFonctionnelle("boise", 250, "deplacement", 0.5f, 1500);		
+		//fragmentationFonctionnelle("boise", 250, "deplacement", 0.5f, 1500);
+		/*
+		classifFonctionnelle("boise", 125, "deplacement", 0.5f);
+		clusterFonctionnel("boise", 125, "deplacement", 0.5f);		
+		proportionFonctionnelle("boise", 125, "deplacement", 0.5f, 1500);		
+		fragmentationFonctionnelle("boise", 125, "deplacement", 0.5f, 1500);
+		*/
 		long end = System.currentTimeMillis();
 		System.out.println("time computing : "+(end - begin));
 	}
 	
+	private static void calculIndiceContinuite(String type, int dMax) {
+		Coverage cov1 = CoverageManager.getCoverage("H:/rennes_metropole/volume_deplacement/test/indice_accessibilite_"+type+"_"+dMax+"m.tif");
+		float[] data1 = cov1.getData();
+		EnteteRaster entete = cov1.getEntete();
+		cov1.dispose();
+		
+		Coverage cov2 = CoverageManager.getCoverage("H:/rennes_metropole/volume_deplacement/test/indice_deplacement_"+type+"_"+dMax+"m.tif");
+		float[] data2 = cov2.getData();
+		cov2.dispose();
+		
+		float[] outData = new float[entete.width()*entete.height()];
+		
+		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(outData, data1, data2){
+
+			@Override
+			protected float doTreat(float[] v) {
+				return v[0] * v[1];
+			}
+		};
+		cal.run();
+		
+		CoverageManager.write("H:/rennes_metropole/volume_deplacement/test/indice_continuite_"+type+"_"+dMax+"m.tif", outData, entete);
+		
+	}
+	
+	private static void calculIndiceDeplacement(String type, int dMax) {
+		Coverage cov = CoverageManager.getCoverage("H:/rennes_metropole/volume_deplacement/volume_deplacement_"+type+"_"+dMax+".tif");
+		float[] data = cov.getData();
+		EnteteRaster entete = cov.getEntete();
+		cov.dispose();
+		
+		float[] outData = new float[entete.width()*entete.height()];
+		
+		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(outData, data){
+
+			@Override
+			protected float doTreat(float[] v) {
+				//System.out.println(v[0]+" "+((((Math.pow(dMax, 2)*Math.PI))*dMax)/3)+" "+(v[0] / (((Math.pow(dMax, 2)*Math.PI))*dMax)/3));
+				return (float) (v[0] / (((Math.pow(125, 2)*Math.PI))*125)/3);
+				//return (float) (v[0] / (((Math.pow(dMax, 2)*Math.PI))*dMax)/3);
+			}
+		};
+		cal.run();
+		
+		CoverageManager.write("H:/rennes_metropole/volume_deplacement/test/indice_deplacement_"+type+"_"+dMax+"m_rapport125m.tif", outData, entete);
+		
+	}
+
 	private static void sumProportionContinuites(int dMax){
 		
 		
@@ -115,7 +253,6 @@ public class ScriptContinuitesRennesMetropole {
 	}
 	
 	private static void calculIndiceAccessibilite(String type, int dMax){
-		
 		
 		Coverage cov = CoverageManager.getCoverage("H:/rennes_metropole/volume_deplacement/surface_accessibilite_"+type+"_"+dMax+".tif");
 		float[] data = cov.getData();
@@ -153,35 +290,51 @@ public class ScriptContinuitesRennesMetropole {
 		
 	}
 	
-	private static void noteMNIE(String type, int dMax) {
+	private static void noteEntity(String territoire, String type, int echelle, String continuite, String metric) {
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
 		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
-		
-		/*
-		builder.setRasterFile("H:/rennes_metropole/volume_deplacement/volume_deplacement_"+type+"_"+dMax+".tif");
-		builder.setEntityRasterFile("H:/rennes_metropole/volume_deplacement/mnie.tif");
-		builder.addMetric("average");
-		builder.addGeoTiffOutput("average", "H:/rennes_metropole/volume_deplacement/mnie_average_"+type+"_"+dMax+".tif");
-		builder.addCsvOutput("H:/rennes_metropole/volume_deplacement/mnie_"+type+"_"+dMax+".csv");
-		*/
-		
-		builder.setRasterFile("H:/rennes_metropole/test/volume_deplacement_"+type+"_2.tif");
-		builder.setEntityRasterFile("H:/rennes_metropole/volume_deplacement/mnie_20m.tif");
-		builder.addMetric("average");
-		builder.addGeoTiffOutput("average", "H:/rennes_metropole/test/mnie_average_"+type+"_"+dMax+".tif");
-		builder.addCsvOutput("H:/rennes_metropole/test/mnie_"+type+"_"+dMax+".csv");
-		
+	
+		builder.setRasterFile("H:/rennes_metropole/volume_deplacement/test/indice_"+continuite+"_"+type+"_"+echelle+"m.tif");
+		builder.setEntityRasterFile("H:/rennes_metropole/volume_deplacement/"+territoire+"_5m.tif");
+		builder.addMetric(metric);
+		builder.addGeoTiffOutput(metric, "H:/rennes_metropole/volume_deplacement/test/"+territoire+"_"+metric+"_"+continuite+"_"+type+"_"+echelle+"m.tif");
+		builder.addCsvOutput("H:/rennes_metropole/volume_deplacement/test/"+territoire+"_"+metric+"_"+continuite+"_"+type+"_"+echelle+"m.csv");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 		analysis.allRun();
 		
 	}
+	
+	private static void rasterizeCodeSecteur() {
+		
+		Coverage cov = CoverageManager.getCoverage("H:/rennes_metropole/continuite_ecologique/rm_os_bre.tif");
+		EnteteRaster entete = cov.getEntete();
+		cov.dispose();
+		
+		Coverage covN = ShapeFile2CoverageConverter.getSurfaceCoverage("H:/rennes_metropole/continuite_ecologique/communes_rennes_metropole_L93.shp", "id_secteur", entete.cellsize(), entete.noDataValue(), entete.crs(), entete.minx(), entete.maxx(), entete.miny(), entete.maxy(), entete.noDataValue());
+		float[] dataN = covN.getData();
+		covN.dispose();
+		
+		CoverageManager.write("H:/rennes_metropole/volume_deplacement/secteur_5m.tif", dataN, entete);
+	}
+	
+	private static void rasterizeCodeCommune() {
+		
+		Coverage cov = CoverageManager.getCoverage("H:/rennes_metropole/continuite_ecologique/rm_os_bre.tif");
+		EnteteRaster entete = cov.getEntete();
+		cov.dispose();
+		
+		Coverage covN = ShapeFile2CoverageConverter.getSurfaceCoverage("H:/rennes_metropole/continuite_ecologique/communes_rennes_metropole_L93.shp", "insee", entete.cellsize(), entete.noDataValue(), entete.crs(), entete.minx(), entete.maxx(), entete.miny(), entete.maxy(), entete.noDataValue());
+		float[] dataN = covN.getData();
+		covN.dispose();
+		
+		CoverageManager.write("H:/rennes_metropole/volume_deplacement/commune_5m.tif", dataN, entete);
+	}
 
 	private static void rasterizeCodeMNIE() {
-		
-		//Coverage cov = CoverageManager.getCoverage("H:/rennes_metropole/grain_bocager/rm_type_boisement.tif");
-		Coverage cov = CoverageManager.getCoverage("H:/rennes_metropole/test/volume_deplacement_boise_9.tif");
+	
+		Coverage cov = CoverageManager.getCoverage("H:/rennes_metropole/continuite_ecologique/rm_os_bre.tif");
 		EnteteRaster entete = cov.getEntete();
 		cov.dispose();
 		
@@ -189,18 +342,21 @@ public class ScriptContinuitesRennesMetropole {
 		float[] dataN = covN.getData();
 		covN.dispose();
 		
-		CoverageManager.write("H:/rennes_metropole/volume_deplacement/mnie_20m.tif", dataN, entete);
+		CoverageManager.write("H:/rennes_metropole/volume_deplacement/mnie_5m.tif", dataN, entete);
 	}
 
-	private static void fragmentationFonctionnelleHumide(){
+	private static void fragmentationFonctionnelle(String type, int echelle, String continuite, float min, int echelle2){
+		
+		int ws = (echelle2*2/5)+1;
+		String minV = ((int) (min * 100.0))+"";
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setRasterFile("H:/rennes_metropole/test/cluster_volume_deplacement_humide_2.tif");
+		builder.setRasterFile("H:/rennes_metropole/volume_deplacement/test/cluster_indice_"+continuite+"_"+type+"_"+echelle+"m_min"+minV+".tif");
 		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
-		builder.setWindowSize(201);
+		builder.setWindowSize(ws);
 		builder.setDisplacement(10);
 		builder.addMetric("SHDI");
-		builder.addGeoTiffOutput("SHDI", "H:/rennes_metropole/test/fragmentation_volume_deplacement_humide_2.tif");
+		builder.addGeoTiffOutput("SHDI", "H:/rennes_metropole/volume_deplacement/test/fragmentation_indice_"+continuite+"_"+type+"_"+echelle+"m_min"+minV+"_"+echelle2+"m.tif");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 	
@@ -208,15 +364,18 @@ public class ScriptContinuitesRennesMetropole {
 		
 	}
 	
-	private static void proportionFonctionnelleHumide(){
+	private static void proportionFonctionnelle(String type, int echelle, String continuite, float min, int echelle2){
+		
+		int ws = (echelle2*2/5)+1;
+		String minV = ((int) (min * 100.0))+"";
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setRasterFile("H:/rennes_metropole/test/classif_volume_deplacement_humide_2.tif");
+		builder.setRasterFile("H:/rennes_metropole/volume_deplacement/test/classif_indice_"+continuite+"_"+type+"_"+echelle+"m_min"+minV+".tif");
 		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
-		builder.setWindowSize(201);
+		builder.setWindowSize(ws);
 		builder.setDisplacement(10);
 		builder.addMetric("pNV_1");
-		builder.addGeoTiffOutput("pNV_1", "H:/rennes_metropole/test/proportion_volume_deplacement_humide_2.tif");
+		builder.addGeoTiffOutput("pNV_1", "H:/rennes_metropole/volume_deplacement/test/proportion_indice_"+continuite+"_"+type+"_"+echelle+"m_min"+minV+"_"+echelle2+"m.tif");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 	
@@ -224,35 +383,40 @@ public class ScriptContinuitesRennesMetropole {
 		
 	}
 	
-	private static void clusterFonctionnelHumide(){
+	private static void clusterFonctionnel(String type, int echelle, String continuite, float min){
 		
-		Coverage cov = CoverageManager.getCoverage("H:/rennes_metropole/test/classif_volume_deplacement_humide_2.tif");
+		String minV = ((int) (min * 100.0))+"";
+		
+		Coverage cov = CoverageManager.getCoverage("H:/rennes_metropole/volume_deplacement/test/classif_indice_"+continuite+"_"+type+"_"+echelle+"m_min"+minV+".tif");
 		float[] data = cov.getData();
 		EnteteRaster entete = cov.getEntete();
 		cov.dispose();
 
 		TabQueenClusteringAnalysis ca = new TabQueenClusteringAnalysis(data, entete.width(), entete.height(), new int[]{1}, entete.noDataValue());
-		float[] dataCluster = (float[]) ca.allRun();
-		CoverageManager.writeGeotiff("H:/rennes_metropole/test/cluster_volume_deplacement_humide_2.tif", dataCluster, entete);
+		float[] outData = (float[]) ca.allRun();
+		CoverageManager.writeGeotiff("H:/rennes_metropole/volume_deplacement/test/cluster_indice_"+continuite+"_"+type+"_"+echelle+"m_min"+minV+".tif", outData, entete);
 		
 	}
 	
-	private static void classifFonctionnelleHumide(int volume_max){
+	private static void classifFonctionnelle(String type, int echelle, String continuite, float min){
 		
 		
-		Coverage covVolume = CoverageManager.getCoverage("H:/rennes_metropole/test/volume_deplacement_humide_2.tif");
-		float[] dataVolume = covVolume.getData();
-		EnteteRaster entete = covVolume.getEntete();
-		covVolume.dispose();
+		Coverage cov = CoverageManager.getCoverage("H:/rennes_metropole/volume_deplacement/test/indice_"+continuite+"_"+type+"_"+echelle+"m.tif");
+		float[] data = cov.getData();
+		EnteteRaster entete = cov.getEntete();
+		cov.dispose();
 		
 		float[] outData = new float[entete.width()*entete.height()];
 		
-		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(outData, dataVolume){
+		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(outData, data){
 
 			@Override
 			protected float doTreat(float[] v) {
 				float value = v[0];
-				if(value > volume_max){
+				if(value == -1){
+					return -1;
+				}
+				if(value > min){
 					return 1;
 				}
 				return 0;
@@ -260,7 +424,9 @@ public class ScriptContinuitesRennesMetropole {
 		};
 		cal.run();
 		
-		CoverageManager.write("H:/rennes_metropole/test/classif_volume_deplacement_humide_2.tif", outData, entete);
+		String minV = ((int) (min * 100.0))+"";
+		
+		CoverageManager.write("H:/rennes_metropole/volume_deplacement/test/classif_indice_"+continuite+"_"+type+"_"+echelle+"m_min"+minV+".tif", outData, entete);
 		
 	}
 	
@@ -293,8 +459,7 @@ public class ScriptContinuitesRennesMetropole {
 		CoverageManager.write("H:/rennes_metropole/test/rapport_humide_2_2.tif", outData, entete);
 		
 	}
-	
-	
+		
 	private static void fragmentationFonctionnelleBoise(int volumeMin){
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
@@ -369,12 +534,12 @@ public class ScriptContinuitesRennesMetropole {
 	
 	private static void testIndiceContinuite(String type, int dMax){
 		
-		Coverage covSurface = CoverageManager.getCoverage("H:/rennes_metropole/volume_deplacement/surface_accessibilite_"+type+"_"+dMax+".tif");
+		Coverage covSurface = CoverageManager.getCoverage("H:/rennes_metropole/volume_deplacement/test/indice_accessibilite_"+type+"_"+dMax+"m.tif");
 		float[] dataSurface = covSurface.getData();
 		EnteteRaster entete = covSurface.getEntete();
 		covSurface.dispose();
 		
-		Coverage covVolume = CoverageManager.getCoverage("H:/rennes_metropole/volume_deplacement/volume_deplacement_"+type+"_"+dMax+".tif");
+		Coverage covVolume = CoverageManager.getCoverage("H:/rennes_metropole/volume_deplacement/test/indice_deplacement_"+type+"_"+dMax+"m.tif");
 		float[] dataVolume = covVolume.getData();
 		covVolume.dispose();
 		
@@ -389,12 +554,14 @@ public class ScriptContinuitesRennesMetropole {
 			@Override
 			protected float doTreat(float[] v) {
 				//return v[1] / (v[0]*v[2]);
-				return v[0] / (v[1]*v[2]);
+				//return v[0] / (v[1]*v[2]);
+				//return (v[0] / v[1]) * (1 / v[2]);
+				return v[1] * (1/v[2]);
 			}
 		};
 		cal.run();
 		
-		CoverageManager.write("H:/rennes_metropole/volume_deplacement/rapport_inverse_"+type+"_"+dMax+".tif", outData, entete);
+		CoverageManager.write("H:/rennes_metropole/volume_deplacement/test/rapport_deplacement_sur_permeabilite_"+type+"_"+dMax+"m.tif", outData, entete);
 		
 	}
 	

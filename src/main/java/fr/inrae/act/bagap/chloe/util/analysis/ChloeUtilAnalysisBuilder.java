@@ -23,19 +23,23 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	
 	private String inputRaster;
 	
+	private String inputShapefile;
+	
 	private String outputPrefix, outputSuffix;
 	
 	private String csv;
+	
+	private String attribute;
 	
 	private String combination;
 	
 	private Map<Float, Float> changes;
 	
-	private float cellSize;
+	private float cellSize, fillValue;
 	
 	private int width, height, noDataValue;
 	
-	private double xMin, yMin;
+	private double xMin, xMax, yMin, yMax;
 	
 	private Map<Domain<Float, Float>, Integer> domains;
 	
@@ -49,6 +53,8 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 		outputRaster = null;
 		outputFolder = null;
 		inputRaster = null;
+		inputShapefile = null;
+		attribute = null;
 		outputPrefix = "";
 		outputSuffix = "";
 		typeMime = RasterTypeMime.GEOTIFF;
@@ -59,8 +65,11 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 		width = -1;
 		height = -1;
 		xMin = 0;
+		xMax = 0;
 		yMin = 0;
+		yMax = 0;
 		noDataValue = Raster.getNoDataValue();
+		fillValue = Raster.getNoDataValue();
 		domains = null;
 		variables = new HashSet<String>();
 	}
@@ -105,6 +114,11 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	}
 	
 	@Override
+	public void setFillValue(float fillValue) {
+		this.fillValue = fillValue;
+	}
+	
+	@Override
 	public void setDomains(Map<Domain<Float, Float>, Integer> domains) {
 		this.domains= domains;
 	}
@@ -140,8 +154,18 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	}
 	
 	@Override
+	public void setXMax(double xMax) {
+		this.xMax = xMax;
+	}
+	
+	@Override
 	public void setYMin(double yMin) {
 		this.yMin = yMin;
+	}
+	
+	@Override
+	public void setYMax(double yMax) {
+		this.yMax = yMax;
 	}
 	
 	@Override
@@ -168,6 +192,14 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	@Override
 	public void setTypeMime(RasterTypeMime typeMime) {
 		this.typeMime = typeMime;
+	}
+	
+	public void setShapefile(String shapefile){
+		this.inputShapefile = shapefile;
+	}
+	
+	public void setAttribute(String attribute){
+		this.attribute = attribute;
 	}
 	
 	// getters
@@ -197,6 +229,10 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 		return inputRaster;
 	}
 	
+	public String getShapefile(){
+		return inputShapefile;
+	}
+	
 	public String getCsvFile(){
 		return csv;
 	}
@@ -217,6 +253,10 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 		return noDataValue;
 	}
 	
+	public float getFillValue(){
+		return fillValue;
+	}
+	
 	public int getWidth(){
 		return width;
 	}
@@ -228,9 +268,21 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	public double getXMin(){
 		return xMin;
 	}
+	
+	public double getXMax(){
+		return xMax;
+	}
 
 	public double getYMin(){
 		return yMin;
+	}
+	
+	public double getYMax(){
+		return yMax;
+	}
+	
+	public String getAttribute(){
+		return attribute;
 	}
 	
 	public float getCellSize(){

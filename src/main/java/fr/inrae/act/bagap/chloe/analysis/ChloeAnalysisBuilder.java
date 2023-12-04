@@ -91,6 +91,10 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 	
+	public void setShapefile(String shapefile){
+		throw new UnsupportedOperationException();
+	}
+	
 	public void setEntete(EnteteRaster entete){
 		throw new UnsupportedOperationException();
 	}
@@ -291,6 +295,10 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 	
+	public void setFillValue(float fillValue) {
+		throw new UnsupportedOperationException();
+	}
+	
 	public void setDomains(Map<Domain<Float, Float>, Integer> domains) {
 		throw new UnsupportedOperationException();
 	}
@@ -315,7 +323,15 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 	
+	public void setXMax(double xMax) {
+		throw new UnsupportedOperationException();
+	}
+	
 	public void setYMin(double yMin) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setYMax(double yMax) {
 		throw new UnsupportedOperationException();
 	}
 	
@@ -339,6 +355,10 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 
+	public void setAttribute(String attribute) {
+		throw new UnsupportedOperationException();
+	}
+	
 	// getters
 	
 	public WindowShapeType getWindowShapeType() {
@@ -356,7 +376,5 @@ public abstract class ChloeAnalysisBuilder {
 	public String getRasterFile() {
 		throw new UnsupportedOperationException();
 	}
-
-	
 	
 }

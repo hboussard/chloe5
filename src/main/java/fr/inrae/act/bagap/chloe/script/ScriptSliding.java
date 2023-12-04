@@ -10,7 +10,7 @@ import fr.inrae.act.bagap.raster.CoverageManager;
 public class ScriptSliding {
 
 	public static void main(String[] args) {
-		//scriptSliding();
+		scriptSliding();
 		
 	}
 	
@@ -24,11 +24,11 @@ public class ScriptSliding {
 		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
 		//builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
 		builder.addRasterFile(path+"pf_2018_10m.tif");
-		builder.addMetric("pNV_3");
-		builder.addWindowSize(201);
+		builder.addMetric("NV_7");
+		builder.addWindowSize(401);
 		builder.setUnfilters(new int[]{-1});
 		//builder.setDisplacement(20);
-		builder.addGeoTiffOutput("pNV_3", path+"sliding/pNV_3_201p_1.tif");
+		builder.addGeoTiffOutput("NV_7", path+"sliding/NV_7_401p.tif");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 		
