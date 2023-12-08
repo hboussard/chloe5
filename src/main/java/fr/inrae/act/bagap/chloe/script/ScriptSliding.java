@@ -24,11 +24,12 @@ public class ScriptSliding {
 		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
 		//builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
 		builder.addRasterFile(path+"pf_2018_10m.tif");
-		builder.addMetric("NV_7");
-		builder.addWindowSize(401);
+		builder.addMetric("HET");
+		//builder.addMetric("pNV_7");
+		builder.addWindowSize(201);
 		builder.setUnfilters(new int[]{-1});
-		//builder.setDisplacement(20);
-		builder.addGeoTiffOutput("NV_7", path+"sliding/NV_7_401p.tif");
+		builder.addGeoTiffOutput("HET", path+"fast/HET_fast_201p3.tif");
+		//builder.addGeoTiffOutput("pNV_7", path+"fast/pNV_7_fast_201p.tif");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 		

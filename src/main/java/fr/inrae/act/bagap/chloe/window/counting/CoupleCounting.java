@@ -26,11 +26,12 @@ public class CoupleCounting extends Counting implements CoupleCountingInterface 
 	
 	private short countCoupleClass;
 	
-	public CoupleCounting(int nValues, float[] couples, double theoreticalSize, int theoreticalCoupleSize){
-		super(theoreticalCoupleSize);
+	public CoupleCounting(int nValues, float[] couples, float theoreticalSize, int theoreticalCoupleSize){
+		super(theoreticalSize);
 		this.nValues = nValues;
 		this.couples = couples;
 		this.countCouples = new HashMap<Float, Float>();
+		this.theoreticalCoupleSize = theoreticalCoupleSize;
 	}
 	
 	public CoupleCounting(int nValues, float[] couples){

@@ -45,22 +45,19 @@ public abstract class FastCountCoupleKernel extends FastQualitativeKernel {
 				
 				v = (int) inDatas()[((y + dy) * width()) + x];
 				coeff = coeff(dy);
-				//buf()[x][2] += coeff;
+				
 				nb += coeff;
+				
 				if(v == noDataValue()){
-					//buf()[x][3] += coeff;
 					nb_nodata += coeff;
 				}
 				
 				if(y+dy>0) {
 					v_V = (int) inDatas()[((y + dy - 1) * width()) + x];
-					//buf()[x][4] += coeff;
 					nbC += coeff;
 					if(v == noDataValue() || v_V == noDataValue()){
-						//mc = 5;
 						nbC_nodata += coeff;
 					}else if (v==0 || v_V == 0){
-						//mc = 6;
 						nbC_zero += coeff;
 					}else{
 						mc = 7 + mapCouples[mapValues()[v]][mapValues()[v_V]];
@@ -71,12 +68,10 @@ public abstract class FastCountCoupleKernel extends FastQualitativeKernel {
 				
 				if(x>0) {
 					v_H = (int) inDatas()[((y + dy) * width()) + x - 1];
-					buf()[x][4] += coeff;
+					nbC += coeff;
 					if(v == noDataValue() || v_H == noDataValue()){
-						//mc = 5;
 						nbC_nodata += coeff;
 					}else if (v==0 || v_H == 0){
-						//mc = 6;
 						nbC_zero += coeff;
 					}else{
 						mc = 7 + mapCouples[mapValues()[v]][mapValues()[v_H]];

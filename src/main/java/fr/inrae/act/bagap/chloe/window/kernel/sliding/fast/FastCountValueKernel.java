@@ -25,13 +25,10 @@ public abstract class FastCountValueKernel extends FastQualitativeKernel {
 				
 				v = (int) inDatas()[((y + dy) * width()) + x];
 				coeff = coeff(dy);
-				//buf()[x][2] += coeff; 
 				nb += coeff;
 				if(v == noDataValue()){
-					//mv = 3;
 					nb_nodata += coeff;
 				}else if(v==0){
-					//mv = 4;
 					nb_zero += coeff;
 				}else{
 					mv = mapValues()[v] + 5;

@@ -654,7 +654,11 @@ public class ChloeAPI {
 	// not required 
 	public static void importOutputFolder(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("output_folder")){
-			builder.setOutputFolder(properties.getProperty("output_folder"));
+			String prop = properties.getProperty("output_folder");
+			if(!(prop.endsWith("/") || prop.endsWith("\\\\"))){
+				prop += "/";
+			}
+			builder.setOutputFolder(prop);
 		}
 	}
 	
@@ -676,6 +680,9 @@ public class ChloeAPI {
 	public static void importOutputFolderForCenteredWindow(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("output_folder")){
 			String prop = properties.getProperty("output_folder");
+			if(!(prop.endsWith("/") || prop.endsWith("\\\\"))){
+				prop += "/";
+			}
 			String input = properties.getProperty("input_raster");
 			if(input.endsWith(".asc")){
 				builder.setAsciiGridFolderOutput(prop);
@@ -687,15 +694,6 @@ public class ChloeAPI {
 			
 			StringBuffer sb = new StringBuffer();
 			sb.append(new File(input).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
-			if(builder.getWindowShapeType() == WindowShapeType.CIRCLE){
-				sb.append("_cr");
-			}else if(builder.getWindowShapeType() == WindowShapeType.SQUARE){
-				sb.append("_sq");
-			}else if (builder.getWindowShapeType() == WindowShapeType.FUNCTIONAL) {
-				sb.append("_fu");
-			}
-			sb.append("_w"+builder.getWindowSize());
-			sb.append("_d_"+builder.getDisplacement());
 			sb.append(".csv");
 			
 			builder.addCsvOutput(prop+sb.toString());
@@ -706,6 +704,9 @@ public class ChloeAPI {
 	public static void importOutputFolderForGridWindow(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("output_folder")){
 			String prop = properties.getProperty("output_folder");
+			if(!(prop.endsWith("/") || prop.endsWith("\\\\"))){
+				prop += "/";
+			}
 			String input = properties.getProperty("input_raster");
 			if(input.endsWith(".asc")){
 				builder.setAsciiGridFolderOutput(prop);
