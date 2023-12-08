@@ -1,7 +1,7 @@
 package fr.inrae.act.bagap.chloe.window.kernel.sliding;
 
 import fr.inrae.act.bagap.chloe.cluster.TabClusteringOutput;
-import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenClusteringAnalysis;
+import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenDiscreteClusteringAnalysis;
 
 public class SlidingPatchKernel extends AbstractSlidingLandscapeMetricKernel {
 
@@ -61,7 +61,7 @@ public class SlidingPatchKernel extends AbstractSlidingLandscapeMetricKernel {
 					}
 				}
 				
-				TabQueenClusteringAnalysis ca = new TabQueenClusteringAnalysis(tabCover, windowSize(), windowSize(), values, noDataValue());
+				TabQueenDiscreteClusteringAnalysis ca = new TabQueenDiscreteClusteringAnalysis(tabCover, windowSize(), windowSize(), values, noDataValue());
 				float[] tabCluster = (float[]) ca.allRun();
 				
 				TabClusteringOutput cto = new TabClusteringOutput(tabCluster, tabCover, values, cellSize, noDataValue());

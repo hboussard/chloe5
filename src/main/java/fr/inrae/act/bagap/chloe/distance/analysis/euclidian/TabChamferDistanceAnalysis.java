@@ -3,7 +3,6 @@ package fr.inrae.act.bagap.chloe.distance.analysis.euclidian;
 import java.util.Arrays;
 
 import fr.inra.sad.bagap.apiland.analysis.Analysis;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 
 public class TabChamferDistanceAnalysis extends Analysis {
 
@@ -20,9 +19,9 @@ public class TabChamferDistanceAnalysis extends Analysis {
 
 	private int[][] chamfer = null;
 
-	private int normalizer = 0;
+	private int normalizer;
 
-	private int width = 0, height = 0;
+	private int width, height;
 
 	private float[] outDatas, inDatas;
 	
@@ -33,8 +32,10 @@ public class TabChamferDistanceAnalysis extends Analysis {
 	private int noDataValue;
 	
 	private boolean hasValue;
+	
+	private double threshold;
 
-	public TabChamferDistanceAnalysis(float[] outDatas, float[] inDatas, int width, int height, float cellSize, int noDataValue, int[] codes) {
+	public TabChamferDistanceAnalysis(float[] outDatas, float[] inDatas, int width, int height, float cellSize, int noDataValue, int[] codes, double threshold) {
 		this.chamfer = TabChamferDistanceAnalysis.chamfer13;
 		this.normalizer = this.chamfer[0][2];
 		this.outDatas = outDatas;
@@ -44,6 +45,7 @@ public class TabChamferDistanceAnalysis extends Analysis {
 		this.cellSize = cellSize;
 		this.noDataValue = noDataValue;
 		this.codes = codes;
+		this.threshold = threshold;
 	}
 	
 	public boolean hasValue(){
@@ -55,7 +57,7 @@ public class TabChamferDistanceAnalysis extends Analysis {
 		setResult(compute());
 	}
 
-	private void testAndSet(int x, int y, float newvalue) {
+	private void testAndSet(int x, int y, float newValue) {
 		if (x < 0 || x >= width) {
 			return;
 		}
@@ -63,10 +65,10 @@ public class TabChamferDistanceAnalysis extends Analysis {
 			return;
 		}
 		double v = outDatas[y * width + x];
-		if (v == Raster.getNoDataValue() || (v >= 0 && v < newvalue)) {
+		if (v == noDataValue || (v >= 0 && v < newValue)) {
 			return;
 		}
-		outDatas[y * width + x] = newvalue;
+		outDatas[y * width + x] = newValue;
 	}
 	
 	private float[] compute() {
@@ -132,11 +134,17 @@ public class TabChamferDistanceAnalysis extends Analysis {
 		if(hasValue){
 			
 			float v;
+			float d;
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < width; x++) {
 					v = outDatas[y * width + x];
-					if(v != Raster.getNoDataValue()){
-						outDatas[y * width + x] = (v / normalizer) * cellSize;
+					if(v != noDataValue){
+						//outDatas[y * width + x] = (v / normalizer) * cellSize;
+						d = (v / normalizer) * cellSize;
+						if(threshold != noDataValue && d > threshold){
+							d = (float) threshold;
+						}
+						outDatas[y * width + x] = d;
 					}
 				}
 			}
@@ -160,7 +168,7 @@ public class TabChamferDistanceAnalysis extends Analysis {
 			for (int xt = 0; xt < width; xt++) {
 				v = inDatas[yt*width+xt];
 				ok = false;
-				if (v != Raster.getNoDataValue()) {
+				if (v != noDataValue) {
 					for (int c : codes) {
 						if (c == v) {
 							ok = true;

@@ -6,7 +6,7 @@ import java.util.Set;
 import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
-import fr.inrae.act.bagap.chloe.distance.analysis.functional.ArrayRCMDistanceAnalysis;
+import fr.inrae.act.bagap.chloe.distance.analysis.functional.TabRCMDistanceAnalysis;
 import fr.inrae.act.bagap.chloe.window.kernel.selected.DoubleSelectedLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 
@@ -71,7 +71,7 @@ public abstract class SelectedFunctionalKernel extends DoubleSelectedLandscapeMe
 		
 		float[] distance = new float[windowSize()*windowSize()];
 		
-		ArrayRCMDistanceAnalysis rcm = new ArrayRCMDistanceAnalysis(distance, resistance, windowSize(), windowSize(), (float) cellSize, noDataValue(), radius);
+		TabRCMDistanceAnalysis rcm = new TabRCMDistanceAnalysis(distance, resistance, windowSize(), windowSize(), (float) cellSize, noDataValue(), radius);
 		rcm.allRun();
 		
 		return distance;

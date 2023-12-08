@@ -13,6 +13,49 @@ public class ScriptDistanceAndCluster {
 
 	public static void main(String[] args) {
 		
+		script2();
+	}
+	
+	private static void script3(){
+		
+		Coverage cov = CoverageManager.getCoverage("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/pf_2018_10m.tif");
+		float[] data = cov.getData();
+		EnteteRaster entete = cov.getEntete();
+		cov.dispose();
+		
+		int[] codes =  new int[]{7,8};
+		
+		float[] dataDistance = new float[entete.width() * entete.height()];
+		TabChamferDistanceAnalysis da = new TabChamferDistanceAnalysis(dataDistance, data, entete.width(), entete.height(), entete.cellsize(), entete.noDataValue(), codes, entete.noDataValue());
+		da.allRun();
+		
+		TabDistanceClusteringAnalysis ca = new TabDistanceClusteringAnalysis(data, dataDistance, entete.width(), entete.height(), codes, 10, entete.noDataValue());
+		float[] dataCluster = (float[]) ca.allRun();
+		
+		CoverageManager.writeGeotiff("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/cluster/cluster_3.tif", dataCluster, entete);
+		
+		String csv = "C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/cluster/cluster_3.csv";
+		CsvClusteringOutput csvCO = new CsvClusteringOutput(csv, dataCluster, data, codes, entete.cellsize(), entete.noDataValue());
+		csvCO.allRun();
+	}
+	
+	private static void script2(){
+		
+		Coverage cov = CoverageManager.getCoverage("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/pf_2018_10m.tif");
+		float[] data = cov.getData();
+		EnteteRaster entete = cov.getEntete();
+		cov.dispose();
+		
+		int[] codes =  new int[]{7,8};
+		
+		TabQueenClusteringAnalysis ca = new TabQueenClusteringAnalysis(data, entete.width(), entete.height(), codes, entete.noDataValue());
+		float[] dataCluster = (float[]) ca.allRun();
+		
+		CoverageManager.writeGeotiff("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/cluster/cluster_4.tif", dataCluster, entete);
+	}
+	
+	private static void script1(){
+
 		float[] tabCluster;
 		
 		Coverage cov = CoverageManager.getCoverage("H:/temp/test/ascii1.tif");
@@ -62,7 +105,6 @@ public class ScriptDistanceAndCluster {
 		TabDistanceClusteringAnalysis ca = new TabDistanceClusteringAnalysis(data, dataDistance, entete.width(), entete.height(), codes, 150, entete.noDataValue());
 		tabCluster = (float[]) ca.allRun();
 		CoverageManager.writeGeotiff("H:/temp/test/clusterMais_func_150.tif", tabCluster, entete);
-		
 	}
 
 }

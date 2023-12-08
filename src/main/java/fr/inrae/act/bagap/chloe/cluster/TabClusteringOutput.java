@@ -31,23 +31,10 @@ public class TabClusteringOutput extends Analysis {
 	private double[] maxSurfaces;
 	
 	private int noDataValue;
-	
-	/*
-	public TabClusteringOutput(int[] tabCluster, int[] tabCover, int[] initValues, double cellSize){
-		this.tabCluster = tabCluster;
-		this.tabCover = tabCover;
-		this.initValues = initValues;
-		this.cellSize = cellSize;
-	}*/
-	
+
 	public TabClusteringOutput(float[] tabCluster, float[] tabCover, int[] initValues, double cellSize, int noDataValue){
 		this.tabCluster = tabCluster;
 		this.tabCover = tabCover;
-		/*this.tabCover = new int[tabCover.length];
-		int ind = 0;
-		for(float tc : tabCover){
-			this.tabCover[ind++] = (int) tc;
-		}*/
 		this.initValues = initValues;
 		this.cellSize = cellSize;
 		this.noDataValue = noDataValue;

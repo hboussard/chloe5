@@ -286,7 +286,7 @@ public class GrainBocager {
 		
 		float[] data = new float[entete.width()*entete.height()];
 		
-		TabChamferDistanceAnalysis da = new TabChamferDistanceAnalysis(data, dataTypeBoisementPhase1, entete.width(), entete.height(), entete.cellsize(), entete.noDataValue(), new int[]{5});
+		TabChamferDistanceAnalysis da = new TabChamferDistanceAnalysis(data, dataTypeBoisementPhase1, entete.width(), entete.height(), entete.cellsize(), entete.noDataValue(), new int[]{5}, entete.noDataValue());
 		da.allRun();
 		
 		return new TabCoverage(data, entete);

@@ -28,6 +28,10 @@ public class TabRCMDistanceAnalysis extends Analysis {
 	
 	private boolean hasValue;
 	
+	public TabRCMDistanceAnalysis(float[] outDatas, float[] frictionDatas, int width, int height, float cellSize, int noDataValue, double threshold) {
+		this(outDatas, null, frictionDatas, width, height, cellSize, noDataValue, null, noDataValue);
+	}
+	
 	public TabRCMDistanceAnalysis(float[] outDatas, float[] inDatas, float[] frictionDatas, int width, int height, float cellSize, int noDataValue, int[] codes) {
 		this(outDatas, inDatas, frictionDatas, width, height, cellSize, noDataValue, codes, noDataValue);
 	}
@@ -42,7 +46,7 @@ public class TabRCMDistanceAnalysis extends Analysis {
 		this.noDataValue = noDataValue;
 		this.codes = codes;
 		if(threshold == noDataValue){
-			this.threshold = 20000;
+			this.threshold = Integer.MAX_VALUE;
 		}else{
 			this.threshold = threshold;
 		}
@@ -62,50 +66,65 @@ public class TabRCMDistanceAnalysis extends Analysis {
 		waits[0] = new ArrayList<Integer>();
 		
 		hasValue = false;
-		boolean ok;
-		float v;
-		for (int yt = 0; yt < height; yt++) {
-			for (int xt = 0; xt < width; xt++) {
-				v = inDatas[yt*width+xt];
-				ok = false;
-				if (v != noDataValue) {
-					for (int c : codes) {
-						if (c == v) {
-							ok = true;
-							hasValue = true;
-							break;
-						}
-					}
-					if (ok) {
-						outDatas[yt * width + xt] = 0; // inside the object -> distance=0
-					} else {
-						outDatas[yt * width + xt] = -2; // outside the object -> to be computed
-					}
-				}else{
-					outDatas[yt * width + xt] = noDataValue; // nodata_value -> to be not computed
-				}
-				
-			}
-		}
-		inDatas = null;
 		
-		if(hasValue){
-			// afin de limiter le nombre de calculs de diffusion, ne diffuser qu'à partir des bords d'habitats
-			boolean maj;
+		if(inDatas == null){
+			for(int ind=0; ind<frictionDatas.length; ind++){
+				if(frictionDatas[ind] == noDataValue){
+					outDatas[ind] = noDataValue;
+				}else if(ind == ((width*width)-1)/2){ // pixel central source de diffusion
+					hasValue = true;
+					outDatas[ind] = 0;
+					waits[0].add(ind);
+				}else{
+					outDatas[ind] = -2; // to be computed
+				}
+			}
+		}else{
+			boolean ok;
+			float v;
 			for (int yt = 0; yt < height; yt++) {
 				for (int xt = 0; xt < width; xt++) {
-					if (outDatas[yt * width + xt] == 0) {
-						maj = true;
-						if(xt == 0 || outDatas[(xt-1)+yt*width] == 0){
-							if(xt == 0 || yt == 0 || outDatas[(xt-1)+(yt-1)*width] == 0){
-								if(yt == 0 || outDatas[xt+(yt-1)*width] == 0){
-									if(xt == (width-1) || yt == 0 || outDatas[(xt+1)+(yt-1)*width] == 0){
-										if(xt == (width-1) || outDatas[(xt+1)+yt*width] == 0){
-											if(xt == (width-1) || yt == (height-1) || outDatas[(xt+1)+(yt+1)*width] == 0){
-												if(yt == (height-1) || outDatas[xt+(yt+1)*width] == 0){
-													if(xt == 0 || yt == (height-1) || outDatas[(xt-1)+(yt+1)*width] == 0){
-														// do nothing
-														maj = false;
+					v = inDatas[yt*width+xt];
+					ok = false;
+					if (v != noDataValue) {
+						for (int c : codes) {
+							if (c == v) {
+								ok = true;
+								hasValue = true;
+								break;
+							}
+						}
+						if (ok) {
+							outDatas[yt * width + xt] = 0; // inside the object -> distance=0
+						} else {
+							outDatas[yt * width + xt] = -2; // outside the object -> to be computed
+						}
+					}else{
+						outDatas[yt * width + xt] = noDataValue; // nodata_value -> to be not computed
+					}
+					
+				}
+			}
+			inDatas = null;
+			
+			if(hasValue){
+				// afin de limiter le nombre de calculs de diffusion, ne diffuser qu'à partir des bords d'habitats
+				boolean maj;
+				for (int yt = 0; yt < height; yt++) {
+					for (int xt = 0; xt < width; xt++) {
+						if (outDatas[yt * width + xt] == 0) {
+							maj = true;
+							if(xt == 0 || outDatas[(xt-1)+yt*width] == 0){
+								if(xt == 0 || yt == 0 || outDatas[(xt-1)+(yt-1)*width] == 0){
+									if(yt == 0 || outDatas[xt+(yt-1)*width] == 0){
+										if(xt == (width-1) || yt == 0 || outDatas[(xt+1)+(yt-1)*width] == 0){
+											if(xt == (width-1) || outDatas[(xt+1)+yt*width] == 0){
+												if(xt == (width-1) || yt == (height-1) || outDatas[(xt+1)+(yt+1)*width] == 0){
+													if(yt == (height-1) || outDatas[xt+(yt+1)*width] == 0){
+														if(xt == 0 || yt == (height-1) || outDatas[(xt-1)+(yt+1)*width] == 0){
+															// do nothing
+															maj = false;
+														}
 													}
 												}
 											}
@@ -113,16 +132,15 @@ public class TabRCMDistanceAnalysis extends Analysis {
 									}
 								}
 							}
+							if(maj){
+								setPixelAndValue(yt * width + xt, 0.0f);
+							}
 						}
-						if(maj){
-							setPixelAndValue(yt * width + xt, 0.0f);
-						}
+						
 					}
-					
 				}
 			}
 		}
-		
 	}
 
 	@Override
@@ -178,7 +196,7 @@ public class TabRCMDistanceAnalysis extends Analysis {
 				// en haut à gauche
 				np = p - width - 1;
 				if(x > 0 && y > 0 && everDatas[np] != 1){
-					v = outDatas[np]; // valeur au point cardinal
+					v = outDatas[np]; // valeur au point diagonal
 					if (v != noDataValue) {
 						fc = frictionDatas[np];
 						d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
@@ -204,7 +222,7 @@ public class TabRCMDistanceAnalysis extends Analysis {
 				// en haut à droite
 				np = p - width + 1;
 				if(x < (width-1) && y > 0 && everDatas[np] != 1){
-					v = outDatas[np]; // valeur au point cardinal
+					v = outDatas[np]; // valeur au point diagonal
 					if (v != noDataValue) {
 						fc = frictionDatas[np];
 						d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
@@ -243,7 +261,7 @@ public class TabRCMDistanceAnalysis extends Analysis {
 				// en bas à gauche
 				np = p + width - 1;
 				if(x > 0 && y < (height-1) && everDatas[np] != 1){
-					v = outDatas[np]; // valeur au point cardinal
+					v = outDatas[np]; // valeur au point diagonal
 					if (v != noDataValue) {
 						fc = frictionDatas[np];
 						d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
@@ -269,7 +287,7 @@ public class TabRCMDistanceAnalysis extends Analysis {
 				// en bas à droite
 				np = p + width + 1;
 				if(x < (width-1) && y < (height-1) && everDatas[np] != 1){
-					v = outDatas[np]; // valeur au point cardinal
+					v = outDatas[np]; // valeur au point diagonal
 					if (v != noDataValue) {
 						fc = frictionDatas[np];
 						d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
@@ -282,7 +300,6 @@ public class TabRCMDistanceAnalysis extends Analysis {
 			}
 		}
 	}
-
 
 	@Override
 	protected void doClose() {

@@ -3,6 +3,9 @@ package fr.inrae.act.bagap.chloe.util.analysis;
 import java.io.IOException;
 
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
+import fr.inrae.act.bagap.chloe.cluster.ClusterAnalysis;
+import fr.inrae.act.bagap.chloe.distance.analysis.DistanceAnalysis;
+import fr.inrae.act.bagap.chloe.distance.analysis.DistanceType;
 
 public class ChloeUtilAnalysisFactory {
 
@@ -45,6 +48,18 @@ public class ChloeUtilAnalysisFactory {
 			
 			ChloeUtilAnalysis analysis = new RasterFromShapefileAnalysis(builder.getOutputRaster(), builder.getShapefile(), builder.getAttribute(),
 					builder.getXMin(), builder.getXMax(), builder.getYMin(), builder.getYMax(), builder.getCellSize(), builder.getNoDataValue(), builder.getFillValue());
+			
+			return analysis;
+		}
+		if(builder.getAnalysisType() == ChloeAnalysisType.DISTANCE){
+			
+			ChloeUtilAnalysis analysis = new DistanceAnalysis(builder.getOutputRaster(), builder.getRasterFile(), builder.getRasterFile2(), builder.getDistanceType(), builder.getSources(), builder.getMaxDistance());
+			
+			return analysis;
+		}
+		if(builder.getAnalysisType() == ChloeAnalysisType.CLUSTER){
+			
+			ChloeUtilAnalysis analysis = new ClusterAnalysis(builder.getOutputRaster(), builder.getOutputCsv(), builder.getRasterFile(), builder.getRasterFile2(), builder.getClusterType(), builder.getSources(), builder.getMaxDistance());
 			
 			return analysis;
 		}

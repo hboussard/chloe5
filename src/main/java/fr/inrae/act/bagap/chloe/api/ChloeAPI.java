@@ -16,7 +16,9 @@ import fr.inra.sad.bagap.apiland.domain.DomainFactory;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysis;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
+import fr.inrae.act.bagap.chloe.cluster.ClusterType;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.api.GrainBocagerAPI;
+import fr.inrae.act.bagap.chloe.distance.analysis.DistanceType;
 import fr.inrae.act.bagap.chloe.util.analysis.ChloeUtilAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
@@ -57,6 +59,8 @@ public class ChloeAPI {
 				case "classification" : launchClassification(properties); break;
 				case "raster_from_csv" : launchRasterFromCsv(properties); break;
 				case "raster_from_shapefile" : launchRasterFromShapefile(properties); break;
+				case "distance" : launchDistance(properties); break;
+				case "cluster" : launchCluster(properties); break;
 				default :
 					throw new IllegalArgumentException("treatment "+treatment+" is not implemented yet");
 				}
@@ -67,7 +71,7 @@ public class ChloeAPI {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	private static void launchSliding(Properties properties) {
 		
 		try{
@@ -333,6 +337,57 @@ public class ChloeAPI {
 		}
 	}
 
+	private static void launchDistance(Properties properties) {
+		try{
+			long begin = System.currentTimeMillis();
+			
+			ChloeAnalysisBuilder builder = new ChloeUtilAnalysisBuilder();
+			builder.setAnalysisType(ChloeAnalysisType.DISTANCE);
+				
+			importInputRaster(builder, properties);
+			importOutputRaster(builder, properties);
+			importFrictionRaster(builder, properties);
+			importDistanceSources(builder, properties);
+			importDistanceType(builder, properties);
+			importMaxDistance(builder, properties);
+			
+			ChloeAnalysis analysis = builder.build();
+			analysis.allRun();
+				
+			long end = System.currentTimeMillis();
+			System.out.println("time computing : "+(end - begin));
+			
+		} catch (NoParameterException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void launchCluster(Properties properties) {
+		try{
+			long begin = System.currentTimeMillis();
+			
+			ChloeAnalysisBuilder builder = new ChloeUtilAnalysisBuilder();
+			builder.setAnalysisType(ChloeAnalysisType.CLUSTER);
+				
+			importInputRaster(builder, properties);
+			importClusterType(builder, properties);
+			importClusterSources(builder, properties);
+			importDistanceRaster(builder, properties);
+			importMaxDistance(builder, properties);
+			importOutputCsv(builder, properties);
+			importOutputRaster(builder, properties);
+			
+			ChloeAnalysis analysis = builder.build();
+			analysis.allRun();
+				
+			long end = System.currentTimeMillis();
+			System.out.println("time computing : "+(end - begin));
+			
+		} catch (NoParameterException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	// importations
 
 	// required 
@@ -393,6 +448,60 @@ public class ChloeAPI {
 			return;
 		}
 		throw new NoParameterException("sizes");
+	}
+	
+	// required 
+	private static void importDistanceSources(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("distance_sources")){
+			String prop = properties.getProperty("distance_sources");
+			prop = prop.replace("{", "").replace("}", "").replace(" ", "");
+			String[] ds = prop.split(";");
+			for(String s : ds){
+				builder.addSource(Integer.parseInt(s));
+			}
+			return;
+		}
+		throw new NoParameterException("distance_sources");
+	}
+	
+	// required 
+	private static void importClusterSources(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("cluster_sources")){
+			String prop = properties.getProperty("cluster_sources");
+			prop = prop.replace("{", "").replace("}", "").replace(" ", "");
+			String[] ds = prop.split(";");
+			for(String s : ds){
+				builder.addSource(Integer.parseInt(s));
+			}
+			return;
+		}
+		throw new NoParameterException("cluster_sources");
+	}
+	
+	// required 
+	private static void importDistanceType(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("distance_type")){
+			builder.setDistanceType(DistanceType.valueOf(properties.getProperty("distance_type").toUpperCase()));
+			return;
+		}
+		throw new NoParameterException("distance_type");
+	}
+	
+	// required 
+	private static void importClusterType(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("cluster_type")){
+			builder.setClusterType(ClusterType.valueOf(properties.getProperty("cluster_type").toUpperCase()));
+			return;
+		}
+		throw new NoParameterException("cluster_type");
+	}
+	
+	// not required
+	private static void importMaxDistance(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("max_distance")){
+			String prop = properties.getProperty("max_distance");
+			builder.setMaxDistance(Float.parseFloat(prop));
+		}
 	}
 	
 	// required
@@ -471,6 +580,13 @@ public class ChloeAPI {
 	}
 	
 	// not required
+	public static void importDistanceRaster(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("distance_raster")){
+			builder.setRasterFile2(properties.getProperty("distance_raster"));
+		}
+	}
+	
+	// not required
 	public static void importFilters(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("filters")){
 			String prop = properties.getProperty("filters");
@@ -528,24 +644,28 @@ public class ChloeAPI {
 		}
 	}
 	
+	// not required 
 	public static void importOutputPrefix(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("output_prefix")){
 			builder.setOutputPrefix(properties.getProperty("output_prefix"));
 		}
 	}
 	
+	// not required 
 	public static void importOutputFolder(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("output_folder")){
 			builder.setOutputFolder(properties.getProperty("output_folder"));
 		}
 	}
 	
+	// not required 
 	public static void importOutputSuffix(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("output_suffix")){
 			builder.setOutputSuffix(properties.getProperty("output_suffix"));
 		}
 	}
 	
+	// not required 
 	public static void importTypeMime(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("type_mime")){
 			builder.setTypeMime(properties.getProperty("type_mime"));

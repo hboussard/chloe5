@@ -181,7 +181,7 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 					
 				if(MetricManager.hasOnlyValueMetric(metrics)){
 						
-					System.out.println("comptage des valeurs");
+					//System.out.println("comptage des valeurs");
 						
 					nbValues = 5 + values.length;
 						
@@ -191,9 +191,9 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 						
 				}else if(MetricManager.hasOnlyCoupleMetric(metrics)){
 					
-					System.out.println("comptage des couples");
+					//System.out.println("comptage des couples");
 						
-					nbValues = 3 + couples.length;
+					nbValues = 7 + couples.length;
 						
 					kernel = new GridCountCoupleKernel(gridSize, coverage.getEntete().noDataValue(), values);
 						
@@ -201,7 +201,7 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 					
 				}else{
 					
-					System.out.println("comptage des valeurs et des couples");
+					//System.out.println("comptage des valeurs et des couples");
 
 					nbValues = 5 + values.length + 3 + couples.length;
 						

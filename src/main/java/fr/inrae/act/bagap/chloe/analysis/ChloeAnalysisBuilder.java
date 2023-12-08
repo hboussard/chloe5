@@ -6,6 +6,8 @@ import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.RefPoint;
 import fr.inra.sad.bagap.apiland.domain.Domain;
 import fr.inrae.act.bagap.chloe.api.RasterTypeMime;
+import fr.inrae.act.bagap.chloe.cluster.ClusterType;
+import fr.inrae.act.bagap.chloe.distance.analysis.DistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
@@ -45,7 +47,6 @@ public abstract class ChloeAnalysisBuilder {
 	public void setObservers(Set<CountingObserver> observers){
 		throw new UnsupportedOperationException();
 	}
-	
 	
 	public void setWindowShapeType(WindowShapeType shapeType){
 		throw new UnsupportedOperationException();
@@ -359,6 +360,22 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 	
+	public void addSource(int source) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setDistanceType(DistanceType distanceType) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setMaxDistance(float maxDistance) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setClusterType(ClusterType clusterType) {
+		throw new UnsupportedOperationException();
+	}
+	
 	// getters
 	
 	public WindowShapeType getWindowShapeType() {
@@ -376,5 +393,7 @@ public abstract class ChloeAnalysisBuilder {
 	public String getRasterFile() {
 		throw new UnsupportedOperationException();
 	}
+
 	
+
 }

@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.AbstractDoubleSlidingLandscapeMetricKernel;
-import fr.inrae.act.bagap.chloe.distance.analysis.functional.ArrayRCMDistanceAnalysis;
+import fr.inrae.act.bagap.chloe.distance.analysis.functional.TabRCMDistanceAnalysis;
 
 public abstract class SlidingFunctionalKernel extends AbstractDoubleSlidingLandscapeMetricKernel {
 
@@ -67,7 +67,7 @@ public abstract class SlidingFunctionalKernel extends AbstractDoubleSlidingLands
 		
 		float[] distance = new float[windowSize()*windowSize()];
 		
-		ArrayRCMDistanceAnalysis rcm = new ArrayRCMDistanceAnalysis(distance, resistance, windowSize(), windowSize(), (float) cellSize, noDataValue(), radius);
+		TabRCMDistanceAnalysis rcm = new TabRCMDistanceAnalysis(distance, resistance, windowSize(), windowSize(), (float) cellSize, noDataValue(), radius);
 		rcm.allRun();
 		
 		return distance;

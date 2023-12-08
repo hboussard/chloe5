@@ -11,6 +11,8 @@ import fr.inra.sad.bagap.apiland.domain.Domain;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysis;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.api.RasterTypeMime;
+import fr.inrae.act.bagap.chloe.cluster.ClusterType;
+import fr.inrae.act.bagap.chloe.distance.analysis.DistanceType;
 import fr.inrae.act.bagap.chloe.util.Util;
 
 public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
@@ -19,9 +21,11 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	
 	private String outputRaster;
 	
+	private String outputCsv;
+	
 	private String outputFolder;
 	
-	private String inputRaster;
+	private String inputRaster, inputRaster2;
 	
 	private String inputShapefile;
 	
@@ -47,12 +51,22 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	
 	private RasterTypeMime typeMime;
 	
+	private DistanceType distanceType;
+	
+	private ClusterType clusterType;
+	
+	private float maxDistance;
+	
+	private Set<Integer> sources;
+	
 	@Override
 	public void reset() {
 		factors = null;
 		outputRaster = null;
+		outputCsv = null;
 		outputFolder = null;
 		inputRaster = null;
+		inputRaster2 = null;
 		inputShapefile = null;
 		attribute = null;
 		outputPrefix = "";
@@ -72,6 +86,10 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 		fillValue = Raster.getNoDataValue();
 		domains = null;
 		variables = new HashSet<String>();
+		distanceType = DistanceType.EUCLIDIAN;
+		clusterType = ClusterType.QUEEN;
+		maxDistance = -1;
+		sources = new HashSet<Integer>();
 	}
 	
 	@Override
@@ -94,8 +112,17 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	}
 	
 	@Override
+	public void addCsvOutput(String outputCsv){
+		this.outputCsv = outputCsv;
+	}
+	
+	@Override
 	public void setRasterFile(String rasterFile){
 		this.inputRaster = rasterFile;
+	}
+
+	public void setRasterFile2(String rasterFile2){
+		this.inputRaster2 = rasterFile2;
 	}
 	
 	@Override
@@ -194,15 +221,53 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 		this.typeMime = typeMime;
 	}
 	
+	@Override
 	public void setShapefile(String shapefile){
 		this.inputShapefile = shapefile;
 	}
 	
+	@Override
 	public void setAttribute(String attribute){
 		this.attribute = attribute;
 	}
 	
+	@Override
+	public void addSource(int source) {
+		this.sources.add(source);
+	}
+	
+	@Override
+	public void setDistanceType(DistanceType distanceType) {
+		this.distanceType = distanceType;
+	}
+	
+	@Override
+	public void setMaxDistance(float maxDistance) {
+		this.maxDistance = maxDistance;
+	}
+	
+	@Override
+	public void setClusterType(ClusterType clusterType) {
+		this.clusterType = clusterType;
+	}
+	
 	// getters
+	
+	public Set<Integer> getSources(){
+		return sources;
+	}
+	
+	public DistanceType getDistanceType(){
+		return distanceType;
+	}
+	
+	public ClusterType getClusterType(){
+		return clusterType;
+	}
+	
+	public float getMaxDistance(){
+		return maxDistance;
+	}
 	
 	public Map<String, String> getNamesAndRasters(){
 		return factors;
@@ -210,6 +275,10 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	
 	public String getOutputRaster(){
 		return outputRaster;
+	}
+	
+	public String getOutputCsv(){
+		return outputCsv;
 	}
 	
 	public String getOutputPrefix(){
@@ -227,6 +296,10 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	@Override
 	public String getRasterFile() {
 		return inputRaster;
+	}
+	
+	public String getRasterFile2() {
+		return inputRaster2;
 	}
 	
 	public String getShapefile(){

@@ -3,9 +3,9 @@ package fr.inrae.act.bagap.chloe.cluster.chess;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TabQueenClusteringAnalysis extends TabChessClusteringAnalysis {
+public class TabQueenDiscreteClusteringAnalysis extends TabChessClusteringAnalysis {
 
-	public TabQueenClusteringAnalysis(float[] inDatas, int width, int height, int[] interest, int noDataValue){	
+	public TabQueenDiscreteClusteringAnalysis(float[] inDatas, int width, int height, int[] interest, int noDataValue){	
 		super(inDatas, width, height, interest, noDataValue);
 	}
 	
@@ -17,7 +17,7 @@ public class TabQueenClusteringAnalysis extends TabChessClusteringAnalysis {
 		float actual = 1;
 		Map<Float, Float> sames = new HashMap<Float, Float>();
 		
-		float v;  
+		float v, vi, vj, vg, vd;  
 		float vci, vcj, vcg, vcd, vvci, vvcj, vvcd, vvcg;
 		for(int j=0; j<height; j++){
 			for(int i=0; i<width; i++){
@@ -36,7 +36,12 @@ public class TabQueenClusteringAnalysis extends TabChessClusteringAnalysis {
 						vcg = tabCluster[(j-1)*width + (i-1)];
 						vcd = tabCluster[(j-1)*width + (i+1)];
 						
-						if(vci>0 && vcj>0){
+						vi = (int) inDatas[j*width + (i-1)];
+						vj = (int) inDatas[(j-1)*width + i];
+						vg = (int) inDatas[(j-1)*width + (i-1)];
+						vd = (int) inDatas[(j-1)*width + (i+1)];
+						
+						if(vi == v && vi == vj && vci>0 && vcj>0){
 							if(vci == vcj){
 								tabCluster[j*width + i] = vcj;
 							}else{
@@ -51,7 +56,7 @@ public class TabQueenClusteringAnalysis extends TabChessClusteringAnalysis {
 									sames.put(vvci, vvcj);
 								}
 							}
-						}else if(vci>0 && vcd>0){
+						}else if(vi == v && vi == vd && vci>0 && vcd>0){
 							if(vci == vcd){
 								tabCluster[j*width + i] = vcd;
 							}else{
@@ -67,7 +72,7 @@ public class TabQueenClusteringAnalysis extends TabChessClusteringAnalysis {
 								}
 							}
 							
-						}else if(vcg>0 && vcd>0){
+						}else if(vg == v && vg == vd && vcg>0 && vcd>0){
 							if(vcg == vcd){
 								tabCluster[j*width + i] = vcg;
 							}else{
@@ -82,13 +87,13 @@ public class TabQueenClusteringAnalysis extends TabChessClusteringAnalysis {
 									sames.put(vvcg, vvcd);
 								}
 							}
-						}else if(vci>0){
+						}else if(vi == v && vci>0){
 							tabCluster[j*width + i] = vci;
-						}else if(vcj>0){
+						}else if(vj == v && vcj>0){
 							tabCluster[j*width + i] = vcj;
-						}else if(vcg>0){
+						}else if(vg == v && vcg>0){
 							tabCluster[j*width + i] = vcg;
-						}else if(vcd>0){
+						}else if(vd == v && vcd>0){
 							tabCluster[j*width + i] = vcd;
 						}else{
 							sames.put(actual, noDataValue);
@@ -97,8 +102,8 @@ public class TabQueenClusteringAnalysis extends TabChessClusteringAnalysis {
 						
 					}else if(i>0 && j==0){ // cas 2
 						vci = tabCluster[j*width + (i-1)];
-						
-						if(vci > 0){
+						vi = (int) inDatas[j*width + (i-1)];
+						if(vi == v && vci > 0){
 							tabCluster[j*width + i] = vci;
 						}else{
 							sames.put(actual, noDataValue);
@@ -108,9 +113,12 @@ public class TabQueenClusteringAnalysis extends TabChessClusteringAnalysis {
 						vcj = tabCluster[(j-1)*width + i];
 						vcd = tabCluster[(j-1)*width + (i+1)];
 						
-						if(vcj>0){
+						vj = (int) inDatas[(j-1)*width + i];
+						vd = (int) inDatas[(j-1)*width + (i+1)];
+						
+						if(vj == v && vcj>0){
 							tabCluster[j*width + i] = vcj;
-						}else if(vcd >0){
+						}else if(vd == v && vcd >0){
 							tabCluster[j*width + i] = vcd;
 						}else{
 							sames.put(actual, noDataValue);
@@ -122,7 +130,11 @@ public class TabQueenClusteringAnalysis extends TabChessClusteringAnalysis {
 						vcj = tabCluster[(j-1)*width + i];
 						vcg = tabCluster[(j-1)*width + (i-1)];
 						
-						if(vci>0 && vcj>0){
+						vi = (int) inDatas[j*width + (i-1)];
+						vj = (int) inDatas[(j-1)*width + i];
+						vg = (int) inDatas[(j-1)*width + (i-1)];
+						
+						if(vi == v && vi == vj && vci>0 && vcj>0){
 							if(vci == vcj){
 								tabCluster[j*width + i] = vcj;
 							}else{
@@ -137,11 +149,11 @@ public class TabQueenClusteringAnalysis extends TabChessClusteringAnalysis {
 									sames.put(vvci, vvcj);
 								}
 							}
-						}else if(vci>0){
+						}else if(vi == v && vci>0){
 							tabCluster[j*width + i] = vci;
-						}else if(vcj>0){
+						}else if(vj == v && vcj>0){
 							tabCluster[j*width + i] = vcj;
-						}else if(vcg>0){
+						}else if(vg == v && vcg>0){
 							tabCluster[j*width + i] = vcg;
 						}else{
 							sames.put(actual, noDataValue);

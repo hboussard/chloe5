@@ -74,7 +74,7 @@ public class TinyGridLandscapeMetricAnalysis extends GridLandscapeMetricAnalysis
 		
 		int yGrid = 0;
 		for(int b=0; b<roiHeight(); b+=buffer, yGrid++){
-			System.out.println("buffer "+b);
+			//System.out.println("buffer "+b);
 			kernel().applyGridWindow(gridWidth, b);
 			
 			for(int xGrid=0; xGrid<gridWidth; xGrid++){

@@ -5,7 +5,7 @@ import java.util.List;
 import fr.inra.sad.bagap.apiland.analysis.Analysis;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 
-public class ArrayRCMDistanceAnalysis extends Analysis {
+public class ArrayRCMDistanceAnalysis4 extends Analysis {
 
 	//private int indexG = 0;
 	
@@ -27,7 +27,7 @@ public class ArrayRCMDistanceAnalysis extends Analysis {
 	
 	private boolean hasValue;
 
-	public ArrayRCMDistanceAnalysis(float[] outDatas, float[] frictionDatas, int width, int height, float cellSize, int noDataValue, /*List<Integer>[] waits,*/ double threshold) {
+	public ArrayRCMDistanceAnalysis4(float[] outDatas, float[] frictionDatas, int width, int height, float cellSize, int noDataValue, double threshold) {
 		this.outDatas = outDatas;
 		this.frictionDatas = frictionDatas;
 		this.width = width;
@@ -49,6 +49,7 @@ public class ArrayRCMDistanceAnalysis extends Analysis {
 		
 		waits = new ArrayList[(int) ((threshold * coeffReg)/cellSize)];
 		waits[0] = new ArrayList<Integer>();
+		
 		hasValue = false;
 		for(int ind=0; ind<frictionDatas.length; ind++){
 			if(frictionDatas[ind] == noDataValue){

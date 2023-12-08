@@ -5,12 +5,6 @@ import java.util.Map;
 
 public class TabRookClusteringAnalysis extends TabChessClusteringAnalysis {
 	
-	/*
-	public TabRookClusteringAnalysis(int[] inDatas, int width, int height, int[] interest, int noDataValue){		
-		super(inDatas, width, height, interest, noDataValue);
-	}
-	*/
-	
 	public TabRookClusteringAnalysis(float[] inDatas, int width, int height, int[] interest, int noDataValue){	
 		super(inDatas, width, height, interest, noDataValue);
 	}
@@ -23,7 +17,7 @@ public class TabRookClusteringAnalysis extends TabChessClusteringAnalysis {
 		float actual = 1;
 		Map<Float, Float> sames = new HashMap<Float, Float>();
 		
-		float v, vi, vj;  
+		float v;  
 		float vci, vcj, vvci, vvcj;
 		for(int j=0; j<height; j++){
 			for(int i=0; i<width; i++){
@@ -37,10 +31,7 @@ public class TabRookClusteringAnalysis extends TabChessClusteringAnalysis {
 						vci = tabCluster[j*width + (i-1)];
 						vcj = tabCluster[(j-1)*width + i];
 						
-						vi = (int) inDatas[j*width + (i-1)];
-						vj = (int) inDatas[(j-1)*width + i];
-						
-						if(vi == v && vi == vj && vci>0 && vcj>0){
+						if(vci>0 && vcj>0){
 							if(vci == vcj){
 								tabCluster[j*width + i] = vcj;
 							}else{
@@ -55,9 +46,9 @@ public class TabRookClusteringAnalysis extends TabChessClusteringAnalysis {
 									sames.put(vvci, vvcj);
 								}
 							}
-						}else if(vi == v && vci>0){
+						}else if(vci>0){
 							tabCluster[j*width + i] = vci;
-						}else if(vj == v && vcj>0){
+						}else if(vcj>0){
 							tabCluster[j*width + i] = vcj;
 						}else{
 							sames.put(actual, noDataValue);
@@ -66,8 +57,7 @@ public class TabRookClusteringAnalysis extends TabChessClusteringAnalysis {
 						
 					}else if(i>0 && j==0){ // cas 2
 						vci = tabCluster[j*width + (i-1)];
-						vi = (int) inDatas[j*width + (i-1)];
-						if(vi == v && vci > 0){
+						if(vci > 0){
 							tabCluster[j*width + i] = vci;
 						}else{
 							sames.put(actual, noDataValue);
@@ -76,9 +66,7 @@ public class TabRookClusteringAnalysis extends TabChessClusteringAnalysis {
 					}else if(j>0 && i==0){ // cas 3
 						vcj = tabCluster[(j-1)*width + i];
 						
-						vj = (int) inDatas[(j-1)*width + i];
-						
-						if(vj == v && vcj>0){
+						if(vcj>0){
 							tabCluster[j*width + i] = vcj;
 						}else{
 							sames.put(actual, noDataValue);
@@ -89,10 +77,7 @@ public class TabRookClusteringAnalysis extends TabChessClusteringAnalysis {
 						vci = tabCluster[j*width + (i-1)];
 						vcj = tabCluster[(j-1)*width + i];
 						
-						vi = (int) inDatas[j*width + (i-1)];
-						vj = (int) inDatas[(j-1)*width + i];
-						
-						if(vi == v && vi == vj && vci>0 && vcj>0){
+						if(vci>0 && vcj>0){
 							if(vci == vcj){
 								tabCluster[j*width + i] = vcj;
 							}else{
@@ -107,9 +92,9 @@ public class TabRookClusteringAnalysis extends TabChessClusteringAnalysis {
 									sames.put(vvci, vvcj);
 								}
 							}
-						}else if(vi == v && vci>0){
+						}else if(vci>0){
 							tabCluster[j*width + i] = vci;
-						}else if(vj == v && vcj>0){
+						}else if(vcj>0){
 							tabCluster[j*width + i] = vcj;
 						}else{
 							sames.put(actual, noDataValue);

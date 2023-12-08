@@ -3,7 +3,6 @@ package fr.inrae.act.bagap.chloe.distance.analysis.euclidian;
 import java.awt.Rectangle;
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.media.jai.PlanarImage;
@@ -11,7 +10,6 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.image.util.ImageUtilities;
 import fr.inra.sad.bagap.apiland.analysis.Analysis;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.distance.output.TileGeoTiffDistanceOutput;
 import fr.inrae.act.bagap.chloe.distance.output.TileRasterDistanceOutput;
 import fr.inrae.act.bagap.chloe.util.Util;
@@ -63,10 +61,6 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 		
 		this.codes = codes;
 		this.threshold = threshold;
-	}
-	
-	public HugeChamferDistanceAnalysis(Coverage inCoverage, Tile tile, String output, String name, int[] codes) {
-		this(inCoverage, tile, output, name, codes, Raster.getNoDataValue());
 	}
 	
 	@Override
@@ -167,7 +161,7 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 						outDatas = new float[roiHeight*roiWidth];
 						
 						// analyse de distance
-						ccd = new TabChamferDistanceAnalysis(outDatas, inDatas, roiWidth, roiHeight, cellSize, noDataValue, codes);
+						ccd = new TabChamferDistanceAnalysis(outDatas, inDatas, roiWidth, roiHeight, cellSize, noDataValue, codes, threshold);
 						
 						ccd.init();
 						inDatas = null;
@@ -295,7 +289,7 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 								}
 							}
 								
-							ccd = new TabChamferDistanceAnalysis(outDatas, null, roiWidth, roiHeight, cellSize, noDataValue, null);
+							ccd = new TabChamferDistanceAnalysis(outDatas, null, roiWidth, roiHeight, cellSize, noDataValue, null, threshold);
 							ccd.run();
 							outDatas = (float[]) ccd.getResult();
 								
@@ -415,7 +409,7 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 				ImageUtilities.disposePlanarImageChain(planarImage);
 				cov = null;
 						
-				TabChamferDistanceAnalysis ccd = new TabChamferDistanceAnalysis(outDatas, null, roiWidth, roiHeight, cellSize, noDataValue, null);
+				TabChamferDistanceAnalysis ccd = new TabChamferDistanceAnalysis(outDatas, null, roiWidth, roiHeight, cellSize, noDataValue, null, threshold);
 				outDatas = ccd.normalize();
 						
 				// stockage en mémoire fichier de l'état de la tuile
@@ -428,7 +422,7 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 		
 		//System.out.println("export raster");
 		
-		TileRasterDistanceOutput output = new TileGeoTiffDistanceOutput(folder, name, tile, width, height, maxTile, imageMinX, imageMaxX, imageMinY, imageMaxY, cellSize, Raster.getNoDataValue());
+		TileRasterDistanceOutput output = new TileGeoTiffDistanceOutput(folder, name, tile, width, height, maxTile, imageMinX, imageMaxX, imageMinY, imageMaxY, cellSize, noDataValue);
 		
 		output.init();
 		

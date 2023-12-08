@@ -5,10 +5,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 import javax.media.jai.PlanarImage;
 
@@ -17,7 +14,6 @@ import org.geotools.image.util.ImageUtilities;
 
 import fr.inra.sad.bagap.apiland.analysis.Analysis;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.distance.output.TileGeoTiffDistanceOutput;
 import fr.inrae.act.bagap.chloe.distance.output.TileRasterDistanceOutput;
 import fr.inrae.act.bagap.chloe.util.Util;
@@ -56,33 +52,6 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 	
 	private Tile tile;
 	
-	/*
-	public static void main(String[] args){
-		
-		//String input = "F:/chloe/chloe5/data/za.tif";
-		//String inputFriction = "F:/chloe/chloe5/data/distance/permeabilite_pf.tif";
-		//String output = "F:/chloe/chloe5/data/distance/continuites_pf.asc";
-		//Set<Integer> c = new HashSet<Integer>();
-		//c.add(4);
-		//c.add(5);
-		
-		//String input = "F:/coterra/data/Coterra_2019_DNSB_erb/continuites_prairie/habitat_prairial.tif";
-		//String inputFriction = "F:/coterra/data/Coterra_2019_DNSB_erb/continuites_prairie/permeabilite_prairiale.tif";
-		//String output = "F:/coterra/data/Coterra_2019_DNSB_erb/continuites_prairie/continuites_prairiales.asc";
-		//Set<Integer> c = new HashSet<Integer>();
-		//c.add(1);
-		
-		String input = "F:/chloe/debug/mallet/Habitat_et_permeabilite/Habitat_haie_sup_0_mas_clean.asc";
-		String inputFriction = "F:/chloe/debug/mallet/Habitat_et_permeabilite/Permeabilite_grand_rhino_bis.asc";
-		String output = "F:/chloe/debug/mallet/Habitat_et_permeabilite/continuites_bis.asc";
-		Set<Integer> c = new HashSet<Integer>();
-		c.add(1);
-		
-		
-		Raster.setNoDataValue(-1);
-		new HugeRCMDistanceAnalysis(input, inputFriction, output, c).allRun();
-	}*/
-	
 	public HugeRCMDistanceAnalysis(Coverage inCoverage, Coverage frictionCoverage, Tile tile, String output, String name, Collection<Integer> codes, float threshold) {
 		this.inCoverage = inCoverage;
 		this.frictionCoverage = frictionCoverage;
@@ -103,10 +72,6 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 			this.codes[index++] = i;
 		}
 		this.threshold = threshold;
-	}
-	
-	public HugeRCMDistanceAnalysis(Coverage inCoverage, Coverage frictionCoverage, Tile tile, String output, String name, Collection<Integer> codes) {
-		this(inCoverage, frictionCoverage, tile, output, name, codes, Raster.getNoDataValue());
 	}
 
 	@Override
@@ -281,7 +246,6 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										for(int j=0; j<roiHeight; j++){
 											outDatas[j*roiWidth+0] = bord[j]; 
 											rcm.setPixelAndValue(j*roiWidth+0, bord[j]);
-											//rcm.setPixelAndValue(new Pixel(0, j), bord[j]);
 										}
 									}
 								}
@@ -291,7 +255,6 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										for(int i=0; i<roiWidth; i++){
 											outDatas[i] = bord[i];
 											rcm.setPixelAndValue(i, bord[i]);
-											//rcm.setPixelAndValue(new Pixel(i, 0), bord[i]);
 										}
 									}
 								}
@@ -301,7 +264,6 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										for(int j=0; j<roiHeight; j++){
 											outDatas[j*roiWidth + (roiWidth-1)] = bord[j];
 											rcm.setPixelAndValue(j*roiWidth + (roiWidth-1), bord[j]);
-											//rcm.setPixelAndValue(new Pixel(roiWidth-1, j), bord[j]);
 										}
 									}
 								}
@@ -311,7 +273,6 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										for(int i=0; i<roiWidth; i++){
 											outDatas[(roiHeight-1)*roiWidth + i] = bord[i];
 											rcm.setPixelAndValue((roiHeight-1)*roiWidth + i, bord[i]);
-											//rcm.setPixelAndValue(new Pixel(i, roiHeight-1), bord[i]);
 										}
 									}
 								}
@@ -323,7 +284,6 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										if(bord[j] < outDatas[j*roiWidth+0]){
 											outDatas[j*roiWidth+0] = bord[j]; 
 											rcm.setPixelAndValue(j*roiWidth+0, bord[j]);
-											//rcm.setPixelAndValue(new Pixel(0, j), bord[j]);
 										}
 									}
 								}
@@ -333,7 +293,6 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										if(bord[i] < outDatas[i]){
 											outDatas[i] = bord[i];
 											rcm.setPixelAndValue(i, bord[i]);
-											//rcm.setPixelAndValue(new Pixel(i, 0), bord[i]);
 										}
 									}
 								}
@@ -343,7 +302,6 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										if(bord[j] < outDatas[j*roiWidth + (roiWidth-1)]){
 											outDatas[j*roiWidth + (roiWidth-1)] = bord[j];
 											rcm.setPixelAndValue(j*roiWidth + (roiWidth-1), bord[j]);
-											//rcm.setPixelAndValue(new Pixel(roiWidth-1, j), bord[j]);
 										}
 									}
 								}
@@ -353,7 +311,6 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										if(bord[i] < outDatas[(roiHeight-1)*roiWidth + i]){
 											outDatas[(roiHeight-1)*roiWidth + i] = bord[i];
 											rcm.setPixelAndValue((roiHeight-1)*roiWidth + i, bord[i]);
-											//rcm.setPixelAndValue(new Pixel(i, roiHeight-1), bord[i]);
 										}
 									}
 								}
@@ -389,14 +346,6 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 		// compilation
 		exportRaster();
 	}
-	
-	/*
-	private void setPixelAndValue(Map<Float, Set<Pixel>> waits, Pixel pixel, float value) {
-		if (!waits.containsKey(value)) {
-			waits.put(value, new HashSet<Pixel>());
-		}
-		waits.get(value).add(pixel);
-	}*/
 
 	/**
 	 * 3 cas
@@ -459,9 +408,7 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 	
 	private void exportRaster() {
 		
-		System.out.println("export raster");
-		
-		TileRasterDistanceOutput output = new TileGeoTiffDistanceOutput(folder, name, tile, width, height, maxTile, imageMinX, imageMaxX, imageMinY, imageMaxY, cellSize, Raster.getNoDataValue());
+		TileRasterDistanceOutput output = new TileGeoTiffDistanceOutput(folder, name, tile, width, height, maxTile, imageMinX, imageMaxX, imageMinY, imageMaxY, cellSize, noDataValue);
 		
 		output.init();
 		

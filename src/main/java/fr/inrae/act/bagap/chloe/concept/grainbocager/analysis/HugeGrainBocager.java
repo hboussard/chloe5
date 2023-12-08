@@ -1,18 +1,15 @@
 package fr.inrae.act.bagap.chloe.concept.grainbocager.analysis;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
-import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenClusteringAnalysis;
 import fr.inrae.act.bagap.chloe.cluster.chess.TileQueenClusteringAnalysis;
 import fr.inrae.act.bagap.chloe.distance.analysis.euclidian.HugeChamferDistanceAnalysis;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
-import fr.inrae.act.bagap.chloe.window.output.CoverageOutput;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.TabCoverage;
 import fr.inrae.act.bagap.raster.Tile;
 import fr.inrae.act.bagap.raster.TileCoverage;
 import fr.inrae.act.bagap.raster.analysis.Pixel2PixelTileCoverageCalculation;
@@ -196,7 +193,7 @@ public class HugeGrainBocager {
 		
 		Util.createAccess(rasterDistanceBoisement);
 	
-		HugeChamferDistanceAnalysis da = new HugeChamferDistanceAnalysis(covTypeBoisementPhase1, tile, rasterDistanceBoisement, "massif", new int[]{5});
+		HugeChamferDistanceAnalysis da = new HugeChamferDistanceAnalysis(covTypeBoisementPhase1, tile, rasterDistanceBoisement, "massif", new int[]{5}, covTypeBoisementPhase1.getEntete().noDataValue());
 		
 		da.allRun();
 		

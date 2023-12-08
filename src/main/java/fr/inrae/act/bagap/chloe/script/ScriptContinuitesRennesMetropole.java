@@ -76,10 +76,10 @@ public class ScriptContinuitesRennesMetropole {
 		
 		//calculIndiceDeplacement("boise", 125);
 		//calculIndiceDeplacement("humide", 125);
-		calculIndiceDeplacement("boise", 250);
-		calculIndiceDeplacement("humide", 250);
-		calculIndiceDeplacement("boise", 500);
-		calculIndiceDeplacement("humide", 500);
+		//calculIndiceDeplacement("boise", 250);
+		//calculIndiceDeplacement("humide", 250);
+		//calculIndiceDeplacement("boise", 500);
+		//calculIndiceDeplacement("humide", 500);
 		
 		//calculIndiceContinuite("boise", 125);
 		//calculIndiceContinuite("humide", 125);
@@ -123,44 +123,46 @@ public class ScriptContinuitesRennesMetropole {
 		//noteEntity("mnie", "humide", 250, "continuite", "maximum");
 		//noteEntity("mnie", "boise", 500, "continuite", "maximum");
 		//noteEntity("mnie", "humide", 500, "continuite", "maximum");
-		
-		//noteEntity("mnie", "boise", 125, "continuite", "average");
-		//noteEntity("mnie", "humide", 125, "continuite", "average");
-		//noteEntity("mnie", "boise", 250, "continuite", "average");
-		//noteEntity("mnie", "humide", 250, "continuite", "average");
-		//noteEntity("mnie", "boise", 500, "continuite", "average");
-		//noteEntity("mnie", "humide", 500, "continuite", "average");
-		
+		/*
+		noteEntity("mnie", "boise", 125, "deplacement", "average");
+		noteEntity("mnie", "humide", 125, "deplacement", "average");
+		noteEntity("mnie", "boise", 250, "deplacement", "average");
+		noteEntity("mnie", "humide", 250, "deplacement", "average");
+		noteEntity("mnie", "boise", 500, "deplacement", "average");
+		noteEntity("mnie", "humide", 500, "deplacement", "average");
+		*/
+		/*
 		//rasterizeCodeCommune();		
-		//noteEntity("commune", "boise", 125, "continuite", "average");
-		//noteEntity("commune", "humide", 125, "continuite", "average");
-		//noteEntity("commune", "boise", 250, "continuite", "average");
-		//noteEntity("commune", "humide", 250, "continuite", "average");
-		//noteEntity("commune", "boise", 500, "continuite", "average");
-		//noteEntity("commune", "humide", 500, "continuite", "average");
+		noteEntity("commune", "boise", 125, "deplacement", "average");
+		noteEntity("commune", "humide", 125, "deplacement", "average");
+		noteEntity("commune", "boise", 250, "deplacement", "average");
+		noteEntity("commune", "humide", 250, "deplacement", "average");
+		noteEntity("commune", "boise", 500, "deplacement", "average");
+		noteEntity("commune", "humide", 500, "deplacement", "average");
 		
-		//noteEntity("commune", "boise", 125, "continuite", "sum");
-		//noteEntity("commune", "humide", 125, "continuite", "sum");
-		//noteEntity("commune", "boise", 250, "continuite", "sum");
-		//noteEntity("commune", "humide", 250, "continuite", "sum");
-		//noteEntity("commune", "boise", 500, "continuite", "sum");
-		//noteEntity("commune", "humide", 500, "continuite", "sum");
-		
+		noteEntity("commune", "boise", 125, "deplacement", "sum");
+		noteEntity("commune", "humide", 125, "deplacement", "sum");
+		noteEntity("commune", "boise", 250, "deplacement", "sum");
+		noteEntity("commune", "humide", 250, "deplacement", "sum");
+		noteEntity("commune", "boise", 500, "deplacement", "sum");
+		noteEntity("commune", "humide", 500, "deplacement", "sum");
+		*/
+		/*
 		//rasterizeCodeSecteur();	
-		//noteEntity("secteur", "boise", 125, "continuite", "average");
-		//noteEntity("secteur", "humide", 125, "continuite", "average");
-		//noteEntity("secteur", "boise", 250, "continuite", "average");
-		//noteEntity("secteur", "humide", 250, "continuite", "average");
-		//noteEntity("secteur", "boise", 500, "continuite", "average");
-		//noteEntity("secteur", "humide", 500, "continuite", "average");
+		noteEntity("secteur", "boise", 125, "deplacement", "average");
+		noteEntity("secteur", "humide", 125, "deplacement", "average");
+		noteEntity("secteur", "boise", 250, "deplacement", "average");
+		noteEntity("secteur", "humide", 250, "deplacement", "average");
+		noteEntity("secteur", "boise", 500, "deplacement", "average");
+		noteEntity("secteur", "humide", 500, "deplacement", "average");
 		
-		//noteEntity("secteur", "boise", 125, "continuite", "sum");
-		//noteEntity("secteur", "humide", 125, "continuite", "sum");
-		//noteEntity("secteur", "boise", 250, "continuite", "sum");
-		//noteEntity("secteur", "humide", 250, "continuite", "sum");
-		//noteEntity("secteur", "boise", 500, "continuite", "sum");
-		//noteEntity("secteur", "humide", 500, "continuite", "sum");
-		
+		noteEntity("secteur", "boise", 125, "deplacement", "sum");
+		noteEntity("secteur", "humide", 125, "deplacement", "sum");
+		noteEntity("secteur", "boise", 250, "deplacement", "sum");
+		noteEntity("secteur", "humide", 250, "deplacement", "sum");
+		noteEntity("secteur", "boise", 500, "deplacement", "sum");
+		noteEntity("secteur", "humide", 500, "deplacement", "sum");
+		*/
 		//testIndiceContinuite("boise", 125);
 		
 		//classifFonctionnelle("boise", 250, "deplacement", 0.5f);
@@ -295,11 +297,11 @@ public class ScriptContinuitesRennesMetropole {
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
 		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
 	
-		builder.setRasterFile("H:/rennes_metropole/volume_deplacement/test/indice_"+continuite+"_"+type+"_"+echelle+"m.tif");
-		builder.setEntityRasterFile("H:/rennes_metropole/volume_deplacement/"+territoire+"_5m.tif");
+		builder.setRasterFile("H:/rennes_metropole/continuite_ecologique/indice_"+continuite+"_"+type+"_"+echelle+"m.tif");
+		builder.setEntityRasterFile("H:/rennes_metropole/continuite_ecologique/"+territoire+"_5m.tif");
 		builder.addMetric(metric);
-		builder.addGeoTiffOutput(metric, "H:/rennes_metropole/volume_deplacement/test/"+territoire+"_"+metric+"_"+continuite+"_"+type+"_"+echelle+"m.tif");
-		builder.addCsvOutput("H:/rennes_metropole/volume_deplacement/test/"+territoire+"_"+metric+"_"+continuite+"_"+type+"_"+echelle+"m.csv");
+		builder.addGeoTiffOutput(metric, "H:/rennes_metropole/continuite_ecologique/"+territoire+"/"+territoire+"_"+metric+"_"+continuite+"_"+type+"_"+echelle+"m.tif");
+		builder.addCsvOutput("H:/rennes_metropole/continuite_ecologique/"+territoire+"/"+territoire+"_"+metric+"_"+continuite+"_"+type+"_"+echelle+"m.csv");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 		analysis.allRun();
