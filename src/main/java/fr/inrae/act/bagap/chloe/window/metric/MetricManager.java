@@ -66,12 +66,13 @@ public class MetricManager {
 		BufferedReader buf = null;
 		try{
 			buf = new BufferedReader(new InputStreamReader(MetricManager.class.getResourceAsStream("metrics.csv")));
+			
 			cr = new CsvReader(buf);
 			cr.setDelimiter(';');
 			cr.readHeaders();
 			while(cr.readRecord()){
 				if(!cr.get("name").startsWith("#")){
-					
+					//System.out.println(cr.get("name"));
 					metrics.put(cr.get("name"), cr.get("class"));
 					coherences.put(cr.get("name"), Integer.parseInt(cr.get("coherence")));
 					

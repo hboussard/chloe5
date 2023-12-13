@@ -1,6 +1,5 @@
 package fr.inrae.act.bagap.chloe.window.output;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +11,7 @@ import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 
-public class EntityGeoTiffOutput implements CountingObserver{
+public class EntityRasterOutput implements CountingObserver{
 	
 	private final String file;
 	
@@ -24,7 +23,7 @@ public class EntityGeoTiffOutput implements CountingObserver{
 	
 	private Map<Integer, Float> datas;
 	
-	public EntityGeoTiffOutput(String file, Metric metric, Coverage entityCoverage, int noDataValue){
+	public EntityRasterOutput(String file, Metric metric, Coverage entityCoverage, int noDataValue){
 		this.file = file;
 		this.metric = metric;
 		this.entityCoverage = entityCoverage;

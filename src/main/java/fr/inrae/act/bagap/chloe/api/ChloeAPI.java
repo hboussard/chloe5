@@ -54,6 +54,7 @@ public class ChloeAPI {
 				case "selected" : launchSelected(properties); break;
 				case "grid" : launchGrid(properties); break;
 				case "map" : launchMap(properties); break;
+				case "entity" : launchEntity(properties); break;
 				case "combine" : launchCombine(properties); break;
 				case "search_and_replace" : launchSearchAndReplace(properties); break;
 				case "classification" : launchClassification(properties); break;
@@ -98,7 +99,7 @@ public class ChloeAPI {
 			//importFrictionFile(builder, properties); // finalement abandonné
 			
 			if(properties.containsKey("output_folder")){
-				importOutputFolderForCenteredWindow(builder, properties);
+				importOutputFolderForWindow(builder, properties);
 			}else{
 				importOutputRaster(builder, properties);
 				importOutputCsv(builder, properties);
@@ -135,7 +136,7 @@ public class ChloeAPI {
 			importWindowsPath(builder, properties);
 			
 			if(properties.containsKey("output_folder")){
-				importOutputFolderForCenteredWindow(builder, properties);
+				importOutputFolderForWindow(builder, properties);
 			}else{
 				importOutputRaster(builder, properties);
 				importOutputCsv(builder, properties);
@@ -166,7 +167,7 @@ public class ChloeAPI {
 			importMaximumNoValueRate(builder, properties);
 			
 			if(properties.containsKey("output_folder")){
-				importOutputFolderForGridWindow(builder, properties);
+				importOutputFolderForWindow(builder, properties);
 			}else{
 				importOutputRaster(builder, properties);
 				importOutputCsv(builder, properties);
@@ -194,6 +195,36 @@ public class ChloeAPI {
 			importInputRaster(builder, properties);
 			importMetrics(builder, properties);
 			importOutputCsv(builder, properties);
+			
+			ChloeAnalysis analysis = builder.build();
+			analysis.allRun();
+				
+			long end = System.currentTimeMillis();
+			System.out.println("time computing : "+(end - begin));
+			
+		} catch (NoParameterException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void launchEntity(Properties properties) {
+		
+		try{
+			long begin = System.currentTimeMillis();
+			
+			ChloeAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+			builder.setAnalysisType(ChloeAnalysisType.ENTITY);
+				
+			importInputRaster(builder, properties);
+			importEntityRaster(builder, properties);
+			importMetrics(builder, properties);
+			
+			if(properties.containsKey("output_folder")){
+				importOutputFolderForWindow(builder, properties);
+			}else{
+				importOutputRaster(builder, properties);
+				importOutputCsv(builder, properties);
+			}
 			
 			ChloeAnalysis analysis = builder.build();
 			analysis.allRun();
@@ -410,6 +441,18 @@ public class ChloeAPI {
 			}
 		}
 		throw new NoParameterException("input_raster");
+	}
+	
+	// required 
+	public static void importEntityRaster(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("entity_raster")){
+			String prop = properties.getProperty("entity_raster");
+			if(new File(prop).isFile()){
+				builder.setEntityRasterFile(prop);
+				return;
+			}
+		}
+		throw new NoParameterException("entity_raster");
 	}
 	
 	// required 
@@ -640,7 +683,11 @@ public class ChloeAPI {
 	// not required 
 	public static void importWindowsPath(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("windows_path")){
-			builder.setWindowsPath(properties.getProperty("windows_path"));
+			String prop = properties.getProperty("windows_path");
+			if(!(prop.endsWith("/") || prop.endsWith("\\\\"))){
+				prop += "/";
+			}
+			builder.setWindowsPath(prop);
 		}
 	}
 	
@@ -677,7 +724,7 @@ public class ChloeAPI {
 	}
 	
 	// not required
-	public static void importOutputFolderForCenteredWindow(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importOutputFolderForWindow(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("output_folder")){
 			String prop = properties.getProperty("output_folder");
 			if(!(prop.endsWith("/") || prop.endsWith("\\\\"))){
@@ -696,31 +743,6 @@ public class ChloeAPI {
 			sb.append(new File(input).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
 			sb.append(".csv");
 			
-			builder.addCsvOutput(prop+sb.toString());
-		}
-	}
-	
-	// not required
-	public static void importOutputFolderForGridWindow(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
-		if(properties.containsKey("output_folder")){
-			String prop = properties.getProperty("output_folder");
-			if(!(prop.endsWith("/") || prop.endsWith("\\\\"))){
-				prop += "/";
-			}
-			String input = properties.getProperty("input_raster");
-			if(input.endsWith(".asc")){
-				builder.setAsciiGridFolderOutput(prop);
-			}else if(input.endsWith(".tif")){
-				builder.setGeoTiffFolderOutput(prop);
-			}else{
-				throw new NoParameterException("output_raster : "+input+" extension problem");
-			}
-				
-			StringBuffer sb = new StringBuffer();
-			sb.append(new File(input).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
-			sb.append("_w"+builder.getWindowSize());
-			sb.append(".csv");
-				
 			builder.addCsvOutput(prop+sb.toString());
 		}
 	}

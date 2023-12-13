@@ -30,7 +30,7 @@ public class GBPCalculGrainBocager extends GrainBocagerProcedure {
 		
 		//Coverage covGrainBocager = CoverageManager.getCoverage(manager().grainBocager());
 		
-		Coverage covGrainBocager = GrainBocager.calculGrainBocager(covDistanceInfluenceBoisement, manager().grainWindowRadius(), manager().grainCellSize());
+		Coverage covGrainBocager = GrainBocager.calculGrainBocager(covDistanceInfluenceBoisement, manager().grainWindowRadius(), manager().grainCellSize(), manager().modeFast());
 		
 		if(!manager().grainBocager().equalsIgnoreCase("")){
 			CoverageManager.write(manager().grainBocager(), covGrainBocager.getData(), covGrainBocager.getEntete());

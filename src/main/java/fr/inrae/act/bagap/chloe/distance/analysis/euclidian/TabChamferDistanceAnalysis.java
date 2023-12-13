@@ -75,6 +75,7 @@ public class TabChamferDistanceAnalysis extends Analysis {
 		if(hasValue){
 			// forward
 			for (int y = 0; y <= height - 1; y++) {
+				System.out.println("#"+(y*100/height)/2);
 				for (int x = 0; x <= width - 1; x++) {
 					float v = outDatas[y * width + x];
 					if (v < 0) {
@@ -101,6 +102,7 @@ public class TabChamferDistanceAnalysis extends Analysis {
 
 			// backward
 			for (int y = height - 1; y >= 0; y--) {
+				System.out.println("#"+((height-y)*100/height)/2);
 				for (int x = width - 1; x >= 0; x--) {
 					float v = outDatas[y * width + x];
 					if (v < 0) {

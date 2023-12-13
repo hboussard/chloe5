@@ -1,6 +1,7 @@
 package fr.inrae.act.bagap.chloe.analysis;
 
 import fr.inra.sad.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.chloe.api.PluginProgression;
 
 public abstract class ChloeAnalysis extends Analysis {
 

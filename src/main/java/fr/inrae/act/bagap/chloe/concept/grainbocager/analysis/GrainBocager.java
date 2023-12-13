@@ -94,7 +94,7 @@ public class GrainBocager {
 		Coverage covDistanceInfluence = calculDistancesInfluences(dataHauteurBoisement, covTypeBoisement.getData(), entete, modeFast);
 		
 		// moyenne globale du grain bocager
-		return calculGrainBocager(covDistanceInfluence, windowRadius, outputCellSize);
+		return calculGrainBocager(covDistanceInfluence, windowRadius, outputCellSize, modeFast);
 	}
 	
 	// recuperation des hauteurs de boisement
@@ -398,23 +398,23 @@ public class GrainBocager {
 	
 	// calcul du grain bocager en fonction d'une taille de fenêtre et d'une taille de sortie
 	
-	public static Coverage calculGrainBocager(String rasterDistanceInfluence, double windowRadius, double outputCellSize) {
+	public static Coverage calculGrainBocager(String rasterDistanceInfluence, double windowRadius, double outputCellSize, boolean modeFast) {
 		
 		Coverage covDistanceInfluence = CoverageManager.getCoverage(rasterDistanceInfluence);
 		float[] dataDistanceInfluence = covDistanceInfluence.getData();
 		EnteteRaster entete = covDistanceInfluence.getEntete();
 		covDistanceInfluence.dispose();
 		
-		return calculGrainBocager(dataDistanceInfluence, entete, windowRadius, outputCellSize);
+		return calculGrainBocager(dataDistanceInfluence, entete, windowRadius, outputCellSize, modeFast);
 	}
 	
-	public static Coverage calculGrainBocager(Coverage covDistanceInfluence, double windowRadius, double outputCellSize) {
-		/*
-		float[] dataDistanceInfluence = covDistanceInfluence.getDatas();
+	public static Coverage calculGrainBocager(Coverage covDistanceInfluence, double windowRadius, double outputCellSize, boolean modeFast) {
+		
+		float[] dataDistanceInfluence = covDistanceInfluence.getData();
 		EnteteRaster entete = covDistanceInfluence.getEntete();
 		
-		return calculGrainBocager(dataDistanceInfluence, entete, windowRadius, outputCellSize);
-		*/
+		return calculGrainBocager(dataDistanceInfluence, entete, windowRadius, outputCellSize, modeFast);
+		/*
 		EnteteRaster entete = covDistanceInfluence.getEntete();
 		
 		int windowSize = LandscapeMetricAnalysis.getWindowSize(entete.cellsize(), windowRadius);
@@ -434,9 +434,10 @@ public class GrainBocager {
 		analysis.allRun();
 		
 		return covOutput.getCoverage();
+		*/
 	}
 	
-	public static Coverage calculGrainBocager(float[] dataDistanceInfluence, EnteteRaster entete, double windowRadius, double outputCellSize) {
+	public static Coverage calculGrainBocager(float[] dataDistanceInfluence, EnteteRaster entete, double windowRadius, double outputCellSize, boolean modeFast) {
 		
 		int windowSize = LandscapeMetricAnalysis.getWindowSize(entete.cellsize(), windowRadius);
 		int displacement = LandscapeMetricAnalysis.getDisplacement(entete.cellsize(), outputCellSize);
@@ -444,11 +445,19 @@ public class GrainBocager {
 		CoverageOutput covOutput = new CoverageOutput("average");
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		if(modeFast){
+			builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		}
 		builder.setRasterTab(dataDistanceInfluence);
 		builder.setEntete(entete);
 		builder.setDisplacement(displacement); 
 		builder.addMetric("average");
-		builder.setWindowSize(windowSize);
+		if(modeFast){
+			builder.setWindowSize((int) (windowSize*1.5));
+		}else{
+			builder.setWindowSize(windowSize);
+		}
+		
 		builder.addCoverageOutput(covOutput);
 		
 		LandscapeMetricAnalysis analysis = builder.build();

@@ -1,6 +1,7 @@
 package fr.inrae.act.bagap.chloe.window.analysis.entity;
 
 import java.awt.Rectangle;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,10 +24,7 @@ import fr.inrae.act.bagap.chloe.window.kernel.entity.EntityQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.EntityCsvOutput;
-import fr.inrae.act.bagap.chloe.window.output.EntityGeoTiffOutput;
-import fr.inrae.act.bagap.chloe.window.output.EntityMultipleAsciiGridOutput;
-import fr.inrae.act.bagap.chloe.window.output.GeoTiffOutput;
-import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineGeoTiffOutput;
+import fr.inrae.act.bagap.chloe.window.output.EntityRasterOutput;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.TabCoverage;
@@ -82,16 +80,56 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 			EntityCsvOutput csvOutput = new EntityCsvOutput(builder.getCsv());
 			observers.add(csvOutput);
 		}
+		/*
 		if(builder.getAsciiGridFolder() != null){
 			EntityMultipleAsciiGridOutput asciiOutput = new EntityMultipleAsciiGridOutput(builder.getAsciiGridFolder(), entityCoverage, roiWidth, roiHeight, inMinX, inMinY, inCellSize, Raster.getNoDataValue());
 			observers.add(asciiOutput);
 		}
-		/*if(builder.getTabOutputs().size() > 0){
+		if(builder.getTabOutputs().size() > 0){
 			for(Entry<String, float[]> e : builder.getTabOutputs().entrySet()){
 				EntityTabOutput tabOutput = new EntityTabOutput(e.getValue(), entityCoverage, MetricManager.get(e.getKey()), roiWidth, roiHeight, Raster.getNoDataValue());
 				observers.add(tabOutput);
 			}
 		}*/
+		
+		if(builder.getAsciiOutputs(0) != null){
+			for (Entry<String, String> entry : builder.getAsciiOutputs(0).entrySet()) {
+				Metric metric = null;
+				for (Metric m : metrics) {
+					if (m.getName().equalsIgnoreCase(entry.getKey())) {
+						metric = m;
+						break;
+					}
+				}
+				if(metric != null){
+					
+					EntityRasterOutput rasterOutput = new EntityRasterOutput(entry.getValue(), metric, entityCoverage, coverage.getEntete().noDataValue());
+					observers.add(rasterOutput);
+					
+				}
+			}
+		}
+		
+		if(builder.getAsciiGridFolder() != null){
+			
+			String rasterFolder = builder.getAsciiGridFolder();
+			if(!(rasterFolder.endsWith("/") || rasterFolder.endsWith("\\"))){
+				rasterFolder += "/";
+			}
+			String tifFile;
+			for (Metric m : metrics) {
+				
+				StringBuffer sb = new StringBuffer();
+				sb.append(new File(builder.getRasterFile()).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
+				sb.append("_"+m.getName());
+				sb.append(".asc");
+				
+				tifFile = rasterFolder+sb.toString();
+				
+				EntityRasterOutput geotiffOutput = new EntityRasterOutput(tifFile, m, entityCoverage, coverage.getEntete().noDataValue());
+				observers.add(geotiffOutput);
+			}
+		}
 		
 		if(builder.getGeoTiffOutputs(0) != null){
 			for (Entry<String, String> entry : builder.getGeoTiffOutputs(0).entrySet()) {
@@ -104,10 +142,31 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 				}
 				if(metric != null){
 					
-					EntityGeoTiffOutput geotiffOutput = new EntityGeoTiffOutput(entry.getValue(), metric, entityCoverage, coverage.getEntete().noDataValue());
-					observers.add(geotiffOutput);
+					EntityRasterOutput rasterOutput = new EntityRasterOutput(entry.getValue(), metric, entityCoverage, coverage.getEntete().noDataValue());
+					observers.add(rasterOutput);
 					
 				}
+			}
+		}
+		
+		if(builder.getGeoTiffFolder() != null){
+			
+			String tifFolder = builder.getGeoTiffFolder();
+			if(!(tifFolder.endsWith("/") || tifFolder.endsWith("\\"))){
+				tifFolder += "/";
+			}
+			String tifFile;
+			for (Metric m : metrics) {
+				
+				StringBuffer sb = new StringBuffer();
+				sb.append(new File(builder.getRasterFile()).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
+				sb.append("_"+m.getName());
+				sb.append(".tif");
+				
+				tifFile = tifFolder+sb.toString();
+				
+				EntityRasterOutput rasterOutput = new EntityRasterOutput(tifFile, m, entityCoverage, coverage.getEntete().noDataValue());
+				observers.add(rasterOutput);
 			}
 		}
 			
