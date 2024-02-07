@@ -30,5 +30,14 @@ public class TinySlidingLandscapeMetricAnalysisFactory extends SlidingLandscapeM
 				roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nb, displacement, kernel,
 				counting);
 	}
+	
+	@Override
+	protected SlidingLandscapeMetricAnalysis createTriple(Coverage coverage, Coverage coverage2, Coverage coverage3, int roiX, int roiY,
+			int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax,
+			int nb, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {
+		return new TripleTinySlidingLandscapeMetricAnalysis(coverage, coverage2, coverage3, roiX, roiY, roiWidth,
+				roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nb, displacement, kernel,
+				counting);
+	}
 
 }

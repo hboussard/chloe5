@@ -8,6 +8,7 @@ import fr.inra.sad.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.distance.analysis.functional.TabRCMDistanceAnalysis;
 import fr.inrae.act.bagap.chloe.distance.analysis.slope.TabInverseAltitudeRCMDistanceAnalysis;
+import fr.inrae.act.bagap.chloe.distance.analysis.slope.TabInverseAltitudeRCMDistanceAnalysis2;
 import fr.inrae.act.bagap.chloe.distance.analysis.slope.TabInverseSlopeDirectionRCMDistanceAnalysis;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
@@ -22,7 +23,7 @@ import fr.inrae.act.bagap.raster.converter.ShapeFile2CoverageConverter;
 
 public class ScriptErosionRuissellement {
 
-	private static final String path = "H:/temp/slope/test/data/";
+	private static final String path = "E:/temp/slope/test2/data/";
 	private static final String bv = path+"bv.tif"; 
 	private static final String bv_troncon_hydrographique = path+"bv_troncon_hydrographique.tif";
 	private static final String bv_surface_hydrographique = path+"bv_surface_hydrographique.tif";
@@ -38,7 +39,7 @@ public class ScriptErosionRuissellement {
 	private static final String bv_os = path+"bv_os.tif";
 	private static final String bv_abattement = path+"bv_abattement.tif";
 	private static final String bv_distance_eau = path+"bv_distance_eau.tif";
-	private static final String bv_distance_eau_altitude =  path+"bv_distance_eau_altitude.tif";
+	private static final String bv_distance_eau_altitude =  path+"bv_distance_eau_altitude_bis.tif";
 	private static final String bv_distance_eau_direction = path+"bv_distance_eau_direction_brute_reseau_plat.tif";
 	private static final String bv_coef_distance_eau = path+"bv_coef_distance_eau_reseau_plat.tif";
 	private static final String bv_coeff_versement = path+"bv_coeff_versement.tif";
@@ -61,7 +62,7 @@ public class ScriptErosionRuissellement {
 		// initialisation
 		//convertRGE();
 		//recuperationBV();
-		//recuperationAltitude();
+		recuperationAltitude();
 		//cleanAltitude();
 		//detectionPente();
 		//detectioncreux();
@@ -72,26 +73,26 @@ public class ScriptErosionRuissellement {
 		//recuperationReseauHydrographique();
 		
 		// situation
-		//generationFrictionAbattement();
-		generationCoeffVersement();
+		generationFrictionAbattement();
+		//generationCoeffVersement();
 		//calculDistanceFromEau();
 		//calculDistanceFromEauWithAltitude();
 		//calculDistanceFromEauWithDirection();
 		//calculCoeffDistanceEau();
-		calculRisqueErosifLocal();
-		calculRisqueErosif();
-		/*
+		//calculRisqueErosifLocal();
+		//calculRisqueErosif();
+		
 		// amenagement
-		//recuperationOccupationSolAmenagement();
-		generationFrictionAbattement();
-		generationCoeffVersement();
-		calculDistanceFromEau();
-		calculDistanceFromEauWithAltitude();
-		calculDistanceFromEauWithDirection();
-		calculCoeffDistanceEau();
-		calculRisqueErosifLocal();
-		calculRisqueErosif();
-		*/
+		recuperationOccupationSolAmenagement();
+		//generationFrictionAbattement();
+		//generationCoeffVersement();
+		//calculDistanceFromEau();
+		//calculDistanceFromEauWithAltitude();
+		//calculDistanceFromEauWithDirection();
+		//calculCoeffDistanceEau();
+		//calculRisqueErosifLocal();
+		//calculRisqueErosif();
+		
 		//test();
 	}
 	
@@ -383,7 +384,8 @@ public class ScriptErosionRuissellement {
 		
 		float[] data = new float[eauData.length];
 		
-		TabInverseAltitudeRCMDistanceAnalysis analysis = new TabInverseAltitudeRCMDistanceAnalysis(data, eauData, abbData, altData, entete.width(), entete.height(), entete.cellsize(), entete.noDataValue(), new int[]{1});
+		TabInverseAltitudeRCMDistanceAnalysis analysis = new TabInverseAltitudeRCMDistanceAnalysis(data, eauData, abbData, altData, entete.width(), entete.height(), entete.cellsize(), entete.noDataValue(), new int[]{1},1000);
+		//TabInverseAltitudeRCMDistanceAnalysis2 analysis = new TabInverseAltitudeRCMDistanceAnalysis2(data, eauData, abbData, altData, entete.width(), entete.height(), entete.cellsize(), entete.noDataValue(), new int[]{1});
 		analysis.allRun();
 		
 		CoverageManager.write(bv_distance_eau_altitude, data, entete);

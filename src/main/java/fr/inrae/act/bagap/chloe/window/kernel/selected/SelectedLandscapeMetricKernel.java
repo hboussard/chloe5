@@ -162,7 +162,7 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel implements La
 		return windowsPath;
 	}
 	
-	public void exportFilters(Pixel p, int x, int y){
+	private void exportFilters(Pixel p, int x, int y){
 		if(windowsPath != null){
 			int mid = windowSize() / 2;
 			float[] image = new float[windowSize()*windowSize()];

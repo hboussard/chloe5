@@ -43,12 +43,13 @@ public class CsvOutput implements CountingObserver{
 	
 	@Override
 	public void init(Counting c, Set<Metric> metrics) {
-
+		System.out.println(csv);
 		this.x = minX + cellSize/2.0;
 		this.initX = x;
 		this.y = maxY - cellSize/2.0;
 		
 		try {
+			
 			bw = new BufferedWriter(new FileWriter(csv));
 			bw.write("X;Y");
 			for(Metric m : metrics) {

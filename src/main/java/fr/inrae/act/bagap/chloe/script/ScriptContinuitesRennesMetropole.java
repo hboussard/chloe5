@@ -1,15 +1,20 @@
 package fr.inrae.act.bagap.chloe.script;
 
+import java.awt.Rectangle;
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.locationtech.jts.geom.Envelope;
 
+import fr.inra.sad.bagap.apiland.analysis.tab.ClassificationPixel2PixelTabCalculation;
 import fr.inra.sad.bagap.apiland.analysis.tab.OverlayPixel2PixelTabCalculation;
 import fr.inra.sad.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
 import fr.inra.sad.bagap.apiland.analysis.tab.SearchAndReplacePixel2PixelTabCalculation;
+import fr.inra.sad.bagap.apiland.domain.Domain;
+import fr.inra.sad.bagap.apiland.domain.DomainFactory;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.cluster.TabClusteringOutput;
 import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenClusteringAnalysis;
@@ -38,17 +43,21 @@ public class ScriptContinuitesRennesMetropole {
 		//prepaPermeabilite();
 		//calculDistanceFonctionnelle();
 		
+		//rasterizeCGTV();
+		//prepaPermeabilitePrairial();
+		//cleanPermeabilitePrairial();
+		
 		//calculClusterFonctionnel();
 		
 		//prepaFenetresFonctionnelles();
 		//calculFenetresFonctionnelles();
 		//calculContinuity();
-		//testIndiceContinuite();
 		
 		//calculContinuityBoise();
 		//calculContinuityHumide();
-		
-		//testIndiceContinuite("boise", 125);
+		//calculContinuity("prairial", 125);
+		//calculContinuity("prairial", 250);
+		//calculContinuity("prairial", 500);
 		
 		//int volumeMin = 30000000;
 		//classifFonctionnelleBoise(volumeMin);
@@ -80,6 +89,8 @@ public class ScriptContinuitesRennesMetropole {
 		//calculIndiceDeplacement("humide", 250);
 		//calculIndiceDeplacement("boise", 500);
 		//calculIndiceDeplacement("humide", 500);
+		//calculIndiceDeplacement("prairial", 125);
+		//calculIndiceDeplacement("prairial", 250);
 		
 		//calculIndiceContinuite("boise", 125);
 		//calculIndiceContinuite("humide", 125);
@@ -175,10 +186,129 @@ public class ScriptContinuitesRennesMetropole {
 		proportionFonctionnelle("boise", 125, "deplacement", 0.5f, 1500);		
 		fragmentationFonctionnelle("boise", 125, "deplacement", 0.5f, 1500);
 		*/
+		
+		classification("boise", 250, "deplacement", 0, 1, 0.1f);
+		classification("humide", 250, "deplacement", 0, 1, 0.1f);
+		
+		
 		long end = System.currentTimeMillis();
 		System.out.println("time computing : "+(end - begin));
 	}
 	
+	private static void classification(String type, int dMax, String continuite, int min, int max, float step) {
+
+		Coverage cov = CoverageManager.getCoverage("E:/rennes_metropole/continuite_ecologique/indice_"+continuite+"_"+type+"_"+dMax+"m.tif");
+		float[] data = cov.getData();
+		EnteteRaster entete = cov.getEntete();
+		cov.dispose();
+		
+		float[] outData = new float[entete.width()*entete.height()];
+		
+		Map<Domain<Float, Float>, Integer> domains = new HashMap<Domain<Float, Float>, Integer>();
+		/*
+		domains.put(DomainFactory.getFloatDomain("[0, 0.1]"), 1);
+		domains.put(DomainFactory.getFloatDomain("]0.1, 0.2]"), 2);
+		domains.put(DomainFactory.getFloatDomain("]0.2, 0.3]"), 3);
+		domains.put(DomainFactory.getFloatDomain("]0.3, 0.4]"), 4);
+		domains.put(DomainFactory.getFloatDomain("]0.4, 0.5]"), 5);
+		domains.put(DomainFactory.getFloatDomain("]0.5, 0.6]"), 6);
+		domains.put(DomainFactory.getFloatDomain("]0.6, 0.7]"), 7);
+		domains.put(DomainFactory.getFloatDomain("]0.7, 0.8]"), 8);
+		domains.put(DomainFactory.getFloatDomain("]0.8, 0.9]"), 9);
+		domains.put(DomainFactory.getFloatDomain("]0.9, ]"), 10);
+		*/
+		domains.put(DomainFactory.getFloatDomain("[0, 0.26]"), -1);
+		domains.put(DomainFactory.getFloatDomain("]0.26, ]"), 1);
+		
+		ClassificationPixel2PixelTabCalculation cal = new ClassificationPixel2PixelTabCalculation(outData, data, entete.noDataValue(), domains);
+		cal.run();
+		
+		CoverageManager.write("E:/rennes_metropole/continuite_ecologique/classification/classif_0-26_"+continuite+"_"+type+"_"+dMax+"m.tif", outData, entete); // export sur fichier
+		
+	}
+
+	private static void cleanPermeabilitePrairial() {
+		Coverage cov = CoverageManager.getCoverage("E:/rennes_metropole/continuite_ecologique/permeabilite_prairial.tif");
+		float[] data1 = cov.getData();
+		EnteteRaster entete = cov.getEntete();
+		cov.dispose();
+		
+		Coverage cov2 = CoverageManager.getCoverage("E:/rennes_metropole/continuite_ecologique/diversity.tif");
+		float[] data2 = cov2.getData();
+		cov2.dispose();
+		
+		Coverage cov3 = CoverageManager.getCoverage("E:/rennes_metropole/data/cgtv.tif");
+		float[] data3 = cov3.getData();
+		cov3.dispose();
+		
+		float[] outData = new float[entete.width()*entete.height()];
+		
+		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(outData, data1, data2, data3){
+
+			@Override
+			protected float doTreat(float[] v) {
+				float v3 = v[2];
+				if(v3 == 5 || v3 == 6) { // CGTV en prairie permanente
+					return 0.1f;
+				}
+				float v2 = v[1];
+				if(v2>0) { // diversite locale de couverts vegetaux
+					return 1f;
+				}
+				return v[0];
+			}
+		};
+		cal.run();
+		
+		CoverageManager.write("E:/rennes_metropole/continuite_ecologique/permeabilite_prairial.tif", outData, entete);
+		
+	}
+
+	private static void prepaPermeabilitePrairial(){
+		
+		Coverage cov = CoverageManager.getCoverage("E:/rennes_metropole/continuite_ecologique_old/rm_os_bre.tif");
+		float[] data = cov.getData();
+		EnteteRaster entete = cov.getEntete();
+		cov.dispose();
+		
+		Map<Float, Float> sarMap = new TreeMap<Float, Float>();
+		
+		sarMap.put(1f, 100f); 
+		sarMap.put(2f, 10f); 
+		sarMap.put(3f, 100f);
+		sarMap.put(4f, 10f); 
+		sarMap.put(5f, 2f); 
+		sarMap.put(6f, 2f);
+		sarMap.put(7f, 2f);
+		sarMap.put(8f, 2f);
+		sarMap.put(9f, 10f);
+		sarMap.put(10f, 10f);
+		sarMap.put(11f, 2f);
+		sarMap.put(12f, 10f);
+		sarMap.put(13f, 2f);
+		
+		float[] dataSR = new float[data.length];
+		
+		SearchAndReplacePixel2PixelTabCalculation cal = new SearchAndReplacePixel2PixelTabCalculation(dataSR, data, sarMap);
+		cal.run();
+		
+		CoverageManager.write("E:/rennes_metropole/continuite_ecologique/permeabilite_prairial.tif", dataSR, entete);
+	}
+	
+	private static void rasterizeCGTV(){
+		
+		Coverage cov = CoverageManager.getCoverage("E:/rennes_metropole/grain_bocager/rm_grain_bocager_5m_4classes.tif");
+		EnteteRaster enteteRef = cov.getEntete();
+		cov.dispose();
+		
+		Coverage cov2 = CoverageManager.getCoverage("D:/data/sig/CGTV/cgtv.tif");
+		EnteteRaster entete = cov2.getEntete();
+		float[] data = cov2.getData(EnteteRaster.getROI(entete, new Envelope(enteteRef.minx(), enteteRef.maxx(), enteteRef.miny(), enteteRef.maxy())));
+		cov2.dispose();
+		
+		CoverageManager.write("E:/rennes_metropole/data/cgtv.tif", data, enteteRef);
+	}
+
 	private static void calculIndiceContinuite(String type, int dMax) {
 		Coverage cov1 = CoverageManager.getCoverage("H:/rennes_metropole/volume_deplacement/test/indice_accessibilite_"+type+"_"+dMax+"m.tif");
 		float[] data1 = cov1.getData();
@@ -205,10 +335,12 @@ public class ScriptContinuitesRennesMetropole {
 	}
 	
 	private static void calculIndiceDeplacement(String type, int dMax) {
-		Coverage cov = CoverageManager.getCoverage("H:/rennes_metropole/volume_deplacement/volume_deplacement_"+type+"_"+dMax+".tif");
+		Coverage cov = CoverageManager.getCoverage("E:/rennes_metropole/volume_deplacement/volume_deplacement_"+type+"_"+dMax+".tif");
 		float[] data = cov.getData();
 		EnteteRaster entete = cov.getEntete();
 		cov.dispose();
+		
+		//System.out.println((((Math.pow(dMax, 2)*Math.PI))*dMax)/3);
 		
 		float[] outData = new float[entete.width()*entete.height()];
 		
@@ -217,13 +349,14 @@ public class ScriptContinuitesRennesMetropole {
 			@Override
 			protected float doTreat(float[] v) {
 				//System.out.println(v[0]+" "+((((Math.pow(dMax, 2)*Math.PI))*dMax)/3)+" "+(v[0] / (((Math.pow(dMax, 2)*Math.PI))*dMax)/3));
-				return (float) (v[0] / (((Math.pow(125, 2)*Math.PI))*125)/3);
-				//return (float) (v[0] / (((Math.pow(dMax, 2)*Math.PI))*dMax)/3);
+				//return (float) (v[0] / (((Math.pow(125, 2)*Math.PI))*125)/3);
+				return (float) (v[0] / (((Math.pow(dMax, 2)*Math.PI))*dMax)/3);
 			}
 		};
 		cal.run();
 		
-		CoverageManager.write("H:/rennes_metropole/volume_deplacement/test/indice_deplacement_"+type+"_"+dMax+"m_rapport125m.tif", outData, entete);
+		//CoverageManager.write("H:/rennes_metropole/volume_deplacement/test/indice_deplacement_"+type+"_"+dMax+"m_rapport125m.tif", outData, entete);
+		CoverageManager.write("E:/rennes_metropole/continuite_ecologique/indice_deplacement_"+type+"_"+dMax+"m.tif", outData, entete);
 		
 	}
 
@@ -585,6 +718,31 @@ public class ScriptContinuitesRennesMetropole {
 		
 	}
 	
+	private static void calculContinuity(String type, int dMax){
+		
+		int ws = (((dMax*2)/5)*4)+1;
+		System.out.println(type+" "+dMax+" "+ws);
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setWindowShapeType(WindowShapeType.FUNCTIONAL);
+		builder.setRasterFile("E:/rennes_metropole/continuite_ecologique_old/rm_os_bre.tif");
+		builder.setRasterFile2("E:/rennes_metropole/continuite_ecologique/permeabilite_"+type+".tif");
+		builder.setROIX(4000);
+		builder.setROIY(4000);
+		builder.setROIWidth(1000);
+		builder.setROIHeight(1000);
+		builder.setWindowSize(ws);
+		builder.setDisplacement(1);
+		builder.addMetric("surface");
+		builder.addMetric("volume");
+		builder.setDMax(dMax);
+		builder.addGeoTiffOutput("surface", "E:/rennes_metropole/volume_deplacement/surface_accessibilite_"+type+"_"+dMax+".tif");
+		builder.addGeoTiffOutput("volume", "E:/rennes_metropole/volume_deplacement/volume_deplacement_"+type+"_"+dMax+".tif");
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+	
+		analysis.allRun();
+	}
 	
 	private static void calculContinuityHumide(){
 		
@@ -659,7 +817,7 @@ public class ScriptContinuitesRennesMetropole {
 		builder.setWindowSize(501);
 		builder.setDisplacement(20);
 		builder.addMetric("N-valid");
-		builder.addMetric("SHDI"); // bug à corriger
+		builder.addMetric("SHDI"); // bug ï¿½ corriger
 		builder.setDMax(125.0);
 		//builder.addMetric("sum");
 		//builder.addGeoTiffOutput("SHDI", "H:/rennes_metropole/continuite_ecologique/shdi_500m.tif");
@@ -969,7 +1127,7 @@ public class ScriptContinuitesRennesMetropole {
 		float[] data = new float[entete.width()*entete.height()];
 		Arrays.fill(data, 0);
 		
-		String path = "G:/AUDIAR/Données2Hugues/Données2Hugues/ZonesHumides/";
+		String path = "G:/AUDIAR/Donnï¿½es2Hugues/Donnï¿½es2Hugues/ZonesHumides/";
 		Coverage cov2;
 		cov2 = ShapeFile2CoverageConverter.getSurfaceCoverage(data, path+"izh_sage_vilaine/izh_sage_vilaine.shp", "code", entete);
 		cov2.dispose();
@@ -1043,7 +1201,7 @@ public class ScriptContinuitesRennesMetropole {
 	
 	private static void compileOS(){
 		
-		// OSbre --> total = 6 couches à compiler
+		// OSbre --> total = 6 couches ï¿½ compiler
 		// 1. reseau hydro --> 2 couches (surface et troncon)
 		// 2. Route et autres voies --> 2 couches (route et voie ferre)
 		// 3. Boisement --> 1 couche
@@ -1160,12 +1318,12 @@ public class ScriptContinuitesRennesMetropole {
 		
 		Map<Float, Float> sarMap = new TreeMap<Float, Float>();
 		
-		sarMap.put(1f, 3f); // 1 -  --> 3 - voie fréquentée
-		sarMap.put(2f, 3f); // 2 -  --> 3 - voie fréquentée
-		sarMap.put(3f, 3f); // 3 -  --> 3 - voie fréquentée
-		sarMap.put(4f, 4f); // 4 - --> 4 - voie peu fréquentée
-		sarMap.put(5f, 4f); // 5 -  --> 4 - voie peu fréquentée 
-		sarMap.put(6f, 0f); // 6 -  --> ignoré
+		sarMap.put(1f, 3f); // 1 -  --> 3 - voie frï¿½quentï¿½e
+		sarMap.put(2f, 3f); // 2 -  --> 3 - voie frï¿½quentï¿½e
+		sarMap.put(3f, 3f); // 3 -  --> 3 - voie frï¿½quentï¿½e
+		sarMap.put(4f, 4f); // 4 - --> 4 - voie peu frï¿½quentï¿½e
+		sarMap.put(5f, 4f); // 5 -  --> 4 - voie peu frï¿½quentï¿½e 
+		sarMap.put(6f, 0f); // 6 -  --> ignorï¿½
 		
 		float[] dataSR = new float[data.length];
 		
@@ -1185,7 +1343,7 @@ public class ScriptContinuitesRennesMetropole {
 		
 		Map<Float, Float> sarMap = new TreeMap<Float, Float>();
 		
-		sarMap.put(1f, 10f); // 1 - arbre isolé --> 10 - haie
+		sarMap.put(1f, 10f); // 1 - arbre isolï¿½ --> 10 - haie
 		sarMap.put(5f, 9f); // 2 - massif --> 9 boisement
 		sarMap.put(10f, 10f); // 3 - haie --> 10 - haie
 		
@@ -1208,18 +1366,18 @@ public class ScriptContinuitesRennesMetropole {
 		sarMap.put(0f, 0f); // 0 - autre --> 0 - autre
 		sarMap.put(1f, 1f); // 1 - bati --> 1 - bati
 		sarMap.put(2f, 2f); // 2 - surface minerale, sable --> 2 - surface minerale
-		sarMap.put(3f, 3f); // 3 - voie fréquentée --> 3 - voie fréquentée
-		sarMap.put(4f, 4f); // 4 - voie peu fréquentée --> 4 - voie peu fréquentée
+		sarMap.put(3f, 3f); // 3 - voie frï¿½quentï¿½e --> 3 - voie frï¿½quentï¿½e
+		sarMap.put(4f, 4f); // 4 - voie peu frï¿½quentï¿½e --> 4 - voie peu frï¿½quentï¿½e
 		sarMap.put(5f, 5f); // 5 - colza --> 5 - culture
-		sarMap.put(6f, 5f); // 6 - céréales à paille --> 5 - culture
-		sarMap.put(7f, 5f); // 7 - protéagineux --> 5 - culture
+		sarMap.put(6f, 5f); // 6 - cï¿½rï¿½ales ï¿½ paille --> 5 - culture
+		sarMap.put(7f, 5f); // 7 - protï¿½agineux --> 5 - culture
 		sarMap.put(9f, 5f); // 9 - tournesol --> 5 - culture
-		sarMap.put(10f, 5f); // 10 - maïs --> 5 - culture
+		sarMap.put(10f, 5f); // 10 - maï¿½s --> 5 - culture
 		sarMap.put(12f, 5f); // 12 - tubercules --> 5 - culture
 		sarMap.put(13f, 6f); // 13 - prairie --> 6 - prairie
 		sarMap.put(14f, 7f); // 14 - verger --> 7 - verger
 		sarMap.put(15f, 8f); // 15 - vigne --> 8 - vignes
-		sarMap.put(16f, 9f); // 16 - forêt --> 9 boisement
+		sarMap.put(16f, 9f); // 16 - forï¿½t --> 9 boisement
 		sarMap.put(17f, 9f); // 17 - boisement --> 9 boisement
 		sarMap.put(18f, 10f); // 18 - haie --> 10 - haie
 		sarMap.put(19f, 11f); // 19 - lande ligneuse --> 11 - lande

@@ -13,7 +13,9 @@ public abstract class Counting implements
 	QuantitativeCountingInterface,
 	PatchCountingInterface,
 	SlopeCountingInterface,
-	ContinuityCountingInterface{//,
+	ContinuityCountingInterface,
+	ErosionCountingInterface,
+	DegatErosionCountingInterface{//,
 	//MetricObserver {
 	
 	/**
@@ -375,6 +377,26 @@ public abstract class Counting implements
 	
 	@Override
 	public float volume(){
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public float erosionEmprise(){
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public float erosionIntensity(){
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public float degatErosionEmprise(){
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public float degatErosionIntensity(){
 		throw new UnsupportedOperationException();
 	}
 }

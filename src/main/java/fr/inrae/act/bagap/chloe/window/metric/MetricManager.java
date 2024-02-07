@@ -16,6 +16,8 @@ import org.jumpmind.symmetric.csv.CsvReader;
 import fr.inrae.act.bagap.chloe.window.metric.basic.BasicMetric;
 import fr.inrae.act.bagap.chloe.window.metric.continuity.ContinuityMetric;
 import fr.inrae.act.bagap.chloe.window.metric.couple.CoupleMetric;
+import fr.inrae.act.bagap.chloe.window.metric.erosion.DegatErosionMetric;
+import fr.inrae.act.bagap.chloe.window.metric.erosion.ErosionMetric;
 import fr.inrae.act.bagap.chloe.window.metric.patch.PatchMetric;
 import fr.inrae.act.bagap.chloe.window.metric.quantitative.QuantitativeMetric;
 import fr.inrae.act.bagap.chloe.window.metric.slope.SlopeMetric;
@@ -352,6 +354,24 @@ public class MetricManager {
 	public static boolean hasOnlyContinuityMetric(Set<Metric> metrics) {
 		for(Metric m : metrics){
 			if(!(m instanceof ContinuityMetric) && !(m instanceof BasicMetric)){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean hasOnlyErosionMetric(Set<Metric> metrics) {
+		for(Metric m : metrics){
+			if(!(m instanceof ErosionMetric) && !(m instanceof BasicMetric)){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean hasOnlyDegatErosionMetric(Set<Metric> metrics) {
+		for(Metric m : metrics){
+			if(!(m instanceof DegatErosionMetric) && !(m instanceof BasicMetric)){
 				return false;
 			}
 		}

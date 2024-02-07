@@ -5,13 +5,13 @@ import java.util.List;
 
 import fr.inra.sad.bagap.apiland.analysis.Analysis;
 
-public class TabInverseAltitudeRCMDistanceAnalysis extends Analysis {
+public class TabDegatErosionRCMDistanceAnalysis extends Analysis {
 
 	private static final float sqrt2 = (float) Math.sqrt(2);
 	
 	private static final float coeffReg = 314.0f;
 	
-	private float[] outDatas, inDatas, frictionDatas, altitudeDatas, everDatas;
+	private float[] outDatas, inDatas, infiltrationDatas, altitudeDatas, everDatas;
 	
 	private int[] codes;
 
@@ -26,26 +26,22 @@ public class TabInverseAltitudeRCMDistanceAnalysis extends Analysis {
 	private boolean hasValue;
 	
 	private List<Integer>[] waits;
-
-	public TabInverseAltitudeRCMDistanceAnalysis(float[] outDatas, float[] inDatas, float[] frictionDatas, float[] altitudeDatas, int width, int height, float cellSize, int noDataValue, int[] codes) {
-		this(outDatas, inDatas, frictionDatas, altitudeDatas, width, height, cellSize, noDataValue, codes, noDataValue);
+	
+	public TabDegatErosionRCMDistanceAnalysis(float[] outDatas, float[] altitudeDatas, float[] infiltrationDatas, int width, int height, float cellSize, int noDataValue, float threshold) {
+		this(outDatas, null, altitudeDatas, infiltrationDatas, width, height, cellSize, noDataValue, null, threshold);		
 	}
 	
-	public TabInverseAltitudeRCMDistanceAnalysis(float[] outDatas, float[] inDatas, float[] frictionDatas, float[] altitudeDatas, int width, int height, float cellSize, int noDataValue, int[] codes, int threshold) {
+	public TabDegatErosionRCMDistanceAnalysis(float[] outDatas, float[] inDatas, float[] altitudeDatas, float[] infiltrationDatas, int width, int height, float cellSize, int noDataValue, int[] codes, float threshold) {
 		this.outDatas = outDatas;
 		this.inDatas = inDatas;
-		this.frictionDatas = frictionDatas;
+		this.infiltrationDatas = infiltrationDatas;
 		this.altitudeDatas = altitudeDatas;
 		this.width = width;
 		this.height = height;
 		this.cellSize = cellSize;
 		this.noDataValue = noDataValue;
 		this.codes = codes;
-		if(threshold == noDataValue){
-			this.threshold = Integer.MAX_VALUE;
-		}else{
-			this.threshold = threshold;
-		}
+		this.threshold = threshold;
 	}
 	
 	public boolean hasValue(){
@@ -58,13 +54,15 @@ public class TabInverseAltitudeRCMDistanceAnalysis extends Analysis {
 		
 		everDatas = new float[outDatas.length];
 		waits = new ArrayList[(int) ((threshold * coeffReg)/cellSize)];
+		//System.out.println(threshold);
+		//System.out.println((int) ((threshold * coeffReg)/cellSize));
 		waits[0] = new ArrayList<Integer>();
 		
 		hasValue = false;
 		
 		if(inDatas == null){
-			for(int ind=0; ind<frictionDatas.length; ind++){
-				if(frictionDatas[ind] == noDataValue){
+			for(int ind=0; ind<infiltrationDatas.length; ind++){
+				if(infiltrationDatas[ind] == noDataValue){
 					outDatas[ind] = noDataValue;
 				}else if(ind == ((width*width)-1)/2){ // pixel central source de diffusion
 					hasValue = true;
@@ -146,7 +144,8 @@ public class TabInverseAltitudeRCMDistanceAnalysis extends Analysis {
 			
 			List<Integer> wait;
 			// diffusion
-			for(int d=0; d<threshold*coeffReg/cellSize; d++){
+			for(int d=0; d<((int) ((threshold * coeffReg)/cellSize)); d++){
+				//System.out.println(d+" "+((int) ((threshold * coeffReg)/cellSize)));
 				wait = waits[d];
 				if(wait != null){
 					waits[d] = null;
@@ -160,6 +159,61 @@ public class TabInverseAltitudeRCMDistanceAnalysis extends Analysis {
 		setResult(outDatas);
 	}
 
+	private static float getSlopeIntensity(float alt, float nalt, float cote_adjacent) {
+		
+		if(alt == nalt) {
+			return 0;
+		}
+		
+		float cote_oppose = alt - nalt;
+		float tangente = cote_oppose/cote_adjacent;
+		double arctangente = Math.atan(tangente);
+		double angle = Math.toDegrees(arctangente);
+		
+		//System.out.println(cote_oppose+" "+cote_adjacent+" "+tangente+" "+arctangente+" "+angle);
+		
+		float v =  (float) ((90 - angle)%180.0);
+		if(v <= 45){
+			return  1;
+		}else if(v >= 135){
+			return  -1;
+		}else{
+			return (float) ((90-v)/45.0);
+		}
+	}
+	
+	private float friction(float slopeIntensity, float infiltration) {
+		float friction = 2 + 9*infiltration - slopeIntensity;
+		/*if(friction >= 9) {
+			friction *= 10;
+		}*/
+		return friction;
+	}
+	/*
+	private float getSlopeIntensity(float alt, float nalt, float dist) {
+		
+		if(alt == nalt) {
+			return 0;
+		}
+		
+		float tangente = dist/(alt - nalt);
+		float v =  (float) ((90 + (90 + Math.toDegrees(Math.atan(tangente))))%180.0);
+		
+		if(v <= 45){
+			return  1;
+		}else{
+			return (float) ((90-v)/45.0);
+		}
+	}
+	
+	private float friction(float slopeIntensity, float infiltration) {
+		float friction = 1 + 9*infiltration - slopeIntensity;
+		if(friction >= 9) {
+			friction *= 10;
+		}
+		return friction;
+	}
+	*/
 	private void diffusionPaquet(int dd, List<Integer> wait){
 		for(int p : wait){
 			diffusion(p, dd/coeffReg);
@@ -167,7 +221,7 @@ public class TabInverseAltitudeRCMDistanceAnalysis extends Analysis {
 	}
 
 	public void setPixelAndValue(int pixel, float dist) {
-		if(dist < threshold/cellSize){
+		if(dist < (int) (threshold/cellSize)){
 			if (waits[(int) (dist*coeffReg)] == null) {
 				waits[(int) (dist*coeffReg)] = new ArrayList<Integer>();
 			}
@@ -177,30 +231,33 @@ public class TabInverseAltitudeRCMDistanceAnalysis extends Analysis {
 	
 	private void diffusion(int p, double dd) {
 		//++indexG;
-		
-		if (everDatas[p] != 1 && threshold/cellSize > dd) {
+		//System.out.println("diffusion de puis "+p);
+		if (everDatas[p] != 1 && ((int) threshold/cellSize) > dd) {
 			
 			everDatas[p] = 1; // marquage de diffusion du pixel
 			
 			if (outDatas[p] != noDataValue) {
-				float fd = frictionDatas[p]; // friction au point de diffusion
 				float alt = altitudeDatas[p]; // altitude au point de diffusion
 				int np;
-				float v, fc, d;
+				float v, infc, d;
 				float nalt;
+				float sInt;
+				float friction;
 				
 				int x = p%width;
 				int y = p/width;
 				
 				// en haut � gauche
 				np = p - width - 1;
-				nalt = altitudeDatas[np]; 
-				if(alt <= nalt){
-					if(x > 0 && y > 0 && everDatas[np] != 1){
+				if(x > 0 && y > 0 && everDatas[np] != 1){
+					nalt = altitudeDatas[np]; 
+					if(alt <= nalt){
 						v = outDatas[np]; // valeur au point diagonal
 						if (v != noDataValue) {
-							fc = frictionDatas[np];
-							d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
+							infc = infiltrationDatas[np];
+							sInt = getSlopeIntensity(alt, nalt, sqrt2 * cellSize);
+							friction = friction(sInt, infc);
+							d = (float) (dd + sqrt2 * friction); // distance au point diagonal
 							if (v == -2 || d * cellSize < v) { // MAJ ?
 								outDatas[np] = d * cellSize;
 								setPixelAndValue(np, d);
@@ -211,13 +268,15 @@ public class TabInverseAltitudeRCMDistanceAnalysis extends Analysis {
 				
 				// en haut
 				np = p - width;
-				nalt = altitudeDatas[np]; 
-				if(alt <= nalt){
-					if(y > 0 && everDatas[np] != 1){
+				if(y > 0 && everDatas[np] != 1){
+					nalt = altitudeDatas[np]; 
+					if(alt <= nalt){
 						v = outDatas[np]; // valeur au point cardinal
 						if (v != noDataValue) {
-							fc = frictionDatas[np];
-							d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
+							infc = infiltrationDatas[np];
+							sInt = getSlopeIntensity(alt, nalt, cellSize);
+							friction = friction(sInt, infc);
+							d = (float) (dd + friction); // distance au point cardinal
 							if (v == -2 || d * cellSize < v) { // MAJ ?
 								outDatas[np] = d * cellSize;
 								setPixelAndValue(np, d);
@@ -228,13 +287,15 @@ public class TabInverseAltitudeRCMDistanceAnalysis extends Analysis {
 				
 				// en haut � droite
 				np = p - width + 1;
-				nalt = altitudeDatas[np]; 
-				if(alt <= nalt){
-					if(x < (width-1) && y > 0 && everDatas[np] != 1){
+				if(x < (width-1) && y > 0 && everDatas[np] != 1){
+					nalt = altitudeDatas[np]; 
+					if(alt <= nalt){
 						v = outDatas[np]; // valeur au point diagonal
 						if (v != noDataValue) {
-							fc = frictionDatas[np];
-							d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
+							infc = infiltrationDatas[np];
+							sInt = getSlopeIntensity(alt, nalt, sqrt2 * cellSize);
+							friction = friction(sInt, infc);
+							d = (float) (dd + sqrt2 * friction); // distance au point diagonal
 							if (v == -2 || d * cellSize < v) { // MAJ ?
 								outDatas[np] = d * cellSize;
 								setPixelAndValue(np, d);
@@ -245,13 +306,15 @@ public class TabInverseAltitudeRCMDistanceAnalysis extends Analysis {
 				
 				// � gauche
 				np = p - 1;
-				nalt = altitudeDatas[np]; 
-				if(alt <= nalt){
-					if(x > 0 && everDatas[np] != 1){
+				if(x > 0 && everDatas[np] != 1){
+					nalt = altitudeDatas[np]; 
+					if(alt <= nalt){
 						v = outDatas[np]; // valeur au point cardinal
 						if (v != noDataValue) {
-							fc = frictionDatas[np];
-							d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
+							infc = infiltrationDatas[np];
+							sInt = getSlopeIntensity(alt, nalt, cellSize);
+							friction = friction(sInt, infc);
+							d = (float) (dd + friction); // distance au point cardinal
 							if (v == -2 || d * cellSize < v) { // MAJ ?
 								outDatas[np] = d * cellSize;
 								setPixelAndValue(np, d);
@@ -262,13 +325,15 @@ public class TabInverseAltitudeRCMDistanceAnalysis extends Analysis {
 				
 				// � droite
 				np = p + 1;
-				nalt = altitudeDatas[np]; 
-				if(alt <= nalt){
-					if(x < (width-1) && everDatas[np] != 1){
+				if(x < (width-1) && everDatas[np] != 1){
+					nalt = altitudeDatas[np]; 
+					if(alt <= nalt){
 						v = outDatas[np]; // valeur au point cardinal
 						if (v != noDataValue) {
-							fc = frictionDatas[np];
-							d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
+							infc = infiltrationDatas[np];
+							sInt = getSlopeIntensity(alt, nalt, cellSize);
+							friction = friction(sInt, infc);
+							d = (float) (dd + friction); // distance au point cardinal
 							if (v == -2 || d * cellSize < v) { // MAJ ?
 								outDatas[np] = d * cellSize;
 								setPixelAndValue(np, d);
@@ -279,13 +344,15 @@ public class TabInverseAltitudeRCMDistanceAnalysis extends Analysis {
 				
 				// en bas � gauche
 				np = p + width - 1;
-				nalt = altitudeDatas[np]; 
-				if(alt <= nalt){
-					if(x > 0 && y < (height-1) && everDatas[np] != 1){
+				if(x > 0 && y < (height-1) && everDatas[np] != 1){
+					nalt = altitudeDatas[np]; 
+					if(alt <= nalt){
 						v = outDatas[np]; // valeur au point diagonal
 						if (v != noDataValue) {
-							fc = frictionDatas[np];
-							d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
+							infc = infiltrationDatas[np];
+							sInt = getSlopeIntensity(alt, nalt, sqrt2 * cellSize);
+							friction = friction(sInt, infc);
+							d = (float) (dd + sqrt2 * friction); // distance au point diagonal
 							if (v == -2 || d * cellSize < v) { // MAJ ?
 								outDatas[np] = d * cellSize;
 								setPixelAndValue(np, d);
@@ -296,13 +363,15 @@ public class TabInverseAltitudeRCMDistanceAnalysis extends Analysis {
 				
 				// en bas
 				np = p + width;
-				nalt = altitudeDatas[np]; 
-				if(alt <= nalt){
-					if(y < (height-1) && everDatas[np] != 1){
+				if(y < (height-1) && everDatas[np] != 1){
+					nalt = altitudeDatas[np]; 
+					if(alt <= nalt){
 						v = outDatas[np]; // valeur au point cardinal
 						if (v != noDataValue) {
-							fc = frictionDatas[np];
-							d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
+							infc = infiltrationDatas[np];
+							sInt = getSlopeIntensity(alt, nalt, cellSize);
+							friction = friction(sInt, infc);
+							d = (float) (dd + friction); // distance au point cardinal
 							if (v == -2 || d * cellSize < v) { // MAJ ?
 								outDatas[np] = d * cellSize;
 								setPixelAndValue(np, d);
@@ -313,13 +382,15 @@ public class TabInverseAltitudeRCMDistanceAnalysis extends Analysis {
 				
 				// en bas � droite
 				np = p + width + 1;
-				nalt = altitudeDatas[np]; 
-				if(alt <= nalt){
-					if(x < (width-1) && y < (height-1) && everDatas[np] != 1){
+				if(x < (width-1) && y < (height-1) && everDatas[np] != 1){
+					nalt = altitudeDatas[np]; 
+					if(alt <= nalt){
 						v = outDatas[np]; // valeur au point diagonal
 						if (v != noDataValue) {
-							fc = frictionDatas[np];
-							d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
+							infc = infiltrationDatas[np];
+							sInt = getSlopeIntensity(alt, nalt, sqrt2 * cellSize);
+							friction = friction(sInt, infc);
+							d = (float) (dd + sqrt2 * friction); // distance au point diagonal
 							if (v == -2 || d * cellSize < v) { // MAJ ?
 								outDatas[np] = d * cellSize;
 								setPixelAndValue(np, d);
@@ -336,7 +407,7 @@ public class TabInverseAltitudeRCMDistanceAnalysis extends Analysis {
 	protected void doClose() {
 		waits = null;
 		inDatas = null;
-		frictionDatas = null;
+		infiltrationDatas = null;
 		altitudeDatas = null;
 		everDatas = null;
 	}

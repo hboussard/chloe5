@@ -1,19 +1,17 @@
 package fr.inrae.act.bagap.chloe.distance.analysis.slope;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.List;
 
 import fr.inra.sad.bagap.apiland.analysis.Analysis;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 
 public class TabInverseSlopeDirectionRCMDistanceAnalysis extends Analysis {
 
-	private float[] outDatas, inDatas, frictionDatas, slopeDirectionDatas;
+	private static final float sqrt2 = (float) Math.sqrt(2);
+	
+	private static final float coeffReg = 314.0f;
+	
+	private float[] outDatas, inDatas, frictionDatas, slopeDirectionDatas, everDatas;
 	
 	private int[] codes;
 
@@ -27,7 +25,7 @@ public class TabInverseSlopeDirectionRCMDistanceAnalysis extends Analysis {
 	
 	private boolean hasValue;
 	
-	private Map<Float, Set<Pixel>> waits;
+	private List<Integer>[] waits;
 
 	public TabInverseSlopeDirectionRCMDistanceAnalysis(float[] outDatas, float[] inDatas, float[] frictionDatas, float[] slopeDirectionDatas, int width, int height, float cellSize, int noDataValue, int[] codes) {
 		this(outDatas, inDatas, frictionDatas, slopeDirectionDatas, width, height, cellSize, noDataValue, codes, noDataValue);
@@ -48,215 +46,293 @@ public class TabInverseSlopeDirectionRCMDistanceAnalysis extends Analysis {
 		}else{
 			this.threshold = threshold;
 		}
-		this.waits = new TreeMap<Float, Set<Pixel>>();
 	}
 	
 	public boolean hasValue(){
 		return hasValue;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void doInit() {
-		hasValue = false;
-		boolean ok;
-		float v;
-		for (int yt = 0; yt < height; yt++) {
-			for (int xt = 0; xt < width; xt++) {
-				v = inDatas[yt*width+xt];
-				ok = false;
-				if (v != Raster.getNoDataValue()) {
-					for (int c : codes) {
-						if (c == v) {
-							ok = true;
-							hasValue = true;
-							break;
-						}
-					}
-					if (ok) {
-						outDatas[yt * width + xt] = 0; // inside the object -> distance=0
-					} else {
-						outDatas[yt * width + xt] = -2; // outside the object -> to be computed
-					}
-				}else{
-					outDatas[yt * width + xt] = noDataValue; // nodata_value -> to be not computed
-				}
-				
-			}
-		}
-		inDatas = null;
 		
-		// afin de limiter le nombre de calculs de diffusion, ne diffuser qu'à partir des bords d'habitats
-		boolean maj;
-		for (int yt = 0; yt < height; yt++) {
-			for (int xt = 0; xt < width; xt++) {
-				if (outDatas[yt * width + xt] == 0) {
-					maj = true;
-					if(xt == 0 || outDatas[(xt-1)+yt*width] == 0){
-						if(xt == 0 || yt == 0 || outDatas[(xt-1)+(yt-1)*width] == 0){
-							if(yt == 0 || outDatas[xt+(yt-1)*width] == 0){
-								if(xt == (width-1) || yt == 0 || outDatas[(xt+1)+(yt-1)*width] == 0){
-									if(xt == (width-1) || outDatas[(xt+1)+yt*width] == 0){
-										if(xt == (width-1) || yt == (height-1) || outDatas[(xt+1)+(yt+1)*width] == 0){
-											if(yt == (height-1) || outDatas[xt+(yt+1)*width] == 0){
-												if(xt == 0 || yt == (height-1) || outDatas[(xt-1)+(yt+1)*width] == 0){
-													// do nothing
-													maj = false;
+		everDatas = new float[outDatas.length];
+		waits = new ArrayList[(int) ((threshold * coeffReg)/cellSize)];
+		waits[0] = new ArrayList<Integer>();
+		
+		hasValue = false;
+		
+		if(inDatas == null){
+			for(int ind=0; ind<frictionDatas.length; ind++){
+				if(frictionDatas[ind] == noDataValue){
+					outDatas[ind] = noDataValue;
+				}else if(ind == ((width*width)-1)/2){ // pixel central source de diffusion
+					hasValue = true;
+					outDatas[ind] = 0;
+					waits[0].add(ind);
+				}else{
+					outDatas[ind] = -2; // to be computed
+					//outDatas[ind] = threshold; // to be computed
+				}
+			}
+		}else{
+			boolean ok;
+			float v;
+			for (int yt = 0; yt < height; yt++) {
+				for (int xt = 0; xt < width; xt++) {
+					v = inDatas[yt*width+xt];
+					ok = false;
+					if (v != noDataValue) {
+						for (int c : codes) {
+							if (c == v) {
+								ok = true;
+								hasValue = true;
+								break;
+							}
+						}
+						if (ok) {
+							outDatas[yt * width + xt] = 0; // inside the object -> distance=0
+						} else {
+							outDatas[yt * width + xt] = -2; // outside the object -> to be computed
+							//outDatas[yt * width + xt] = threshold; // to be computed
+						}
+					}else{
+						outDatas[yt * width + xt] = noDataValue; // nodata_value -> to be not computed
+					}
+					
+				}
+			}
+			inDatas = null;
+			
+			if(hasValue){
+				// afin de limiter le nombre de calculs de diffusion, ne diffuser qu'ï¿½ partir des bords d'habitats
+				boolean maj;
+				for (int yt = 0; yt < height; yt++) {
+					for (int xt = 0; xt < width; xt++) {
+						if (outDatas[yt * width + xt] == 0) {
+							maj = true;
+							if(xt == 0 || outDatas[(xt-1)+yt*width] == 0){
+								if(xt == 0 || yt == 0 || outDatas[(xt-1)+(yt-1)*width] == 0){
+									if(yt == 0 || outDatas[xt+(yt-1)*width] == 0){
+										if(xt == (width-1) || yt == 0 || outDatas[(xt+1)+(yt-1)*width] == 0){
+											if(xt == (width-1) || outDatas[(xt+1)+yt*width] == 0){
+												if(xt == (width-1) || yt == (height-1) || outDatas[(xt+1)+(yt+1)*width] == 0){
+													if(yt == (height-1) || outDatas[xt+(yt+1)*width] == 0){
+														if(xt == 0 || yt == (height-1) || outDatas[(xt-1)+(yt+1)*width] == 0){
+															// do nothing
+															maj = false;
+														}
+													}
 												}
 											}
 										}
 									}
 								}
 							}
+							if(maj){
+								setPixelAndValue(yt * width + xt, 0.0f);
+							}
 						}
-					}
-					if(maj){
-						setPixelAndValue(new Pixel(xt, yt), 0.0f);
+						
 					}
 				}
-				
 			}
 		}
 	}
 
 	@Override
 	public void doRun() {
-
-		// diffusion
-		
-		while (waits.size() > 0) {
-			diffusionPaquet();
+		if(hasValue){
+			
+			List<Integer> wait;
+			// diffusion
+			for(int d=0; d<threshold*coeffReg/cellSize; d++){
+				wait = waits[d];
+				if(wait != null){
+					waits[d] = null;
+					diffusionPaquet(d, wait);
+					d--;
+				}
+			}
 			
 		}
-		
+		//System.out.println("nombre de diffusions = "+indexG);
 		setResult(outDatas);
 	}
 
-	public void setPixelAndValue(Pixel pixel, float value) {
-		value = (float) (Math.floor(value * 100.0)/100.0);
-		if (!waits.containsKey(value)) {
-			waits.put(value, new HashSet<Pixel>());
+	private void diffusionPaquet(int dd, List<Integer> wait){
+		for(int p : wait){
+			diffusion(p, dd/coeffReg);
 		}
-		waits.get(value).add(pixel);
 	}
 
-	private void diffusionPaquet(){
+	public void setPixelAndValue(int pixel, float dist) {
+		if(dist < threshold/cellSize){
+			if (waits[(int) (dist*coeffReg)] == null) {
+				waits[(int) (dist*coeffReg)] = new ArrayList<Integer>();
+			}
+			waits[(int) (dist*coeffReg)].add(pixel);
+		}
+	}
+	
+	private void diffusion(int p, double dd) {
+		//++indexG;
 		
-		Iterator<Entry<Float, Set<Pixel>>> iteEntry = waits.entrySet().iterator();
-		Entry<Float, Set<Pixel>> entry = iteEntry.next(); // récupération des pixels à diffuser
-		iteEntry.remove();
-		
-		if(entry.getValue().size() != 0){
-			double dd = entry.getKey(); // récupération de la valeur de diffusion 
+		if (everDatas[p] != 1 && threshold/cellSize > dd) {
 			
-			Iterator<Pixel> itePixel = entry.getValue().iterator();
-			Pixel p;
-			while(itePixel.hasNext()){
-				p = itePixel.next();
-				itePixel.remove();
+			everDatas[p] = 1; // marquage de diffusion du pixel
+			
+			if (outDatas[p] != noDataValue) {
+				float fd = frictionDatas[p]; // friction au point de diffusion
+				int np;
+				float v, fc, d;
+				int dir, ndir;
+				int x = p%width;
+				int y = p/width;
 				
-				diffusion(p, dd);
-			}
-		}
-	}
-	
-	/*
-	 * 1 2 3
-	 * 4 0 5
-	 * 6 7 8
-	 */
-	private int getDirection(Pixel p, Pixel np){
-		if(p.x() == np.x()-1){
-			if(p.y() == np.y()-1){
-				return 8;
-			}else if(p.y() == np.y()){
-				return 5;
-			}else if(p.y() == np.y()+1){
-				return 3;
-			}
-		}else if(p.x() == np.x()){
-			if(p.y() == np.y()-1){
-				return 7;
-			}else if(p.y() == np.y()+1){
-				return 2;
-			}
-		}else if(p.x() == np.x()+1){
-			if(p.y() == np.y()-1){
-				return 6;
-			}else if(p.y() == np.y()){
-				return 4;
-			}else if(p.y() == np.y()+1){
-				return 1;
-			}
-		}
-		// impossible --> p = np
-		throw new IllegalArgumentException();
-	}
-	
-	private void diffusion(Pixel p, double dd) {
-		if (threshold > dd) { 
-			double vd = outDatas[p.x()+p.y()*width];  // valeur au point de diffusion
-			if (vd != Raster.getNoDataValue()) {
-				double fd = frictionDatas[p.x()+p.y()*width]; // friction au point de diffusion
-				
-				Pixel np;
-				float v, d;
-				Iterator<Pixel> ite = p.getCardinalMargins(); // pour chaque pixel cardinal (4)
-				
-				while (ite.hasNext()) {
-					np = ite.next();
-					
-					int ndir = getDirection(p, np);
-					int dir = (int) slopeDirectionDatas[np.x()+np.y()*width];
-					//System.out.println(p+" "+np);
-					//System.out.println(dir+" "+ndir);
-					if(dir == 0 || ndir+dir == 9){
-						//System.out.println("pass");
-						if(np.x() >= 0 && np.x() < width && np.y() >= 0 && np.y() < height){
-							v = outDatas[np.x()+np.y()*width]; // valeur au point cardinal
-							if (v != Raster.getNoDataValue()) {
-								float fc = frictionDatas[np.x()+np.y()*width];
-								d = (float) (dd + (cellSize / 2) * fd + (cellSize / 2) * fc); // distance au point cardinal
-								if (v == -2 || d < v) { // MAJ ?
-									outDatas[np.x()+np.y()*width] = (float) d;
-									
-									//if(v != -2){
-									//	waits.get(v).remove(np);
-									//}
-									setPixelAndValue(np, (float) d);
-								}
+				// en haut a gauche
+				np = p - width - 1;
+				dir = 1;
+				ndir = (int) slopeDirectionDatas[np];
+				if(ndir == 0 || ndir+dir == 9){
+					if(x > 0 && y > 0 && everDatas[np] != 1){
+						v = outDatas[np]; // valeur au point diagonal
+						if (v != noDataValue) {
+							fc = frictionDatas[np];
+							d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
+							if (v == -2 || d * cellSize < v) { // MAJ ?
+								outDatas[np] = d * cellSize;
+								setPixelAndValue(np, d);
 							}
 						}
 					}
 				}
 				
-				
-				ite = p.getDiagonalMargins(); // pour chaque pixel diagonal (4)
-				while (ite.hasNext()) {
-					np = ite.next();
-						
-					int ndir = getDirection(p, np);
-					int dir = (int) slopeDirectionDatas[np.x()+np.y()*width];
-					//System.out.println(p+" "+np);
-					//System.out.println(dir+" "+ndir);
-					if(dir == 0 || ndir+dir == 9){
-						//System.out.println("pass");
-						if(np.x() >= 0 && np.x() < width && np.y() >= 0 && np.y() < height){
-							v = outDatas[np.x()+np.y()*width]; // valeur au point cardinal
-							if (v != Raster.getNoDataValue()) {
-								float fc = frictionDatas[np.x()+np.y()*width];
-								d = (float) (dd + (cellSize * Math.sqrt(2) / 2) * fd + (cellSize * Math.sqrt(2) / 2) * fc); // distance au point diagonal
-								if (v == -2 || d < v) { // MAJ ?
-									outDatas[np.x()+np.y()*width] = (float) d;
-									
-									//if(v != -2){
-									//	waits.get(v).remove(np);
-									//}
-									setPixelAndValue(np, (float) d);
-								}
+				// en haut
+				np = p - width;
+				dir = 2;
+				ndir = (int) slopeDirectionDatas[np];
+				if(ndir == 0 || ndir+dir == 9){
+					if(y > 0 && everDatas[np] != 1){
+						v = outDatas[np]; // valeur au point cardinal
+						if (v != noDataValue) {
+							fc = frictionDatas[np];
+							d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
+							if (v == -2 || d * cellSize < v) { // MAJ ?
+								outDatas[np] = d * cellSize;
+								setPixelAndValue(np, d);
 							}
 						}
 					}
-				}	
+				}
+				
+				// en haut a droite
+				np = p - width + 1;
+				dir = 3;
+				ndir = (int) slopeDirectionDatas[np];
+				if(ndir == 0 || ndir+dir == 9){
+					if(x < (width-1) && y > 0 && everDatas[np] != 1){
+						v = outDatas[np]; // valeur au point diagonal
+						if (v != noDataValue) {
+							fc = frictionDatas[np];
+							d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
+							if (v == -2 || d * cellSize < v) { // MAJ ?
+								outDatas[np] = d * cellSize;
+								setPixelAndValue(np, d);
+							}
+						}
+					}
+				}
+				
+				// a gauche
+				np = p - 1;
+				dir = 4;
+				ndir = (int) slopeDirectionDatas[np];
+				if(ndir == 0 || ndir+dir == 9){
+					if(x > 0 && everDatas[np] != 1){
+						v = outDatas[np]; // valeur au point cardinal
+						if (v != noDataValue) {
+							fc = frictionDatas[np];
+							d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
+							if (v == -2 || d * cellSize < v) { // MAJ ?
+								outDatas[np] = d * cellSize;
+								setPixelAndValue(np, d);
+							}
+						}
+					}
+				}
+				
+				// a droite
+				np = p + 1;
+				dir = 5;
+				ndir = (int) slopeDirectionDatas[np];
+				if(ndir == 0 || ndir+dir == 9){
+					if(x < (width-1) && everDatas[np] != 1){
+						v = outDatas[np]; // valeur au point cardinal
+						if (v != noDataValue) {
+							fc = frictionDatas[np];
+							d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
+							if (v == -2 || d * cellSize < v) { // MAJ ?
+								outDatas[np] = d * cellSize;
+								setPixelAndValue(np, d);
+							}
+						}
+					}
+				}
+				
+				// en bas a gauche
+				np = p + width - 1;
+				dir = 6;
+				ndir = (int) slopeDirectionDatas[np];
+				if(ndir == 0 || ndir+dir == 9){
+					if(x > 0 && y < (height-1) && everDatas[np] != 1){
+						v = outDatas[np]; // valeur au point diagonal
+						if (v != noDataValue) {
+							fc = frictionDatas[np];
+							d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
+							if (v == -2 || d * cellSize < v) { // MAJ ?
+								outDatas[np] = d * cellSize;
+								setPixelAndValue(np, d);
+							}
+						}
+					}
+				}
+				
+				// en bas
+				np = p + width;
+				dir = 7;
+				ndir = (int) slopeDirectionDatas[np];
+				if(ndir == 0 || ndir+dir == 9){
+					if(y < (height-1) && everDatas[np] != 1){
+						v = outDatas[np]; // valeur au point cardinal
+						if (v != noDataValue) {
+							fc = frictionDatas[np];
+							d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
+							if (v == -2 || d * cellSize < v) { // MAJ ?
+								outDatas[np] = d * cellSize;
+								setPixelAndValue(np, d);
+							}
+						}
+					}
+				}
+				
+				// en bas a droite
+				np = p + width + 1;
+				dir = 8;
+				ndir = (int) slopeDirectionDatas[np];
+				if(ndir == 0 || ndir+dir == 9){
+					if(x < (width-1) && y < (height-1) && everDatas[np] != 1){
+						v = outDatas[np]; // valeur au point diagonal
+						if (v != noDataValue) {
+							fc = frictionDatas[np];
+							d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
+							if (v == -2 || d * cellSize < v) { // MAJ ?
+								outDatas[np] = d * cellSize;
+								setPixelAndValue(np, d);
+							}
+						}
+					}
+				}
 				
 			}
 		}

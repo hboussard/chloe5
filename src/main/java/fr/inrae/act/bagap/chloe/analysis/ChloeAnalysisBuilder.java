@@ -72,6 +72,10 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 	
+	public void setCoverage3(Coverage coverage3){
+		throw new UnsupportedOperationException();
+	}
+	
 	public void setRasterTile(String rasterTile){
 		throw new UnsupportedOperationException();
 	}
@@ -84,11 +88,19 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 	
+	public void setRasterFile3(String rasterFile3){
+		throw new UnsupportedOperationException();
+	}
+	
 	public void setRasterTab(float[] inputDatas){
 		throw new UnsupportedOperationException();
 	}
 	
-	public void setRasterTab2(float[] inputDatas){
+	public void setRasterTab2(float[] inputDatas2){
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setRasterTab3(float[] inputDatas3){
 		throw new UnsupportedOperationException();
 	}
 	

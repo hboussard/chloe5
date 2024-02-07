@@ -32,4 +32,12 @@ public class HugeSlidingLandscapeMetricAnalysisFactory extends SlidingLandscapeM
 				roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nb, displacement, kernel, counting);
 	}
 
+	@Override
+	protected SlidingLandscapeMetricAnalysis createTriple(Coverage coverage, Coverage coverage2, Coverage coverage3,
+			int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin,
+			int bufferROIYMax, int nb, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

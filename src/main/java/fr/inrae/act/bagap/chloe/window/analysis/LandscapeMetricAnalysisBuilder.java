@@ -38,13 +38,13 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	
 	private String distanceFunction;
 	
-	private Coverage coverage, coverage2;
+	private Coverage coverage, coverage2, coverage3;
 	
 	private Set<String> rasterFiles;
 	
-	private String rasterFile, rasterFile2, entityRasterFile, rasterTile;
+	private String rasterFile, rasterFile2, rasterFile3, entityRasterFile, rasterTile;
 	
-	private float[] rasterTab, rasterTab2, entityRasterTab;
+	private float[] rasterTab, rasterTab2, rasterTab3, entityRasterTab;
 	
 	private EnteteRaster entete;
 	
@@ -129,11 +129,14 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		this.rasterFiles = new HashSet<String>();
 		this.coverage = null;
 		this.coverage2 = null;
+		this.coverage3 = null;
 		this.rasterTile = null;
 		this.rasterFile = null;
 		this.rasterFile2 = null;
+		this.rasterFile3 = null;
 		this.rasterTab = null;
 		this.rasterTab2 = null;
+		this.rasterTab3 = null;
 		this.entete = null;
 		this.entityRasterFile = null;
 		this.entityRasterTab = null;
@@ -188,6 +191,11 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	}
 	
 	@Override
+	public void setCoverage3(Coverage coverage3){
+		this.coverage3 = coverage3;
+	}
+	
+	@Override
 	public void setRasterTile(String rasterTile) {
 		this.rasterTile = rasterTile;
 	}
@@ -203,13 +211,23 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	}
 	
 	@Override
+	public void setRasterFile3(String rasterFile3) {
+		this.rasterFile3 = rasterFile3;
+	}
+	
+	@Override
 	public void setRasterTab(float[] inputDatas) {
 		this.rasterTab = inputDatas;
 	}
 	
 	@Override
-	public void setRasterTab2(float[] inputDatas) {
-		this.rasterTab2 = inputDatas;
+	public void setRasterTab2(float[] inputDatas2) {
+		this.rasterTab2 = inputDatas2;
+	}
+	
+	@Override
+	public void setRasterTab3(float[] inputDatas3) {
+		this.rasterTab3 = inputDatas3;
 	}
 	
 	@Override
@@ -559,6 +577,10 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		return coverage2;
 	}
 	
+	public Coverage getCoverage3(){
+		return coverage3;
+	}
+	
 	public String getRasterTile() {
 		return rasterTile;
 	}
@@ -572,12 +594,20 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		return rasterFile2;
 	}
 	
+	public String getRasterFile3() {
+		return rasterFile3;
+	}
+	
 	public float[] getRasterTab() {
 		return rasterTab;
 	}
 	
 	public float[] getRasterTab2() {
 		return rasterTab2;
+	}
+	
+	public float[] getRasterTab3() {
+		return rasterTab3;
 	}
 	
 	public EnteteRaster getEntete() {

@@ -29,7 +29,7 @@ public class TabRCMDistanceAnalysis extends Analysis {
 	private boolean hasValue;
 	
 	public TabRCMDistanceAnalysis(float[] outDatas, float[] frictionDatas, int width, int height, float cellSize, int noDataValue, double threshold) {
-		this(outDatas, null, frictionDatas, width, height, cellSize, noDataValue, null, noDataValue);
+		this(outDatas, null, frictionDatas, width, height, cellSize, noDataValue, null, threshold);
 	}
 	
 	public TabRCMDistanceAnalysis(float[] outDatas, float[] inDatas, float[] frictionDatas, int width, int height, float cellSize, int noDataValue, int[] codes) {
@@ -61,7 +61,8 @@ public class TabRCMDistanceAnalysis extends Analysis {
 	protected void doInit() {
 
 		everDatas = new float[outDatas.length];
-		
+		//System.out.println(threshold+" "+coeffReg+" "+cellSize);
+		//System.out.println((int) ((threshold * coeffReg)/cellSize));
 		waits = new ArrayList[(int) ((threshold * coeffReg)/cellSize)];
 		waits[0] = new ArrayList<Integer>();
 		
@@ -108,7 +109,7 @@ public class TabRCMDistanceAnalysis extends Analysis {
 			inDatas = null;
 			
 			if(hasValue){
-				// afin de limiter le nombre de calculs de diffusion, ne diffuser qu'à partir des bords d'habitats
+				// afin de limiter le nombre de calculs de diffusion, ne diffuser qu'ï¿½ partir des bords d'habitats
 				boolean maj;
 				for (int yt = 0; yt < height; yt++) {
 					for (int xt = 0; xt < width; xt++) {
@@ -193,7 +194,7 @@ public class TabRCMDistanceAnalysis extends Analysis {
 				int x = p%width;
 				int y = p/width;
 				
-				// en haut à gauche
+				// en haut ï¿½ gauche
 				np = p - width - 1;
 				if(x > 0 && y > 0 && everDatas[np] != 1){
 					v = outDatas[np]; // valeur au point diagonal
@@ -219,7 +220,7 @@ public class TabRCMDistanceAnalysis extends Analysis {
 						}
 					}
 				}
-				// en haut à droite
+				// en haut ï¿½ droite
 				np = p - width + 1;
 				if(x < (width-1) && y > 0 && everDatas[np] != 1){
 					v = outDatas[np]; // valeur au point diagonal
@@ -232,7 +233,7 @@ public class TabRCMDistanceAnalysis extends Analysis {
 						}
 					}
 				}
-				// à gauche
+				// ï¿½ gauche
 				np = p - 1;
 				if(x > 0 && everDatas[np] != 1){
 					v = outDatas[np]; // valeur au point cardinal
@@ -245,7 +246,7 @@ public class TabRCMDistanceAnalysis extends Analysis {
 						}
 					}
 				}
-				// à droite
+				// ï¿½ droite
 				np = p + 1;
 				if(x < (width-1) && everDatas[np] != 1){
 					v = outDatas[np]; // valeur au point cardinal
@@ -258,7 +259,7 @@ public class TabRCMDistanceAnalysis extends Analysis {
 						}
 					}
 				}
-				// en bas à gauche
+				// en bas ï¿½ gauche
 				np = p + width - 1;
 				if(x > 0 && y < (height-1) && everDatas[np] != 1){
 					v = outDatas[np]; // valeur au point diagonal
@@ -284,7 +285,7 @@ public class TabRCMDistanceAnalysis extends Analysis {
 						}
 					}
 				}
-				// en bas à droite
+				// en bas ï¿½ droite
 				np = p + width + 1;
 				if(x < (width-1) && y < (height-1) && everDatas[np] != 1){
 					v = outDatas[np]; // valeur au point diagonal

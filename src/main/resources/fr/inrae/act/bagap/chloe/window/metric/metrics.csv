@@ -48,3 +48,7 @@ slopedirection;slope;other;fr.inrae.act.bagap.chloe.window.metric.slope.SlopeDir
 slopeintensity;slope;other;fr.inrae.act.bagap.chloe.window.metric.slope.SlopeIntensityMetric;6
 surface;continuity;other;fr.inrae.act.bagap.chloe.window.metric.continuity.SurfaceAccessibilityMetric;7
 volume;continuity;other;fr.inrae.act.bagap.chloe.window.metric.continuity.VolumeMovementMetric;7
+erosionemprise;erosion;other;fr.inrae.act.bagap.chloe.window.metric.erosion.ErosionEmpriseMetric;8
+erosionintensity;erosion;other;fr.inrae.act.bagap.chloe.window.metric.erosion.ErosionIntensityMetric;8
+degaterosionemprise;degaterosion;other;fr.inrae.act.bagap.chloe.window.metric.erosion.DegatErosionEmpriseMetric;9
+degaterosionintensity;degaterosion;other;fr.inrae.act.bagap.chloe.window.metric.erosion.DegatErosionIntensityMetric;9

@@ -171,12 +171,13 @@
     	<version>2.3.3</version>
     	<type>pom</type>
   	</dependency>
+  	<!--
     <dependency>
     	<groupId>fr.inrae.act.bagap</groupId>
     	<artifactId>apiland</artifactId>
     	<version>1.0</version>
     </dependency>
-       
+       -->
   </dependencies>
   
   
