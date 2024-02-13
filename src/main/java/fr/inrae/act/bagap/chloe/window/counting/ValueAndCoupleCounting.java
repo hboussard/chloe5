@@ -6,39 +6,39 @@ import java.util.Map;
 public class ValueAndCoupleCounting extends Counting implements ValueCountingInterface, CoupleCountingInterface {
 
 	/** the count of values */
-	private Map<Integer, Float> countValues;
+	private Map<Integer, Double> countValues;
 	
 	private int[] values;
 	
-	private float totalCountValues;
+	private double totalCountValues;
 	
 	private int countClass;
 	
 	/** the count of couples */
-	private Map<Float, Float> countCouples;
+	private Map<Float, Double> countCouples;
 	
 	private float[] couples;
 	
 	private int theoreticalCoupleSize;
 	
-	private float totalCouples;
+	private double totalCouples;
 	
-	private float validCouples;
+	private double validCouples;
 	
-	private float totalCountCouples;
+	private double totalCountCouples;
 	
-	private float homogeneousCouples;
+	private double homogeneousCouples;
 	
-	private float heterogeneousCouples;
+	private double heterogeneousCouples;
 	
 	private short countCoupleClass;
 	
 	public ValueAndCoupleCounting(int[] values, float[] couples, float theoreticalSize, int theoreticalCoupleSize){
 		super(theoreticalSize);
 		this.values = values;
-		this.countValues = new HashMap<Integer, Float>();
+		this.countValues = new HashMap<Integer, Double>();
 		this.couples = couples;
-		this.countCouples = new HashMap<Float, Float>();
+		this.countCouples = new HashMap<Float, Double>();
 		this.theoreticalCoupleSize = theoreticalCoupleSize;
 	}
 	
@@ -52,11 +52,11 @@ public class ValueAndCoupleCounting extends Counting implements ValueCountingInt
 	 * 5 : nombre de couples pris en compte
 	 * 6 : nombre de couple noDataValue
 	 * 7 : nombre de couple "0"
-	 * à partir de 8 jusqu'au nombre de valeurs + 8 : les occurences de valeurs dans l'ordre numérique
-	 * à partir de 8 + nombre de valeurs jusqu'au nombre de couples + 8 + nombre de valeurs : les occurences de couples de pixels dans l'ordre numérique, couples homogènes d'abords
+	 * ï¿½ partir de 8 jusqu'au nombre de valeurs + 8 : les occurences de valeurs dans l'ordre numï¿½rique
+	 * ï¿½ partir de 8 + nombre de valeurs jusqu'au nombre de couples + 8 + nombre de valeurs : les occurences de couples de pixels dans l'ordre numï¿½rique, couples homogï¿½nes d'abords
 	 */
 	@Override
-	public void doSetCounts(float[] counts) {
+	public void doSetCounts(double[] counts) {
 
 		totalCountValues = validValues() - counts[4];
 		
@@ -92,7 +92,7 @@ public class ValueAndCoupleCounting extends Counting implements ValueCountingInt
 	}
 	
 	@Override
-	public float countValues() {
+	public double countValues() {
 		return totalCountValues;
 	}
 	
@@ -102,7 +102,7 @@ public class ValueAndCoupleCounting extends Counting implements ValueCountingInt
 	}
 	
 	@Override
-	public float countValue(int v){
+	public double countValue(int v){
 		return countValues.get(v);
 	}
 
@@ -132,17 +132,17 @@ public class ValueAndCoupleCounting extends Counting implements ValueCountingInt
 	}
 	
 	@Override
-	public float totalCouples() {
+	public double totalCouples() {
 		return totalCouples;
 	}
 
 	@Override
-	public float validCouples() {
+	public double validCouples() {
 		return validCouples;
 	}
 	
 	@Override
-	public float countCouples() {
+	public double countCouples() {
 		return totalCountCouples;
 	}
 	
@@ -152,7 +152,7 @@ public class ValueAndCoupleCounting extends Counting implements ValueCountingInt
 	}
 	
 	@Override
-	public float countCouple(float c){
+	public double countCouple(float c){
 		if(countCouples.containsKey(c)){
 			return countCouples.get(c);
 		}
@@ -165,12 +165,12 @@ public class ValueAndCoupleCounting extends Counting implements ValueCountingInt
 	}
 	
 	@Override
-	public float countHomogeneousCouples() {
+	public double countHomogeneousCouples() {
 		return homogeneousCouples;
 	}
 
 	@Override
-	public float countHeterogenousCouples() {
+	public double countHeterogenousCouples() {
 		return heterogeneousCouples;
 	}
 	

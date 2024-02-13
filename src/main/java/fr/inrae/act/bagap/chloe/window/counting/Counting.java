@@ -28,13 +28,13 @@ public abstract class Counting implements
 	 */
 	private boolean validCounting;
 	
-	private float theoreticalSize;
+	private double theoreticalSize;
 	
-	private float centralValue;
+	private double centralValue;
 	
-	private float totalValues;
+	private double totalValues;
 	
-	private float validValues;
+	private double validValues;
 	
 	/**
 	 * the metrics and values
@@ -51,7 +51,7 @@ public abstract class Counting implements
 	 */
 	private Set<CountingObserver> observers;
 	
-	public Counting(float theoreticalSize){
+	public Counting(double theoreticalSize){
 		this.theoreticalSize = theoreticalSize;
 		//metrics = new TreeMap<Metric, Double>();
 		metrics = new TreeSet<Metric>();
@@ -65,13 +65,12 @@ public abstract class Counting implements
 	 * 2 : nombre de pixels pris en compte
 	 * 3 : nombre de noDataValue
 	 */
-	public void setCounts(float[] counts){
+	public void setCounts(double[] counts){
 		
 		if(counts[0] == 1){
 		
 			totalValues = counts[2];
 			validValues = totalValues - counts[3];
-			
 			if(validValues/theoreticalSize >= minRate){
 				setValidCounting(true);
 			}else{
@@ -89,7 +88,7 @@ public abstract class Counting implements
 	}
 	
 	// partie specifique
-	public abstract void doSetCounts(float[] counts);
+	public abstract void doSetCounts(double[] counts);
 	
 	public void addMetric(Metric m){
 		//metrics.put(m, (double) Raster.getNoDataValue());
@@ -208,7 +207,7 @@ public abstract class Counting implements
 	}
 	
 	@Override
-	public float theoreticalSize(){
+	public double theoreticalSize(){
 		if(theoreticalSize == 0){
 			return totalValues;
 		}
@@ -216,22 +215,22 @@ public abstract class Counting implements
 	}
 	
 	@Override
-	public float totalValues() {
+	public double totalValues() {
 		return totalValues;
 	}
 
 	@Override
-	public float validValues() {
+	public double validValues() {
 		return validValues;
 	}
 	
 	@Override
-	public float centralValue(){
+	public double centralValue(){
 		return centralValue;
 	}
 	
 	@Override
-	public float countValues() {
+	public double countValues() {
 		throw new UnsupportedOperationException();
 	}
 	
@@ -241,7 +240,7 @@ public abstract class Counting implements
 	}
 
 	@Override
-	public float countValue(int v) {
+	public double countValue(int v) {
 		throw new UnsupportedOperationException();
 	}
 	
@@ -256,27 +255,27 @@ public abstract class Counting implements
 	}
 
 	@Override
-	public float totalCouples() {
+	public double totalCouples() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public float validCouples() {
+	public double validCouples() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public float countCouples() {
+	public double countCouples() {
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public float countHomogeneousCouples() {
+	public double countHomogeneousCouples() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public float countHeterogenousCouples() {
+	public double countHeterogenousCouples() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -286,12 +285,12 @@ public abstract class Counting implements
 	}
 
 	@Override
-	public float countCouple(float c) {
+	public double countCouple(float c) {
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public float countCouple(short v1, short v2) {
+	public double countCouple(short v1, short v2) {
 		return countCouple(Couple.getCouple(v1, v2));
 	}
 
@@ -301,32 +300,32 @@ public abstract class Counting implements
 	}
 
 	@Override
-	public float average() {
+	public double average() {
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public float standardDeviation() {
+	public double standardDeviation() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public float sum() {
+	public double sum() {
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public float squareSum() {
+	public double squareSum() {
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public float minimum(){
+	public double minimum(){
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public float maximum(){
+	public double maximum(){
 		throw new UnsupportedOperationException();
 	}
 
@@ -336,12 +335,12 @@ public abstract class Counting implements
 	}
 	
 	@Override
-	public float totalSurface(){
+	public double totalSurface(){
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public float maxSurface(){
+	public double maxSurface(){
 		throw new UnsupportedOperationException();
 	}
 
@@ -351,52 +350,52 @@ public abstract class Counting implements
 	}
 
 	@Override
-	public float totalSurface(int v){
+	public double totalSurface(int v){
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public float maxSurface(int v){
+	public double maxSurface(int v){
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public float slopeDirection(){
+	public double slopeDirection(){
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public float slopeIntensity(){
+	public double slopeIntensity(){
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public float surface(){
+	public double surface(){
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public float volume(){
+	public double volume(){
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public float erosionEmprise(){
+	public double erosionEmprise(){
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public float erosionIntensity(){
+	public double erosionIntensity(){
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public float degatErosionEmprise(){
+	public double degatErosionEmprise(){
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public float degatErosionIntensity(){
+	public double degatErosionIntensity(){
 		throw new UnsupportedOperationException();
 	}
 }

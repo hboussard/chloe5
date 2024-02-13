@@ -8,7 +8,7 @@ public abstract class MapLandscapeMetricKernel implements LandscapeMetricKernel 
 	
 	private float[] inDatas;
 	
-	private float[] outDatas;
+	private double[] outDatas;
 	
 	private int width, height;
 	
@@ -30,7 +30,7 @@ public abstract class MapLandscapeMetricKernel implements LandscapeMetricKernel 
 		this.inDatas = inDatas;
 	}
 	
-	public void setOutDatas(float[] outDatas){
+	public void setOutDatas(double[] outDatas){
 		this.outDatas = outDatas;
 	}
 	
@@ -50,7 +50,7 @@ public abstract class MapLandscapeMetricKernel implements LandscapeMetricKernel 
 		return inDatas;
 	}
 	
-	public float[] outDatas(){
+	public double[] outDatas(){
 		return outDatas;
 	}
 	

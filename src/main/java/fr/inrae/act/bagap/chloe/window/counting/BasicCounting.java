@@ -7,7 +7,7 @@ public class BasicCounting extends Counting implements BasicCountingInterface {
 	}
 
 	@Override
-	public void doSetCounts(float[] counts) {
+	public void doSetCounts(double[] counts) {
 		// do nothing special
 	}
 

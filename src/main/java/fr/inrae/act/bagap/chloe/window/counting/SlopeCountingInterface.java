@@ -6,12 +6,12 @@ public interface SlopeCountingInterface {
 	 * to get the slope direction
 	 * @return the slope direction
 	 */
-	float slopeDirection();
+	double slopeDirection();
 	
 	/**
 	 * to get the slope intensity
 	 * @return the slope intensity
 	 */
-	float slopeIntensity();
+	double slopeIntensity();
 	
 }

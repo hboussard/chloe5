@@ -35,7 +35,7 @@ public class ScriptContinuitesRennesMetropole {
 		
 		long begin = System.currentTimeMillis();
 		
-		//convert();
+		convert();
 		
 		//prepaOS();
 		//rasterizeZoneHumide();
@@ -187,14 +187,167 @@ public class ScriptContinuitesRennesMetropole {
 		fragmentationFonctionnelle("boise", 125, "deplacement", 0.5f, 1500);
 		*/
 		
-		classification("boise", 250, "deplacement", 0, 1, 0.1f);
-		classification("humide", 250, "deplacement", 0, 1, 0.1f);
+		//classification("boise", 250, "deplacement", 0, 1, 0.1f);
+		//classification("humide", 250, "deplacement", 0, 1, 0.1f);
 		
+		//sum(250, "deplacement", 33);
+		//sum(250, "deplacement", 26);
+		
+		//cleanClassif(250, "deplacement", 33);
+		//cleanClassif(250, "deplacement", 26);
+		/*
+		analyseGlobale("E:/rennes_metropole/continuite_ecologique/classification/rm_classif_0-33_deplacement_boise_250m.tif", "E:/rennes_metropole/continuite_ecologique/classification/rm_classif_0-33_deplacement_boise_250m.csv");
+		analyseGlobale("E:/rennes_metropole/continuite_ecologique/classification/rm_classif_0-33_deplacement_humide_250m.tif", "E:/rennes_metropole/continuite_ecologique/classification/rm_classif_0-33_deplacement_humide_250m.csv");
+		analyseGlobale("E:/rennes_metropole/continuite_ecologique/classification/rm_classif_0-33_deplacement_250m.tif", "E:/rennes_metropole/continuite_ecologique/classification/rm_classif_0-33_deplacement_250m.csv");
+		analyseGlobale("E:/rennes_metropole/continuite_ecologique/classification/rm_classif_0-26_deplacement_boise_250m.tif", "E:/rennes_metropole/continuite_ecologique/classification/rm_classif_0-26_deplacement_boise_250m.csv");
+		analyseGlobale("E:/rennes_metropole/continuite_ecologique/classification/rm_classif_0-26_deplacement_humide_250m.tif", "E:/rennes_metropole/continuite_ecologique/classification/rm_classif_0-26_deplacement_humide_250m.csv");
+		analyseGlobale("E:/rennes_metropole/continuite_ecologique/classification/rm_classif_0-26_deplacement_250m.tif", "E:/rennes_metropole/continuite_ecologique/classification/rm_classif_0-26_deplacement_250m.csv");
+		//System.out.println(Float.MAX_VALUE);
+		*/
+		//System.out.println(Long.MAX_VALUE);
+		//System.out.println(Float.MAX_VALUE);
+		//System.out.println(Double.MAX_VALUE);
+	/*
+		double f=0;
+		for(int i=0; i<Integer.MAX_VALUE; i+=100) {
+			f += 100;
+			System.out.println(f);
+		}
+		*/
+		//double d = Math.pow(2, 24);
+		//System.out.println(d);
 		
 		long end = System.currentTimeMillis();
 		System.out.println("time computing : "+(end - begin));
 	}
 	
+	private static void analyseGlobale(String inputRaster, String outputCsv) {
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(ChloeAnalysisType.MAP);
+		builder.setRasterFile(inputRaster);
+		builder.addMetric("pNV_1");
+		builder.addCsvOutput(outputCsv);
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+	}
+	
+	private static void cleanClassif(int dMax, String continuite, int seuil) {
+		
+		Coverage cov = CoverageManager.getCoverage("E:/rennes_metropole/data/commune_5m.tif");
+		float[] data = cov.getData();
+		EnteteRaster entete = cov.getEntete();
+		cov.dispose();
+		
+		Coverage cov1 = CoverageManager.getCoverage("E:/rennes_metropole/continuite_ecologique/classification/classif_0-"+seuil+"_"+continuite+"_boise_"+dMax+"m.tif");
+		float[] data1 = cov1.getData();
+		cov1.dispose();
+		
+		float[] outData = new float[entete.width()*entete.height()];
+		
+		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(outData, data, data1){
+
+			@Override
+			protected float doTreat(float[] v) {
+				float v0 = v[0];
+				float v1 = v[1];
+				if(v0 == -1) { 
+					return -1;
+				}
+				if(v1 == 1) { 
+					return 1;
+				}
+				return 0;
+			}
+		};
+		cal.run();
+		
+		CoverageManager.write("E:/rennes_metropole/continuite_ecologique/classification/rm_classif_0-"+seuil+"_"+continuite+"_boise_"+dMax+"m.tif", outData, entete);
+		
+		cov1 = CoverageManager.getCoverage("E:/rennes_metropole/continuite_ecologique/classification/classif_0-"+seuil+"_"+continuite+"_humide_"+dMax+"m.tif");
+		data1 = cov1.getData();
+		cov1.dispose();
+		
+		outData = new float[entete.width()*entete.height()];
+		
+		cal = new Pixel2PixelTabCalculation(outData, data, data1){
+
+			@Override
+			protected float doTreat(float[] v) {
+				float v0 = v[0];
+				float v1 = v[1];
+				if(v0 == -1) { 
+					return -1;
+				}
+				if(v1 == 1) { 
+					return 1;
+				}
+				return 0;
+			}
+		};
+		cal.run();
+		
+		CoverageManager.write("E:/rennes_metropole/continuite_ecologique/classification/rm_classif_0-"+seuil+"_"+continuite+"_humide_"+dMax+"m.tif", outData, entete);
+		
+		cov1 = CoverageManager.getCoverage("E:/rennes_metropole/continuite_ecologique/classification/classif_0-"+seuil+"_"+continuite+"_"+dMax+"m.tif");
+		data1 = cov1.getData();
+		cov1.dispose();
+		
+		outData = new float[entete.width()*entete.height()];
+		
+		cal = new Pixel2PixelTabCalculation(outData, data, data1){
+
+			@Override
+			protected float doTreat(float[] v) {
+				float v0 = v[0];
+				float v1 = v[1];
+				if(v0 == -1) { 
+					return -1;
+				}
+				if(v1 == 1) { 
+					return 1;
+				}
+				return 0;
+			}
+		};
+		cal.run();
+		
+		CoverageManager.write("E:/rennes_metropole/continuite_ecologique/classification/rm_classif_0-"+seuil+"_"+continuite+"_"+dMax+"m.tif", outData, entete);
+
+	}
+	
+	private static void sum(int dMax, String continuite, int seuil) {
+		
+		Coverage covB = CoverageManager.getCoverage("E:/rennes_metropole/continuite_ecologique/classification/classif_0-"+seuil+"_"+continuite+"_boise_"+dMax+"m.tif");
+		float[] dataB = covB.getData();
+		EnteteRaster entete = covB.getEntete();
+		covB.dispose();
+		
+		Coverage covH = CoverageManager.getCoverage("E:/rennes_metropole/continuite_ecologique/classification/classif_0-"+seuil+"_"+continuite+"_humide_"+dMax+"m.tif");
+		float[] dataH = covH.getData();
+		covH.dispose();
+		
+		float[] outData = new float[entete.width()*entete.height()];
+		
+		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(outData, dataB, dataH){
+
+			@Override
+			protected float doTreat(float[] v) {
+				float vB = v[0];
+				float vH = v[1];
+				if(vB == 1 || vH == 1) { 
+					return 1;
+				}
+				return 0;
+			}
+		};
+		cal.run();
+		
+		CoverageManager.write("E:/rennes_metropole/continuite_ecologique/classification/classif_0-"+seuil+"_"+continuite+"_"+dMax+"m.tif", outData, entete);
+	}
+
 	private static void classification(String type, int dMax, String continuite, int min, int max, float step) {
 
 		Coverage cov = CoverageManager.getCoverage("E:/rennes_metropole/continuite_ecologique/indice_"+continuite+"_"+type+"_"+dMax+"m.tif");

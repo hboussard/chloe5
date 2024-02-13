@@ -7,24 +7,24 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
 	
 	private int[] values;
 	
-	private float totalSurface;
+	private double totalSurface;
 	
 	private int nbPatch;
 	
-	private float maxSurface; 
+	private double maxSurface; 
 	
 	private Map<Integer, Integer> nbPatches;
 	
-	private Map<Integer, Float> totalSurfaces;
+	private Map<Integer, Double> totalSurfaces;
 	
-	private Map<Integer, Float> maxSurfaces;
+	private Map<Integer, Double> maxSurfaces;
 	
  	public PatchCounting(int[] values, float theoreticalSize){
 		super(theoreticalSize);
 		this.values = values;
 		nbPatches = new HashMap<Integer, Integer>();
-		totalSurfaces = new HashMap<Integer, Float>();
-		maxSurfaces = new HashMap<Integer, Float>();
+		totalSurfaces = new HashMap<Integer, Double>();
+		maxSurfaces = new HashMap<Integer, Double>();
 	}
  	
  	public PatchCounting(int[] values){
@@ -36,12 +36,12 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
 	 * 4 : nombre de pathes
 	 * 5 : surface totale
 	 * 6 : surface max
-	 * à partir de 7 jusqu'au nombre de valeurs + 7 : les nombres de patch par classe
-	 * à partir de nombre de valeurs + 7 jusqu'à 2*nombre de valeurs + 7 : les surfaces totales par classe
-	 * à partir de 2*nombre de valeurs + 7 jusqu'à 3*nombre de valeurs + 7 : les maximum de surfaces par classe
+	 * ï¿½ partir de 7 jusqu'au nombre de valeurs + 7 : les nombres de patch par classe
+	 * ï¿½ partir de nombre de valeurs + 7 jusqu'ï¿½ 2*nombre de valeurs + 7 : les surfaces totales par classe
+	 * ï¿½ partir de 2*nombre de valeurs + 7 jusqu'ï¿½ 3*nombre de valeurs + 7 : les maximum de surfaces par classe
 	 */
  	@Override
-	public void doSetCounts(float[] counts) {
+	public void doSetCounts(double[] counts) {
 		
  		nbPatch = (int) counts[4];
  		totalSurface = counts[5];
@@ -62,7 +62,7 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
 	}
 
 	@Override
-	public float totalSurface() {
+	public double totalSurface() {
 		return totalSurface;
 	}
 
@@ -72,7 +72,7 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
 	}
 	
 	@Override
-	public float maxSurface(){
+	public double maxSurface(){
 		return maxSurface;
 	}
 	
@@ -82,12 +82,12 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
 	}
 
 	@Override
-	public float totalSurface(int v){
+	public double totalSurface(int v){
 		return totalSurfaces.get(v);
 	}
 
 	@Override
-	public float maxSurface(int v){
+	public double maxSurface(int v){
 		return maxSurfaces.get(v);
 	}
 	

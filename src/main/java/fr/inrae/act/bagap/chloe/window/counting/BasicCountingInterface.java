@@ -14,26 +14,26 @@ public interface BasicCountingInterface {
 	 * the theoretical size of the window if there were no border
 	 * @return the theoretical size
 	 */
-	float theoreticalSize();
+	double theoreticalSize();
 	
 	/**
 	 * the total count of values
 	 * @return the total count of values
 	 */
-	float totalValues();
+	double totalValues();
 	
 	/**
 	 * the total count of valid values
 	 * a valid value is different to Raster.noDataValue()
 	 * @return the total count of valid values
 	 */
-	float validValues();
+	double validValues();
 	
 	/**
 	 * the central value of the window
 	 * only available for sliding et selected windows
 	 * @return the central value
 	 */
-	float centralValue();
+	double centralValue();
 
 }

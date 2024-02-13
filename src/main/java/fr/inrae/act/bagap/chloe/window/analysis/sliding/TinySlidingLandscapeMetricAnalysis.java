@@ -40,7 +40,7 @@ public class TinySlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 		buffer = (short) Math.max(displacement(), LandscapeMetricAnalysis.bufferSize());
 		
 		// gestion des sorties
-		kernel().setOutDatas(new float[((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1))][nbValues()]);
+		kernel().setOutDatas(new double[((((roiWidth()-1)/displacement())+1)*(((buffer-1)/displacement())+1))][nbValues()]);
 		
 		// initialisation du comptage
 		counting().init();

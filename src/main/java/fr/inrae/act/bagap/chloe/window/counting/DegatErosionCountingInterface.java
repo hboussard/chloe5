@@ -2,8 +2,8 @@ package fr.inrae.act.bagap.chloe.window.counting;
 
 public interface DegatErosionCountingInterface {
 
-	float degatErosionEmprise();
+	double degatErosionEmprise();
 	
-	float degatErosionIntensity();
+	double degatErosionIntensity();
 	
 }

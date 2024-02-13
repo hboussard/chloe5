@@ -14,7 +14,7 @@ public abstract class AbstractSlidingLandscapeMetricKernel extends Kernel implem
 	
 	private float[] inDatas;
 	
-	private float[][] outDatas;
+	private double[][] outDatas;
 	
 	private int theY;
 	
@@ -131,12 +131,12 @@ public abstract class AbstractSlidingLandscapeMetricKernel extends Kernel implem
 	}
 
 	@Override
-	public void setOutDatas(float[][] outDatas){
+	public void setOutDatas(double[][] outDatas){
 		this.outDatas = outDatas;
 	}
 	
 	@Override
-	public float[][] outDatas(){
+	public double[][] outDatas(){
 		return outDatas;
 	}
 	

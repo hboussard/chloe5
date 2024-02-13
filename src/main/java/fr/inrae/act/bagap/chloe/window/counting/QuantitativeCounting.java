@@ -2,9 +2,9 @@ package fr.inrae.act.bagap.chloe.window.counting;
 
 public class QuantitativeCounting extends Counting implements QuantitativeCountingInterface {
 	
-	private float sum, squareSum, minimum, maximum;
+	private double sum, squareSum, minimum, maximum;
 	
-	public QuantitativeCounting(float theoriticalSize) {
+	public QuantitativeCounting(double theoriticalSize) {
 		super(theoriticalSize);
 	}
 	
@@ -15,12 +15,12 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 	/**
 	 * partie specifique :
 	 * 4 : somme des valeurs
-	 * 5 : somme des carrés des valeurs
+	 * 5 : somme des carrï¿½s des valeurs
 	 * 6 : minimum des valeurs
 	 * 7 : maximum des valeurs
 	 */
 	@Override
-	public void doSetCounts(float[] counts){
+	public void doSetCounts(double[] counts){
 		sum = counts[4];
 		squareSum = counts[5];
 		minimum = counts[6];
@@ -28,22 +28,22 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 	}
 
 	@Override
-	public float average() {
+	public double average() {
 		return (float) (sum / validValues());
 	}
 
 	@Override
-	public float sum() {
+	public double sum() {
 		return sum;
 	}
 	
 	@Override
-	public float squareSum() {
+	public double squareSum() {
 		return squareSum;
 	}
 	
 	@Override
-	public float standardDeviation() {
+	public double standardDeviation() {
 		if(((squareSum / validValues()) - Math.pow(sum / validValues(), 2)) < 0){
 			return 0;
 		}
@@ -51,12 +51,12 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 	}
 	
 	@Override
-	public float minimum(){
+	public double minimum(){
 		return minimum;
 	}
 	
 	@Override
-	public float maximum(){
+	public double maximum(){
 		return maximum;
 	}
 

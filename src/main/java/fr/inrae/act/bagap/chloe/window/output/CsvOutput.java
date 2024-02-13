@@ -43,7 +43,6 @@ public class CsvOutput implements CountingObserver{
 	
 	@Override
 	public void init(Counting c, Set<Metric> metrics) {
-		System.out.println(csv);
 		this.x = minX + cellSize/2.0;
 		this.initX = x;
 		this.y = maxY - cellSize/2.0;

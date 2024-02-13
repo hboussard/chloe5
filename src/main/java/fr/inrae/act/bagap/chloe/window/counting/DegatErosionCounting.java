@@ -2,11 +2,11 @@ package fr.inrae.act.bagap.chloe.window.counting;
 
 public class DegatErosionCounting extends Counting implements DegatErosionCountingInterface {
 
-	private float emprise;
+	private double emprise;
 	
-	private float intensity;
+	private double intensity;
 	
-	public DegatErosionCounting(float theoreticalSize){
+	public DegatErosionCounting(double theoreticalSize){
 		super(theoreticalSize);
 	}
 	/*
@@ -20,19 +20,19 @@ public class DegatErosionCounting extends Counting implements DegatErosionCounti
 	 * 5 : intensity
 	 */
 	@Override
-	public void doSetCounts(float[] counts){
+	public void doSetCounts(double[] counts){
 	
 		emprise = counts[4];
 		intensity = counts[5];
 	}
 	
 	@Override
-	public float degatErosionEmprise(){
+	public double degatErosionEmprise(){
 		return emprise;
 	}
 	
 	@Override
-	public float degatErosionIntensity(){
+	public double degatErosionIntensity(){
 		return intensity;
 	}
 	

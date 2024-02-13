@@ -6,7 +6,7 @@ import java.util.Map;
 public class CoupleCounting extends Counting implements CoupleCountingInterface {
 
 	/** the count of couples */
-	private Map<Float, Float> countCouples;
+	private Map<Float, Double> countCouples;
 	
 	private int nValues;
 	
@@ -14,23 +14,23 @@ public class CoupleCounting extends Counting implements CoupleCountingInterface 
 	
 	private int theoreticalCoupleSize;
 	
-	private float totalCouples;
+	private double totalCouples;
 	
-	private float validCouples;
+	private double validCouples;
 	
-	private float totalCountCouples;
+	private double totalCountCouples;
 	
-	private float homogeneousCouples;
+	private double homogeneousCouples;
 	
-	private float heterogeneousCouples;
+	private double heterogeneousCouples;
 	
 	private short countCoupleClass;
 	
-	public CoupleCounting(int nValues, float[] couples, float theoreticalSize, int theoreticalCoupleSize){
+	public CoupleCounting(int nValues, float[] couples, double theoreticalSize, int theoreticalCoupleSize){
 		super(theoreticalSize);
 		this.nValues = nValues;
 		this.couples = couples;
-		this.countCouples = new HashMap<Float, Float>();
+		this.countCouples = new HashMap<Float, Double>();
 		this.theoreticalCoupleSize = theoreticalCoupleSize;
 	}
 	
@@ -43,10 +43,10 @@ public class CoupleCounting extends Counting implements CoupleCountingInterface 
 	 * 4 : nombre de couples pris en compte
 	 * 5 : nombre de couple noDataValue
 	 * 6 : nombre de couple "0"
-	 * à partir de 7 jusqu'au nombre de couples + 7 : les occurences de couples de pixels dans l'ordre numérique, couples homogènes d'abords
+	 * ï¿½ partir de 7 jusqu'au nombre de couples + 7 : les occurences de couples de pixels dans l'ordre numï¿½rique, couples homogï¿½nes d'abords
 	 */
 	@Override
-	public void doSetCounts(float[] counts){
+	public void doSetCounts(double[] counts){
 		
 		
 		totalCouples = counts[4];
@@ -92,17 +92,17 @@ public class CoupleCounting extends Counting implements CoupleCountingInterface 
 	}
 	
 	@Override
-	public float totalCouples() {
+	public double totalCouples() {
 		return totalCouples;
 	}
 
 	@Override
-	public float validCouples() {
+	public double validCouples() {
 		return validCouples;
 	}
 	
 	@Override
-	public float countCouples() {
+	public double countCouples() {
 		return totalCountCouples;
 	}
 	
@@ -112,7 +112,7 @@ public class CoupleCounting extends Counting implements CoupleCountingInterface 
 	}
 	
 	@Override
-	public float countCouple(float c){
+	public double countCouple(float c){
 		if(countCouples.containsKey(c)){
 			return countCouples.get(c);
 		}
@@ -125,12 +125,12 @@ public class CoupleCounting extends Counting implements CoupleCountingInterface 
 	}
 	
 	@Override
-	public float countHomogeneousCouples() {
+	public double countHomogeneousCouples() {
 		return homogeneousCouples;
 	}
 
 	@Override
-	public float countHeterogenousCouples() {
+	public double countHeterogenousCouples() {
 		return heterogeneousCouples;
 	}
 	

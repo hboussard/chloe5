@@ -40,7 +40,7 @@ public class HugeGridLandscapeMetricAnalysis extends GridLandscapeMetricAnalysis
 		}
 		
 		// gestion des sorties
-		kernel().setOutDatas(new float[gridWidth][nbValues()]);
+		kernel().setOutDatas(new double[gridWidth][nbValues()]);
 		
 		int yGrid, tYs, localBufferROIYMin, localBufferROIYMax;
 		Rectangle roi;

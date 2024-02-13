@@ -2,11 +2,11 @@ package fr.inrae.act.bagap.chloe.window.counting;
 
 public class ErosionCounting extends Counting implements ErosionCountingInterface {
 
-	private float emprise;
+	private double emprise;
 	
-	private float intensity;
+	private double intensity;
 	
-	public ErosionCounting(float theoreticalSize){
+	public ErosionCounting(double theoreticalSize){
 		super(theoreticalSize);
 	}
 	/*
@@ -20,19 +20,19 @@ public class ErosionCounting extends Counting implements ErosionCountingInterfac
 	 * 5 : intensity
 	 */
 	@Override
-	public void doSetCounts(float[] counts){
+	public void doSetCounts(double[] counts){
 	
 		emprise = counts[4];
 		intensity = counts[5];
 	}
 	
 	@Override
-	public float erosionEmprise(){
+	public double erosionEmprise(){
 		return emprise;
 	}
 	
 	@Override
-	public float erosionIntensity(){
+	public double erosionIntensity(){
 		return intensity;
 	}
 	

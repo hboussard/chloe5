@@ -108,7 +108,8 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		setAnalysisType(ChloeAnalysisType.SLIDING);
 		this.shapeType = WindowShapeType.CIRCLE;
 		this.distanceType = WindowDistanceType.THRESHOLD;
-		this.distanceFunction = "exp(-pow(distance, 2)*2*log(2)/(pow(dmax/2, 2)))";
+		this.distanceFunction = "exp(-pow(distance, 2)/pow(dmax/2, 2))";
+		//this.distanceFunction = "exp(-pow(distance, 2)*2*log(2)/(pow(dmax/2, 2)))";
 		this.metrics = new HashSet<Metric>();
 		//this.observers = new HashSet<CountingObserver>();
 		this.displacement = 1;

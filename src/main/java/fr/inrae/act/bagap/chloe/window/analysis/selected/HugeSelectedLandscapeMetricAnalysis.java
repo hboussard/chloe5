@@ -24,9 +24,9 @@ public class HugeSelectedLandscapeMetricAnalysis extends SelectedLandscapeMetric
 	protected void doInit() {
 				
 		// gestion des sorties
-		Map<Pixel, float[]> outDatas = new HashMap<Pixel, float[]>();
+		Map<Pixel, double[]> outDatas = new HashMap<Pixel, double[]>();
 		for(Pixel p : pixels()){
-			outDatas.put(p, new float[nbValues()]);
+			outDatas.put(p, new double[nbValues()]);
 		}
 		kernel().setOutDatas(outDatas);
 		

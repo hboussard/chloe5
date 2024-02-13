@@ -7,8 +7,12 @@ public class ScriptGrainBocagerDepartement {
 
 	public static void main(String[] args){
 		
-		scriptCalculGrainBocager(53, 2019);
 		
+		//scriptCalculGrainBocager(22, 2018);
+		//scriptCalculGrainBocager(29, 2018);
+		//scriptCalculGrainBocager(35, 2020);
+		//scriptCalculGrainBocager(53, 2019);
+		//scriptCalculGrainBocager(56, 2019);
 	}
 	
 	private static void scriptCalculGrainBocager(int numDep, int annee) {

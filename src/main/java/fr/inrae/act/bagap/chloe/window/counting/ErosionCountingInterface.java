@@ -2,8 +2,8 @@ package fr.inrae.act.bagap.chloe.window.counting;
 
 public interface ErosionCountingInterface {
 
-	float erosionEmprise();
+	double erosionEmprise();
 	
-	float erosionIntensity();
+	double erosionIntensity();
 	
 }

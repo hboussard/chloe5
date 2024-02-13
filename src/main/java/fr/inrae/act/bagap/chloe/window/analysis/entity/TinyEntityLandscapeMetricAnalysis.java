@@ -23,8 +23,8 @@ public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 		kernel().setWidth(roiWidth());
 		kernel().setHeight(roiHeight());
 		
-		// lecture de la carte area et détection des numéros
-		// voir si on ne peut faire cette initialisation à la volée
+		// lecture de la carte area et dï¿½tection des numï¿½ros
+		// voir si on ne peut faire cette initialisation ï¿½ la volï¿½e
 				
 		// recuperation des donnees depuis le coverage
 		Rectangle roi = new Rectangle(roiX(), roiY(), roiWidth(), roiHeight());
@@ -43,9 +43,9 @@ public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 		//System.out.println("nombre de features "+areaNumbers.size());
 		
 		// gestion des sorties
-		kernel().setOutDatas(new HashMap<Integer, float[]>());
+		kernel().setOutDatas(new HashMap<Integer, double[]>());
 		for(int aId : entityIds){
-			kernel().outDatas().put(aId, new float[nbValues()]);
+			kernel().outDatas().put(aId, new double[nbValues()]);
 			kernel().outDatas().get(aId)[0] = 1; // filtre ok
 			//kernel().outDatas().get(aId)[6] = Float.MAX_VALUE; // init minimum
 		}
@@ -61,7 +61,7 @@ public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 	protected void doRun() {
 		kernel().applyEntityWindow();
 		
-		for(Entry<Integer, float[]> e : kernel().outDatas().entrySet()){
+		for(Entry<Integer, double[]> e : kernel().outDatas().entrySet()){
 			counting().setCounts(e.getValue());
 			counting().calculate();
 			counting().export(e.getKey());

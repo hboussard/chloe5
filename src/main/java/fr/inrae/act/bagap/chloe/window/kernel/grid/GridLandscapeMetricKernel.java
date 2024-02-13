@@ -12,7 +12,7 @@ public abstract class GridLandscapeMetricKernel extends Kernel implements Landsc
 	
 	private float[] inDatas;
 	
-	private float[][] outDatas;
+	private double[][] outDatas;
 	
 	private int theY;
 	
@@ -86,11 +86,11 @@ public abstract class GridLandscapeMetricKernel extends Kernel implements Landsc
 		return inDatas;
 	}
 	
-	public void setOutDatas(float[][] outDatas){
+	public void setOutDatas(double[][] outDatas){
 		this.outDatas = outDatas;
 	}
 	
-	public float[][] outDatas(){
+	public double[][] outDatas(){
 		return outDatas;
 	}
 	

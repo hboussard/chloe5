@@ -3,14 +3,14 @@ package fr.inrae.act.bagap.chloe.window.counting;
 public interface ContinuityCountingInterface {
 
 	/**
-	 * la surface d'accessibilité
-	 * @return la surface d'accessibilité
+	 * la surface d'accessibilitï¿½
+	 * @return la surface d'accessibilitï¿½
 	 */
-	float surface();
+	double surface();
 	
 	/**
-	 * le volume de déplacement
-	 * @return le volume de déplacement
+	 * le volume de dï¿½placement
+	 * @return le volume de dï¿½placement
 	 */
-	float volume();
+	double volume();
 }

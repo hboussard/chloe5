@@ -14,7 +14,7 @@ public abstract class EntityLandscapeMetricKernel implements LandscapeMetricKern
 
 	private float[] inDatas, entityDatas;
 
-	private Map<Integer, float[]> outDatas;
+	private Map<Integer, double[]> outDatas;
 	
 	public EntityLandscapeMetricKernel(int noDataValue){
 		this.noDataValue = noDataValue;
@@ -36,7 +36,7 @@ public abstract class EntityLandscapeMetricKernel implements LandscapeMetricKern
 		this.entityDatas = entityDatas;
 	}
 	
-	public void setOutDatas(Map<Integer, float[]> outDatas){
+	public void setOutDatas(Map<Integer, double[]> outDatas){
 		this.outDatas = outDatas;
 	}
 	
@@ -60,7 +60,7 @@ public abstract class EntityLandscapeMetricKernel implements LandscapeMetricKern
 		return entityDatas;
 	}
 	
-	public Map<Integer, float[]> outDatas(){
+	public Map<Integer, double[]> outDatas(){
 		return outDatas;
 	}
 	

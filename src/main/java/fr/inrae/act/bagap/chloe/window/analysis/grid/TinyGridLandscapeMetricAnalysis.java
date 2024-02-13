@@ -61,7 +61,7 @@ public class TinyGridLandscapeMetricAnalysis extends GridLandscapeMetricAnalysis
 		}*/
 		
 		// gestion des sorties
-		kernel().setOutDatas(new float[gridWidth][nbValues()]);
+		kernel().setOutDatas(new double[gridWidth][nbValues()]);
 		
 		// initialisation du comptage
 		counting().init();

@@ -13,14 +13,14 @@ public interface ValueCountingInterface {
 	 * a value is different to 0 and to Raster.noDataValue()
 	 * @return the count of values
 	 */
-	float countValues();
+	double countValues();
 	
 	/**
 	 * to count value of type v
 	 * @param v : type of value
 	 * @return the count of v
 	 */
-	float countValue(int v);
+	double countValue(int v);
 	
 	/**
 	 * to count the classes
