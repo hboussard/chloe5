@@ -657,7 +657,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			// recuperation des valeurs
 			int[] values = builder.getValues();
 			if (values == null) {
-				values = readValues(coverage, new Rectangle(roiX, roiY, roiWidth, roiHeight));
+				values = readValues(coverage, new Rectangle(roiX, roiY, roiWidth, roiHeight), coverage.getEntete().noDataValue());
 			}
 			
 			// les non-filtres
@@ -917,7 +917,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 		
 	}
 	
-	protected abstract int[] readValues(Coverage coverage, Rectangle roi);
+	protected abstract int[] readValues(Coverage coverage, Rectangle roi, int noDataValue);
 	
 	protected abstract SlidingLandscapeMetricAnalysis createSingle(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, 
 			int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nb, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting);

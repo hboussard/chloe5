@@ -27,7 +27,7 @@ public class GBPCalculEnjeuxGlobaux extends GrainBocagerProcedure {
 			covClusterFonctionnel = CoverageManager.getCoverage(manager().clusterGrainBocagerFonctionnel());
 		}
 		
-		System.out.println("calcul des zones de fragmentation de grain bocager fonctionnel à "+manager().enjeuxCellSize()+"m en utilisant une fenêtre de "+manager().enjeuxWindowRadius()+"m");
+		System.out.println("calcul des zones de fragmentation de grain bocager fonctionnel a "+manager().enjeuxCellSize()+"m en utilisant une fenetre de "+manager().enjeuxWindowRadius()+"m");
 		
 		Coverage covFragmentationGrainBocagerFonctionnel = GrainBocager.runSHDIClusterGrainBocagerFonctionnel(covClusterFonctionnel, manager().enjeuxWindowRadius(), manager().enjeuxCellSize(), manager().modeFast());
 		
@@ -48,7 +48,7 @@ public class GBPCalculEnjeuxGlobaux extends GrainBocagerProcedure {
 		
 		Coverage covGrainBocagerFonctionnel = CoverageManager.getCoverage(manager().grainBocagerFonctionnel());
 		
-		System.out.println("calcul des proportions de grain bocager fonctionnel dans une fenêtre de "+manager().enjeuxWindowRadius()+"m avec une resolution de "+manager().enjeuxCellSize()+"m");
+		System.out.println("calcul des proportions de grain bocager fonctionnel dans une fenï¿½tre de "+manager().enjeuxWindowRadius()+"m avec une resolution de "+manager().enjeuxCellSize()+"m");
 		
 		Coverage covProportionGrainBocagerFonctionnel = GrainBocager.runProportionGrainBocagerFonctionnel(covGrainBocagerFonctionnel, manager().enjeuxWindowRadius(), manager().enjeuxCellSize(), manager().modeFast());
 		

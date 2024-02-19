@@ -26,7 +26,7 @@ public class GBPCalculGrainBocager extends GrainBocagerProcedure {
 			covDistanceInfluenceBoisement = CoverageManager.getCoverage(manager().distanceInfluenceBoisement());
 		}
 		
-		System.out.println("calcul du grain bocager à "+manager().grainCellSize()+"m dans une fenêtre de "+manager().grainWindowRadius()+"m");
+		System.out.println("calcul du grain bocager a "+manager().grainCellSize()+"m dans une fenetre de "+manager().grainWindowRadius()+"m");
 		
 		//Coverage covGrainBocager = CoverageManager.getCoverage(manager().grainBocager());
 		

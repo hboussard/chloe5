@@ -59,11 +59,11 @@ public class SelectedCsvOutput implements CountingObserver{
 	}
 
 	@Override
-	public void postrun(Counting c, int i, int j, Set<Metric> metrics) {
+	public void postrun(Counting c, Pixel pix, Set<Metric> metrics) {
 		
 		Pixel pixel = null;
 		for(Pixel p : pixels){
-			if(p.x() == i && p.y() == j){
+			if(p == pix) {
 				pixel = p;
 				break;
 			}
@@ -115,6 +115,11 @@ public class SelectedCsvOutput implements CountingObserver{
 	@Override
 	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// do nothing
+	}
+	
+	@Override
+	public void postrun(Counting c, int i, int j, Set<Metric> metrics) {
+		// do nothing;
 	}
 
 }

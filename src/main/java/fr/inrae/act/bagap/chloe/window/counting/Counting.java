@@ -3,6 +3,8 @@ package fr.inrae.act.bagap.chloe.window.counting;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+
+import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
@@ -188,6 +190,13 @@ public abstract class Counting implements
 	public void export(int x, int y) {
 		for(CountingObserver co : observers) {
 			co.postrun(this, x, y, metrics);
+			
+		}
+	}
+	
+	public void export(Pixel p) {
+		for(CountingObserver co : observers) {
+			co.postrun(this, p, metrics);
 			
 		}
 	}

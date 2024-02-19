@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.PixelWithID;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
@@ -55,6 +56,11 @@ public class DataOutput implements CountingObserver{
 	@Override
 	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// do nothing
+	}
+	
+	@Override
+	public void postrun(Counting c, Pixel p, Set<Metric> metrics) {
+		// do nothing;
 	}
 	
 	@Override

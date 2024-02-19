@@ -29,11 +29,11 @@ public class GrainBocagerManager {
 	
 	private Tile tile;					// tuilage pour grandes analyses
 	
-	private List<String> scenarios;		// liste des scénarios
+	private List<String> scenarios;		// liste des scenarios
 	
 	private List<String> codesEA;		// liste des codes exploitations
 	
-	private String outputPath; 		// dossier de génération des sorties
+	private String outputPath; 		// dossier de generation des sorties
 	
 	private String name;				// nom identifiant du territoire
 	
@@ -43,27 +43,27 @@ public class GrainBocagerManager {
 	
 	private double bufferArea; 			// buffer autour du territoire d'analyse
 	
-	private String zoneBocage;			// shapefile des zones bocageres appartenant à l'acteur du territoire
+	private String zoneBocage;			// shapefile des zones bocageres appartenant a l'acteur du territoire
 	
 	private String bocage;				// tuiles MNHC ou autre donnees de boisement
 	
 	private String hauteurBoisement;	// les hauteur de boisement
 	
-	private String typeBoisement;		// les types de boisement (masif, haie ou arbre isolé)
+	private String typeBoisement;		// les types de boisement (masif, haie ou arbre isole)
 	
 	private String distanceInfluenceBoisement; // les distances d'influence des boisement (en fonctin de leur type et de leur hauteur)
 	
 	private String grainBocager;		// le grain bocager continue (de 0 a 1)
 	
-	private String grainBocager4Classes;	// le grain bocager classifié en 4 classes
+	private String grainBocager4Classes;	// le grain bocager classifie en 4 classes
 	
 	private String grainBocagerFonctionnel;	// le grain bocager fonctionnel
 	
-	private String clusterGrainBocagerFonctionnel;	// le grain bocager fonctionnel clusterisé
+	private String clusterGrainBocagerFonctionnel;	// le grain bocager fonctionnel clusterise
 	
-	private String proportionGrainBocagerFonctionnel;	// les proportions de grain bocager fonctionnel (à une certaine échelle)
+	private String proportionGrainBocagerFonctionnel;	// les proportions de grain bocager fonctionnel (a une certaine echelle)
 	
-	private String zoneFragmentationGrainBocagerFonctionnel;	// les zones de fragmentation du grain bocager fonctionnel (à une certaine échelle)
+	private String zoneFragmentationGrainBocagerFonctionnel;	// les zones de fragmentation du grain bocager fonctionnel (a une certaine echelle)
 	
 	private String plantation;			// ajout de lineaires bocagers ou surfaces de bocage
 	
@@ -75,13 +75,13 @@ public class GrainBocagerManager {
 	
 	private double grainCellSize;			// taille du pixel du grain bocager
 	
-	private double grainWindowRadius;		// taille de la fenêtre d'analyse pour le grain bocager
+	private double grainWindowRadius;		// taille de la fenï¿½tre d'analyse pour le grain bocager
 	
 	private double enjeuxCellSize;		// taille du pixel des enjeux
 	
-	private double enjeuxWindowRadius;	// taille de la fenêtre d'analyse pour les enjeux bocagers
+	private double enjeuxWindowRadius;	// taille de la fenï¿½tre d'analyse pour les enjeux bocagers
 	
-	private double[] seuils; 			// seuil d'observation du grain bocager, le seuil de fonctionnalite est le deuxième
+	private double[] seuils; 			// seuil d'observation du grain bocager, le seuil de fonctionnalite est le deuxiï¿½me
 	
 	private String attributCodeEA;		// attribut de code exploitation
 	
@@ -126,7 +126,7 @@ public class GrainBocagerManager {
 	
 	private void init(){
 		
-		// attributs avec valeur par défaut
+		// attributs avec valeur par defaut
 		tile = null;
 		seuils = new double[]{0.2, 0.33, 0.45};
 		modeFast = false;
@@ -142,7 +142,7 @@ public class GrainBocagerManager {
 		attributSecteur = "secteur";
 		attributHauteurPlantation = "hauteur";
 		
-		// attributs à redéfinir 
+		// attributs a redefinir 
 		bocage = "";
 		territoire = "";
 		enveloppe = "";
@@ -166,7 +166,7 @@ public class GrainBocagerManager {
 		
 		if(!bocage.equalsIgnoreCase("")){
 			
-			// récupération de l'entete du bocage
+			// recuperation de l'entete du bocage
 			Coverage covBocage = CoverageManager.getCoverage(bocage);
 			entete = covBocage.getEntete();
 			covBocage.dispose();
@@ -175,22 +175,22 @@ public class GrainBocagerManager {
 				
 				String[] bornes = enveloppe.replace("{", "").replace("}", "").split(";");
 				
-				// récupération de l'enveloppe totale de travail
+				// recuperation de l'enveloppe totale de travail
 				Envelope envelope = new Envelope(
 						Double.parseDouble(bornes[0])-bufferArea, 
 						Double.parseDouble(bornes[1])+bufferArea, 
 						Double.parseDouble(bornes[2])-bufferArea, 
 						Double.parseDouble(bornes[3])+bufferArea);
 							
-				// récupération de l'entete
+				// recuperation de l'entete
 				entete = EnteteRaster.getEntete(entete, envelope);
 				
 			} else if(!territoire.equalsIgnoreCase("") && bufferArea >= 0){
 				
-				// récupération de l'enveloppe totale de travail
+				// recuperation de l'enveloppe totale de travail
 				Envelope envelope = ShapeFile2CoverageConverter.getEnvelope(territoire, bufferArea);
 							
-				// récupération de l'entete
+				// recuperation de l'entete
 				entete = EnteteRaster.getEntete(entete, envelope);
 			}
 			
@@ -199,7 +199,7 @@ public class GrainBocagerManager {
 		
 		if(!hauteurBoisement.equalsIgnoreCase("") && new File(hauteurBoisement).exists()){
 			
-			// récupération de l'entete
+			// recuperation de l'entete
 			Coverage covHauteurBoisement = CoverageManager.getCoverage(hauteurBoisement);
 			entete = covHauteurBoisement.getEntete();
 			covHauteurBoisement.dispose();
@@ -209,7 +209,7 @@ public class GrainBocagerManager {
 		
 		if(!distanceInfluenceBoisement.equalsIgnoreCase("") && new File(distanceInfluenceBoisement).exists()){
 			
-			// récupération de l'entete
+			// recuperation de l'entete
 			Coverage covDistanceInfluence = CoverageManager.getCoverage(distanceInfluenceBoisement);
 			entete = covDistanceInfluence.getEntete();
 			covDistanceInfluence.dispose();
@@ -219,7 +219,7 @@ public class GrainBocagerManager {
 		
 		if(!grainBocager.equalsIgnoreCase("") && new File(grainBocager).exists()){
 			
-			// récupération de l'entete
+			// recuperation de l'entete
 			Coverage covGrainBocager = CoverageManager.getCoverage(grainBocager);
 			entete = covGrainBocager.getEntete();
 			covGrainBocager.dispose();
@@ -229,7 +229,7 @@ public class GrainBocagerManager {
 		
 		if(!clusterGrainBocagerFonctionnel.equalsIgnoreCase("") && new File(clusterGrainBocagerFonctionnel).exists()){
 			
-			// récupération de l'entete
+			// recuperation de l'entete
 			Coverage covClusterGrainBocager = CoverageManager.getCoverage(clusterGrainBocagerFonctionnel);
 			entete = covClusterGrainBocager.getEntete();
 			covClusterGrainBocager.dispose();

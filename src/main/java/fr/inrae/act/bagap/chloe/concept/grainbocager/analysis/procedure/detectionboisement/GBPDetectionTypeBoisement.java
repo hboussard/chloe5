@@ -27,7 +27,7 @@ public class GBPDetectionTypeBoisement extends GrainBocagerProcedure {
 			covHauteurBoisement = CoverageManager.getCoverage(manager().hauteurBoisement());
 		}
 		
-		System.out.println("détection des types de boisements");
+		System.out.println("detection des types de boisements");
 		
 		Coverage covTypeBoisement = GrainBocager.detectionTypeBoisement(covHauteurBoisement, manager().modeFast());
 		

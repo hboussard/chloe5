@@ -5,6 +5,7 @@ import java.util.Set;
 import org.locationtech.jts.geom.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
@@ -172,6 +173,11 @@ public abstract class TileRasterOutput implements CountingObserver {
 	@Override
 	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// do nothing
+	}
+	
+	@Override
+	public void postrun(Counting c, Pixel p, Set<Metric> metrics) {
+		// do nothing;
 	}
 
 	protected abstract void writeRaster(String file, float[] data, EnteteRaster entete);

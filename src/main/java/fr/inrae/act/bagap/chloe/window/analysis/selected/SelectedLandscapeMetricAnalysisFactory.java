@@ -9,6 +9,7 @@ import fr.inra.sad.bagap.apiland.analysis.combination.CombinationExpressionFacto
 import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
 import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inra.sad.bagap.apiland.core.space.impl.raster.PixelWithID;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
@@ -250,7 +251,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 			// recuperation des valeurs
 			int[] values = builder.getValues();
 			if(values == null){
-				values = readValues(coverage, new Rectangle(roiX, roiY, roiWidth, roiHeight));
+				values = readValues(coverage, new Rectangle(roiX, roiY, roiWidth, roiHeight), coverage.getEntete().noDataValue());
 			}
 			
 			if(MetricManager.hasOnlyQualitativeMetric(metrics)){ // qualitative
@@ -425,7 +426,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 		return null;
 	}
 	
-	protected abstract int[] readValues(Coverage coverage, Rectangle roi);
+	protected abstract int[] readValues(Coverage coverage, Rectangle roi, int noDataValue);
 	
 	protected abstract SelectedLandscapeMetricAnalysis createSingle(Coverage coverage, Set<Pixel> pixels, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, SelectedLandscapeMetricKernel kernel, Counting counting);
 	

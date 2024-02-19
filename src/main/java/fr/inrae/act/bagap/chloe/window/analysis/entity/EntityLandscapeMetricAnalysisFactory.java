@@ -189,7 +189,7 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 			// recuperation des valeurs
 			int[] values = builder.getValues();
 			if(values == null){
-				values = readValues(coverage, new Rectangle(roiX, roiY, roiWidth, roiHeight));
+				values = readValues(coverage, new Rectangle(roiX, roiY, roiWidth, roiHeight), coverage.getEntete().noDataValue());
 			}
 						
 			// recuperation des couples
@@ -257,7 +257,7 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 	}
 
 
-	protected abstract int[] readValues(Coverage coverage, Rectangle roi);
+	protected abstract int[] readValues(Coverage coverage, Rectangle roi, int noDataValue);
 
 	protected abstract EntityLandscapeMetricAnalysis create(Coverage coverage, Coverage entityCoverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nb, EntityLandscapeMetricKernel kernel, Counting counting);
 

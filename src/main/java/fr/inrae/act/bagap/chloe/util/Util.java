@@ -2,12 +2,17 @@ package fr.inrae.act.bagap.chloe.util;
 
 import java.awt.Rectangle;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import org.jumpmind.symmetric.csv.CsvReader;
+
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.raster.Coverage;
 
@@ -45,11 +50,11 @@ public class Util {
 		return Math.sqrt(Math.pow(cellSize*(x1-x2), 2) + Math.pow(cellSize*(y1-y2), 2)); 
 	}
 	
-	public static int[] readValuesTinyRoi(Coverage coverage, Rectangle roi) {
+	public static int[] readValuesTinyRoi(Coverage coverage, Rectangle roi, int noDataValue) {
 		float[] datas = coverage.getData(roi);
 		Set<Float> inValues = new TreeSet<Float>();
 		for (float d : datas) {
-			if (d != 0 && d != Raster.getNoDataValue()) {
+			if (d != 0 && d != noDataValue) {
 				inValues.add(d);
 			}
 		}
@@ -61,14 +66,14 @@ public class Util {
 		return values;
 	}
 	
-	public static int[] readValuesHugeRoi(Coverage coverage, Rectangle roi) {
+	public static int[] readValuesHugeRoi(Coverage coverage, Rectangle roi, int noDataValue) {
 		
 		float[] datas;
 		Set<Float> inValues = new TreeSet<Float>();
 		for(int j=0; j<roi.height; j+=LandscapeMetricAnalysis.tileYSize()){
 			datas = coverage.getData(new Rectangle(roi.x, roi.y+j, roi.width, Math.min(LandscapeMetricAnalysis.tileYSize(), roi.height-j)));
 			for (float d : datas) {
-				if (d != 0 && d != Raster.getNoDataValue()) {
+				if (d != 0 && d != noDataValue) {
 					inValues.add(d);
 				}
 			}
@@ -79,6 +84,32 @@ public class Util {
 			values[index++] = (int) d;
 		}
 		return values;
+	}
+	
+	public static Map<Float, Float> importData(String dataFile, String code, String value){
+		
+		try {
+			CsvReader cr = new CsvReader(dataFile);
+			cr.setDelimiter(';');
+			cr.readHeaders();
+			
+			Map<Float, Float> sarMap = new HashMap<Float, Float>();
+			while(cr.readRecord()) {
+				sarMap.put(Float.parseFloat(cr.get(code)), Float.parseFloat(cr.get(value)));
+			}
+			
+			cr.close();
+			
+			return sarMap;
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;		
 	}
 	
 }

@@ -101,7 +101,7 @@ public abstract class MapLandscapeMetricAnalysisFactory {
 			// recuperation des valeurs
 			int[] values = builder.getValues();
 			if(values == null){
-				values = readValues(coverage, new Rectangle(roiX, roiY, roiWidth, roiHeight));
+				values = readValues(coverage, new Rectangle(roiX, roiY, roiWidth, roiHeight), coverage.getEntete().noDataValue());
 			}
 
 			if(MetricManager.hasOnlyQualitativeMetric(metrics)){ // qualitative
@@ -181,7 +181,7 @@ public abstract class MapLandscapeMetricAnalysisFactory {
 		return create(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
 	}
 	
-	protected abstract int[] readValues(Coverage coverage, Rectangle roi);
+	protected abstract int[] readValues(Coverage coverage, Rectangle roi, int noDataValue);
 	
 	protected abstract MapLandscapeMetricAnalysis create(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, 
 			int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, MapLandscapeMetricKernel kernel, Counting counting);

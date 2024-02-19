@@ -10,8 +10,8 @@ import fr.inrae.act.bagap.raster.Coverage;
 public class TinyGridLandscapeMetricAnalysisFactory extends GridLandscapeMetricAnalysisFactory {
 
 	@Override
-	protected int[] readValues(Coverage coverage, Rectangle roi) {
-		return Util.readValuesTinyRoi(coverage, roi);
+	protected int[] readValues(Coverage coverage, Rectangle roi, int noDataValue) {
+		return Util.readValuesTinyRoi(coverage, roi, noDataValue);
 	}
 
 	@Override

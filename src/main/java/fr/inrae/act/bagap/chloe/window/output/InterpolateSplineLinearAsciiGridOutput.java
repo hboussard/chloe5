@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import fr.inra.sad.bagap.apiland.core.element.manager.DynamicLayerFactory;
 import fr.inra.sad.bagap.apiland.core.element.manager.Tool;
+import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.matrix.MatrixManager;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
@@ -214,6 +215,11 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 	@Override
 	public void postrun(Counting c, int id, Set<Metric> metrics) {
 		// do nothing
+	}
+	
+	@Override
+	public void postrun(Counting c, Pixel p, Set<Metric> metrics) {
+		// do nothing;
 	}
 
 }

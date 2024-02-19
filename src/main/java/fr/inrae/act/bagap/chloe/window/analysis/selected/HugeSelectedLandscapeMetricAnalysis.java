@@ -67,7 +67,8 @@ public class HugeSelectedLandscapeMetricAnalysis extends SelectedLandscapeMetric
 		for(Pixel p : pixels()){
 			counting().setCounts(kernel().outDatas().get(p));
 			counting().calculate();
-			counting().export(p.x(), p.y());
+			//counting().export(p.x(), p.y());
+			counting().export(p);
 		}
 	}
 
