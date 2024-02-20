@@ -94,10 +94,6 @@ public class ChloeAPI {
 			importUnfilters(builder, properties);
 			importMaximumNoValueRate(builder, properties);
 			
-			//importXOrigin(builder, properties); // finalement abandonné
-			//importYOrigin(builder, properties); // finalement abandonné
-			//importFrictionFile(builder, properties); // finalement abandonné
-			
 			if(properties.containsKey("output_folder")){
 				importOutputFolderForWindow(builder, properties);
 			}else{
@@ -132,7 +128,6 @@ public class ChloeAPI {
 			importWindowDistanceFunction(builder, properties);
 			importFrictionRaster(builder, properties);
 			importPointsFilter(builder, properties);
-			//importPixelsFilter(builder, properties); // finalement abandonné
 			importWindowsPath(builder, properties);
 			
 			if(properties.containsKey("output_folder")){
@@ -730,20 +725,34 @@ public class ChloeAPI {
 			if(!(prop.endsWith("/") || prop.endsWith("\\\\"))){
 				prop += "/";
 			}
+			
 			String input = properties.getProperty("input_raster");
-			if(input.endsWith(".asc")){
-				builder.setAsciiGridFolderOutput(prop);
-			}else if(input.endsWith(".tif")){
-				builder.setGeoTiffFolderOutput(prop);
-			}else{
-				throw new NoParameterException("output_raster : "+input+" extension problem");
+			
+			boolean export_raster = true;
+			if(properties.containsKey("export_raster")){
+				export_raster = Boolean.parseBoolean(properties.getProperty("export_raster"));
+			}
+			if(export_raster) {
+				if(input.endsWith(".asc")){
+					builder.setAsciiGridFolderOutput(prop);
+				}else if(input.endsWith(".tif")){
+					builder.setGeoTiffFolderOutput(prop);
+				}else{
+					throw new NoParameterException("output_raster : "+input+" extension problem");
+				}
 			}
 			
-			StringBuffer sb = new StringBuffer();
-			sb.append(new File(input).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
-			sb.append(".csv");
-			
-			builder.addCsvOutput(prop+sb.toString());
+			boolean export_csv = true;
+			if(properties.containsKey("export_csv")){
+				export_csv = Boolean.parseBoolean(properties.getProperty("export_csv"));
+			}
+			if(export_csv) {
+				StringBuffer sb = new StringBuffer();
+				sb.append(new File(input).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
+				sb.append(".csv");
+				
+				builder.addCsvOutput(prop+sb.toString());
+			}
 		}
 	}
 	
