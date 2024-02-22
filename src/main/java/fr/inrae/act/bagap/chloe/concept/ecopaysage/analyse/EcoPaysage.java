@@ -471,4 +471,31 @@ public class EcoPaysage {
 		
 	}
 	
+	public static void analyseRuptures(String outputRaster, String[] mapRasters, EnteteRaster entete) {
+		
+		float[] outData = new float[entete.width()*entete.height()];
+		int size = mapRasters.length;
+		for(String mapRaster : mapRasters) {
+			
+			float[] localData = new float[entete.width()*entete.height()];
+			
+			LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+			builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+			builder.addRasterFile(mapRaster);
+			builder.addMetric("SHDI");
+			builder.addWindowSize(7);
+			builder.setUnfilters(new int[]{-1});
+			builder.addTabOutput(localData);
+			LandscapeMetricAnalysis analysis = builder.build();
+			analysis.allRun();
+			
+			for(int i=0; i<outData.length; i++) {
+				outData[i] += localData[i]/size;
+			}
+		}
+		
+		CoverageManager.write(outputRaster, outData, entete);
+		
+	}
+	
 }

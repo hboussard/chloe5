@@ -1,16 +1,18 @@
-package fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.mapping;
+package fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.rupture;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.EcoPaysage;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageManager;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageProcedure;
-import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.clustering.EPPClustering;
+import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.mapping.EPPMapping;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 
-public class EPPMapping extends EcoPaysageProcedure {
+public class EPPRupture extends EcoPaysageProcedure {
 
-	public EPPMapping(EcoPaysageManager manager) {
+	public EPPRupture(EcoPaysageManager manager) {
 		super(manager);
 	}
 
@@ -19,14 +21,14 @@ public class EPPMapping extends EcoPaysageProcedure {
 		
 		boolean force = manager().force();
 		for(int k : manager().classes()) {
-			if(!new File(manager().ecoFile(k)).exists()) {
+			if(!new File(manager().mapFile(k)).exists()) {
 				force = true;
 				break;
 			}
 		}
 		
 		if(force) {
-			new EPPClustering(manager()).run();
+			new EPPMapping(manager()).run();
 		}
 	}
 	
@@ -37,12 +39,9 @@ public class EPPMapping extends EcoPaysageProcedure {
 		
 		EnteteRaster header = EcoPaysage.getHeader(manager().headerFile());
 		
-		for(int k : manager().classes()) {
-			
-			System.out.println("export cartographique vers "+manager().mapFile(k));
-			
-			EcoPaysage.exportMap(manager().mapFile(k), manager().ecoFile(k), k, header);
-		}
+		System.out.println("analyse de fronts de rupture");
+		
+		EcoPaysage.analyseRuptures(manager().ruptureFile(), manager().mapFiles(), header);
 		
 	}
 	

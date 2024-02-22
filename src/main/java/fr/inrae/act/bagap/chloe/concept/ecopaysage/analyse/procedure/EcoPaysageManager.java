@@ -10,6 +10,7 @@ import java.util.TreeMap;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.calculmetrics.EPPCalculMetricsFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.clustering.EPPClusteringFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.mapping.EPPMappingFactory;
+import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.rupture.EPPRuptureFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.standardization.EPPStandardizationFactory;
 import fr.inrae.act.bagap.chloe.util.Util;
 
@@ -31,7 +32,7 @@ public class EcoPaysageManager {
 	
 	private Map<Integer, String> compoFiles, configFiles, normFiles;
 	
-	private String normFile;
+	private String normFile, ruptureFile;
 	
 	//private int scale; // echelle d'analyse unique
 	
@@ -67,6 +68,9 @@ public class EcoPaysageManager {
 		case "mapping" :
 			factory = new EPPMappingFactory();
 			break;
+		case "rupture" :
+			factory = new EPPRuptureFactory();
+			break;
 		default : throw new IllegalArgumentException("treatment '"+treatment+"' do not exists");
 		}
 	}
@@ -83,6 +87,7 @@ public class EcoPaysageManager {
 		compoFiles = new TreeMap<Integer, String>();
 		configFiles = new TreeMap<Integer, String>();
 		normFiles = new TreeMap<Integer, String>();
+		ruptureFile = null;
 		inputRaster = null;
 		//scale = -1;
 		scales = null;
@@ -149,6 +154,11 @@ public class EcoPaysageManager {
 	public void setNormFile(String normFile) {
 		Util.createAccess(normFile);
 		this.normFile = normFile;
+	}
+	
+	public void setRuptureFile(String ruptureFile) {
+		Util.createAccess(ruptureFile);
+		this.ruptureFile = ruptureFile;
 	}
 	
 	public void addNormFile(int scale, String normFile) {
@@ -237,14 +247,17 @@ public class EcoPaysageManager {
 	}
 	
 	public void setEcoFile(int k, String ecoFile) {
+		Util.createAccess(ecoFile);
 		ecoFiles.put(k, ecoFile);
 	}
 	
 	public void setInfoFile(int k, String infoFile) {
+		Util.createAccess(infoFile);
 		infoFiles.put(k, infoFile);
 	}
 	
 	public void setMapFile(int k, String mapFile) {
+		Util.createAccess(mapFile);
 		mapFiles.put(k, mapFile);
 	}
 	
@@ -330,6 +343,19 @@ public class EcoPaysageManager {
 		}
 		return normFiles.get(scale);
 	}
+	
+	public String ruptureFile() {
+		if(ruptureFile == null) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(outputFolder()+"rupture");
+			for(int scale : scales) {
+				sb.append("_"+scale+"m");
+			}
+			sb.append("_7p.tif");
+			setRuptureFile(sb.toString());
+		}
+		return ruptureFile;
+	}
 
 	public String inputRaster() {
 		return inputRaster;
@@ -400,6 +426,15 @@ public class EcoPaysageManager {
 			setMapFile(k, sb.toString());
 		}
 		return mapFiles.get(k);
+	}
+	
+	public String[] mapFiles() {
+		if(mapFiles.size() == 0) {
+			for(int k : classes()) {
+				mapFile(k);
+			}
+		}
+		return mapFiles.values().toArray(new String[mapFiles.size()]);
 	}
 	
 	public String headerFile() {

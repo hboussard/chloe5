@@ -65,7 +65,7 @@ public class SelectedCountValueAndCoupleKernel extends SelectedLandscapeMetricKe
 							v = (short) inDatas()[((y + dy) * width()) + (x + dx)];
 							outDatas().get(p)[2] += coeff;
 							
-							if(v == -1){
+							if(v == noDataValue()){
 								outDatas().get(p)[3] += coeff;
 							}else if(v == 0){
 								outDatas().get(p)[4] += coeff;
