@@ -1,7 +1,10 @@
 package fr.inrae.act.bagap.chloe.script;
 
+import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.locationtech.jts.geom.Envelope;
 
 import fr.inra.sad.bagap.apiland.analysis.tab.SearchAndReplacePixel2PixelTabCalculation;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
@@ -18,7 +21,44 @@ public class ScriptSelected {
 		
 		//generationFriction();
 		//analyse2Friction();
-		analyse2Friction();
+		//analyse2Friction();
+		//split();
+		analyseSelectedMultiple();
+	}
+	
+	private static void split(){
+		
+		Coverage cov = CoverageManager.getCoverage("D:/data/sig/data_ZA/PF_OS_L93/PF_2018/OS_2018_5m.tif");
+		EnteteRaster enteteRef = cov.getEntete();
+		
+		Envelope env = new Envelope(361000, 364000, 6831000 ,6834000);
+		Rectangle roi = EnteteRaster.getROI(enteteRef, env);
+		
+		float[] data = cov.getData(roi);
+		EnteteRaster entete = EnteteRaster.getEntete(enteteRef, env);
+		cov.dispose();
+		
+		CoverageManager.write("D:/data/sig/data_ZA/PF_OS_L93/PF_2018/mini/landscape3.tif", data, entete);
+		
+	}
+	
+	private static void analyseSelectedMultiple(){
+		
+		String path = "D:/data/sig/data_ZA/PF_OS_L93/PF_2018/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(ChloeAnalysisType.SELECTED);
+		//builder.setRasterFile(path+"OS_2018_5m.tif");
+		builder.addRasterFile(path+"mini/landscape1.tif");
+		builder.addRasterFile(path+"mini/landscape2.tif");
+		builder.addRasterFile(path+"mini/landscape3.tif");
+		builder.setPointsFilter(path+"points.csv");
+		builder.setWindowSizes(new int[]{31,51});
+		builder.addMetric("SHDI");
+		builder.addMetric("HET");
+		builder.addCsvOutput(path+"mini/analyse.csv");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
 	}
 	
 	private static void generationFriction(){

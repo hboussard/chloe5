@@ -96,19 +96,12 @@ public class MultipleMapLandscapeMetricAnalysis extends MultipleLandscapeMetricA
 	}
 
 	@Override
-	protected void doRun() {
-		for(LandscapeMetricAnalysis analysis : analyses){
-			analysis.allRun();
-		}
-	}
-
-	@Override
 	protected void doClose() {
 		
 		SpatialCsvManager.merge(totalCsvOutput, csvOutputs.toArray(new String[csvOutputs.size()]));
 		
 		for(String csvOut : csvOutputs){
-			//new File(csvOut).delete();
+			new File(csvOut).delete();
 		}
 		
 		totalMetrics = null;

@@ -48,7 +48,7 @@ public class Script {
 		//builder.addMetric("LPI");
 		//builder.addMetric("MPS");
 		
-		// analyse avec une seule taille de fenêtre
+		// analyse avec une seule taille de fenï¿½tre
 		builder.setWindowSize(31);
 		
 		// 1
@@ -61,7 +61,7 @@ public class Script {
 		// 2
 		//builder.setPixelsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/pixels_pf_ID.csv");
 		//builder.addCsvOutput(path+"selected/output/selected_pixels_ID.csv");
-		// les points sont exportés 
+		// les points sont exportï¿½s 
 		// mais :
 		// pb : ce ne sont pas les pixels
 		// pb : les identifiants sont manquants
@@ -69,28 +69,28 @@ public class Script {
 		// 3
 		builder.setPointsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/points_pf.csv");
 		builder.addCsvOutput(path+"selected/output/selected_points.csv");
-		// les points demandés sont exportés 
+		// les points demandï¿½s sont exportï¿½s 
 		// mais :
-		// pb : avec des identifiants non demandés
+		// pb : avec des identifiants non demandï¿½s
 		
 		// 4
 		//builder.setPointsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/points_pf_decal.csv");
 		//builder.addCsvOutput(path+"selected/output/selected_points_decal.csv");
-		// les points décalés demandés sont exportés 
+		// les points dï¿½calï¿½s demandï¿½s sont exportï¿½s 
 		// mais,
-		// pb : avec des identifiants non demandés
+		// pb : avec des identifiants non demandï¿½s
 		
 		// 5
 		//builder.setPointsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/points_pf_ID.csv");
 		//builder.addCsvOutput(path+"selected/output/selected_points_ID.csv");
-		// les points demandés sont exportés avec les identifiants demandés
+		// les points demandï¿½s sont exportï¿½s avec les identifiants demandï¿½s
 		
 		// 6
 		//builder.setPointsFilter("C:/Hugues/data/data_ZA/PF_OS_L93/PF_2018/selected/points_pf_ID_decal.csv");
 		//builder.addCsvOutput(path+"selected/output/selected_points_ID_decal.csv");
-		// les points décalés demandés sont exportés avec les identifiants demandés
+		// les points dï¿½calï¿½s demandï¿½s sont exportï¿½s avec les identifiants demandï¿½s
 		
-		// analyse avec plusieurs tailles de fenêtre
+		// analyse avec plusieurs tailles de fenï¿½tre
 		//builder.setWindowSizes(new int[]{31,51});
 		
 		// 1
@@ -417,8 +417,8 @@ public class Script {
 		
 		//builder.addAsciiGridOutput("pNV_1", path+"area/pnv1.asc"); // marche pas...
 		
-		builder.setAsciiGridFolderOutput(path+"communes/");
-		//builder.addAsciiGridFolderOutput(path+"communes/double/");
+		builder.setAsciiGridOutputFolder(path+"communes/");
+		//builder.addAsciiGridOutputFolder(path+"communes/double/");
 		//builder.addCsvOutput(path+"area/analyse_communes_za.csv");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
@@ -474,8 +474,8 @@ public class Script {
 			}
 		}
 		//builder.addCsvOutput(path+"output/analyse_za_5km.csv");
-		//builder.addAsciiGridFolderOutput(path+"output2");
-		builder.setGeoTiffFolderOutput(path+"output4/");
+		//builder.addAsciiGridOutputFolder(path+"output2");
+		builder.setGeoTiffOutputFolder(path+"output4/");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 		
@@ -1659,7 +1659,7 @@ public class Script {
 		builder.setRasterFile(path+"T01alti25m.tif");
 		builder.setEntityRasterFile(path+"parcellaire_toulouse.asc");
 		builder.addMetric("standard_deviation");
-		builder.setAsciiGridFolderOutput(path+"mnt_standard_deviation/");
+		builder.setAsciiGridOutputFolder(path+"mnt_standard_deviation/");
 		builder.addCsvOutput(path+"mnt_standard_deviation/parcelles_standard_deviation_mnt_bis.csv");
 		LandscapeMetricAnalysis analysis = builder.build();
 		
@@ -1679,7 +1679,7 @@ public class Script {
 		builder.setRasterFile(path+"MNT5mT01.tif");
 		builder.setEntityRasterFile(path+"parcellaire_toulouse_5m.asc");
 		builder.addMetric("average");
-		//builder.addAsciiGridFolderOutput(path+"mnt_5m_average/");
+		//builder.addAsciiGridOutputFolder(path+"mnt_5m_average/");
 		builder.addCsvOutput(path+"mnt_5m_average/parcelles_average_mnt.csv");
 		LandscapeMetricAnalysis analysis = builder.build();
 		
@@ -1723,7 +1723,7 @@ public class Script {
 		builder.addMetric("pNV_4");
 		builder.addMetric("pNV_5");
 		builder.addMetric("pNV_6");
-		builder.setAsciiGridFolderOutput(path+"prop/");
+		builder.setAsciiGridOutputFolder(path+"prop/");
 		builder.addCsvOutput(path+"entites_composition_bis.csv");
 		LandscapeMetricAnalysis analysis = builder.build();
 		

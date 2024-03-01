@@ -61,35 +61,35 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	
 	@Override
 	public void reset() {
-		factors = null;
-		outputRaster = null;
-		outputCsv = null;
-		outputFolder = null;
-		inputRaster = null;
-		inputRaster2 = null;
-		inputShapefile = null;
-		attribute = null;
-		outputPrefix = "";
-		outputSuffix = "";
-		typeMime = RasterTypeMime.GEOTIFF;
-		csv = null;
-		combination = null;
-		changes = null;
-		cellSize = -1;
-		width = -1;
-		height = -1;
-		xMin = 0;
-		xMax = 0;
-		yMin = 0;
-		yMax = 0;
-		noDataValue = Raster.getNoDataValue();
-		fillValue = Raster.getNoDataValue();
-		domains = null;
-		variables = new HashSet<String>();
-		distanceType = DistanceType.EUCLIDIAN;
-		clusterType = ClusterType.QUEEN;
-		maxDistance = -1;
-		sources = new HashSet<Integer>();
+		this.factors = null;
+		this.outputRaster = null;
+		this.outputCsv = null;
+		this.outputFolder = null;
+		this.inputRaster = null;
+		this.inputRaster2 = null;
+		this.inputShapefile = null;
+		this.attribute = null;
+		this.outputPrefix = "";
+		this.outputSuffix = "";
+		this.typeMime = RasterTypeMime.GEOTIFF;
+		this.csv = null;
+		this.combination = null;
+		this.changes = null;
+		this.cellSize = -1;
+		this.width = -1;
+		this.height = -1;
+		this.xMin = 0;
+		this.xMax = 0;
+		this.yMin = 0;
+		this.yMax = 0;
+		this.noDataValue = Raster.getNoDataValue();
+		this.fillValue = Raster.getNoDataValue();
+		this.domains = null;
+		this.variables = new HashSet<String>();
+		this.distanceType = DistanceType.EUCLIDIAN;
+		this.clusterType = ClusterType.QUEEN;
+		this.maxDistance = -1;
+		this.sources = new HashSet<Integer>();
 	}
 	
 	@Override
@@ -366,6 +366,7 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 		return domains;
 	}
 	
+	@Override
 	public RasterTypeMime getTypeMime(){
 		return this.typeMime;
 	}

@@ -72,8 +72,8 @@ public class ScriptProjetGahard {
 		//builder.addCsvOutput(path+"mini/sliding2/analysis_sliding.csv");
 		//builder.addGeoTiffOutput(1001, "pNV_6", path+"cgtv/pNV_6_1001.tif");
 		//builder.addGeoTiffOutput(1001, "pNV_5", path+"cgtv/pNV_5_1001.tif");
-		//builder.setAsciiGridFolderOutput(path+"mini/sliding3/");
-		builder.setGeoTiffFolderOutput(path+"cgtv/");
+		//builder.setAsciiGridOutputFolder(path+"mini/sliding3/");
+		builder.setGeoTiffOutputFolder(path+"cgtv/");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 		

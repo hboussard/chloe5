@@ -1,7 +1,15 @@
 package fr.inrae.act.bagap.chloe.concept.ecopaysage.script;
 
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+
+import fr.inra.sad.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageManager;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageProcedure;
+import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.raster.CoverageManager;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class ScriptEcopaysagesBretagne {
 
@@ -24,8 +32,37 @@ public class ScriptEcopaysagesBretagne {
 			}	
 		}*/
 		
-		int[] scales = new int[] {1000, 2500}; // m
-		ecolandscape(scales);
+		sumRuptures("D:/data/sig/bretagne/ecopaysage/sum_rupture.tif", "D:/data/sig/bretagne/ecopaysage/rupture/");
+	}
+	
+	private static void sumRuptures(String ruptureRaster, String folder) {
+		
+		EnteteRaster entete = null;
+		Set<float[]> sets = new HashSet<float[]>();
+		for(String file : new File(folder).list()) {
+			System.out.println(file);
+			Coverage cov = CoverageManager.getCoverage(folder+file);
+			entete = cov.getEntete();
+			sets.add(cov.getData());
+			cov.dispose();
+		}
+		
+		float[] outData = new float[entete.width()*entete.height()];
+		
+		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(outData, sets.toArray(new float[sets.size()][])){
+
+			@Override
+			protected float doTreat(float[] v) {
+				float value = 0;
+				for(float vv : v) {
+					value += Math.min(1, vv)/v.length;
+				}
+				return value;
+			}
+		};
+		cal.run();
+		
+		CoverageManager.write(ruptureRaster, outData, entete);
 		
 	}
 	

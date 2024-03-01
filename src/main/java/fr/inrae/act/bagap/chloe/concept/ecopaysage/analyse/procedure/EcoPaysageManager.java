@@ -9,6 +9,7 @@ import java.util.TreeMap;
 
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.calculmetrics.EPPCalculMetricsFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.clustering.EPPClusteringFactory;
+import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.gradient.EPPGradientFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.mapping.EPPMappingFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.rupture.EPPRuptureFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.standardization.EPPStandardizationFactory;
@@ -44,7 +45,9 @@ public class EcoPaysageManager {
 	
 	private int[] classes; // les nombres de classes à générer
 	
-	private Map<Integer, String> ecoFiles, mapFiles, infoFiles;
+	private Map<Integer, String> ecoFiles, mapFiles, infoFiles, gradientFiles;
+	
+	private Map<Integer, Map<Integer, String>> gradientMapFiles;
 	
 	private String headerFile; // le fichier d'entete raster
 	
@@ -64,6 +67,9 @@ public class EcoPaysageManager {
 			break;
 		case "clustering" :
 			factory = new EPPClusteringFactory();
+			break;
+		case "gradient" :
+			factory = new EPPGradientFactory();
 			break;
 		case "mapping" :
 			factory = new EPPMappingFactory();
@@ -98,6 +104,8 @@ public class EcoPaysageManager {
 		ecoFiles = new TreeMap<Integer, String>();
 		mapFiles = new TreeMap<Integer, String>();
 		infoFiles = new TreeMap<Integer, String>();
+		gradientFiles = new TreeMap<Integer, String>();
+		gradientMapFiles = new TreeMap<Integer, Map<Integer, String>>();
 		headerFile = null;
 		
 	}
@@ -261,6 +269,19 @@ public class EcoPaysageManager {
 		mapFiles.put(k, mapFile);
 	}
 	
+	public void setGradientFile(int k, String gradientFile) {
+		Util.createAccess(gradientFile);
+		gradientFiles.put(k, gradientFile);
+	}
+	
+	public void setGradientMapFile(int k, int ik, String gradientMapFile) {
+		Util.createAccess(gradientMapFile);
+		if(!gradientMapFiles.containsKey(k)) {
+			gradientMapFiles.put(k, new TreeMap<Integer, String>());
+		}
+		gradientMapFiles.get(k).put(ik, gradientMapFile);
+	}
+	
 	public void setHeaderFile(String headerFile) {
 		this.headerFile = headerFile;
 	}
@@ -351,7 +372,7 @@ public class EcoPaysageManager {
 			for(int scale : scales) {
 				sb.append("_"+scale+"m");
 			}
-			sb.append("_7p.tif");
+			sb.append(".tif");
 			setRuptureFile(sb.toString());
 		}
 		return ruptureFile;
@@ -426,6 +447,32 @@ public class EcoPaysageManager {
 			setMapFile(k, sb.toString());
 		}
 		return mapFiles.get(k);
+	}
+	
+	public String gradientFile(int k) {
+		if(!gradientFiles.containsKey(k)) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(outputFolder()+"gradient_ecopaysages_"+k+"classes");
+			for(int scale : scales) {
+				sb.append("_"+scale+"m");
+			}
+			sb.append(".csv");
+			setGradientFile(k, sb.toString());
+		}
+		return gradientFiles.get(k);
+	}
+	
+	public String gradientMapFile(int k, int ik) {
+		if(!gradientMapFiles.containsKey(k) || !gradientMapFiles.get(k).containsKey(ik)) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(outputFolder()+"gradient_ecopaysages_"+k+"classes_ecop"+ik);
+			for(int scale : scales) {
+				sb.append("_"+scale+"m");
+			}
+			sb.append(".tif");
+			setGradientMapFile(k, ik, sb.toString());
+		}
+		return gradientMapFiles.get(k).get(ik);
 	}
 	
 	public String[] mapFiles() {

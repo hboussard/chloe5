@@ -184,15 +184,19 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 	
+	public void setCsvOutputFolder(String csvFolder){
+		throw new UnsupportedOperationException();
+	}
+	
 	public void addCoverageOutput(CoverageOutput coverageOutput){
 		throw new UnsupportedOperationException();
 	}
 	
-	public void setAsciiGridFolderOutput(String asciiGridFolder){
+	public void setAsciiGridOutputFolder(String asciiGridFolder){
 		throw new UnsupportedOperationException();
 	}
 	
-	public void setGeoTiffFolderOutput(String geoTiffFolder){
+	public void setGeoTiffOutputFolder(String geoTiffFolder){
 		throw new UnsupportedOperationException();
 	}
 	
@@ -405,7 +409,9 @@ public abstract class ChloeAnalysisBuilder {
 	public String getRasterFile() {
 		throw new UnsupportedOperationException();
 	}
-
 	
+	public RasterTypeMime getTypeMime(){
+		throw new UnsupportedOperationException();
+	}
 
 }

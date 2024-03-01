@@ -14,6 +14,7 @@ import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.RefPoint;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
+import fr.inrae.act.bagap.chloe.api.RasterTypeMime;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
@@ -62,7 +63,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	
 	//private Set<CountingObserver> observers;
 
-	private String csv, points, pixels, windowsPath, asciiGridFolder, geoTiffFolder;
+	private String csv, points, pixels, windowsPath, asciiGridFolder, geoTiffFolder, csvFolder;
 	
 	private Set<RefPoint> refPoints;
 	
@@ -89,6 +90,8 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	private Map<RefPoint, Float> datas;
 	
 	private Set<CoverageOutput> coverageOutputs;
+	
+	private RasterTypeMime typeMime;
 	
 	/*
 	@Override
@@ -143,6 +146,8 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		this.entityRasterTab = null;
 		this.csv = null;
 		this.asciiGridFolder = null;
+		this.geoTiffFolder = null;
+		this.csvFolder = null;
 		this.points = null;
 		this.pixels = null;
 		this.refPoints = null;
@@ -158,6 +163,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		this.filters = null;
 		this.datas = null;
 		this.coverageOutputs = new HashSet<CoverageOutput>();
+		this.typeMime = RasterTypeMime.GEOTIFF;
 	}
 	
 	@Override
@@ -347,15 +353,21 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	}
 	
 	@Override
-	public void setAsciiGridFolderOutput(String asciiGridFolder){
+	public void setAsciiGridOutputFolder(String asciiGridFolder){
 		Util.createAccess(asciiGridFolder);
 		this.asciiGridFolder = new File(asciiGridFolder).getAbsolutePath()+"/";
 	}
 	
 	@Override
-	public void setGeoTiffFolderOutput(String geoTiffFolder){
+	public void setGeoTiffOutputFolder(String geoTiffFolder){
 		Util.createAccess(geoTiffFolder);
 		this.geoTiffFolder = new File(geoTiffFolder).getAbsolutePath()+"/";
+	}
+	
+	@Override
+	public void setCsvOutputFolder(String csvFolder){
+		Util.createAccess(csvFolder);
+		this.csvFolder = new File(csvFolder).getAbsolutePath()+"/";
 	}
 	
 	@Override
@@ -483,6 +495,16 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	public void setWindowsPath(String windowsPath) {
 		Util.createAccess(windowsPath);
 		this.windowsPath = new File(windowsPath).getAbsolutePath()+"/";
+	}
+	
+	@Override
+	public void setTypeMime(String typeMime) {
+		this.typeMime = RasterTypeMime.valueOf(typeMime);
+	}
+	
+	@Override
+	public void setTypeMime(RasterTypeMime typeMime) {
+		this.typeMime = typeMime;
 	}
 	
 	/*
@@ -683,6 +705,10 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		return geoTiffFolder;
 	}
 	
+	public String getCsvFolder() {
+		return csvFolder;
+	}
+	
 	public Map<String, String> getAsciiOutputs(int ws){
 		return asciiOutputs.get(ws);
 	}
@@ -779,6 +805,10 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	
 	public String getWindowsPath(){
 		return windowsPath;
+	}
+	
+	public RasterTypeMime getTypeMime(){
+		return this.typeMime;
 	}
 	
 	@Override

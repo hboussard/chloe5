@@ -498,4 +498,69 @@ public class EcoPaysage {
 		
 	}
 	
+	public static void analyseGradient(String gradientCsv, String[][] dataXY, String infoFile, String normFile) {
+		
+		try {
+			
+			CsvWriter cw = new CsvWriter(gradientCsv);
+			cw.setDelimiter(';');
+			cw.write("X");
+			cw.write("Y");
+			
+			Map<Integer, float[]> kmeans = new TreeMap<Integer, float[]>();
+			CsvReader crI = new CsvReader(infoFile);
+			crI.setDelimiter(';');
+			crI.readHeaders();
+			int k;
+			while(crI.readRecord()) {
+				k = Integer.parseInt(crI.get("classe"));
+				cw.write("ecop_"+crI.get("classe"));
+				float[] infos = new float[crI.getColumnCount()-1];
+				for(int i=1; i<crI.getColumnCount(); i++) {
+					infos[i-1] = Float.parseFloat(crI.get(i));
+				}
+				kmeans.put(k, infos);
+			}
+			cw.endRecord();
+			crI.close();
+			
+			CsvReader crN = new CsvReader(normFile);
+			crN.setDelimiter(';');
+			crN.readHeaders();
+			int index = 0;
+			while(crN.readRecord()) {
+				String[] xy = dataXY[index++];
+				cw.write(xy[0]);
+				cw.write(xy[1]);
+				float[] data = new float[crN.getColumnCount()];
+				for(int i=0; i<crN.getColumnCount(); i++) {
+					data[i] = Float.parseFloat(crN.get(i));
+				}
+				for(k=1; k<kmeans.size()+1; k++) {
+					float d = distance(kmeans.get(k), data);
+					cw.write(d+"");
+				}
+				cw.endRecord();
+			}
+			crN.close();			
+						
+			cw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	
+		
+	}
+	
+	private static float distance(float[] v1, float[] v2) {
+		double distance = 0;
+		for(int i=0; i<v1.length; i++) {
+			distance += Math.pow(v1[i]-v2[i], 2);
+		}
+		return (float) Math.sqrt(distance);		
+	}
+	
 }

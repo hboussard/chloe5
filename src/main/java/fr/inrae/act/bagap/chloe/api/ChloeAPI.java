@@ -95,6 +95,7 @@ public class ChloeAPI {
 			importMaximumNoValueRate(builder, properties);
 			
 			if(properties.containsKey("output_folder")){
+				importTypeMime(builder, properties);
 				importOutputFolderForWindow(builder, properties);
 			}else{
 				importOutputRaster(builder, properties);
@@ -131,6 +132,7 @@ public class ChloeAPI {
 			importWindowsPath(builder, properties);
 			
 			if(properties.containsKey("output_folder")){
+				importTypeMime(builder, properties);
 				importOutputFolderForWindow(builder, properties);
 			}else{
 				importOutputRaster(builder, properties);
@@ -162,6 +164,7 @@ public class ChloeAPI {
 			importMaximumNoValueRate(builder, properties);
 			
 			if(properties.containsKey("output_folder")){
+				importTypeMime(builder, properties);
 				importOutputFolderForWindow(builder, properties);
 			}else{
 				importOutputRaster(builder, properties);
@@ -215,6 +218,7 @@ public class ChloeAPI {
 			importMetrics(builder, properties);
 			
 			if(properties.containsKey("output_folder")){
+				importTypeMime(builder, properties);
 				importOutputFolderForWindow(builder, properties);
 			}else{
 				importOutputRaster(builder, properties);
@@ -429,10 +433,17 @@ public class ChloeAPI {
 	// required 
 	public static void importInputRaster(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("input_raster")){
-			String prop = properties.getProperty("input_raster");
-			if(new File(prop).isFile()){
-				builder.setRasterFile(prop);
-				return;
+			String prop = properties.getProperty("input_raster").replace("{",  "").replace("}", "");
+			String[] rasters = prop.split(";");
+			boolean ok = false;
+			for(String raster : rasters) {
+				if(new File(raster).isFile()){
+					builder.addRasterFile(raster);
+					ok = true;
+				}	
+			}
+			if(ok) {
+				return;	
 			}
 		}
 		throw new NoParameterException("input_raster");
@@ -726,19 +737,18 @@ public class ChloeAPI {
 				prop += "/";
 			}
 			
-			String input = properties.getProperty("input_raster");
-			
 			boolean export_raster = true;
 			if(properties.containsKey("export_raster")){
 				export_raster = Boolean.parseBoolean(properties.getProperty("export_raster"));
 			}
 			if(export_raster) {
-				if(input.endsWith(".asc")){
-					builder.setAsciiGridFolderOutput(prop);
-				}else if(input.endsWith(".tif")){
-					builder.setGeoTiffFolderOutput(prop);
+				RasterTypeMime typeMime = builder.getTypeMime();
+				if(typeMime == RasterTypeMime.ASCII_GRID){
+					builder.setAsciiGridOutputFolder(prop);
+				}else if(typeMime == RasterTypeMime.GEOTIFF){
+					builder.setGeoTiffOutputFolder(prop);
 				}else{
-					throw new NoParameterException("output_raster : "+input+" extension problem");
+					throw new NoParameterException("type_mime : '"+builder.getTypeMime()+"' interpretation problem");
 				}
 			}
 			
@@ -747,11 +757,12 @@ public class ChloeAPI {
 				export_csv = Boolean.parseBoolean(properties.getProperty("export_csv"));
 			}
 			if(export_csv) {
-				StringBuffer sb = new StringBuffer();
-				sb.append(new File(input).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
-				sb.append(".csv");
+				//StringBuffer sb = new StringBuffer();
+				//sb.append(new File(input).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
+				//sb.append(".csv");
+				//builder.addCsvOutput(prop+sb.toString());
 				
-				builder.addCsvOutput(prop+sb.toString());
+				builder.setCsvOutputFolder(prop);
 			}
 		}
 	}

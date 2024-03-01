@@ -23,7 +23,7 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 
 	private Set<Metric> totalMetrics;
 	
-	private String totalCsvOutput;
+	private String totalCsvOutput, csvFolder;
 	
 	private Set<Integer> coherences;
 	
@@ -40,10 +40,13 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 		try {
 			totalMetrics = builder.getMetrics();
 			totalCsvOutput = builder.getCsv();
+			csvFolder = builder.getCsvFolder();
 			
-			String path = null;
-			if(totalCsvOutput != null){
-				path = new File(totalCsvOutput).getParent();
+			String path = csvFolder;
+			if(totalCsvOutput != null || csvFolder != null){
+				if(path == null) {
+					path = new File(totalCsvOutput).getParent();
+				}
 				csvOutputs = new LinkedHashMap<String, List<String>>();
 				suffixMetrics = new LinkedHashMap<String, List<String>>();
 			}
@@ -51,7 +54,7 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 			coherences = MetricManager.getCoherences(totalMetrics);
 			Set<Metric> metrics = new HashSet<Metric>();
 			
-			if(builder.getRasterFiles().size() == 0 || builder.getRasterFiles().size() == 1){
+			if(builder.getRasterFiles().size() <= 1){ // un seul raster --> un seul fichier CSV
 				
 				String rasterFile = builder.getRasterFile();
 				
@@ -60,10 +63,10 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 					suffixMetrics.put(rasterFile, new ArrayList<String>());
 				}
 				
-				for(int ws : builder.getWindowSizes()){
+				for(int ws : builder.getWindowSizes()){ // pour chaque taille de fenetre
 					builder.setWindowSize(ws);
 					
-					for(int coherence : coherences){
+					for(int coherence : coherences){ // pour chaque groupe coherent de metriques
 						metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
 						if(coherence == 0){
 							continue;
@@ -81,29 +84,28 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 						metrics = new HashSet<Metric>();
 					}
 				}
-				
-			}else{
+			}else{ // plusieurs rasters --> autant de fichiers CSV
 				
 				for(String rasterFile : builder.getRasterFiles()){
 					String name = new File(rasterFile).getName().replace(".tif", "").replace(".asc", "");
 					builder.setRasterFile(rasterFile);
 					
-					if(totalCsvOutput != null){
+					if(totalCsvOutput != null || csvFolder != null){
 						csvOutputs.put(rasterFile, new ArrayList<String>());
 						suffixMetrics.put(rasterFile, new ArrayList<String>());
 					}
 					
-					for(int ws : builder.getWindowSizes()){
+					for(int ws : builder.getWindowSizes()){ // pour chaque taille de fenetre
 						builder.setWindowSize(ws);
 						
-						for(int coherence : coherences){
+						for(int coherence : coherences){ // pour chaque groupe coherent de metriques
 							metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
 							if(coherence == 0){
 								continue;
 							}
 							builder.setMetrics(metrics);
 							
-							if(totalCsvOutput != null){
+							if(totalCsvOutput != null || csvFolder != null){
 								builder.addCsvOutput(path+"/"+name+"_sliding_"+coherence+"_"+ws+".csv");
 								csvOutputs.get(rasterFile).add(path+"/"+name+"_sliding_"+coherence+"_"+ws+".csv");
 								suffixMetrics.get(rasterFile).add("_"+ws);
@@ -115,33 +117,25 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 						}
 					}
 				}
-				
 			}
-		
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	protected void doRun() {
-		for(LandscapeMetricAnalysis analysis : analyses){
-			analysis.allRun();
-		}
-	}
-
-	@Override
 	protected void doClose() {
 		
-		if(totalCsvOutput != null){
+		if(totalCsvOutput != null || csvFolder != null){
 			
-			if(builder.getRasterFiles().size() == 0 || builder.getRasterFiles().size() == 1){
+			if(builder.getRasterFiles().size() <= 1){
 				
 				String rasterFile = builder.getRasterFile();
 					
 				EnteteRaster entete = EnteteRaster.read(csvOutputs.get(rasterFile).iterator().next().replace(".csv", "_header.txt"));
-				SpatialCsvManager.mergeXY(totalCsvOutput, csvOutputs.get(rasterFile).toArray(new String[csvOutputs.size()]), suffixMetrics.get(rasterFile).toArray(new String[suffixMetrics.get(rasterFile).size()]), "X", "Y", entete);
+				SpatialCsvManager.mergeXY(totalCsvOutput, csvOutputs.get(rasterFile).toArray(new String[csvOutputs.get(rasterFile).size()]), suffixMetrics.get(rasterFile).toArray(new String[suffixMetrics.get(rasterFile).size()]), "X", "Y", entete);
 					
+				// nettoyage
 				for(String csvOut : csvOutputs.get(rasterFile)){
 					new File(csvOut).delete();
 					Tool.copy(csvOut.replace(".csv", "_header.txt"), totalCsvOutput.replace(".csv", "_header.txt"));
@@ -153,11 +147,18 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 				Set<String> localCsv = new HashSet<String>();
 				for(String rasterFile : builder.getRasterFiles()){
 					String name = new File(rasterFile).getName().replace(".tif", "").replace(".asc", "");
-					String localCsvOutput = totalCsvOutput.replace(".csv", "")+"_"+name+".csv";
+					
+					String localCsvOutput;
+					if(totalCsvOutput != null) {
+						localCsvOutput = totalCsvOutput.replace(".csv", "")+"_"+name+".csv";
+					}else {
+						localCsvOutput = csvFolder+name+".csv";
+					}
 					
 					EnteteRaster entete = EnteteRaster.read(csvOutputs.get(rasterFile).iterator().next().replace(".csv", "_header.txt"));
-					SpatialCsvManager.mergeXY(localCsvOutput, csvOutputs.get(rasterFile).toArray(new String[csvOutputs.size()]), suffixMetrics.get(rasterFile).toArray(new String[suffixMetrics.get(rasterFile).size()]), "X", "Y", entete);
+					SpatialCsvManager.mergeXY(localCsvOutput, csvOutputs.get(rasterFile).toArray(new String[csvOutputs.get(rasterFile).size()]), suffixMetrics.get(rasterFile).toArray(new String[suffixMetrics.get(rasterFile).size()]), "X", "Y", entete);
 					
+					// nettoyage
 					for(String csvOut : csvOutputs.get(rasterFile)){
 						new File(csvOut).delete();
 						Tool.copy(csvOut.replace(".csv", "_header.txt"), localCsvOutput.replace(".csv", "_header.txt"));
@@ -167,16 +168,14 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 					localCsv.add(localCsvOutput);
 				}
 				
+				/*
 				SpatialCsvManager.mergeSortXY(totalCsvOutput, localCsv.toArray(new String[localCsv.size()]));
 				
 				for(String csv : localCsv){
 					new File(csv).delete();
 				}
-				
+				*/	
 			}
-			
-			
-		
 		}
 		
 		totalMetrics = null;
