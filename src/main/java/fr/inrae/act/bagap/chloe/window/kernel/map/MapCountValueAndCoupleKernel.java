@@ -8,6 +8,8 @@ public class MapCountValueAndCoupleKernel extends MapLandscapeMetricKernel {
 	
 	private int[] mapValues;
 	
+	private short[] lastValueLine;
+	
 	public MapCountValueAndCoupleKernel(int noDataValue, int[] values){		
 		super(noDataValue);
 		this.nbValues = values.length;
@@ -39,6 +41,11 @@ public class MapCountValueAndCoupleKernel extends MapLandscapeMetricKernel {
 	}
 	
 	@Override
+	public void init(){
+		lastValueLine = new short[width()];
+	}
+	
+	@Override
 	public void applyMapWindow(int theY) {
 			
 		short v, v_H, v_V;
@@ -46,7 +53,7 @@ public class MapCountValueAndCoupleKernel extends MapLandscapeMetricKernel {
 		for(int y=0; y<height(); y++) {
 			for(int x=0; x<width(); x++) {
 					
-				v = (short) inDatas()[((theY+y)*width()) + x];			
+				v = (short) inDatas()[(y*width()) + x];			
 				outDatas()[2] += 1;
 				
 				if(v == noDataValue()){
@@ -59,7 +66,20 @@ public class MapCountValueAndCoupleKernel extends MapLandscapeMetricKernel {
 				}
 						
 				if(y > 0) {
-					v_V = (short) inDatas()[((theY+y-1)*width()) + x];
+					v_V = (short) inDatas()[((y-1)*width()) + x];
+					outDatas()[nbValues+5] += 1;
+					
+					if(v == noDataValue() || v_V == noDataValue()){
+						outDatas()[nbValues+6] += 1;
+					}else if(v == 0 || v_V == 0){
+						outDatas()[nbValues+7] += 1;
+					}else{
+						mv = mapCouples[mapValues[v]][mapValues[v_V]];
+						outDatas()[nbValues+mv+8] += 1;
+					}
+				}else if(theY != 0 && y == 0){
+					
+					v_V = lastValueLine[x];
 					outDatas()[nbValues+5] += 1;
 					
 					if(v == noDataValue() || v_V == noDataValue()){
@@ -73,7 +93,7 @@ public class MapCountValueAndCoupleKernel extends MapLandscapeMetricKernel {
 				}
 						
 				if(x > 0) {
-					v_H = (short) inDatas()[((theY+y)*width()) + (x - 1)];
+					v_H = (short) inDatas()[(y*width()) + (x - 1)];
 					outDatas()[nbValues+5] += 1;
 					
 					if(v == noDataValue() || v_H == noDataValue()){
@@ -85,6 +105,10 @@ public class MapCountValueAndCoupleKernel extends MapLandscapeMetricKernel {
 						outDatas()[nbValues+mv+8] += 1;
 					}
 				}
+				
+				if(y == height()-1){
+					lastValueLine[x] = v;
+				}
 			}
 		}
 	}
@@ -94,6 +118,7 @@ public class MapCountValueAndCoupleKernel extends MapLandscapeMetricKernel {
 		super.dispose();
 		mapCouples = null;
 		mapValues = null;
+		lastValueLine = null;
 	}
 	
 }

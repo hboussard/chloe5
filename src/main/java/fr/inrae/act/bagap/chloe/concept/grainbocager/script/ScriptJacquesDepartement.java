@@ -2,16 +2,21 @@ package fr.inrae.act.bagap.chloe.concept.grainbocager.script;
 
 import fr.inra.sad.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
+import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenClusteringAnalysis;
+import fr.inrae.act.bagap.chloe.distance.analysis.euclidian.TabChamferDistanceAnalysis;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
+import fr.inrae.act.bagap.chloe.window.output.CoverageOutput;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.raster.TabCoverage;
 
 public class ScriptJacquesDepartement {
 
 	public static void main(String[] args){
+		
 		/*
 		String inputPath = "E:/IGN/data/";
 		String outputPath = "E:/temp/jacques/boisement/";
@@ -21,10 +26,178 @@ public class ScriptJacquesDepartement {
 		scriptmasqueBoisementDepartement(outputPath, inputPath, 56, 2019);
 		*/
 		
-		String input = "D:/temp/jacques/PFboisements.asc";
-		String output = "D:/temp/jacques/PFboisements2.tif";
+		//String input = "D:/temp/jacques/PFboisements.asc";
+		//String output = "D:/temp/jacques/PFboisements2.tif";
 		//scriptConversion(input, output);
-		scriptSliding(input, output);
+		//scriptSliding(input, output);
+		
+		//String path = "E:\\grain_bocager\\data/";
+		//getEmpriseBoisement(path+"emprise/emprise_22_2018_ouverte.tif", path+"22/2018/22_2018_type_boisement.tif", path+"22/2018/22_2018_grain_bocager_5m.tif", 0.33, 1, 200);
+		//getEmpriseBoisement(path+"emprise/emprise_22_2018_semi_ouverte.tif", path+"22/2018/22_2018_type_boisement.tif", path+"22/2018/22_2018_grain_bocager_5m.tif", 0.25, 0.33, 200);
+		
+		//getEmpriseBoisement(path+"emprise/emprise_22_2018_ouverte_100m.tif", path+"22/2018/22_2018_type_boisement.tif", path+"22/2018/22_2018_grain_bocager_5m.tif", 0.33, 1, 100);
+		//getEmpriseBoisement(path+"emprise/emprise_22_2018_semi_ouverte_100m.tif", path+"22/2018/22_2018_type_boisement.tif", path+"22/2018/22_2018_grain_bocager_5m.tif", 0.25, 0.33, 100);
+		
+		//analyseMap(path+"emprise/emprise_22_2018_ouverte_100m.tif");
+		//analyseMap(path+"emprise/emprise_22_2018_semi_ouverte_100m.tif");
+		
+		String path = "E:/temp/jacques/boisement/densite/";
+		enjeux(path+"zone_densite_fonctionnel_22_2018.tif", path+"cluster_fonctionnel_22_2018.tif", path+"zone_proportion_fonctionnel_22_2018_1km.tif", path+"zone_fragmentation_fonctionnel_22_2018_1km.tif", path+"densite_22_2018_350m.tif", 0.2, 1);
+		enjeux(path+"zone_densite_fonctionnel_29_2018.tif", path+"cluster_fonctionnel_29_2018.tif", path+"zone_proportion_fonctionnel_29_2018_1km.tif", path+"zone_fragmentation_fonctionnel_29_2018_1km.tif", path+"densite_29_2018_350m.tif", 0.2, 1);
+		enjeux(path+"zone_densite_fonctionnel_35_2020.tif", path+"cluster_fonctionnel_35_2020.tif", path+"zone_proportion_fonctionnel_35_2020_1km.tif", path+"zone_fragmentation_fonctionnel_35_2020_1km.tif", path+"densite_35_2020_350m.tif", 0.2, 1);
+		enjeux(path+"zone_densite_fonctionnel_56_2019.tif", path+"cluster_fonctionnel_56_2019.tif", path+"zone_proportion_fonctionnel_56_2019_1km.tif", path+"zone_fragmentation_fonctionnel_56_2019_1km.tif", path+"densite_56_2019_350m.tif", 0.2, 1);
+		
+		enjeux(path+"zone_densite_fonctionnel_22_2018.tif", path+"cluster_fonctionnel_22_2018.tif", path+"zone_proportion_fonctionnel_22_2018_5km.tif", path+"zone_fragmentation_fonctionnel_22_2018_5km.tif", path+"densite_22_2018_350m.tif", 0.2, 5);
+		enjeux(path+"zone_densite_fonctionnel_29_2018.tif", path+"cluster_fonctionnel_29_2018.tif", path+"zone_proportion_fonctionnel_29_2018_5km.tif", path+"zone_fragmentation_fonctionnel_29_2018_5km.tif", path+"densite_29_2018_350m.tif", 0.2, 5);
+		enjeux(path+"zone_densite_fonctionnel_35_2020.tif", path+"cluster_fonctionnel_35_2020.tif", path+"zone_proportion_fonctionnel_35_2020_5km.tif", path+"zone_fragmentation_fonctionnel_35_2020_5km.tif", path+"densite_35_2020_350m.tif", 0.2, 5);
+		enjeux(path+"zone_densite_fonctionnel_56_2019.tif", path+"cluster_fonctionnel_56_2019.tif", path+"zone_proportion_fonctionnel_56_2019_5km.tif", path+"zone_fragmentation_fonctionnel_56_2019_5km.tif", path+"densite_56_2019_350m.tif", 0.2, 5);
+		
+		
+	}
+	
+	private static void enjeux(String outputZoneFonctionnel, String outputClusterFonctionnel, String outputProportionFonctionnel, String outputFragmentationFonctionnel, String inputRaster, double seuil, int echelle) {
+		
+		Coverage cov = CoverageManager.getCoverage(inputRaster);
+		EnteteRaster entete = cov.getEntete();
+		float[] data = cov.getData();
+		cov.dispose();
+		
+		float[] dataDensiteFonctionnel = new float[entete.width()*entete.height()];
+		
+		System.out.println("detection des zones fonctionnelles");
+		
+		Pixel2PixelTabCalculation pptcc = new Pixel2PixelTabCalculation(dataDensiteFonctionnel, data){
+			@Override
+			protected float doTreat(float[] v) {
+				if(v[0] >= seuil){
+					return 1;
+				}
+				return 0;
+			}
+		};
+		pptcc.run();
+		
+		CoverageManager.write(outputZoneFonctionnel, dataDensiteFonctionnel, entete);
+		
+		int windowSize = LandscapeMetricAnalysis.getWindowSize(entete.cellsize(), echelle*1000);
+		System.out.println("proportion de zones fonctionnelles");
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(outputZoneFonctionnel);
+		builder.setEntete(entete);
+		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		builder.addMetric("pNV_1");
+		builder.setWindowSize(windowSize);
+		builder.setDisplacement(4);
+		builder.addGeoTiffOutput(outputProportionFonctionnel);
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		System.out.println("clusterisation fonctionnelles");
+		
+		TabQueenClusteringAnalysis ca = new TabQueenClusteringAnalysis(dataDensiteFonctionnel, entete.width(), entete.height(), new int[]{1}, entete.noDataValue());
+		float[] dataCluster = (float[]) ca.allRun();
+		
+		CoverageManager.write(outputClusterFonctionnel, dataCluster, entete);
+		
+		dataDensiteFonctionnel = null;
+		
+		System.out.println("fragmentation fonctionnelles");
+		
+		builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(outputClusterFonctionnel);
+		builder.setEntete(entete);
+		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		builder.addMetric("SHDI");
+		builder.setWindowSize(windowSize);
+		builder.setDisplacement(4);
+		builder.addGeoTiffOutput(outputFragmentationFonctionnel);
+		analysis = builder.build();
+		
+		analysis.allRun();
+	}
+
+	private static void analyseMap(String input){
+		
+
+		Coverage cov = CoverageManager.getCoverage(input);
+		EnteteRaster entete = cov.getEntete();
+		float[] data = cov.getData();
+		cov.dispose();
+		
+		int sum = 0;
+		for(float v : data) {
+			if(v >0) {
+				sum++;
+			}
+		}
+		
+		System.out.println(sum);
+	}
+	
+	private static void getEmpriseBoisement(String outputRaster, String typeBoisement, String grainBocager, double seuilMin, double seuilMax, double distanceMax) {
+		
+		Coverage covTB = CoverageManager.getCoverage(typeBoisement);
+		EnteteRaster entete = covTB.getEntete();
+		float[] dataTB = covTB.getData();
+		covTB.dispose();
+		
+		Coverage covGB = CoverageManager.getCoverage(grainBocager);
+		float[] dataGB = covGB.getData();
+		covTB.dispose();
+		
+		System.out.println("récuapration des boisements");
+		float[] dataBoisement = new float[entete.width()*entete.height()];
+		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(dataBoisement, dataTB, dataGB){
+			@Override
+			protected float doTreat(float[] v) {
+				float vTB = v[0];
+				float vGB = v[1];
+				if(vGB == -1) {
+					return -1;
+				}
+				if(vGB >= seuilMin && vGB <= seuilMax){
+					if(vTB > 0) {
+						return 1;
+					}
+				}
+				return 0;
+			}
+		};
+		cal.run();
+		
+		int[] codes =  new int[]{1};
+		
+		System.out.println("distance aux boisements");
+		
+		float[] dataDistance = new float[entete.width() * entete.height()];
+		TabChamferDistanceAnalysis da = new TabChamferDistanceAnalysis(dataDistance, dataBoisement, entete.width(), entete.height(), entete.cellsize(), entete.noDataValue(), codes, entete.noDataValue());
+		da.allRun();
+		
+		dataBoisement = null;
+		
+		System.out.println("emprise");
+		
+		float[] dataEmprise = new float[entete.width() * entete.height()];
+		cal = new Pixel2PixelTabCalculation(dataEmprise, dataDistance){
+			@Override
+			protected float doTreat(float[] v) {
+				float vD = v[0];
+				if(vD == -1) {
+					return -1;
+				}
+				if(vD <= distanceMax){
+					return 1;
+				}
+				return 0;
+			}
+		};
+		cal.run();
+		
+		dataDistance = null;
+		
+		CoverageManager.write(outputRaster, dataEmprise, entete);
 	}
 	
 	private static void scriptmasqueBoisementDepartement(String outputPath, String inputPath, int numDep, int annee) {

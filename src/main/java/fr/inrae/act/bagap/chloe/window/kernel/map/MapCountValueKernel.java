@@ -23,9 +23,11 @@ public class MapCountValueKernel extends MapLandscapeMetricKernel {
 		short v;
 		int mv;				
 		for(int y=0; y<height(); y++) {
+			
 			for(int x=0; x<width(); x++) {
 					
-				v = (short) inDatas()[((theY+y)*width()) + x];			
+				v = (short) inDatas()[(y*width()) + x];		
+				
 				outDatas()[2] += 1;
 				if(v == noDataValue()){
 					outDatas()[3] += 1;

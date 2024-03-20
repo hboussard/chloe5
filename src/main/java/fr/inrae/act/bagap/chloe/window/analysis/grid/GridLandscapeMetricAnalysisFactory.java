@@ -1,6 +1,7 @@
 package fr.inrae.act.bagap.chloe.window.analysis.grid;
 
 import java.awt.Rectangle;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,6 +27,9 @@ import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.AsciiGridOutput;
 import fr.inrae.act.bagap.chloe.window.output.CsvOutput;
 import fr.inrae.act.bagap.chloe.window.output.GeoTiffOutput;
+import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineGeoTiffOutput;
+import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineLinearAsciiGridOutput;
+import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineLinearCsvOutput;
 import fr.inrae.act.bagap.raster.Coverage;
 
 public abstract class GridLandscapeMetricAnalysisFactory {
@@ -94,6 +98,10 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 		if(builder.getCsv() != null){
 			CsvOutput csvOutput = new CsvOutput(builder.getCsv(), outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, coverage.getEntete().noDataValue(), coverage.getEntete().crs());
 			observers.add(csvOutput);	
+		}else if (builder.getCsvFolder() != null){
+			String name = builder.getCsvFolder()+new File(builder.getRasterFile()).getName().replace(".tif", "").replace(".asc", "").toString()+".csv";
+			CsvOutput csvOutput = new CsvOutput(name, outMinX, outMaxX, outMinY, outMaxY, outWidth, outHeight, outCellSize, coverage.getEntete().noDataValue(), coverage.getEntete().crs());
+			observers.add(csvOutput);
 		}
 		
 		if(builder.getAsciiOutputs(gridSize) != null){
@@ -105,7 +113,31 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 						break;
 					}
 				}
-				AsciiGridOutput asciiOutput = new AsciiGridOutput(entry.getValue(), metric, outWidth, outHeight, outMinX, outMinY, outCellSize, coverage.getEntete().noDataValue());
+				if(metric != null){
+					AsciiGridOutput asciiOutput = new AsciiGridOutput(entry.getValue(), metric, outWidth, outHeight, outMinX, outMinY, outCellSize, coverage.getEntete().noDataValue());
+					observers.add(asciiOutput);
+				}
+			}
+		}
+		
+		if(builder.getAsciiGridFolder() != null){
+			
+			String asciiFolder = builder.getAsciiGridFolder();
+			if(!(asciiFolder.endsWith("/") || asciiFolder.endsWith("\\"))){
+				asciiFolder += "/";
+			}
+			String asciiFile;
+			for (Metric m : metrics) {
+				
+				StringBuffer sb = new StringBuffer();
+				sb.append(new File(builder.getRasterFile()).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
+				sb.append("_"+m.getName());
+				sb.append("_"+builder.getWindowSize());
+				sb.append(".asc");
+				
+				asciiFile = asciiFolder+sb.toString();
+				
+				AsciiGridOutput asciiOutput = new AsciiGridOutput(asciiFile, m, outWidth, outHeight, outMinX, outMinY, outCellSize, coverage.getEntete().noDataValue());
 				observers.add(asciiOutput);
 			}
 		}
@@ -119,7 +151,31 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 						break;
 					}
 				}
-				GeoTiffOutput geotiffOutput = new GeoTiffOutput(entry.getValue(), metric, outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize, coverage.getEntete().noDataValue(), coverage.getEntete().crs());
+				if(metric != null){
+					GeoTiffOutput geotiffOutput = new GeoTiffOutput(entry.getValue(), metric, outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize, coverage.getEntete().noDataValue(), coverage.getEntete().crs());
+					observers.add(geotiffOutput);
+				}
+			}
+		}
+		
+		if(builder.getGeoTiffFolder() != null){
+			
+			String tifFolder = builder.getGeoTiffFolder();
+			if(!(tifFolder.endsWith("/") || tifFolder.endsWith("\\"))){
+				tifFolder += "/";
+			}
+			String tifFile;
+			for (Metric m : metrics) {
+				
+				StringBuffer sb = new StringBuffer();
+				sb.append(new File(builder.getRasterFile()).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
+				sb.append("_"+m.getName());
+				sb.append("_"+builder.getWindowSize());
+				sb.append(".tif");
+				
+				tifFile = tifFolder+sb.toString();
+				
+				GeoTiffOutput geotiffOutput = new GeoTiffOutput(tifFile, m, outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize, coverage.getEntete().noDataValue(), coverage.getEntete().crs());
 				observers.add(geotiffOutput);
 			}
 		}

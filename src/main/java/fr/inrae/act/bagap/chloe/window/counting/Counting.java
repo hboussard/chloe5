@@ -70,9 +70,10 @@ public abstract class Counting implements
 	public void setCounts(double[] counts){
 		
 		if(counts[0] == 1){
-		
+			
 			totalValues = counts[2];
 			validValues = totalValues - counts[3];
+			
 			if(validValues/theoreticalSize >= minRate){
 				setValidCounting(true);
 			}else{
@@ -197,7 +198,6 @@ public abstract class Counting implements
 	public void export(Pixel p) {
 		for(CountingObserver co : observers) {
 			co.postrun(this, p, metrics);
-			
 		}
 	}
 	
@@ -259,7 +259,7 @@ public abstract class Counting implements
 	}
 
 	@Override
-	public int theoreticalCoupleSize() {
+	public double theoreticalCoupleSize() {
 		throw new UnsupportedOperationException();
 	}
 

@@ -6,7 +6,7 @@ public interface CoupleCountingInterface {
 	 * the theoretical size of the window if there were no border
 	 * @return the theoretical size
 	 */
-	int theoreticalCoupleSize();
+	double theoreticalCoupleSize();
 	
 	/**
 	 * the total count of couples

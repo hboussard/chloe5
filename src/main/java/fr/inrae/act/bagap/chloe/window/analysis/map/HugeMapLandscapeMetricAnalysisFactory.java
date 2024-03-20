@@ -20,8 +20,7 @@ public class HugeMapLandscapeMetricAnalysisFactory extends MapLandscapeMetricAna
 			MapLandscapeMetricKernel kernel, Counting counting) {
 		
 		// analyse
-		return null;
-		//return new HugeMapLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
+		return new HugeMapLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
 	}
 
 }

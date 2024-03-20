@@ -18,6 +18,7 @@ import fr.inrae.act.bagap.chloe.api.RasterTypeMime;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
+import fr.inrae.act.bagap.chloe.window.analysis.grid.MultipleGridLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.map.MultipleMapLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.selected.MultipleSelectedLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.sliding.MultipleSlidingLandscapeMetricAnalysis;
@@ -267,20 +268,9 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	}
 
 	@Override
-	public void setWindowRadius(double radius){
-		addWindowRadius(radius);
-	}
-	
-	@Override
 	public void addWindowSize(int windowSize) {
 		this.windowSizes.add(windowSize);
 		this.windowSize = windowSize;
-	}
-	
-	@Override
-	public void addWindowRadius(double radius){
-		this.windowRadius.add(radius);
-		this.radius = radius;
 	}
 	
 	@Override
@@ -288,6 +278,17 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		for(int ws : windowSizes){
 			addWindowSize(ws);
 		}
+	}
+	
+	@Override
+	public void setWindowRadius(double radius){
+		addWindowRadius(radius);
+	}
+	
+	@Override
+	public void addWindowRadius(double radius){
+		this.windowRadius.add(radius);
+		this.radius = radius;
 	}
 	
 	@Override
@@ -819,7 +820,8 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 			if(getAnalysisType().equals(ChloeAnalysisType.SLIDING)){
 				
 				if((windowSizes.size() == 1 || windowRadius.size() == 1)
-						&& MetricManager.hasCoherence(metrics)){
+						&& MetricManager.hasCoherence(metrics)
+						&& rasterFiles.size() <= 1){
 					
 					analysis = LandscapeMetricAnalysisFactory.create(this);
 					
@@ -832,7 +834,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 				
 				if((windowSizes.size() == 1 || windowRadius.size() == 1)
 					&& MetricManager.hasCoherence(metrics)
-					&& rasterFiles.size() == 0){
+					&& rasterFiles.size() <= 1){
 					
 					analysis = LandscapeMetricAnalysisFactory.create(this);
 					
@@ -844,7 +846,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 				
 			}else if(getAnalysisType().equals(ChloeAnalysisType.MAP)){
 			
-				if(MetricManager.hasCoherence(metrics) && rasterFiles.size() == 0){
+				if(MetricManager.hasCoherence(metrics) && rasterFiles.size() <= 1){
 					
 					analysis = LandscapeMetricAnalysisFactory.create(this);
 					
@@ -854,6 +856,19 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 					
 				}
 				
+			}else if(getAnalysisType().equals(ChloeAnalysisType.GRID)){
+				
+				if((windowSizes.size() == 1)
+						&& MetricManager.hasCoherence(metrics) 
+						&& rasterFiles.size() <= 1){
+					
+					analysis = LandscapeMetricAnalysisFactory.create(this);
+					
+				}else{
+					
+					analysis = new MultipleGridLandscapeMetricAnalysis(this);
+					
+				}
 			}else{
 				
 				analysis = LandscapeMetricAnalysisFactory.create(this);

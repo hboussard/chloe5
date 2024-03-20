@@ -757,11 +757,6 @@ public class ChloeAPI {
 				export_csv = Boolean.parseBoolean(properties.getProperty("export_csv"));
 			}
 			if(export_csv) {
-				//StringBuffer sb = new StringBuffer();
-				//sb.append(new File(input).getName().replace(".asc", "").replace(".tif", "")); // file name, assume it exists
-				//sb.append(".csv");
-				//builder.addCsvOutput(prop+sb.toString());
-				
 				builder.setCsvOutputFolder(prop);
 			}
 		}

@@ -55,8 +55,8 @@ public abstract class MapLandscapeMetricAnalysisFactory {
 		int bufferROIYMax = 0;
 		
 		// tailles theoriques
-		int theoreticalSize = 0;
-		int theoreticalCoupleSize = 0;
+		double theoreticalSize = 0;
+		double theoreticalCoupleSize = 0;
 		for(int j=0; j<roiHeight; j++){
 			for(int i=0; i<roiWidth; i++){
 					
@@ -81,6 +81,11 @@ public abstract class MapLandscapeMetricAnalysisFactory {
 			String name = new File(builder.getRasterFile()).getName();
 			MapCsvOutput csvOutput = new MapCsvOutput(builder.getCsv(), name);
 			observers.add(csvOutput);	
+		}else if (builder.getCsvFolder() != null){
+			String name = new File(builder.getRasterFile()).getName();
+			String csvName = builder.getCsvFolder()+new File(builder.getRasterFile()).getName().replace(".tif", "").replace(".asc", "").toString()+".csv";
+			MapCsvOutput csvOutput = new MapCsvOutput(csvName, name);
+			observers.add(csvOutput);
 		}
 			
 		// kernel et counting

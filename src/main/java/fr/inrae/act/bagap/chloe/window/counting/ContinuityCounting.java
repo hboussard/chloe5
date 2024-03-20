@@ -6,7 +6,7 @@ public class ContinuityCounting extends Counting implements ContinuityCountingIn
 	
 	private double volume;
 	
-	public ContinuityCounting(float theoreticalSize){
+	public ContinuityCounting(double theoreticalSize){
 		super(theoreticalSize);
 	}
 	/*

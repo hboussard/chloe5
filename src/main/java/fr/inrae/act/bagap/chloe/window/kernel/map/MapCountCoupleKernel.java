@@ -6,6 +6,8 @@ public class MapCountCoupleKernel extends MapLandscapeMetricKernel {
 	
 	private int[] mapValues;
 	
+	private short[] lastValueLine;
+	
 	public MapCountCoupleKernel(int noDataValue, int[] values){		
 		super(noDataValue);
 		int maxV = 0;
@@ -36,6 +38,11 @@ public class MapCountCoupleKernel extends MapLandscapeMetricKernel {
 	}
 	
 	@Override
+	public void init(){
+		lastValueLine = new short[width()];
+	}
+	
+	@Override
 	public void applyMapWindow(int theY) {
 		
 		short v, v_H, v_V;
@@ -43,14 +50,26 @@ public class MapCountCoupleKernel extends MapLandscapeMetricKernel {
 		for(int y=0; y<height(); y++) {
 			for(int x=0; x<width(); x++) {
 					
-				v = (short) inDatas()[((theY+y)*width()) + x];			
+				v = (short) inDatas()[(y*width()) + x];			
 				outDatas()[2] += 1;
 				if(v == noDataValue()){
 					outDatas()[3] += 1;
 				}
 				
 				if(y > 0) {
-					v_V = (short) inDatas()[((theY+y-1)*width()) + x];
+					v_V = (short) inDatas()[((y-1)*width()) + x];
+					outDatas()[4] += 1;
+					if(v == noDataValue() || v_V == noDataValue()){
+						outDatas()[5] += 1;
+					}else if(v == 0 || v_V == 0){
+						outDatas()[6] += 1;
+					}else{
+						mc = mapCouples[mapValues[v]][mapValues[v_V]];
+						outDatas()[mc+7] += 1;
+					}
+				}else if(theY != 0 && y == 0){
+					
+					v_V = lastValueLine[x];
 					outDatas()[4] += 1;
 					if(v == noDataValue() || v_V == noDataValue()){
 						outDatas()[5] += 1;
@@ -63,7 +82,7 @@ public class MapCountCoupleKernel extends MapLandscapeMetricKernel {
 				}
 						
 				if(x > 0) {
-					v_H = (short) inDatas()[((theY+y)*width()) + (x - 1)];
+					v_H = (short) inDatas()[(y*width()) + (x - 1)];
 					outDatas()[4] += 1;
 					if(v == noDataValue() || v_H == noDataValue()){
 						outDatas()[5] += 1;
@@ -74,6 +93,10 @@ public class MapCountCoupleKernel extends MapLandscapeMetricKernel {
 						outDatas()[mc+7] += 1;
 					}
 				}
+				
+				if(y == height()-1){
+					lastValueLine[x] = v;
+				}
 			}
 		}
 	}
@@ -83,6 +106,7 @@ public class MapCountCoupleKernel extends MapLandscapeMetricKernel {
 		super.dispose();
 		mapCouples = null;
 		mapValues = null;
+		lastValueLine = null;
 	}
 
 }

@@ -186,6 +186,8 @@ public class LandscapeMetricAnalysisFactory {
 			if(((maxWidth/1000.0) * (maxHeight/1000.0)) <= (LandscapeMetricAnalysis.maxTile()/1000000.0)){
 				
 				return new TinyMapLandscapeMetricAnalysisFactory().create(builder, coverage);
+				
+				//return new HugeMapLandscapeMetricAnalysisFactory().create(builder, coverage);
 			}else{
 				
 				return new HugeMapLandscapeMetricAnalysisFactory().create(builder, coverage);

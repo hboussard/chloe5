@@ -115,12 +115,13 @@ public class MetricManager {
 					
 				}
 			}
+			cr.close();
 			buf.close();
 		}catch(IOException ex){
 			ex.printStackTrace();
-		}finally{
+		}/*finally{
 			cr.close();
-		}
+		}*/
 	}
 	
 	public static boolean hasMetric(String m){

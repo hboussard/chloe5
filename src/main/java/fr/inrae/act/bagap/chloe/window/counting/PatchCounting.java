@@ -19,7 +19,7 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
 	
 	private Map<Integer, Double> maxSurfaces;
 	
- 	public PatchCounting(int[] values, float theoreticalSize){
+ 	public PatchCounting(int[] values, double theoreticalSize){
 		super(theoreticalSize);
 		this.values = values;
 		nbPatches = new HashMap<Integer, Integer>();

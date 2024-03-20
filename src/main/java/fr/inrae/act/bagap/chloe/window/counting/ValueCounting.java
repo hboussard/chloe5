@@ -14,7 +14,7 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	
 	private int countClass;
 	
-	public ValueCounting(int[] values, float theoreticalSize){
+	public ValueCounting(int[] values, double theoreticalSize){
 		super(theoreticalSize);
 		this.values = values;
 		this.countValues = new HashMap<Integer, Double>();
@@ -42,7 +42,6 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 			}
 			countValues.put(values[i-5], counts[i]);
 		}
-
 	}
 	
 	@Override

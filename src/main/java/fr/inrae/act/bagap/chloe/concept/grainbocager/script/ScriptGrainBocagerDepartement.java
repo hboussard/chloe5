@@ -18,12 +18,24 @@ public class ScriptGrainBocagerDepartement {
 		
 		//calculGrainBocager50m(14, 2020);
 		//calculGrainBocager50m(61, 2020);
+		//calculGrainBocager50m(22, 2018);
+		//calculGrainBocager50m(29, 2018);
+		//calculGrainBocager50m(35, 2020);
+		//calculGrainBocager50m(56, 2019);
 		
 		//calculZoneEnjeux(14, 2020, 1);
 		//calculZoneEnjeux(61, 2020, 1);
+		//calculZoneEnjeux(22, 2018, 1);
+		//calculZoneEnjeux(29, 2018, 1);
+		//calculZoneEnjeux(35, 2020, 1);
+		//calculZoneEnjeux(56, 2019, 1);
 		
 		//calculZoneEnjeux(14, 2020, 5);
 		//calculZoneEnjeux(61, 2020, 5);
+		//calculZoneEnjeux(22, 2018, 5);
+		//calculZoneEnjeux(29, 2018, 5);
+		//calculZoneEnjeux(35, 2020, 5);
+		//calculZoneEnjeux(56, 2019, 5);
 	}
 	
 	private static void calculGrainBocager5m(int numDep, int annee) {
@@ -57,6 +69,8 @@ public class ScriptGrainBocagerDepartement {
 		gbManager.setBufferArea(0);
 		gbManager.setSeuils(0.2, 0.33, 0.45);
 		gbManager.setGrainCellSize(50.0);
+		gbManager.setHauteurBoisement(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_hauteur_boisement.tif");
+		gbManager.setTypeBoisement(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_type_boisement.tif");
 		gbManager.setDistanceInfluenceBoisement(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_distance_influence.tif");
 		gbManager.setGrainBocager(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_grain_bocager_50m.tif");
 		gbManager.setGrainBocager4Classes(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_grain_bocager_50m_4classes.tif");

@@ -19,7 +19,7 @@ public class ValueAndCoupleCounting extends Counting implements ValueCountingInt
 	
 	private float[] couples;
 	
-	private int theoreticalCoupleSize;
+	private double theoreticalCoupleSize;
 	
 	private double totalCouples;
 	
@@ -33,7 +33,7 @@ public class ValueAndCoupleCounting extends Counting implements ValueCountingInt
 	
 	private short countCoupleClass;
 	
-	public ValueAndCoupleCounting(int[] values, float[] couples, float theoreticalSize, int theoreticalCoupleSize){
+	public ValueAndCoupleCounting(int[] values, float[] couples, double theoreticalSize, double theoreticalCoupleSize){
 		super(theoreticalSize);
 		this.values = values;
 		this.countValues = new HashMap<Integer, Double>();
@@ -127,7 +127,7 @@ public class ValueAndCoupleCounting extends Counting implements ValueCountingInt
 	*/
 	
 	@Override
-	public int theoreticalCoupleSize(){
+	public double theoreticalCoupleSize(){
 		return theoreticalCoupleSize;
 	}
 	

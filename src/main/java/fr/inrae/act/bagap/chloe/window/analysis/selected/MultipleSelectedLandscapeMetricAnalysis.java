@@ -3,7 +3,6 @@ package fr.inrae.act.bagap.chloe.window.analysis.selected;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,10 +10,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import fr.inra.sad.bagap.apiland.core.element.manager.Tool;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inrae.act.bagap.apiland.util.SpatialCsvManager;
-import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.window.analysis.MultipleLandscapeMetricAnalysis;
@@ -28,13 +25,9 @@ public class MultipleSelectedLandscapeMetricAnalysis extends MultipleLandscapeMe
 
 	private Set<Metric> totalMetrics;
 	
-	private String totalCsvOutput;
+	private String totalCsvOutput, csvFolder;
 	
 	private Set<Integer> coherences;
-	
-	//private List<String> csvOutputs;
-	
-	//private List<String> suffixMetrics;
 	
 	private Map<String, List<String>> csvOutputs;
 	
@@ -49,12 +42,13 @@ public class MultipleSelectedLandscapeMetricAnalysis extends MultipleLandscapeMe
 		try {
 			totalMetrics = builder.getMetrics();
 			totalCsvOutput = builder.getCsv();
+			csvFolder = builder.getCsvFolder();
 			
-			String path = null;
-			if(totalCsvOutput != null){
-				path = new File(totalCsvOutput).getParent();
-				//csvOutputs = new ArrayList<String>();
-				//suffixMetrics = new ArrayList<String>();
+			String path = csvFolder;
+			if(totalCsvOutput != null || csvFolder != null){
+				if(path == null) {
+					path = new File(totalCsvOutput).getParent();
+				}
 				csvOutputs = new LinkedHashMap<String, List<String>>();
 				suffixMetrics = new LinkedHashMap<String, List<String>>();
 			}
@@ -62,21 +56,20 @@ public class MultipleSelectedLandscapeMetricAnalysis extends MultipleLandscapeMe
 			coherences = MetricManager.getCoherences(totalMetrics);
 			Set<Metric> metrics;
 			
-			if(builder.getRasterFiles().size() == 0 || builder.getRasterFiles().size() == 1){
+			if(builder.getRasterFiles().size() <= 1){ // un seul raster --> un seul fichier CSV
 				
 				String rasterFile = builder.getRasterFile();
-			
-				System.out.println("ici");
 				
-				if(totalCsvOutput != null){
+				if(totalCsvOutput != null || csvFolder != null){ // export CSV demande
 					csvOutputs.put(rasterFile, new ArrayList<String>());
 					suffixMetrics.put(rasterFile, new ArrayList<String>());
 				}
 				
-				for(int ws : builder.getWindowSizes()){
+				for(int ws : builder.getWindowSizes()){ // pour chaque taille de fenetre
 					builder.setWindowSize(ws);
 					
-					for(int coherence : coherences){
+					for(int coherence : coherences){ // pour chaque groupe de metrique coherent
+						
 						metrics = new HashSet<Metric>();
 						metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
 						if(coherence == 0){
@@ -84,7 +77,7 @@ public class MultipleSelectedLandscapeMetricAnalysis extends MultipleLandscapeMe
 						}
 						builder.setMetrics(metrics);
 						
-						if(totalCsvOutput != null){
+						if(totalCsvOutput != null || csvFolder != null){
 							builder.addCsvOutput(path+"/selected_"+coherence+"_"+ws+".csv");
 							csvOutputs.get(rasterFile).add(path+"/selected_"+coherence+"_"+ws+".csv");
 							suffixMetrics.get(rasterFile).add("_"+ws);
@@ -97,11 +90,12 @@ public class MultipleSelectedLandscapeMetricAnalysis extends MultipleLandscapeMe
 			}else {
 				
 				for(String rasterFile : builder.getRasterFiles()){
+					
 					String name = new File(rasterFile).getName().replace(".tif", "").replace(".asc", "");
 					builder.setRasterFile(rasterFile);
 					builder.setPixelsFilter((Set<? extends Pixel>) null); 
 					
-					if(totalCsvOutput != null){
+					if(totalCsvOutput != null || csvFolder != null){ // export CSV demande
 						csvOutputs.put(rasterFile, new ArrayList<String>());
 						suffixMetrics.put(rasterFile, new ArrayList<String>());
 					}					
@@ -117,10 +111,8 @@ public class MultipleSelectedLandscapeMetricAnalysis extends MultipleLandscapeMe
 							}
 							builder.setMetrics(metrics);
 							
-							if(totalCsvOutput != null){
+							if(totalCsvOutput != null || csvFolder != null){ // export CSV demande
 								builder.addCsvOutput(path+"/"+name+"_selected_"+coherence+"_"+ws+".csv");
-								//csvOutputs.add(path+"/"+name+"_selected_"+coherence+"_"+ws+".csv");
-								//suffixMetrics.add("_"+ws);
 								csvOutputs.get(rasterFile).add(path+"/"+name+"_selected_"+coherence+"_"+ws+".csv");
 								suffixMetrics.get(rasterFile).add("_"+ws);
 							}
@@ -139,15 +131,23 @@ public class MultipleSelectedLandscapeMetricAnalysis extends MultipleLandscapeMe
 	@Override
 	protected void doClose() {
 		
-		if(totalCsvOutput != null){
+		if(totalCsvOutput != null || csvFolder != null){
 			
-			if(builder.getRasterFiles().size() == 0 || builder.getRasterFiles().size() == 1){
+			if(builder.getRasterFiles().size() <= 1){
 				
 				String rasterFile = builder.getRasterFile();
 			
+				String localCsvOutput;
+				if(totalCsvOutput != null) {
+					localCsvOutput = totalCsvOutput;
+				}else {
+					String name = new File(rasterFile).getName().replace(".tif", "").replace(".asc", "");
+					localCsvOutput = csvFolder+name+".csv";
+				}
+				
 				EnteteRaster entete = builder.getEntete();
 				Set<Pixel> pixels = builder.getRefPixels();
-				SpatialCsvManager.mergeFromPixels(totalCsvOutput, csvOutputs.get(rasterFile).toArray(new String[csvOutputs.get(rasterFile).size()]), suffixMetrics.get(rasterFile).toArray(new String[suffixMetrics.get(rasterFile).size()]), entete, pixels);
+				SpatialCsvManager.mergeFromPixels(localCsvOutput, csvOutputs.get(rasterFile).toArray(new String[csvOutputs.get(rasterFile).size()]), suffixMetrics.get(rasterFile).toArray(new String[suffixMetrics.get(rasterFile).size()]), entete, pixels);
 				
 				for(String csvOut : csvOutputs.get(rasterFile)){
 					new File(csvOut).delete();
@@ -159,9 +159,14 @@ public class MultipleSelectedLandscapeMetricAnalysis extends MultipleLandscapeMe
 				Map<String, String> localCsv = new TreeMap<String, String>();
 				for(String rasterFile : builder.getRasterFiles()){
 					
-					
 					String name = new File(rasterFile).getName().replace(".tif", "").replace(".asc", "");
-					String localCsvOutput = totalCsvOutput.replace(".csv", "")+"_"+name+".csv";
+					
+					String localCsvOutput;
+					if(totalCsvOutput != null) {
+						localCsvOutput = totalCsvOutput.replace(".csv", "")+"_"+name+".csv";
+					}else {
+						localCsvOutput = csvFolder+name+".csv";
+					}
 					
 					Coverage cov = CoverageManager.getCoverage(rasterFile);
 					EnteteRaster entete = cov.getEntete();
@@ -178,11 +183,13 @@ public class MultipleSelectedLandscapeMetricAnalysis extends MultipleLandscapeMe
 					
 				}
 				
-				SpatialCsvManager.mergeMapPixels(totalCsvOutput, localCsv, noDataValue, pixels);
-				
-				for(String csv : localCsv.keySet()){
-					new File(csv).delete();
-				}
+				if(totalCsvOutput != null) {
+					SpatialCsvManager.mergeMapPixels(totalCsvOutput, localCsv, noDataValue, pixels);
+					
+					for(String csv : localCsv.keySet()){
+						new File(csv).delete();
+					}
+				}	
 			}
 		}
 		

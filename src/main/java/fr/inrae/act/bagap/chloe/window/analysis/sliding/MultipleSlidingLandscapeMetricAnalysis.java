@@ -11,7 +11,6 @@ import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.element.manager.Tool;
 import fr.inrae.act.bagap.apiland.util.SpatialCsvManager;
-import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.window.analysis.MultipleLandscapeMetricAnalysis;
@@ -52,13 +51,13 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 			}
 			
 			coherences = MetricManager.getCoherences(totalMetrics);
-			Set<Metric> metrics = new HashSet<Metric>();
+			Set<Metric> metrics;
 			
 			if(builder.getRasterFiles().size() <= 1){ // un seul raster --> un seul fichier CSV
 				
 				String rasterFile = builder.getRasterFile();
 				
-				if(totalCsvOutput != null){
+				if(totalCsvOutput != null || csvFolder != null){ // export CSV demande
 					csvOutputs.put(rasterFile, new ArrayList<String>());
 					suffixMetrics.put(rasterFile, new ArrayList<String>());
 				}
@@ -67,21 +66,20 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 					builder.setWindowSize(ws);
 					
 					for(int coherence : coherences){ // pour chaque groupe coherent de metriques
+						metrics = new HashSet<Metric>();
 						metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
 						if(coherence == 0){
 							continue;
 						}
 						builder.setMetrics(metrics);
 						
-						if(totalCsvOutput != null){
+						if(totalCsvOutput != null || csvFolder != null){
 							builder.addCsvOutput(path+"/sliding_"+coherence+"_"+ws+".csv");
 							csvOutputs.get(rasterFile).add(path+"/sliding_"+coherence+"_"+ws+".csv");
 							suffixMetrics.get(rasterFile).add("_"+ws);
 						}
 						
 						add(LandscapeMetricAnalysisFactory.create(builder));
-						
-						metrics = new HashSet<Metric>();
 					}
 				}
 			}else{ // plusieurs rasters --> autant de fichiers CSV
@@ -99,6 +97,7 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 						builder.setWindowSize(ws);
 						
 						for(int coherence : coherences){ // pour chaque groupe coherent de metriques
+							metrics = new HashSet<Metric>();
 							metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
 							if(coherence == 0){
 								continue;
@@ -112,8 +111,6 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 							}
 							
 							add(LandscapeMetricAnalysisFactory.create(builder));
-						
-							metrics = new HashSet<Metric>();
 						}
 					}
 				}
@@ -132,13 +129,21 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 				
 				String rasterFile = builder.getRasterFile();
 					
+				String localCsvOutput;
+				if(totalCsvOutput != null) {
+					localCsvOutput = totalCsvOutput;
+				}else {
+					String name = new File(rasterFile).getName().replace(".tif", "").replace(".asc", "");
+					localCsvOutput = csvFolder+name+".csv";
+				}
+				
 				EnteteRaster entete = EnteteRaster.read(csvOutputs.get(rasterFile).iterator().next().replace(".csv", "_header.txt"));
-				SpatialCsvManager.mergeXY(totalCsvOutput, csvOutputs.get(rasterFile).toArray(new String[csvOutputs.get(rasterFile).size()]), suffixMetrics.get(rasterFile).toArray(new String[suffixMetrics.get(rasterFile).size()]), "X", "Y", entete);
-					
+				SpatialCsvManager.mergeXY(localCsvOutput, csvOutputs.get(rasterFile).toArray(new String[csvOutputs.get(rasterFile).size()]), suffixMetrics.get(rasterFile).toArray(new String[suffixMetrics.get(rasterFile).size()]), "X", "Y", entete);
+				
 				// nettoyage
 				for(String csvOut : csvOutputs.get(rasterFile)){
 					new File(csvOut).delete();
-					Tool.copy(csvOut.replace(".csv", "_header.txt"), totalCsvOutput.replace(".csv", "_header.txt"));
+					Tool.copy(csvOut.replace(".csv", "_header.txt"), localCsvOutput.replace(".csv", "_header.txt"));
 					new File(csvOut.replace(".csv", "_header.txt")).delete();
 				}
 				

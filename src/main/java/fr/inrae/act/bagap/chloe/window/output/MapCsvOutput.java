@@ -28,7 +28,7 @@ public class MapCsvOutput implements CountingObserver{
 	public void init(Counting c, Set<Metric> metrics) {
 		try {
 			bw = new BufferedWriter(new FileWriter(csv));
-			bw.write("name");
+			bw.write("raster");
 			for(Metric m : metrics) {
 				bw.write(";"+m.getName());
 			}

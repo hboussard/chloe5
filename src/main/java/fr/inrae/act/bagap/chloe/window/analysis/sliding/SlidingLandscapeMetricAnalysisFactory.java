@@ -143,8 +143,8 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			function = CombinationExpressionFactory.createDistanceFunction(builder.getWindowDistanceFunction(), dMax);
 		}
 		
-		float theoreticalSize = 0;
-		int theoreticalCoupleSize = 0;
+		double theoreticalSize = 0;
+		double theoreticalCoupleSize = 0;
 		if(builder.getWindowShapeType() == WindowShapeType.SQUARE || builder.getWindowDistanceType() == WindowDistanceType.FAST_SQUARE) {
 			theoreticalSize = windowSize * windowSize;
 			theoreticalCoupleSize = (windowSize-1) * windowSize * 2;
@@ -200,6 +200,20 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				observers.add(csvOutput);
 			} else {
 				InterpolateSplineLinearCsvOutput csvOutput = new InterpolateSplineLinearCsvOutput(builder.getCsv(),
+						inMinX + (roiX * inCellSize),
+						inMaxX - ((inWidth - roiX) * inCellSize) + (roiWidth * inCellSize),
+						inMinY + ((inHeight - roiY) * inCellSize) - (roiHeight * inCellSize),
+						inMaxY - (roiY * inCellSize), roiWidth, roiHeight, inCellSize, coverage.getEntete().noDataValue(), coverage.getEntete().crs(),
+						displacement);
+				observers.add(csvOutput);
+			}
+		}else if (builder.getCsvFolder() != null){
+			String name = builder.getCsvFolder()+new File(builder.getRasterFile()).getName().replace(".tif", "").replace(".asc", "").toString()+".csv";
+			if (builder.getDisplacement() == 1 || builder.getInterpolation() == false) {
+				CsvOutput csvOutput = new CsvOutput(name, outMinX, outMaxX, outMinY, outMaxY, outWidth,	outHeight, outCellSize, coverage.getEntete().noDataValue(), coverage.getEntete().crs());
+				observers.add(csvOutput);
+			} else {
+				InterpolateSplineLinearCsvOutput csvOutput = new InterpolateSplineLinearCsvOutput(name,
 						inMinX + (roiX * inCellSize),
 						inMaxX - ((inWidth - roiX) * inCellSize) + (roiWidth * inCellSize),
 						inMinY + ((inHeight - roiY) * inCellSize) - (roiHeight * inCellSize),

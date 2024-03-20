@@ -23,7 +23,27 @@ public class ScriptSelected {
 		//analyse2Friction();
 		//analyse2Friction();
 		//split();
-		analyseSelectedMultiple();
+		//analyseSelectedMultiple();
+		analyseSelected();
+	}
+	
+	private static void analyseSelected(){
+		
+		String path = "D:/data/sig/data_ZA/PF_OS_L93/raster_5m/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(ChloeAnalysisType.SELECTED);
+		builder.addRasterFile(path+"os_za_2016.tif");
+		builder.addRasterFile(path+"os_za_2017.tif");
+		builder.addRasterFile(path+"os_za_2018.tif");
+		builder.setPointsFilter(path+"points.csv");
+		builder.setWindowSizes(new int[]{51, 71});
+		builder.addMetric("SHDI");
+		builder.addMetric("average");		
+		//builder.setCsvOutputFolder(path+"test");
+		builder.addCsvOutput(path+"test/analyse.csv");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
 	}
 	
 	private static void split(){

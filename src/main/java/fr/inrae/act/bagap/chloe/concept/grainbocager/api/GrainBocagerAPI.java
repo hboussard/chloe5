@@ -182,8 +182,8 @@ public class GrainBocagerAPI {
 	}
 	
 	private static boolean importPlantation(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("plantation")){
-			String prop = properties.getProperty("plantation");
+		if(properties.containsKey("plantations")){
+			String prop = properties.getProperty("plantations");
 			manager.setPlantation(prop);
 			return true;
 		}
@@ -191,8 +191,8 @@ public class GrainBocagerAPI {
 	}
 	
 	private static boolean importAttributHauteurPlantation(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("attribut_hauteur_plantation")){
-			String prop = properties.getProperty("attribut_hauteur_plantation");
+		if(properties.containsKey("attribut_hauteur_plantations")){
+			String prop = properties.getProperty("attribut_hauteur_plantations");
 			manager.setAttributHauteurPlantation(prop);
 			return true;
 		}

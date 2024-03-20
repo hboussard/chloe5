@@ -12,7 +12,7 @@ public class CoupleCounting extends Counting implements CoupleCountingInterface 
 	
 	private float[] couples;
 	
-	private int theoreticalCoupleSize;
+	private double theoreticalCoupleSize;
 	
 	private double totalCouples;
 	
@@ -26,7 +26,7 @@ public class CoupleCounting extends Counting implements CoupleCountingInterface 
 	
 	private short countCoupleClass;
 	
-	public CoupleCounting(int nValues, float[] couples, double theoreticalSize, int theoreticalCoupleSize){
+	public CoupleCounting(int nValues, float[] couples, double theoreticalSize, double theoreticalCoupleSize){
 		super(theoreticalSize);
 		this.nValues = nValues;
 		this.couples = couples;
@@ -87,7 +87,7 @@ public class CoupleCounting extends Counting implements CoupleCountingInterface 
 	*/
 	
 	@Override
-	public int theoreticalCoupleSize(){
+	public double theoreticalCoupleSize(){
 		return theoreticalCoupleSize;
 	}
 	

@@ -1,6 +1,7 @@
 package fr.inrae.act.bagap.chloe.window.analysis.selected;
 
 import java.awt.Rectangle;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -152,7 +153,13 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 			
 			SelectedCsvOutput csvOutput = new SelectedCsvOutput(builder.getCsv(), pixels, coverage.getEntete());
 			observers.add(csvOutput);
+		}else if (builder.getCsvFolder() != null){
+			
+			String name = builder.getCsvFolder()+new File(builder.getRasterFile()).getName().replace(".tif", "").replace(".asc", "").toString()+".csv";
+			SelectedCsvOutput csvOutput = new SelectedCsvOutput(name, pixels, coverage.getEntete());
+			observers.add(csvOutput);
 		}
+		
 		/*if(builder.getDatas() != null){
 				System.out.println("ici");
 				DataOutput dataOutput = new DataOutput(builder.getMetrics().iterator().next(), builder.getDatas());

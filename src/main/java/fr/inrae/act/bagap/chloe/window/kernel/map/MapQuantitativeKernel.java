@@ -19,7 +19,7 @@ public class MapQuantitativeKernel extends MapLandscapeMetricKernel {
 		for(int y=0; y<height(); y++) {
 			for(int x=0; x<width(); x++) {
 					
-				v = (short) inDatas()[((theY+y)*width()) + x];	
+				v = (short) inDatas()[(y*width()) + x];	
 				nb += 1;	
 				if(v == noDataValue()) {
 					nb_nodata += 1;
@@ -39,7 +39,5 @@ public class MapQuantitativeKernel extends MapLandscapeMetricKernel {
 		outDatas()[6] += min;
 		outDatas()[7] += max;
 	}
-	
-	
 
 }

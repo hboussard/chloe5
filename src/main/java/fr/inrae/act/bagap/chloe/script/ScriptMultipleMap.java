@@ -7,7 +7,24 @@ import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 public class ScriptMultipleMap {
 
 	public static void main(String[] args) {
-		scriptMultipleMap();
+		analyseMap();
+	}
+	
+	private static void analyseMap(){
+		
+		String path = "D:/data/sig/data_ZA/PF_OS_L93/raster_5m/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(ChloeAnalysisType.MAP);
+		builder.addRasterFile(path+"os_za_2016.tif");
+		builder.addRasterFile(path+"os_za_2017.tif");
+		builder.addRasterFile(path+"os_za_2018.tif");
+		builder.addMetric("SHDI");
+		builder.addMetric("average");		
+		builder.setCsvOutputFolder(path+"test");
+		//builder.addCsvOutput(path+"test/analyse.csv");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
 	}
 	
 	private static void scriptMultipleMap(){

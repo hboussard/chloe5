@@ -129,7 +129,7 @@ public class GrainBocagerManager {
 		// attributs avec valeur par defaut
 		tile = null;
 		seuils = new double[]{0.2, 0.33, 0.45};
-		modeFast = false;
+		modeFast = true;
 		force = false;
 		grainCellSize = 5;
 		grainWindowRadius = 250.0;

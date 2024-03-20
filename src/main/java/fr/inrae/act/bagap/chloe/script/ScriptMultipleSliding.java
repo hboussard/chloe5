@@ -5,6 +5,7 @@ import java.util.TreeSet;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.RefPoint;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
+import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.raster.Coverage;
@@ -16,8 +17,28 @@ public class ScriptMultipleSliding {
 	
 	public static void main(String[] args) {
 		//convert();
-		scriptMultipleSliding();
+		//scriptMultipleSliding();
+		analyseSliding();
 		
+	}
+	
+	private static void analyseSliding(){
+		
+		String path = "D:/data/sig/data_ZA/PF_OS_L93/raster_5m/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(ChloeAnalysisType.SLIDING);
+		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		builder.addRasterFile(path+"os_za_2016.tif");
+		//builder.addRasterFile(path+"os_za_2017.tif");
+		//builder.addRasterFile(path+"os_za_2018.tif");
+		builder.setWindowSizes(new int[]{53, 87});
+		builder.addMetric("SHDI");
+		builder.addMetric("average");		
+		builder.setCsvOutputFolder(path+"test");
+		//builder.addCsvOutput(path+"test/analyse.csv");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
 	}
 	
 	private static void convert(){
