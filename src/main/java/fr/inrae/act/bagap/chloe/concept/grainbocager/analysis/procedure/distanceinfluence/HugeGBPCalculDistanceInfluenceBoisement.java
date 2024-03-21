@@ -4,36 +4,41 @@ import java.io.File;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.HugeGrainBocager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.detectionboisement.HugeGBPDetectionTypeBoisement;
+import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedureFactory;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 
 public class HugeGBPCalculDistanceInfluenceBoisement extends GrainBocagerProcedure {
 
-	public HugeGBPCalculDistanceInfluenceBoisement(GrainBocagerManager manager) {
-		super(manager);
+	public HugeGBPCalculDistanceInfluenceBoisement(GrainBocagerProcedureFactory factory, GrainBocagerManager manager) {
+		super(factory, manager);
+	}
+	
+	@Override
+	public void doInit() {
+		
+		if(manager().force() 
+				|| !new File(manager().woodType()).exists()
+				|| !new File(manager().woodHeight()).exists()){
+			
+			factory().parentFactory().create(manager()).run();
+		}
 	}
 
 	@Override
-	public Coverage run() {
+	public void doRun() {
 		
-		Coverage covTypeBoisement;
-		if(manager().force() || !new File(manager().typeBoisement()).exists()){
-			covTypeBoisement = new HugeGBPDetectionTypeBoisement(manager()).run();
-		}else{
-			covTypeBoisement = CoverageManager.getCoverage(manager().typeBoisement());
-		}
+		Coverage covTypeBoisement = CoverageManager.getCoverage(manager().woodType());
+		
+		Coverage covHauteurBoisement = CoverageManager.getCoverage(manager().woodHeight());
 		
 		System.out.println("calcul des distances d'influences des boisements");
 		
-		Coverage covHauteurBoisement = CoverageManager.getCoverage(manager().hauteurBoisement());
-		
-		Coverage covDistanceInfluence = HugeGrainBocager.calculDistancesInfluences(manager().distanceInfluenceBoisement(), covHauteurBoisement, covTypeBoisement, manager().tile(), manager().modeFast());
+		Coverage covDistanceInfluence = HugeGrainBocager.calculDistancesInfluences(manager().influenceDistance(), covHauteurBoisement, covTypeBoisement, manager().tile(), manager().fastMode());
 		
 		covHauteurBoisement.dispose();
 		covTypeBoisement.dispose();
-		
-		return covDistanceInfluence;
+		covDistanceInfluence.dispose();;
 	}
 
 }

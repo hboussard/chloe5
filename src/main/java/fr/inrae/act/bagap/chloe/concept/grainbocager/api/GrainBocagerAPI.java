@@ -8,7 +8,6 @@ import java.io.Reader;
 import java.util.Properties;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
-import fr.inrae.act.bagap.raster.Tile;
 
 public class GrainBocagerAPI {
 
@@ -28,6 +27,8 @@ public class GrainBocagerAPI {
 			in.close();
 			
 			if(properties.containsKey("treatment")){
+				
+				long begin = System.currentTimeMillis();
 				
 				String treatment = properties.getProperty("treatment");
 				GrainBocagerManager manager = new GrainBocagerManager(treatment); 
@@ -50,6 +51,9 @@ public class GrainBocagerAPI {
 				
 				GrainBocagerProcedure procedure = manager.build();
 				procedure.run();
+				
+				long end = System.currentTimeMillis();
+				System.out.println("time computing : "+(end - begin));
 			}
 		}catch(FileNotFoundException ex){
 			ex.printStackTrace();
@@ -60,54 +64,54 @@ public class GrainBocagerAPI {
 
 	private static void importParameters(GrainBocagerManager manager, Properties properties) {
 		
-		importTile(manager, properties);
-		importOutputPath(manager, properties);
-		importName(manager, properties);
-		importModeFast(manager, properties);
+		importFastMode(manager, properties);
 		importForce(manager, properties);
-		importTerritoire(manager, properties);
-		importEnveloppe(manager, properties);
+		importTerritory(manager, properties);
+		importEnvelope(manager, properties);
 		importBufferArea(manager, properties);
+		importTileFolder(manager, properties);
 		importBocage(manager, properties);
-		importSuppression(manager, properties);
-		importPlantation(manager, properties);
-		importAttributHauteurPlantation(manager, properties);
-		importHauteurBoisement(manager, properties);
-		importTypeBoisement(manager, properties);
-		importDistanceInfluence(manager, properties);
-		importGrainCellSize(manager, properties);
-		importGrainWindowRadius(manager, properties);
-		importSeuils(manager, properties);
+		importWoodRemoval(manager, properties);
+		importWoodPlanting(manager, properties);
+		importHeightPlantingAttribute(manager, properties);
+		importWoodHeight(manager, properties);
+		importWoodType(manager, properties);
+		importInfluenceDistance(manager, properties);
+		importGrainBocagerCellSize(manager, properties);
+		importGrainBocagerWindowRadius(manager, properties);
+		importThresholds(manager, properties);
+		importThreshold(manager, properties);
 		importGrainBocager(manager, properties);
 		importGrainBocager4Classes(manager, properties);
-		importSeuil(manager, properties);
-		importGrainBocagerFonctionnel(manager, properties);
-		importClusterFonctionnel(manager, properties);
-		importEnjeuxCellSize(manager, properties);
-		importEnjeuxWindowRadius(manager, properties);
-		importProportionGrainBocagerFonctionnel(manager, properties);
-		importZoneFragmentationGrainBocagerFonctionnel(manager, properties);
-	
+		importFunctionalGrainBocager(manager, properties);
+		importFunctionalGrainBocagerClustering(manager, properties);
+		importIssuesCellSize(manager, properties);
+		importIssuesWindowRadius(manager, properties);
+		importFunctionalGrainBocagerProportion(manager, properties);
+		importFunctionalGrainBocagerFragmentation(manager, properties);
+		importOutputFolder(manager, properties);
+		//importName(manager, properties);
 	}
 
-	private static boolean importTile(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("tuilage")){
-			String prop = properties.getProperty("tuilage");
-			manager.setTile(Tile.getTile(prop));
+	private static boolean importTileFolder(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("tile_folder")){
+			String prop = properties.getProperty("tile_folder");
+			manager.setTile(prop);
 			return true;
 		}
 		return false;
 	}
 	
-	private static boolean importOutputPath(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("output_path")){
-			String prop = properties.getProperty("output_path");
-			manager.setOutputPath(prop);
+	private static boolean importOutputFolder(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("output_folder")){
+			String prop = properties.getProperty("output_folder");
+			manager.setOutputFolder(prop);
 			return true;
 		}
 		return false;
 	}
 	
+	/*
 	private static boolean importName(GrainBocagerManager manager, Properties properties) {
 		if(properties.containsKey("name")){
 			String prop = properties.getProperty("name");
@@ -116,11 +120,12 @@ public class GrainBocagerAPI {
 		}
 		return false;
 	}
+	*/
 	
-	private static boolean importModeFast(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("mode_fast")){
-			boolean modeFast = Boolean.parseBoolean(properties.getProperty("mode_fast"));
-			manager.setModeFast(modeFast);
+	private static boolean importFastMode(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("fast_mode")){
+			boolean fastMode = Boolean.parseBoolean(properties.getProperty("fast_mode"));
+			manager.setFastMode(fastMode);
 			return true;
 		}
 		return false;
@@ -135,19 +140,19 @@ public class GrainBocagerAPI {
 		return false;
 	}
 	
-	private static boolean importTerritoire(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("territoire")){
-			String prop = properties.getProperty("territoire");
-			manager.setTerritoire(prop);
+	private static boolean importTerritory(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("territory")){
+			String prop = properties.getProperty("territory");
+			manager.setTerritory(prop);
 			return true;
 		}
 		return false;
 	}
 	
-	private static boolean importEnveloppe(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("enveloppe")){
-			String prop = properties.getProperty("enveloppe");
-			manager.setEnveloppe(prop);
+	private static boolean importEnvelope(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("envelope")){
+			String prop = properties.getProperty("envelope");
+			manager.setEnvelope(prop);
 			return true;
 		}
 		return false;
@@ -165,93 +170,101 @@ public class GrainBocagerAPI {
 	private static boolean importBocage(GrainBocagerManager manager, Properties properties) {
 		if(properties.containsKey("bocage")){
 			String prop = properties.getProperty("bocage");
-			System.out.println(prop);
 			manager.setBocage(prop);
 			return true;
 		}
 		return false;
 	}
 	
-	private static boolean importSuppression(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("suppression")){
-			String prop = properties.getProperty("suppression");
-			manager.setSuppression(prop);
+	private static boolean importWoodRemoval(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("wood_removal")){
+			String prop = properties.getProperty("wood_removal");
+			manager.setWoodRemoval(prop);
 			return true;
 		}
 		return false;
 	}
 	
-	private static boolean importPlantation(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("plantations")){
-			String prop = properties.getProperty("plantations");
-			manager.setPlantation(prop);
+	private static boolean importWoodPlanting(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("wood_planting")){
+			String prop = properties.getProperty("wood_planting");
+			manager.setWoodPlanting(prop);
 			return true;
 		}
 		return false;
 	}
 	
-	private static boolean importAttributHauteurPlantation(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("attribut_hauteur_plantations")){
-			String prop = properties.getProperty("attribut_hauteur_plantations");
-			manager.setAttributHauteurPlantation(prop);
+	private static boolean importHeightPlantingAttribute(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("height_planting_attribute")){
+			String prop = properties.getProperty("height_planting_attribute");
+			manager.setHeightPlantingAttribute(prop);
 			return true;
 		}
 		return false;
 	}
 	
-	private static boolean importHauteurBoisement(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("hauteur_boisement")){
-			String prop = properties.getProperty("hauteur_boisement");
-			manager.setHauteurBoisement(prop);
+	private static boolean importWoodHeight(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("wood_height")){
+			String prop = properties.getProperty("wood_height");
+			manager.setWoodHeight(prop);
 			return true;
 		}
 		return false;
 	}
 	
-	private static boolean importTypeBoisement(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("type_boisement")){
-			String prop = properties.getProperty("type_boisement");
-			manager.setTypeBoisement(prop);
+	private static boolean importWoodType(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("wood_type")){
+			String prop = properties.getProperty("wood_type");
+			manager.setWoodType(prop);
 			return true;
 		}
 		return false;
 	}
 	
-	private static boolean importDistanceInfluence(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("distance_influence")){
-			String prop = properties.getProperty("distance_influence");
-			manager.setDistanceInfluenceBoisement(prop);
+	private static boolean importInfluenceDistance(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("influence_distance")){
+			String prop = properties.getProperty("influence_distance");
+			manager.setInfluenceDistance(prop);
 			return true;
 		}
 		return false;
 	}
 	
-	private static boolean importSeuils(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("seuil")){
-			String prop = properties.getProperty("seuil");
+	private static boolean importThresholds(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("thresholds")){
+			String prop = properties.getProperty("thresholds");
 			String[] s = prop.replace("{", "").replace("}", "").replaceAll(" ", "").split(";");
 			double s1 = Double.parseDouble(s[0]);
 			double s2 = Double.parseDouble(s[1]);
 			double s3 = Double.parseDouble(s[2]);
-			manager.setSeuils(s1, s2, s3);
+			manager.setThresholds(s1, s2, s3);
 			return true;
 		}
 		return false;
 	}
 	
-	private static boolean importGrainWindowRadius(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("window_radius")){
-			String prop = properties.getProperty("window_radius");
-			manager.setGrainWindowRadius(Double.parseDouble(prop));
+	private static boolean importThreshold(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("threshold")){
+			String prop = properties.getProperty("threshold");
+			manager.setThreshold(Double.parseDouble(prop));
 			return true;
 		}
 		return false;
 	}
 	
-	private static boolean importGrainCellSize(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("grain_cellsize")){
-			String prop = properties.getProperty("grain_cellsize");
-			manager.setGrainCellSize(Double.parseDouble(prop));
+	private static boolean importGrainBocagerWindowRadius(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("grain_bocager_window_radius")){
+			String prop = properties.getProperty("grain_bocager_window_radius");
+			manager.setGrainBocagerWindowRadius(Double.parseDouble(prop));
+			return true;
+		}
+		return false;
+	}
+	
+	private static boolean importGrainBocagerCellSize(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("grain_bocager_cellsize")){
+			String prop = properties.getProperty("grain_bocager_cellsize");
+			manager.setGrainBocagerCellSize(Double.parseDouble(prop));
 			return true;
 		}
 		return false;
@@ -275,69 +288,60 @@ public class GrainBocagerAPI {
 		return false;
 	}
 	
-	private static boolean importSeuil(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("seuil")){
-			String prop = properties.getProperty("seuil");
-			manager.setSeuil(Double.parseDouble(prop));
+	private static boolean importFunctionalGrainBocager(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("functional_grain_bocager")){
+			String prop = properties.getProperty("functional_grain_bocager");
+			manager.setFunctionalGrainBocager(prop);
 			return true;
 		}
 		return false;
 	}
 	
-	private static boolean importGrainBocagerFonctionnel(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("grain_bocager_fonctionnel")){
-			String prop = properties.getProperty("grain_bocager_fonctionnel");
-			manager.setGrainBocagerFonctionnel(prop);
+	private static boolean importFunctionalGrainBocagerClustering(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("functional_grain_bocager_clustering")){
+			String prop = properties.getProperty("functional_grain_bocager_clustering");
+			manager.setFunctionalGrainBocagerClustering(prop);
 			return true;
 		}
 		return false;
 	}
 	
-	private static boolean importClusterFonctionnel(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("clusterisation_grain_bocager_fonctionnel")){
-			String prop = properties.getProperty("clusterisation_grain_bocager_fonctionnel");
-			manager.setClusterGrainBocagerFonctionnel(prop);
+	private static boolean importIssuesWindowRadius(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("issues_window_radius")){
+			String prop = properties.getProperty("issues_window_radius");
+			manager.setIssuesWindowRadius(Double.parseDouble(prop));
 			return true;
 		}
 		return false;
 	}
 	
-	private static boolean importEnjeuxWindowRadius(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("enjeux_window_radius")){
-			String prop = properties.getProperty("enjeux_window_radius");
-			manager.setEnjeuxWindowRadius(Double.parseDouble(prop));
+	private static boolean importIssuesCellSize(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("issues_cellsize")){
+			String prop = properties.getProperty("issues_cellsize");
+			manager.setIssuesCellSize(Double.parseDouble(prop));
 			return true;
 		}
 		return false;
 	}
 	
-	private static boolean importEnjeuxCellSize(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("enjeux_cellsize")){
-			String prop = properties.getProperty("enjeux_cellsize");
-			manager.setEnjeuxCellSize(Double.parseDouble(prop));
+	private static boolean importFunctionalGrainBocagerProportion(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("functional_grain_bocager_proportion")){
+			String prop = properties.getProperty("functional_grain_bocager_proportion");
+			manager.setFunctionalGrainBocagerProportion(prop);
 			return true;
 		}
 		return false;
 	}
 	
-	private static boolean importProportionGrainBocagerFonctionnel(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("proportion_grain_bocager_fonctionnel")){
-			String prop = properties.getProperty("proportion_grain_bocager_fonctionnel");
-			manager.setProportionGrainBocagerFonctionnel(prop);
+	private static boolean importFunctionalGrainBocagerFragmentation(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("functional_grain_bocager_fragmentation")){
+			String prop = properties.getProperty("functional_grain_bocager_fragmentation");
+			manager.setFunctionalGrainBocagerFragmentation(prop);
 			return true;
 		}
 		return false;
 	}
-	
-	private static boolean importZoneFragmentationGrainBocagerFonctionnel(GrainBocagerManager manager, Properties properties) {
-		if(properties.containsKey("fragmentation_grain_bocager_fonctionnel")){
-			String prop = properties.getProperty("fragmentation_grain_bocager_fonctionnel");
-			manager.setZoneFragmentationGrainBocagerFonctionnel(prop);
-			return true;
-		}
-		return false;
-	}
-	
+	/*
 	private static boolean importZoneBocage(GrainBocagerManager manager, Properties properties) {
 		if(properties.containsKey("zone_bocage")){
 			String prop = properties.getProperty("zone_bocage");
@@ -374,10 +378,6 @@ public class GrainBocagerAPI {
 		return false;
 	}
 	
-	
-	
-	
-	
 	private static boolean importScenarios(GrainBocagerManager manager, Properties properties) {
 		if(properties.containsKey("scenarios")){
 			String prop = properties.getProperty("scenarios");
@@ -389,7 +389,7 @@ public class GrainBocagerAPI {
 		}
 		return false;
 	}
-
+	*/
 	/*
 	 * private static void importRecuperationHauteurBoisement(GrainBocagerManager manager, Properties properties) {
 		

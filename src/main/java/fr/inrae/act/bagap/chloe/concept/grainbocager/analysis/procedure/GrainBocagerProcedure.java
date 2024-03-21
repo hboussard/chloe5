@@ -1,19 +1,31 @@
 package fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure;
 
-import fr.inrae.act.bagap.raster.Coverage;
-
 public abstract class GrainBocagerProcedure {
 
+	private GrainBocagerProcedureFactory factory;
+	
 	private GrainBocagerManager manager;
 	
-	public GrainBocagerProcedure(GrainBocagerManager manager){
+	public GrainBocagerProcedure(GrainBocagerProcedureFactory factory, GrainBocagerManager manager){
+		this.factory = factory;
 		this.manager = manager;
+	}
+	
+	protected GrainBocagerProcedureFactory factory(){
+		return factory;
 	}
 	
 	protected GrainBocagerManager manager(){
 		return manager;
 	}
 	
-	public abstract Coverage run();
+	public void run() {
+		doInit();
+		doRun();
+	}
+	
+	public abstract void doInit();
+	
+	public abstract void doRun();
 	
 }

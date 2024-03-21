@@ -44,13 +44,13 @@ public class ScriptGrainBocagerDepartement {
 		String outputPath = "E:/grain_bocager/data/";
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_grain_bocager");
-		gbManager.setModeFast(true);
+		gbManager.setFastMode(true);
 		gbManager.setBufferArea(0);
-		gbManager.setSeuils(0.2, 0.33, 0.45);
+		gbManager.setThresholds(0.2, 0.33, 0.45);
 		gbManager.setBocage(dataPath+numDep+"_"+annee+"_5m/mean/");
-		gbManager.setHauteurBoisement(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_hauteur_boisement.tif");
-		gbManager.setTypeBoisement(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_type_boisement.tif");
-		gbManager.setDistanceInfluenceBoisement(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_distance_influence.tif");
+		gbManager.setWoodHeight(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_hauteur_boisement.tif");
+		gbManager.setWoodType(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_type_boisement.tif");
+		gbManager.setInfluenceDistance(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_distance_influence.tif");
 		gbManager.setGrainBocager(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_grain_bocager_5m.tif");
 		gbManager.setGrainBocager4Classes(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_grain_bocager_5m_4classes.tif");
 		
@@ -65,13 +65,13 @@ public class ScriptGrainBocagerDepartement {
 		String outputPath = "E:/grain_bocager/data/";
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_grain_bocager");
-		gbManager.setModeFast(true);
+		gbManager.setFastMode(true);
 		gbManager.setBufferArea(0);
-		gbManager.setSeuils(0.2, 0.33, 0.45);
-		gbManager.setGrainCellSize(50.0);
-		gbManager.setHauteurBoisement(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_hauteur_boisement.tif");
-		gbManager.setTypeBoisement(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_type_boisement.tif");
-		gbManager.setDistanceInfluenceBoisement(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_distance_influence.tif");
+		gbManager.setThresholds(0.2, 0.33, 0.45);
+		gbManager.setGrainBocagerCellSize(50.0);
+		gbManager.setWoodHeight(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_hauteur_boisement.tif");
+		gbManager.setWoodType(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_type_boisement.tif");
+		gbManager.setInfluenceDistance(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_distance_influence.tif");
 		gbManager.setGrainBocager(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_grain_bocager_50m.tif");
 		gbManager.setGrainBocager4Classes(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_grain_bocager_50m_4classes.tif");
 		
@@ -88,14 +88,14 @@ public class ScriptGrainBocagerDepartement {
 		String outputPath = "E:/grain_bocager/data/";
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_enjeux_globaux");
-		gbManager.setModeFast(true); 
+		gbManager.setFastMode(true); 
 		gbManager.setGrainBocager(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_grain_bocager_50m.tif");
-		gbManager.setGrainBocagerFonctionnel(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_grain_bocager_fonctionnel_50m.tif");
-		gbManager.setClusterGrainBocagerFonctionnel(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_grain_bocager_cluster_50m.tif");
-		gbManager.setEnjeuxCellSize(200);
-		gbManager.setEnjeuxWindowRadius(ewr);
-		gbManager.setProportionGrainBocagerFonctionnel(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_proportion_grain_bocager_fonc_"+km+"km.tif");
-		gbManager.setZoneFragmentationGrainBocagerFonctionnel(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_fragmentation_grain_bocager_fonc_"+km+"km.tif");
+		gbManager.setFunctionalGrainBocager(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_grain_bocager_fonctionnel_50m.tif");
+		gbManager.setFunctionalGrainBocagerClustering(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_grain_bocager_cluster_50m.tif");
+		gbManager.setIssuesCellSize(200);
+		gbManager.setIssuesWindowRadius(ewr);
+		gbManager.setFunctionalGrainBocagerProportion(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_proportion_grain_bocager_fonc_"+km+"km.tif");
+		gbManager.setFunctionalGrainBocagerFragmentation(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_fragmentation_grain_bocager_fonc_"+km+"km.tif");
 		
 		GrainBocagerProcedure gbProcedure = gbManager.build();
 		

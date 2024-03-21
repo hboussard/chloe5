@@ -220,47 +220,44 @@ public class ScriptLeandre {
 	private static void scriptDetectionTypeBoisement() {
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("detection_type_boisement");
-		gbManager.setModeFast(true);
-		gbManager.setTile(Tile.getTile("H:/leandre/grain_bocager/mnhc/"));
-		gbManager.setHauteurBoisement("H:/leandre/grain_bocager/mnhc/");
-		gbManager.setOutputPath("H:/leandre/grain_bocager/");
-		gbManager.setTypeBoisement("H:/leandre/grain_bocager/type_boisement/");
+		gbManager.setFastMode(true);
+		gbManager.setTile("H:/leandre/grain_bocager/mnhc/");
+		gbManager.setWoodHeight("H:/leandre/grain_bocager/mnhc/");
+		gbManager.setOutputFolder("H:/leandre/grain_bocager/");
+		gbManager.setWoodType("H:/leandre/grain_bocager/type_boisement/");
 		
 		GrainBocagerProcedure gbProcedure = gbManager.build();
 		
-		Coverage cov = gbProcedure.run();
-		cov.dispose();
+		gbProcedure.run();
 		
 	}
 	
 	private static void scriptCalculDistanceInfluenceBoisement() {
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_distance_influence_boisement");
-		gbManager.setModeFast(true);
-		gbManager.setTile(Tile.getTile("H:/leandre/grain_bocager/mnhc/"));
-		gbManager.setHauteurBoisement("H:/leandre/grain_bocager/mnhc/");
-		gbManager.setTypeBoisement("H:/leandre/grain_bocager/type_boisement/");
-		gbManager.setDistanceInfluenceBoisement("H:/leandre/grain_bocager/distance_influence_boisement/");
+		gbManager.setFastMode(true);
+		gbManager.setTile("H:/leandre/grain_bocager/mnhc/");
+		gbManager.setWoodHeight("H:/leandre/grain_bocager/mnhc/");
+		gbManager.setWoodType("H:/leandre/grain_bocager/type_boisement/");
+		gbManager.setInfluenceDistance("H:/leandre/grain_bocager/distance_influence_boisement/");
 		
 		GrainBocagerProcedure gbProcedure = gbManager.build();
 		
-		Coverage cov = gbProcedure.run();
-		cov.dispose();
+		gbProcedure.run();
 		
 	}
 	
 	private static void scriptCalculGrainBocager() {
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_grain_bocager");
-		gbManager.setDistanceInfluenceBoisement("H:/leandre/grain_bocager/distance_boisement/");
-		gbManager.setGrainCellSize(50.0);
+		gbManager.setInfluenceDistance("H:/leandre/grain_bocager/distance_boisement/");
+		gbManager.setGrainBocagerCellSize(50.0);
 		gbManager.setGrainBocager("H:/leandre/grain_bocager/grain_bocager_50m.tif");
 		gbManager.setGrainBocager4Classes("H:/leandre/grain_bocager/grain_bocager_4Classes_50m.tif");
 		
 		GrainBocagerProcedure gbProcedure = gbManager.build();
 		
-		Coverage cov = gbProcedure.run();
-		cov.dispose();
+		gbProcedure.run();
 		
 	}
 	

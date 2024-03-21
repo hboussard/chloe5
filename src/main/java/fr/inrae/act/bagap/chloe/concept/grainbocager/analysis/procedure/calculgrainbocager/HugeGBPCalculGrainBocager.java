@@ -4,40 +4,39 @@ import java.io.File;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.HugeGrainBocager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.distanceinfluence.HugeGBPCalculDistanceInfluenceBoisement;
+import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedureFactory;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 
 public class HugeGBPCalculGrainBocager extends GrainBocagerProcedure {
 
-	public HugeGBPCalculGrainBocager(GrainBocagerManager manager) {
-		super(manager);
+	public HugeGBPCalculGrainBocager(GrainBocagerProcedureFactory factory, GrainBocagerManager manager) {
+		super(factory, manager);
 	}
 
 	@Override
-	public Coverage run() {
+	public void doInit() {
 		
-		Coverage covDistanceInfluenceBoisement;
-		if(manager().force() || !new File(manager().distanceInfluenceBoisement()).exists()){
-			covDistanceInfluenceBoisement = new HugeGBPCalculDistanceInfluenceBoisement(manager()).run();
-		}else{
-			covDistanceInfluenceBoisement = CoverageManager.getCoverage(manager().distanceInfluenceBoisement());
+		if(manager().force() || !new File(manager().influenceDistance()).exists()){
+			
+			factory().parentFactory().create(manager()).run();
 		}
+	}
+	
+	@Override
+	public void doRun() {
 		
-		System.out.println("calcul du grain bocager a "+manager().grainCellSize()+"m dans une fenetre de "+manager().grainWindowRadius()+"m");
+		Coverage covDistanceInfluenceBoisement = CoverageManager.getCoverage(manager().influenceDistance());
 		
-		Coverage covGrainBocager = HugeGrainBocager.calculGrainBocager(manager().grainBocager(), covDistanceInfluenceBoisement, manager().entete(), manager().grainWindowRadius(), manager().grainCellSize(), manager().tile());
+		System.out.println("calcul du grain bocager a "+manager().grainBocagerCellSize()+"m dans une fenetre de "+manager().grainBocagerWindowRadius()+"m");
 		
-		if(!manager().grainBocager4Classes().equalsIgnoreCase("")){
+		Coverage covGrainBocager = HugeGrainBocager.calculGrainBocager(manager().grainBocager(), covDistanceInfluenceBoisement, manager().entete(), manager().grainBocagerWindowRadius(), manager().grainBocagerCellSize(), manager().tile(), manager().fastMode());
+		
+		System.out.println("calcul des seuils du grain bocager");
 			
-			System.out.println("calcul des seuils du grain bocager");
-			
-			Coverage covGrainBocager4Classes = HugeGrainBocager.runClassificationNClasses(manager().grainBocager4Classes(), covGrainBocager, manager().entete().noDataValue(),  manager().seuils());
-			
-			covGrainBocager4Classes.dispose();
-		}
+		Coverage covGrainBocager4Classes = HugeGrainBocager.runClassificationNClasses(manager().grainBocager4Classes(), covGrainBocager, manager().entete().noDataValue(),  manager().thresholds());
 		
-		return covGrainBocager;
+		covGrainBocager4Classes.dispose();
 		
 	}
 

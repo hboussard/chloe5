@@ -104,83 +104,78 @@ public class ScriptPaysDeLaLoire {
 	private static void scriptDetectionTypeBoisement() {
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("detection_type_boisement");
-		gbManager.setModeFast(true);
-		gbManager.setTile(Tile.getTile("G:/FRC_Pays_de_la_Loire/data/mnhc/"));
-		gbManager.setHauteurBoisement("G:/FRC_Pays_de_la_Loire/data/mnhc/");
-		gbManager.setOutputPath("G:/FRC_Pays_de_la_Loire/data/grain_bocager/");
-		gbManager.setTypeBoisement("G:/FRC_Pays_de_la_Loire/data/grain_bocager/TypeBoisement/");
+		gbManager.setFastMode(true);
+		gbManager.setTile("G:/FRC_Pays_de_la_Loire/data/mnhc/");
+		gbManager.setWoodHeight("G:/FRC_Pays_de_la_Loire/data/mnhc/");
+		gbManager.setOutputFolder("G:/FRC_Pays_de_la_Loire/data/grain_bocager/");
+		gbManager.setWoodType("G:/FRC_Pays_de_la_Loire/data/grain_bocager/TypeBoisement/");
 		
 		GrainBocagerProcedure gbProcedure = gbManager.build();
 		
-		Coverage cov = gbProcedure.run();
-		cov.dispose();
+		gbProcedure.run();
 		
 	}
 	
 	private static void scriptCalculDistanceInfluenceBoisement() {
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_distance_influence_boisement");
-		gbManager.setModeFast(true);
-		gbManager.setTile(Tile.getTile("G:/FRC_Pays_de_la_Loire/data/mnhc/"));
-		gbManager.setHauteurBoisement("G:/FRC_Pays_de_la_Loire/data/mnhc/");
-		gbManager.setTypeBoisement("G:/FRC_Pays_de_la_Loire/data/grain_bocager/TypeBoisement/");
-		gbManager.setDistanceInfluenceBoisement("G:/FRC_Pays_de_la_Loire/data/grain_bocager/DistanceInfluenceBoisement/");
+		gbManager.setFastMode(true);
+		gbManager.setTile("G:/FRC_Pays_de_la_Loire/data/mnhc/");
+		gbManager.setWoodHeight("G:/FRC_Pays_de_la_Loire/data/mnhc/");
+		gbManager.setWoodType("G:/FRC_Pays_de_la_Loire/data/grain_bocager/TypeBoisement/");
+		gbManager.setInfluenceDistance("G:/FRC_Pays_de_la_Loire/data/grain_bocager/DistanceInfluenceBoisement/");
 		
 		GrainBocagerProcedure gbProcedure = gbManager.build();
 		
-		Coverage cov = gbProcedure.run();
-		cov.dispose();
+		gbProcedure.run();
 		
 	}
 	
 	private static void scriptCalculGrainBocager() {
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_grain_bocager");
-		gbManager.setTile(Tile.getTile("G:/FRC_Pays_de_la_Loire/data/mnhc/"));
-		gbManager.setDistanceInfluenceBoisement("G:/FRC_Pays_de_la_Loire/data/grain_bocager/DistanceInfluenceBoisement/");
-		gbManager.setGrainCellSize(50.0);
+		gbManager.setTile("G:/FRC_Pays_de_la_Loire/data/mnhc/");
+		gbManager.setInfluenceDistance("G:/FRC_Pays_de_la_Loire/data/grain_bocager/DistanceInfluenceBoisement/");
+		gbManager.setGrainBocagerCellSize(50.0);
 		gbManager.setGrainBocager("G:/FRC_Pays_de_la_Loire/data/grain_bocager/GrainBocager/");
 		gbManager.setGrainBocager4Classes("G:/FRC_Pays_de_la_Loire/data/grain_bocager/GrainBocager4Classes/");
 		
 		GrainBocagerProcedure gbProcedure = gbManager.build();
 		
-		Coverage cov = gbProcedure.run();
-		cov.dispose();
+		gbProcedure.run();
 		
 	}
 	
 	private static void scriptClusterisationZoneGrainBocagerFonctionnel() {
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("clusterisation_fonctionnalite");
-		gbManager.setModeFast(true);
-		gbManager.setTile(Tile.getTile("G:/FRC_Pays_de_la_Loire/data/mnhc/"));
+		gbManager.setFastMode(true);
+		gbManager.setTile("G:/FRC_Pays_de_la_Loire/data/mnhc/");
 		gbManager.setGrainBocager("G:/FRC_Pays_de_la_Loire/data/grain_bocager/GrainBocager/");
-		gbManager.setGrainBocagerFonctionnel("G:/FRC_Pays_de_la_Loire/data/grain_bocager/GrainBocagerFonctionnel/");
-		gbManager.setClusterGrainBocagerFonctionnel("G:/FRC_Pays_de_la_Loire/data/grain_bocager/ClusterisationGrainBocagerFonctionnel/");
+		gbManager.setFunctionalGrainBocager("G:/FRC_Pays_de_la_Loire/data/grain_bocager/GrainBocagerFonctionnel/");
+		gbManager.setFunctionalGrainBocagerClustering("G:/FRC_Pays_de_la_Loire/data/grain_bocager/ClusterisationGrainBocagerFonctionnel/");
 		
 		GrainBocagerProcedure gbProcedure = gbManager.build();
 		
-		Coverage cov = gbProcedure.run();
-		cov.dispose();
+		gbProcedure.run();
 		
 	}
 	
 	private static void scriptCalculEnjeuxGlobaux() {
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_enjeux_globaux");
-		gbManager.setModeFast(true);
-		gbManager.setTile(Tile.getTile("G:/FRC_Pays_de_la_Loire/data/mnhc/"));
-		gbManager.setGrainBocagerFonctionnel("G:/FRC_Pays_de_la_Loire/data/grain_bocager/GrainBocagerFonctionnel/");
-		gbManager.setClusterGrainBocagerFonctionnel("G:/FRC_Pays_de_la_Loire/data/grain_bocager/ClusterisationGrainBocagerFonctionnel/");
-		gbManager.setEnjeuxWindowRadius(1000);
-		gbManager.setEnjeuxCellSize(200);
-		gbManager.setProportionGrainBocagerFonctionnel("G:/FRC_Pays_de_la_Loire/data/grain_bocager/ProportionGrainBocagerFonctionnel/");
-		gbManager.setZoneFragmentationGrainBocagerFonctionnel("G:/FRC_Pays_de_la_Loire/data/grain_bocager/ZoneFragmentationGrainBocagerFonctionnel/");
+		gbManager.setFastMode(true);
+		gbManager.setTile("G:/FRC_Pays_de_la_Loire/data/mnhc/");
+		gbManager.setFunctionalGrainBocager("G:/FRC_Pays_de_la_Loire/data/grain_bocager/GrainBocagerFonctionnel/");
+		gbManager.setFunctionalGrainBocagerClustering("G:/FRC_Pays_de_la_Loire/data/grain_bocager/ClusterisationGrainBocagerFonctionnel/");
+		gbManager.setIssuesWindowRadius(1000);
+		gbManager.setIssuesCellSize(200);
+		gbManager.setFunctionalGrainBocagerProportion("G:/FRC_Pays_de_la_Loire/data/grain_bocager/ProportionGrainBocagerFonctionnel/");
+		gbManager.setFunctionalGrainBocagerFragmentation("G:/FRC_Pays_de_la_Loire/data/grain_bocager/ZoneFragmentationGrainBocagerFonctionnel/");
 		
 		GrainBocagerProcedure gbProcedure = gbManager.build();
 		
-		Coverage cov = gbProcedure.run();
-		cov.dispose();
+		gbProcedure.run();
 		
 	}
 	

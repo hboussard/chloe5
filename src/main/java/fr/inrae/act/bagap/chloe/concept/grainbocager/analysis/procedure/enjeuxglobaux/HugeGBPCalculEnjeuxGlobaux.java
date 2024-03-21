@@ -5,43 +5,48 @@ import java.io.File;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.HugeGrainBocager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.clusterisationfonctionnalite.HugeGBPClusterisationFonctionnalite;
+import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedureFactory;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 
 public class HugeGBPCalculEnjeuxGlobaux extends GrainBocagerProcedure {
 
-	public HugeGBPCalculEnjeuxGlobaux(GrainBocagerManager manager) {
-		super(manager);
+	public HugeGBPCalculEnjeuxGlobaux(GrainBocagerProcedureFactory factory, GrainBocagerManager manager) {
+		super(factory, manager);
 	}
 
 	@Override
-	public Coverage run() {
-		/*
-		Coverage covClusterFonctionnel;
-		if(!new File(manager().clusterGrainBocagerFonctionnel()).exists()){
-			covClusterFonctionnel = new HugeGBPClusterisationFonctionnalite(manager()).run();
-		}else{
-			covClusterFonctionnel = CoverageManager.getCoverage(manager().clusterGrainBocagerFonctionnel());
-		}
+	public void doInit() {
+	
+		if(manager().force() || !new File(manager().functionalGrainBocagerClustering()).exists()){
+			
+			factory().parentFactory().create(manager()).run();
+			
+		}	
+	}
+	
+	@Override
+	public void doRun() {
+
+		Coverage covClusterFonctionnel = CoverageManager.getCoverage(manager().functionalGrainBocagerClustering());
 		
-		System.out.println("calcul des zones de fragmentation de grain bocager fonctionnel à "+manager().enjeuxCellSize()+"m en utilisant une fenêtre de "+manager().enjeuxWindowRadius()+"m");
+		System.out.println("calcul des zones de fragmentation de grain bocager fonctionnel a "+manager().issuesCellSize()+"m en utilisant une fenetre de "+manager().issuesWindowRadius()+"m");
 		
-		Coverage covFragmentationGrainBocagerFonctionnel = HugeGrainBocager.runSHDIClusterGrainBocagerFonctionnel(manager().zoneFragmentationGrainBocagerFonctionnel(), covClusterFonctionnel, manager().entete(), manager().enjeuxWindowRadius(), manager().enjeuxCellSize(), manager().tile(), manager().modeFast());
+		Coverage covFragmentationGrainBocagerFonctionnel = HugeGrainBocager.runSHDIClusterGrainBocagerFonctionnel(manager().functionalGrainBocagerFragmentation(), covClusterFonctionnel, manager().entete(), manager().issuesWindowRadius(), manager().issuesCellSize(), manager().tile(), manager().fastMode());
 		
 		covClusterFonctionnel.dispose();
 		
 		covFragmentationGrainBocagerFonctionnel.dispose();
-		*/
-		Coverage covGrainBocagerFonctionnel = CoverageManager.getCoverage(manager().grainBocagerFonctionnel());
 		
-		System.out.println("calcul des proportions de grain bocager fonctionnel dans une fenêtre de "+manager().enjeuxWindowRadius()+"m avec une resolution de "+manager().enjeuxCellSize()+"m");
+		Coverage covGrainBocagerFonctionnel = CoverageManager.getCoverage(manager().functionalGrainBocager());
 		
-		Coverage covProportionGrainBocagerFonctionnel = HugeGrainBocager.runProportionGrainBocagerFonctionnel(manager().proportionGrainBocagerFonctionnel(), covGrainBocagerFonctionnel, manager().entete(), manager().enjeuxWindowRadius(), manager().enjeuxCellSize(), manager().tile(), manager().modeFast());
+		System.out.println("calcul des proportions de grain bocager fonctionnel dans une fenetre de "+manager().issuesWindowRadius()+"m avec une resolution de "+manager().issuesCellSize()+"m");
+		
+		Coverage covProportionGrainBocagerFonctionnel = HugeGrainBocager.runProportionGrainBocagerFonctionnel(manager().functionalGrainBocagerProportion(), covGrainBocagerFonctionnel, manager().entete(), manager().issuesWindowRadius(), manager().issuesCellSize(), manager().tile(), manager().fastMode());
 		
 		covGrainBocagerFonctionnel.dispose();
 		
-		return covProportionGrainBocagerFonctionnel;
+		covProportionGrainBocagerFonctionnel.dispose();
 		
 	}
 

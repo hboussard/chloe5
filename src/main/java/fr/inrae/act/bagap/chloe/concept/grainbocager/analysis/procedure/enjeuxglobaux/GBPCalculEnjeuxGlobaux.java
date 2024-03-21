@@ -7,66 +7,64 @@ import fr.inra.sad.bagap.apiland.core.element.manager.Tool;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.GrainBocager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.clusterisationfonctionnalite.GBPClusterisationFonctionnalite;
+import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedureFactory;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 
 public class GBPCalculEnjeuxGlobaux extends GrainBocagerProcedure {
 
-	public GBPCalculEnjeuxGlobaux(GrainBocagerManager manager) {
-		super(manager);
+	public GBPCalculEnjeuxGlobaux(GrainBocagerProcedureFactory factory, GrainBocagerManager manager) {
+		super(factory, manager);
 	}
 
 	@Override
-	public Coverage run() {
+	public void doInit() {
+	
+		if(manager().force() || !new File(manager().functionalGrainBocagerClustering()).exists()){
+			
+			factory().parentFactory().create(manager()).run();
+			
+		}	
+	}
+	
+	@Override
+	public void doRun() {
 
-		Coverage covClusterFonctionnel;
-		if(manager().force() || !new File(manager().clusterGrainBocagerFonctionnel()).exists()){
-			covClusterFonctionnel = new GBPClusterisationFonctionnalite(manager()).run();
-		}else{
-			covClusterFonctionnel = CoverageManager.getCoverage(manager().clusterGrainBocagerFonctionnel());
-		}
+		Coverage covClusterFonctionnel = CoverageManager.getCoverage(manager().functionalGrainBocagerClustering());
 		
-		System.out.println("calcul des zones de fragmentation de grain bocager fonctionnel a "+manager().enjeuxCellSize()+"m en utilisant une fenetre de "+manager().enjeuxWindowRadius()+"m");
+		System.out.println("calcul des zones de fragmentation de grain bocager fonctionnel a "+manager().issuesCellSize()+"m en utilisant une fenetre de "+manager().issuesWindowRadius()+"m");
 		
-		Coverage covFragmentationGrainBocagerFonctionnel = GrainBocager.runSHDIClusterGrainBocagerFonctionnel(covClusterFonctionnel, manager().enjeuxWindowRadius(), manager().enjeuxCellSize(), manager().modeFast());
+		Coverage covFragmentationGrainBocagerFonctionnel = GrainBocager.runSHDIClusterGrainBocagerFonctionnel(covClusterFonctionnel, manager().issuesWindowRadius(), manager().issuesCellSize(), manager().fastMode());
 		
 		covClusterFonctionnel.dispose();
 		
-		if(!manager().zoneFragmentationGrainBocagerFonctionnel().equalsIgnoreCase("")){
+		CoverageManager.write(manager().functionalGrainBocagerFragmentation(), covFragmentationGrainBocagerFonctionnel.getData(), covFragmentationGrainBocagerFonctionnel.getEntete());
 			
-			CoverageManager.write(manager().zoneFragmentationGrainBocagerFonctionnel(), covFragmentationGrainBocagerFonctionnel.getData(), covFragmentationGrainBocagerFonctionnel.getEntete());
-			
-			try {
-				Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_fragmentation_grain_bocager_fonctionnel.qml"), Tool.deleteExtension(manager().zoneFragmentationGrainBocagerFonctionnel())+".qml");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		try {
+			Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_fragmentation_grain_bocager_fonctionnel.qml"), Tool.deleteExtension(manager().functionalGrainBocagerFragmentation())+".qml");
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		
 		covFragmentationGrainBocagerFonctionnel.dispose();
 		
-		Coverage covGrainBocagerFonctionnel = CoverageManager.getCoverage(manager().grainBocagerFonctionnel());
+		Coverage covGrainBocagerFonctionnel = CoverageManager.getCoverage(manager().functionalGrainBocager());
 		
-		System.out.println("calcul des proportions de grain bocager fonctionnel dans une fen�tre de "+manager().enjeuxWindowRadius()+"m avec une resolution de "+manager().enjeuxCellSize()+"m");
+		System.out.println("calcul des proportions de grain bocager fonctionnel dans une fenetre de "+manager().issuesWindowRadius()+"m avec une resolution de "+manager().issuesCellSize()+"m");
 		
-		Coverage covProportionGrainBocagerFonctionnel = GrainBocager.runProportionGrainBocagerFonctionnel(covGrainBocagerFonctionnel, manager().enjeuxWindowRadius(), manager().enjeuxCellSize(), manager().modeFast());
+		Coverage covProportionGrainBocagerFonctionnel = GrainBocager.runProportionGrainBocagerFonctionnel(covGrainBocagerFonctionnel, manager().issuesWindowRadius(), manager().issuesCellSize(), manager().fastMode());
 		
 		covGrainBocagerFonctionnel.dispose();
 		
-		if(!manager().proportionGrainBocagerFonctionnel().equalsIgnoreCase("")){
+		CoverageManager.write(manager().functionalGrainBocagerProportion(), covProportionGrainBocagerFonctionnel.getData(), covProportionGrainBocagerFonctionnel.getEntete());
 			
-			CoverageManager.write(manager().proportionGrainBocagerFonctionnel(), covProportionGrainBocagerFonctionnel.getData(), covProportionGrainBocagerFonctionnel.getEntete());
-			
-			try {
-				Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_proportion_grain_bocager_fonctionnel.qml"), Tool.deleteExtension(manager().proportionGrainBocagerFonctionnel())+".qml");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		try {
+			Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_proportion_grain_bocager_fonctionnel.qml"), Tool.deleteExtension(manager().functionalGrainBocagerProportion())+".qml");
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		
-		return covProportionGrainBocagerFonctionnel;
-		
+		covProportionGrainBocagerFonctionnel.dispose();
 	}
 
 }

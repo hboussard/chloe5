@@ -20,7 +20,7 @@ public class ScriptDepartement {
 		GrainBocagerManager gbManager = new GrainBocagerManager("recuperation_hauteur_boisement");
 		
 		gbManager.setBocage("H:/IGN/data/"+codeDept+"_"+annee+"_5m/mean/");
-		gbManager.setHauteurBoisement("H:/IGN/"+outputPath+"hauteur_boisement_"+codeDept+"_"+annee+"_5m.asc");
+		gbManager.setWoodHeight("H:/IGN/"+outputPath+"hauteur_boisement_"+codeDept+"_"+annee+"_5m.asc");
 	
 		GrainBocagerProcedure gbProcedure = gbManager.build();
 		

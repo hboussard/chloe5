@@ -7,46 +7,46 @@ import fr.inra.sad.bagap.apiland.core.element.manager.Tool;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.GrainBocager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.recuperationhauteur.GBPRecuperationHauteurBoisement;
+import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedureFactory;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 
 public class GBPDetectionTypeBoisement extends GrainBocagerProcedure {
 
-	public GBPDetectionTypeBoisement(GrainBocagerManager manager) {
-		super(manager);
+	public GBPDetectionTypeBoisement(GrainBocagerProcedureFactory factory, GrainBocagerManager manager) {
+		super(factory, manager);
 	}
 
 	@Override
-	public Coverage run() {
+	public void doInit() {
 		
-		Coverage covHauteurBoisement;
-		if(manager().force() || !new File(manager().hauteurBoisement()).exists()){
-			covHauteurBoisement = new GBPRecuperationHauteurBoisement(manager()).run();
-		}else{
-			covHauteurBoisement = CoverageManager.getCoverage(manager().hauteurBoisement());
+		if(manager().force() || !new File(manager().woodHeight()).exists()){
+			
+			factory().parentFactory().create(manager()).run();
+			
 		}
+	}
+
+	@Override
+	public void doRun() {
+		
+		Coverage covHauteurBoisement = CoverageManager.getCoverage(manager().woodHeight());
 		
 		System.out.println("detection des types de boisements");
 		
-		Coverage covTypeBoisement = GrainBocager.detectionTypeBoisement(covHauteurBoisement, manager().modeFast());
+		Coverage covTypeBoisement = GrainBocager.detectionTypeBoisement(manager().woodHeight(), manager().fastMode());
 		
 		covHauteurBoisement.dispose();
 		
-		if(!manager().typeBoisement().equalsIgnoreCase("")){
-			CoverageManager.write(manager().typeBoisement(), covTypeBoisement.getData(), covTypeBoisement.getEntete());
+		CoverageManager.write(manager().woodType(), covTypeBoisement.getData(), covTypeBoisement.getEntete());
 			
-			try {
-				Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_type_boisement.qml"), Tool.deleteExtension(manager().typeBoisement())+".qml");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}	
-		}/*else{
-			CoverageManager.write(manager().outputPath()+"type_boisement.tif", covTypeBoisement.getDatas(), covTypeBoisement.getEntete());
-		}*/
+		covTypeBoisement.dispose();
 		
-		//covTypeBoisement.dispose();
-		return covTypeBoisement;
+		try {
+			Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_type_boisement.qml"), Tool.deleteExtension(manager().woodType())+".qml");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
 	}
 
 }

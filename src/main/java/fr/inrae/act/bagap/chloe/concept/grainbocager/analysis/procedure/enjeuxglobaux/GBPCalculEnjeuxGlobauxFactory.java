@@ -11,23 +11,32 @@ public class GBPCalculEnjeuxGlobauxFactory extends GrainBocagerProcedureFactory 
 
 	@Override
 	public boolean check(GrainBocagerManager manager) {
-		if(new File(manager.clusterGrainBocagerFonctionnel()).exists()){
+		
+		if(!manager.force() && new File(manager.functionalGrainBocagerClustering()).exists()){
+			
 			return true;
+			
 		}else{
-			System.out.println("input file for 'cluster_grain_bocager_fonctionnel' is missing");
-			return new GBPClusterisationFonctionnaliteFactory().check(manager);
+			
+			System.out.println("WARNING : input file for 'functional_grain_bocager_clustering' is missing");
+			
+			setParentFactory(new GBPClusterisationFonctionnaliteFactory());
+			
+			return checkParent(manager);
 		}
 	}
 
 	@Override
 	public GrainBocagerProcedure create(GrainBocagerManager manager) {
 		
-		if(manager.tile() == null){
-			return new GBPCalculEnjeuxGlobaux(manager);
+		if(manager.hugeMode()){
+			
+			return new HugeGBPCalculEnjeuxGlobaux(this, manager);
+			
 		}else{
-			return new HugeGBPCalculEnjeuxGlobaux(manager);
+			
+			return new GBPCalculEnjeuxGlobaux(this, manager);
 		}
-		
 	}
 
 }

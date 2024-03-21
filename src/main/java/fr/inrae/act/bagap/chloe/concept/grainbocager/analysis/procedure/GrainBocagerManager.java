@@ -1,11 +1,13 @@
 package fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.locationtech.jts.geom.Envelope;
 
+import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysis;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.calculgrainbocager.GBPCalculGrainBocagerFactory;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.clusterisationfonctionnalite.GBPClusterisationFonctionnaliteFactory;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.detectionboisement.GBPDetectionTypeBoisementFactory;
@@ -25,69 +27,71 @@ public class GrainBocagerManager {
 
 	private GrainBocagerProcedureFactory factory; // constructeur de procedure
 	
+	//private boolean hugeMode; 			// mode grand territoire ?
+	
 	private EnteteRaster entete; 		// entete de travail
 	
 	private Tile tile;					// tuilage pour grandes analyses
 	
-	private List<String> scenarios;		// liste des scenarios
+	//private List<String> scenarios;		// liste des scenarios
 	
-	private List<String> codesEA;		// liste des codes exploitations
+	//private List<String> codesEA;		// liste des codes exploitations
 	
-	private String outputPath; 		// dossier de generation des sorties
+	private String outputFolder; 		// dossier de generation des sorties
 	
-	private String name;				// nom identifiant du territoire
+	private String outputPrefix;				// nom identifiant du territoire
 	
-	private String territoire;			// shapefile du territoire pour definir l'enveloppe
+	private String territory;			// shapefile du territoire pour definir l'enveloppe
 	
-	private String enveloppe;			// envelopppe d'analyse
+	private String envelope;			// enveloppe d'analyse
 	
 	private double bufferArea; 			// buffer autour du territoire d'analyse
 	
-	private String zoneBocage;			// shapefile des zones bocageres appartenant a l'acteur du territoire
+	//private String zoneBocage;			// shapefile des zones bocageres appartenant a l'acteur du territoire
 	
 	private String bocage;				// tuiles MNHC ou autre donnees de boisement
 	
-	private String hauteurBoisement;	// les hauteur de boisement
+	private String woodHeight;			// les hauteur de boisement
 	
-	private String typeBoisement;		// les types de boisement (masif, haie ou arbre isole)
+	private String woodType;		// les types de boisement (masif, haie ou arbre isole)
 	
-	private String distanceInfluenceBoisement; // les distances d'influence des boisement (en fonctin de leur type et de leur hauteur)
+	private String influenceDistance; // les distances d'influence des boisement (en fonctin de leur type et de leur hauteur)
 	
 	private String grainBocager;		// le grain bocager continue (de 0 a 1)
 	
 	private String grainBocager4Classes;	// le grain bocager classifie en 4 classes
 	
-	private String grainBocagerFonctionnel;	// le grain bocager fonctionnel
+	private String functionalGrainBocager;	// le grain bocager fonctionnel
 	
-	private String clusterGrainBocagerFonctionnel;	// le grain bocager fonctionnel clusterise
+	private String functionalGrainBocagerClustering;	// le grain bocager fonctionnel clusterise
 	
-	private String proportionGrainBocagerFonctionnel;	// les proportions de grain bocager fonctionnel (a une certaine echelle)
+	private String functionalGrainBocagerProportion;	// les proportions de grain bocager fonctionnel (a une certaine echelle)
 	
-	private String zoneFragmentationGrainBocagerFonctionnel;	// les zones de fragmentation du grain bocager fonctionnel (a une certaine echelle)
+	private String functionalGrainBocagerFragmentation;	// les zones de fragmentation du grain bocager fonctionnel (a une certaine echelle)
 	
-	private String plantation;			// ajout de lineaires bocagers ou surfaces de bocage
+	private String woodPlanting;			// ajout de lineaires bocagers ou surfaces de bocage
 	
-	private String suppression;			// suppression de surfaces de bocage 
+	private String heightPlantingAttribute;		// attribut des valeurs de hauteur dans la couche de plantation
 	
-	private boolean modeFast; 			// mode FAST (imprecis mais rapide)
+	private String woodRemoval;			// suppression de surfaces de bocage 
+	
+	private boolean fastMode; 			// mode FAST (imprecis mais rapide)
 	
 	private boolean force; 				// forcage des recalculations
 	
-	private double grainCellSize;			// taille du pixel du grain bocager
+	private double grainBocagerCellSize;			// taille du pixel du grain bocager
 	
-	private double grainWindowRadius;		// taille de la fen�tre d'analyse pour le grain bocager
+	private double grainBocagerWindowRadius;		// taille de la fen�tre d'analyse pour le grain bocager
 	
-	private double enjeuxCellSize;		// taille du pixel des enjeux
+	private double issuesCellSize;		// taille du pixel des enjeux
 	
-	private double enjeuxWindowRadius;	// taille de la fen�tre d'analyse pour les enjeux bocagers
+	private double issuesWindowRadius;	// taille de la fen�tre d'analyse pour les enjeux bocagers
 	
-	private double[] seuils; 			// seuil d'observation du grain bocager, le seuil de fonctionnalite est le deuxi�me
+	private double[] thresholds; 			// seuil d'observation du grain bocager, le seuil de fonctionnalite est le deuxi�me
 	
-	private String attributCodeEA;		// attribut de code exploitation
+	//private String attributCodeEA;		// attribut de code exploitation
 	
-	private String attributSecteur;		// attribut des secteurs
-	
-	private String attributHauteurPlantation;		// attribut des valeurs de hauteur dans la couche de plantation
+	//private String attributSecteur;		// attribut des secteurs
 	
 	public GrainBocagerManager(String treatment){
 		setTreatment(treatment);
@@ -96,28 +100,28 @@ public class GrainBocagerManager {
 	
 	private void setTreatment(String treatment){
 		switch(treatment){
-		case "diagnostique_exploitation" : 
-			factory = new GBPDiagnosticExploitationFactory();
-			break;
-		case "diagnostique_territoire" : 
-			factory = new GBPDiagnosticTerritoireFactory();
-			break;
-		case "recuperation_hauteur_boisement" : 
+		//case "farm_diagnostic" : 
+		//	factory = new GBPDiagnosticExploitationFactory();
+		//	break;
+		//case "territory_diagnostic" : 
+		//	factory = new GBPDiagnosticTerritoireFactory();
+		//	break;
+		case "wood_height_recovery" : 
 			factory = new GBPRecuperationHauteurBoisementFactory();
 			break;
-		case "detection_type_boisement" : 
+		case "wood_type_detection" : 
 			factory = new GBPDetectionTypeBoisementFactory();
 			break;
-		case "calcul_distance_influence_boisement" :
+		case "influence_distance_calculation" :
 			factory = new GBPCalculDistanceInfluenceBoisementFactory();
 			break;
-		case "calcul_grain_bocager" : 
+		case "grain_bocager_calculation" : 
 			factory = new GBPCalculGrainBocagerFactory();
 			break;
-		case "clusterisation_fonctionnalite" : 
+		case "functional_clustering" : 
 			factory = new GBPClusterisationFonctionnaliteFactory();
 			break;
-		case "calcul_enjeux_globaux" : 
+		case "global_issues_calculation" : 
 			factory = new GBPCalculEnjeuxGlobauxFactory();
 			break;
 		default : throw new IllegalArgumentException("treatment '"+treatment+"' do not exists");
@@ -127,53 +131,59 @@ public class GrainBocagerManager {
 	private void init(){
 		
 		// attributs avec valeur par defaut
+		//hugeMode = false;
 		tile = null;
-		seuils = new double[]{0.2, 0.33, 0.45};
-		modeFast = true;
+		thresholds = new double[]{0.2, 0.33, 0.45};
+		fastMode = true;
 		force = false;
-		grainCellSize = 5;
-		grainWindowRadius = 250.0;
-		enjeuxCellSize = 50;
-		enjeuxWindowRadius = 1000.0;
+		grainBocagerCellSize = 5;
+		grainBocagerWindowRadius = 250.0;
+		issuesCellSize = 50;
+		issuesWindowRadius = 1000.0;
 		bufferArea = 0.0;
-		scenarios = new ArrayList<String>();
-		codesEA = new ArrayList<String>();
-		attributCodeEA = "id_ea";
-		attributSecteur = "secteur";
-		attributHauteurPlantation = "hauteur";
+		//scenarios = new ArrayList<String>();
+		//codesEA = new ArrayList<String>();
+		//attributCodeEA = "id_ea";
+		//attributSecteur = "secteur";
+		heightPlantingAttribute = "hauteur";
+		outputFolder = new File(System.getProperty("java.io.tmpdir")).toString().replace("\\", "/")+"/grain_bocager/";
+		Util.createAccess(outputFolder);
+		/*File tmpDir = new File(outputFolder);
+		for(File f : tmpDir.listFiles()) {
+			f.deleteOnExit();
+		}*/
+		outputPrefix = "";
 		
 		// attributs a redefinir 
-		bocage = "";
-		territoire = "";
-		enveloppe = "";
-		outputPath = "";
-		name = "";
-		plantation = "";
-		suppression = "";
-		hauteurBoisement = "";
-		typeBoisement = "";
-		distanceInfluenceBoisement = "";
-		grainBocager = "";
-		grainBocager4Classes = "";
-		zoneBocage = "";
-		grainBocagerFonctionnel = "";
-		clusterGrainBocagerFonctionnel = "";
-		proportionGrainBocagerFonctionnel = "";
-		zoneFragmentationGrainBocagerFonctionnel = "";
+		bocage = null;
+		territory = null;
+		envelope = null;
+		
+		woodPlanting = null;
+		woodRemoval = null;
+		woodHeight = null;
+		woodType = null;
+		influenceDistance = null;
+		grainBocager = null;
+		grainBocager4Classes = null;
+		functionalGrainBocager = null;
+		functionalGrainBocagerClustering = null;
+		functionalGrainBocagerProportion = null;
+		functionalGrainBocagerFragmentation = null;
 	}
 	
 	private boolean initEntete(){
 		
-		if(!bocage.equalsIgnoreCase("")){
+		if(!bocage().equalsIgnoreCase("")){
 			
 			// recuperation de l'entete du bocage
-			Coverage covBocage = CoverageManager.getCoverage(bocage);
+			Coverage covBocage = CoverageManager.getCoverage(bocage());
 			entete = covBocage.getEntete();
 			covBocage.dispose();
 			
-			if(!enveloppe.equalsIgnoreCase("") && bufferArea >= 0){
+			if(envelope != null){
 				
-				String[] bornes = enveloppe.replace("{", "").replace("}", "").split(";");
+				String[] bornes = envelope.replace("{", "").replace("}", "").split(";");
 				
 				// recuperation de l'enveloppe totale de travail
 				Envelope envelope = new Envelope(
@@ -185,54 +195,64 @@ public class GrainBocagerManager {
 				// recuperation de l'entete
 				entete = EnteteRaster.getEntete(entete, envelope);
 				
-			} else if(!territoire.equalsIgnoreCase("") && bufferArea >= 0){
+			} else if(territory != null){
 				
 				// recuperation de l'enveloppe totale de travail
-				Envelope envelope = ShapeFile2CoverageConverter.getEnvelope(territoire, bufferArea);
+				Envelope envelope = ShapeFile2CoverageConverter.getEnvelope(territory, bufferArea);
 							
 				// recuperation de l'entete
 				entete = EnteteRaster.getEntete(entete, envelope);
 			}
 			
+			//initHugeMode();
+			
 			return true;
 		}
 		
-		if(!hauteurBoisement.equalsIgnoreCase("") && new File(hauteurBoisement).exists()){
+		if(new File(woodHeight()).exists()){
 			
 			// recuperation de l'entete
-			Coverage covHauteurBoisement = CoverageManager.getCoverage(hauteurBoisement);
+			Coverage covHauteurBoisement = CoverageManager.getCoverage(woodHeight());
 			entete = covHauteurBoisement.getEntete();
 			covHauteurBoisement.dispose();
 			
+			//initHugeMode();
+			
 			return true;
 		}
 		
-		if(!distanceInfluenceBoisement.equalsIgnoreCase("") && new File(distanceInfluenceBoisement).exists()){
+		if(new File(influenceDistance()).exists()){
 			
 			// recuperation de l'entete
-			Coverage covDistanceInfluence = CoverageManager.getCoverage(distanceInfluenceBoisement);
+			Coverage covDistanceInfluence = CoverageManager.getCoverage(influenceDistance());
 			entete = covDistanceInfluence.getEntete();
 			covDistanceInfluence.dispose();
 			
+			//initHugeMode();
+			
 			return true;
 		}
 		
-		if(!grainBocager.equalsIgnoreCase("") && new File(grainBocager).exists()){
+		if(new File(grainBocager()).exists()){
 			
 			// recuperation de l'entete
-			Coverage covGrainBocager = CoverageManager.getCoverage(grainBocager);
+			Coverage covGrainBocager = CoverageManager.getCoverage(grainBocager());
 			entete = covGrainBocager.getEntete();
 			covGrainBocager.dispose();
 			
+			//initHugeMode();
+			
 			return true;
 		}
 		
-		if(!clusterGrainBocagerFonctionnel.equalsIgnoreCase("") && new File(clusterGrainBocagerFonctionnel).exists()){
+		if(new File(functionalGrainBocagerClustering()).exists()){
 			
 			// recuperation de l'entete
-			Coverage covClusterGrainBocager = CoverageManager.getCoverage(clusterGrainBocagerFonctionnel);
+			Coverage covClusterGrainBocager = CoverageManager.getCoverage(functionalGrainBocagerClustering());
 			entete = covClusterGrainBocager.getEntete();
 			covClusterGrainBocager.dispose();
+			
+			//initHugeMode();
 			
 			return true;
 		}
@@ -240,6 +260,16 @@ public class GrainBocagerManager {
 		return false;
 	}
 	
+	/*
+	private void initHugeMode() {
+		if(entete.width()*entete.height() > ChloeAnalysis.maxTile()){
+			hugeMode = true;
+		}else {
+			hugeMode = false;
+		}
+	}
+	*/
+
 	public GrainBocagerProcedure build(){
 		if(factory.check(this)){
 			if(initEntete()){
@@ -251,26 +281,26 @@ public class GrainBocagerManager {
 		throw new IllegalArgumentException("parameters are unconsistant");
 	}
 	
-	public void setTile(Tile tile){
-		this.tile = tile;
+	public void setTile(String tileDir){
+		this.tile = Tile.getTile(tileDir);
 	}
 
 	public void setBocage(String bocage) {
 		this.bocage = bocage;
 	}
 	
-	public void setHauteurBoisement(String hauteurBoisement) {
-		this.hauteurBoisement = hauteurBoisement;
+	public void setWoodHeight(String woodHeight) {
+		this.woodHeight = woodHeight;
 	}
 	
-	public void setTypeBoisement(String typeBoisement) {
-		Util.createAccess(typeBoisement);
-		this.typeBoisement = typeBoisement;
+	public void setWoodType(String woodType) {
+		Util.createAccess(woodType);
+		this.woodType = woodType;
 	}
 	
-	public void setDistanceInfluenceBoisement(String distanceInfluenceBoisement) {
-		Util.createAccess(distanceInfluenceBoisement);
-		this.distanceInfluenceBoisement = distanceInfluenceBoisement;
+	public void setInfluenceDistance(String influenceDistance) {
+		Util.createAccess(influenceDistance);
+		this.influenceDistance = influenceDistance;
 	}
 	
 	public void setGrainBocager(String grainBocager){
@@ -283,26 +313,27 @@ public class GrainBocagerManager {
 		this.grainBocager4Classes = grainBocager4Classes;
 	}
 	
-	public void setGrainBocagerFonctionnel(String grainBocagerFonctionnel){
-		Util.createAccess(grainBocagerFonctionnel);
-		this.grainBocagerFonctionnel = grainBocagerFonctionnel;
+	public void setFunctionalGrainBocager(String functionalGrainBocager){
+		Util.createAccess(functionalGrainBocager);
+		this.functionalGrainBocager = functionalGrainBocager;
 	}
 	
-	public void setClusterGrainBocagerFonctionnel(String clusterGrainBocagerFonctionnel){
-		Util.createAccess(clusterGrainBocagerFonctionnel);
-		this.clusterGrainBocagerFonctionnel = clusterGrainBocagerFonctionnel;
+	public void setFunctionalGrainBocagerClustering(String functionalGrainBocagerClustering){
+		Util.createAccess(functionalGrainBocagerClustering);
+		this.functionalGrainBocagerClustering = functionalGrainBocagerClustering;
 	}
 	
-	public void setProportionGrainBocagerFonctionnel(String proportionGrainBocagerFonctionnel){
-		Util.createAccess(proportionGrainBocagerFonctionnel);
-		this.proportionGrainBocagerFonctionnel = proportionGrainBocagerFonctionnel;
+	public void setFunctionalGrainBocagerProportion(String functionalGrainBocagerProportion){
+		Util.createAccess(functionalGrainBocagerProportion);
+		this.functionalGrainBocagerProportion = functionalGrainBocagerProportion;
 	}
 	
-	public void setZoneFragmentationGrainBocagerFonctionnel(String zoneFragmentationGrainBocagerFonctionnel){
-		Util.createAccess(zoneFragmentationGrainBocagerFonctionnel);
-		this.zoneFragmentationGrainBocagerFonctionnel = zoneFragmentationGrainBocagerFonctionnel;
+	public void setFunctionalGrainBocagerFragmentation(String functionalGrainBocagerFragmentation){
+		Util.createAccess(functionalGrainBocagerFragmentation);
+		this.functionalGrainBocagerFragmentation = functionalGrainBocagerFragmentation;
 	}
 	
+	/*
 	public void addScenario(String scenario){
 		scenarios.add(scenario);
 	}
@@ -310,79 +341,80 @@ public class GrainBocagerManager {
 	public void addCodeEA(String codeEA){
 		codesEA.add(codeEA);
 	}
+	*/
 	
-	public void setGrainCellSize(double grainCellSize){
-		this.grainCellSize = grainCellSize;
+	public void setGrainBocagerCellSize(double grainCellSize){
+		this.grainBocagerCellSize = grainCellSize;
 	}
 	
-	public void setGrainWindowRadius(double grainWindowRadius){
-		this.grainWindowRadius = grainWindowRadius;
+	public void setGrainBocagerWindowRadius(double grainWindowRadius){
+		this.grainBocagerWindowRadius = grainWindowRadius;
 	}
 	
-	public void setEnjeuxCellSize(double enjeuxCellSize){
-		this.enjeuxCellSize = enjeuxCellSize;
+	public void setIssuesCellSize(double issuesCellSize){
+		this.issuesCellSize = issuesCellSize;
 	}
 	
-	public void setEnjeuxWindowRadius(double enjeuxWindowRadius){
-		this.enjeuxWindowRadius = enjeuxWindowRadius;
+	public void setIssuesWindowRadius(double issuesWindowRadius){
+		this.issuesWindowRadius = issuesWindowRadius;
 	}
 	
-	public void setSeuils(double seuil1, double seuil2, double seuil3) {
-		this.seuils[0] = seuil1;
-		this.seuils[1] = seuil2;
-		this.seuils[2] = seuil3;
+	public void setThresholds(double threshold1, double threshold2, double threshold3) {
+		this.thresholds[0] = threshold1;
+		this.thresholds[1] = threshold2;
+		this.thresholds[2] = threshold3;
 	}
 	
-	public void setSeuil(double seuil) {
-		this.seuils[1] = seuil;
+	public void setThreshold(double threshold) {
+		this.thresholds[1] = threshold;
 	}
 
-	public void setTerritoire(String territoire) {
-		this.territoire = territoire;
+	public void setTerritory(String territory) {
+		this.territory = territory;
 	}
 	
-	public void setEnveloppe(String enveloppe) {
-		this.enveloppe = enveloppe;
+	public void setEnvelope(String envelope) {
+		this.envelope = envelope;
 	}
 	
 	public void setBufferArea(double bufferArea){
 		this.bufferArea = bufferArea;
 	}
-	
+	/*
 	public void setZoneBocage(String zoneBocage) {
 		this.zoneBocage = zoneBocage;
 	}
-	
-	public void setOutputPath(String outputPath) {
-		Util.createAccess(outputPath);
-		this.outputPath = outputPath;
+	*/
+	public void setOutputFolder(String outputFolder) {
+		Util.createAccess(outputFolder);
+		this.outputFolder = outputFolder;
 	}
-	/*
-	public void setOutputFile(String outputFile) {
-		Util.createAccess(outputFile);
-		this.outputFile = outputFile;
-	}*/
 	
-	public void setName(String name) {
-		this.name = name;
+	public void setOuputPrefix(String outputPrefix) {
+		this.outputPrefix = outputPrefix;
 	}
 
-	public void setPlantation(String plantation) {
-		this.plantation = plantation;
+	public void setWoodPlanting(String woodPlanting) {
+		this.woodPlanting = woodPlanting;
 	}
 	
-	public void setSuppression(String suppression) {
-		this.suppression = suppression;
+	public void setHeightPlantingAttribute(String heightPlantingAttribute) {
+		this.heightPlantingAttribute = heightPlantingAttribute;
 	}
 	
-	public void setModeFast(boolean modeFast){
-		this.modeFast = modeFast;
+	public void setWoodRemoval(String woodRemoval) {
+		this.woodRemoval = woodRemoval;
+	}
+	
+	public void setFastMode(boolean fastMode){
+		this.fastMode = fastMode;
 	}
 	
 	public void setForce(boolean force){
 		this.force = force;
 	}
 	
+	/*
 	public void setAttributCodeEA(String attributeCodeEA) {
 		this.attributCodeEA = attributeCodeEA;
 	}
@@ -390,124 +422,184 @@ public class GrainBocagerManager {
 	public void setAttributSecteur(String attributeSecteur) {
 		this.attributSecteur = attributeSecteur;
 	}
-	
-	public void setAttributHauteurPlantation(String attributHauteurPlantation) {
-		this.attributHauteurPlantation = attributHauteurPlantation;
-	}
-	
+	*/
+		
+	/*
 	public List<String> scenarios(){
 		return scenarios;
 	}
+	*/
 	
 	public Tile tile(){
 		return tile;
 	}
+	
+	public boolean hugeMode() {
+		return tile != null;
+	}
 
-	public double seuil() {
-		return seuils[1];
+	public double threshold() {
+		return thresholds[1];
 	}
 	
-	public double[] seuils() {
-		return seuils;
+	public double[] thresholds() {
+		return thresholds;
 	}
 
-	public String outputPath() {
-		return outputPath;
+	public String outputFolder() {
+		return outputFolder;
 	}
-	/*
-	public String outputFile() {
-		return outputFile;
-	}*/
-
-	/*
-	public String territoire() {
-		return territoire;
-	}*/
 	
+	/*
 	public String zoneBocage() {
 		return zoneBocage;
 	}
-
-	public String name() {
-		return name;
+	*/
+	
+	public String outputPrefix() {
+		return outputPrefix;
 	}
 
 	public String bocage() {
 		return bocage;
 	}
 	
-	public String hauteurBoisement() {
-		return hauteurBoisement;
+	public String woodHeight() {
+		if(woodHeight == null) {
+			if(tile == null) {
+				setWoodHeight(outputFolder()+outputPrefix()+"hauteur_boisement.tif");
+			}else {
+				setWoodHeight(outputFolder()+outputPrefix()+"hauteur_boisement/");
+			}
+		}
+		return woodHeight;
 	}
 	
-	public String typeBoisement() {
-		return typeBoisement;
+	public String woodType() {
+		if(woodType == null) {
+			if(tile == null) {
+				setWoodType(outputFolder()+outputPrefix()+"type_boisement.tif");
+			}else {
+				setWoodType(outputFolder()+outputPrefix()+"type_boisement/");
+			}
+		}
+		return woodType;
 	}
 	
-	public String distanceInfluenceBoisement() {
-		return distanceInfluenceBoisement;
+	public String influenceDistance() {
+		if(influenceDistance == null) {
+			if(tile == null) {
+				setInfluenceDistance(outputFolder()+outputPrefix()+"distance_influence.tif");
+			}else {
+				setInfluenceDistance(outputFolder()+outputPrefix()+"distance_influence/");
+			}
+		}
+		return influenceDistance;
 	}
 	
 	public String grainBocager() {
+		if(grainBocager == null) {
+			if(tile == null) {
+				setGrainBocager(outputFolder()+outputPrefix()+"grain_bocager_"+grainBocagerCellSize()+"m.tif");
+			}else {
+				setGrainBocager(outputFolder()+outputPrefix()+"grain_bocager_"+grainBocagerCellSize()+"/");
+			}
+		}
 		return grainBocager;
 	}
 	
 	public String grainBocager4Classes() {
+		if(grainBocager4Classes == null) {
+			if(tile == null) {
+				setGrainBocager4Classes(outputFolder()+outputPrefix()+"grain_bocager_4classes_"+grainBocagerCellSize()+"m.tif");
+			}else {
+				setGrainBocager4Classes(outputFolder()+outputPrefix()+"grain_bocager_4classes_"+grainBocagerCellSize()+"/");
+			}
+		}
 		return grainBocager4Classes;
 	}
 	
-	public String grainBocagerFonctionnel() {
-		return grainBocagerFonctionnel;
+	public String functionalGrainBocager() {
+		if(functionalGrainBocager == null) {
+			if(tile == null) {
+				setFunctionalGrainBocager(outputFolder()+outputPrefix()+"grain_bocager_fonctionnel_"+grainBocagerCellSize()+"m.tif");
+			}else {
+				
+			}
+		}
+		return functionalGrainBocager;
 	}
 	
-	public String clusterGrainBocagerFonctionnel() {
-		return clusterGrainBocagerFonctionnel;
+	public String functionalGrainBocagerClustering() {
+		if(functionalGrainBocagerClustering == null) {
+			if(tile == null) {
+				setFunctionalGrainBocagerClustering(outputFolder()+outputPrefix()+"cluster_grain_bocager_fonctionnel_"+grainBocagerCellSize()+"m.tif");
+			}else {
+				setFunctionalGrainBocagerClustering(outputFolder()+outputPrefix()+"cluster_grain_bocager_fonctionnel_"+grainBocagerCellSize()+"m.tif/");
+			}
+		}
+		return functionalGrainBocagerClustering;
 	}
 	
-	public String proportionGrainBocagerFonctionnel() {
-		return proportionGrainBocagerFonctionnel;
+	public String functionalGrainBocagerProportion() {
+		if(functionalGrainBocagerProportion == null) {
+			if(tile == null) {
+				setFunctionalGrainBocagerProportion(outputFolder()+outputPrefix()+"proportion_grain_bocager_fonctionnel_"+issuesCellSize()+"m.tif");
+			}else {
+				setFunctionalGrainBocagerProportion(outputFolder()+outputPrefix()+"proportion_grain_bocager_fonctionnel_"+issuesCellSize()+"/");
+			}
+		}
+		return functionalGrainBocagerProportion;
 	}
 	
-	public String zoneFragmentationGrainBocagerFonctionnel() {
-		return zoneFragmentationGrainBocagerFonctionnel;
+	public String functionalGrainBocagerFragmentation() {
+		if(functionalGrainBocagerFragmentation == null) {
+			if(tile == null) {
+				setFunctionalGrainBocagerFragmentation(outputFolder()+outputPrefix()+"fragmentation_grain_bocager_fonctionnel_"+issuesCellSize()+"m.tif");
+			}else {
+				setFunctionalGrainBocagerFragmentation(outputFolder()+outputPrefix()+"fragmentation_grain_bocager_fonctionnel_"+issuesCellSize()+"/");
+			}
+		}
+		return functionalGrainBocagerFragmentation;
 	}
 
-	public String plantation() {
-		return plantation;
+	public String woodPlanting() {
+		return woodPlanting;
 	}
 	
-	public String suppression() {
-		return suppression;
+	public String woodRemoval() {
+		return woodRemoval;
 	}
 
-	public boolean modeFast() {
-		return modeFast;
+	public boolean fastMode() {
+		return fastMode;
 	}
 	
 	public boolean force() {
 		return force;
 	}
 
-	public double grainCellSize() {
-		return grainCellSize;
+	public double grainBocagerCellSize() {
+		return grainBocagerCellSize;
 	}
 
-	public double grainWindowRadius(){
-		return grainWindowRadius;
+	public double grainBocagerWindowRadius(){
+		return grainBocagerWindowRadius;
 	}
 	
-	public double enjeuxCellSize() {
-		return enjeuxCellSize;
+	public double issuesCellSize() {
+		return issuesCellSize;
 	}
 
-	public double enjeuxWindowRadius(){
-		return enjeuxWindowRadius;
+	public double issuesWindowRadius(){
+		return issuesWindowRadius;
 	}
 	/*
 	public double bufferArea() {
 		return bufferArea;
 	}
 	*/
+	/*
 	public String attributCodeEA(){
 		return attributCodeEA;
 	}
@@ -515,9 +607,10 @@ public class GrainBocagerManager {
 	public String attributSecteur(){
 		return attributSecteur;
 	}
+	*/
 	
-	public String attributHauteurPlantation(){
-		return attributHauteurPlantation;
+	public String heightPlantingAttribute(){
+		return heightPlantingAttribute;
 	}
 	
 	public EnteteRaster entete(){

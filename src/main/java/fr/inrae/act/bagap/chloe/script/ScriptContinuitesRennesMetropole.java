@@ -40,7 +40,7 @@ public class ScriptContinuitesRennesMetropole {
 		//prepaOS();
 		//rasterizeZoneHumide();
 		//prepaHabitats();
-		//prepaPermeabilite();
+		prepaPermeabilite();
 		//calculDistanceFonctionnelle();
 		
 		//rasterizeCGTV();

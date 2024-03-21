@@ -6,66 +6,59 @@ import fr.inra.sad.bagap.apiland.core.element.manager.Tool;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.GrainBocager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.distanceinfluence.GBPCalculDistanceInfluenceBoisement;
+import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedureFactory;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 
 public class GBPCalculGrainBocager extends GrainBocagerProcedure {
-
-	public GBPCalculGrainBocager(GrainBocagerManager manager) {
-		super(manager);
+	
+	public GBPCalculGrainBocager(GrainBocagerProcedureFactory factory, GrainBocagerManager manager) {
+		super(factory, manager);
 	}
 
 	@Override
-	public Coverage run() {
+	public void doInit() {
 		
-		Coverage covDistanceInfluenceBoisement;
-		if(manager().force() || !new File(manager().distanceInfluenceBoisement()).exists()){
-			covDistanceInfluenceBoisement = new GBPCalculDistanceInfluenceBoisement(manager()).run();
-		}else{
-			covDistanceInfluenceBoisement = CoverageManager.getCoverage(manager().distanceInfluenceBoisement());
-		}
-		
-		System.out.println("calcul du grain bocager a "+manager().grainCellSize()+"m dans une fenetre de "+manager().grainWindowRadius()+"m");
-		
-		//Coverage covGrainBocager = CoverageManager.getCoverage(manager().grainBocager());
-		
-		Coverage covGrainBocager = GrainBocager.calculGrainBocager(covDistanceInfluenceBoisement, manager().grainWindowRadius(), manager().grainCellSize(), manager().modeFast());
-		
-		if(!manager().grainBocager().equalsIgnoreCase("")){
-			CoverageManager.write(manager().grainBocager(), covGrainBocager.getData(), covGrainBocager.getEntete());
+		if(manager().force() || !new File(manager().influenceDistance()).exists()){
 			
-			try {
-				Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_grain_bocager.qml"), Tool.deleteExtension(manager().grainBocager())+".qml");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-		}/*else{
-			CoverageManager.write(manager().outputPath()+"grain_bocager.tif", covGrainBocager.getDatas(), covGrainBocager.getEntete());
-		}*/
-		
-		if(!manager().grainBocager4Classes().equalsIgnoreCase("")){
-			
-			System.out.println("calcul des seuils du grain bocager");
-			
-			Coverage covGrainBocager4Classes = GrainBocager.runClassificationNClasses(covGrainBocager, manager().entete().noDataValue(), manager().seuils());
-			
-			CoverageManager.write(manager().grainBocager4Classes(), covGrainBocager4Classes.getData(), covGrainBocager4Classes.getEntete());
-			
-			try {
-				Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_grain_bocager_4classes.qml"), Tool.deleteExtension(manager().grainBocager4Classes())+".qml");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			covGrainBocager4Classes.dispose();
+			factory().parentFactory().create(manager()).run();
 			
 		}
+	}
+	
+	@Override
+	public void doRun() {
 		
-		//covGrainBocager.dispose();
-		return covGrainBocager;
+		Coverage covDistanceInfluenceBoisement = CoverageManager.getCoverage(manager().influenceDistance());
 		
+		System.out.println("calcul du grain bocager a "+manager().grainBocagerCellSize()+"m dans une fenetre de "+manager().grainBocagerWindowRadius()+"m");
+		
+		Coverage covGrainBocager = GrainBocager.calculGrainBocager(covDistanceInfluenceBoisement, manager().grainBocagerWindowRadius(), manager().grainBocagerCellSize(), manager().fastMode());
+		
+		CoverageManager.write(manager().grainBocager(), covGrainBocager.getData(), covGrainBocager.getEntete());
+			
+		try {
+			Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_grain_bocager.qml"), Tool.deleteExtension(manager().grainBocager())+".qml");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("calcul des seuils du grain bocager");
+			
+		Coverage covGrainBocager4Classes = GrainBocager.runClassificationNClasses(covGrainBocager, manager().entete().noDataValue(), manager().thresholds());
+			
+		covGrainBocager.dispose();
+		
+		CoverageManager.write(manager().grainBocager4Classes(), covGrainBocager4Classes.getData(), covGrainBocager4Classes.getEntete());
+			
+		try {
+			Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_grain_bocager_4classes.qml"), Tool.deleteExtension(manager().grainBocager4Classes())+".qml");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+			
+		covGrainBocager4Classes.dispose();
+			
 	}
 
 }

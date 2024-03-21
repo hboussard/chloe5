@@ -18,11 +18,11 @@ public class ScriptGrainBocagerOrne {
 		String dataPath = "H:/IGN/analyse_orne/";
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_grain_bocager");
-		gbManager.setModeFast(true);
+		gbManager.setFastMode(true);
 		gbManager.setBocage("H:/IGN/data/61_2020_5m/mean/");
-		gbManager.setHauteurBoisement(dataPath+"hauteur_boisement_61_2020.tif");
-		gbManager.setTypeBoisement(dataPath+"type_boisement_61_2020.tif");
-		gbManager.setDistanceInfluenceBoisement(dataPath+"distance_influence_61_2020.tif");
+		gbManager.setWoodHeight(dataPath+"hauteur_boisement_61_2020.tif");
+		gbManager.setWoodType(dataPath+"type_boisement_61_2020.tif");
+		gbManager.setInfluenceDistance(dataPath+"distance_influence_61_2020.tif");
 		gbManager.setGrainBocager(dataPath+"grain_bocager_5m_61_2020.tif");
 		gbManager.setGrainBocager4Classes(dataPath+"grain_bocager_5m_4classes_61_2020.tif");
 		
@@ -37,9 +37,9 @@ public class ScriptGrainBocagerOrne {
 		String dataPath = "H:/IGN/analyse_orne/";
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_grain_bocager");
-		gbManager.setModeFast(true);
-		gbManager.setDistanceInfluenceBoisement(dataPath+"distance_influence_61_2020.tif");
-		gbManager.setGrainCellSize(50);
+		gbManager.setFastMode(true);
+		gbManager.setInfluenceDistance(dataPath+"distance_influence_61_2020.tif");
+		gbManager.setGrainBocagerCellSize(50);
 		gbManager.setGrainBocager(dataPath+"grain_bocager_50m_61_2020.tif");
 		gbManager.setGrainBocager4Classes(dataPath+"grain_bocager_50m_4classes_61_2020.tif");
 		
@@ -54,17 +54,17 @@ public class ScriptGrainBocagerOrne {
 		String dataPath = "H:/IGN/analyse_orne/";
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_enjeux_globaux");
-		gbManager.setModeFast(true); 
+		gbManager.setFastMode(true); 
 		
 		gbManager.setGrainBocager(dataPath+"grain_bocager_50m_61_2020.tif");
-		gbManager.setGrainBocagerFonctionnel(dataPath+"grain_bocager_fonctionnel_50m_61_2020.tif");
-		gbManager.setClusterGrainBocagerFonctionnel(dataPath+"grain_bocager_cluster_50m_61_2020.tif");
+		gbManager.setFunctionalGrainBocager(dataPath+"grain_bocager_fonctionnel_50m_61_2020.tif");
+		gbManager.setFunctionalGrainBocagerClustering(dataPath+"grain_bocager_cluster_50m_61_2020.tif");
 		
-		gbManager.setEnjeuxCellSize(200);
-		gbManager.setEnjeuxWindowRadius(1000);
+		gbManager.setIssuesCellSize(200);
+		gbManager.setIssuesWindowRadius(1000);
 		
-		gbManager.setProportionGrainBocagerFonctionnel(dataPath+"proportion_grain_bocager_fonc_1km_61_2020.tif");
-		gbManager.setZoneFragmentationGrainBocagerFonctionnel(dataPath+"fragmentation_grain_bocager_fonc_1km_61_2020.tif");
+		gbManager.setFunctionalGrainBocagerProportion(dataPath+"proportion_grain_bocager_fonc_1km_61_2020.tif");
+		gbManager.setFunctionalGrainBocagerFragmentation(dataPath+"fragmentation_grain_bocager_fonc_1km_61_2020.tif");
 		
 		GrainBocagerProcedure gbProcedure = gbManager.build();
 		
@@ -77,17 +77,17 @@ public class ScriptGrainBocagerOrne {
 		String dataPath = "H:/IGN/analyse_orne/";
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_enjeux_globaux");
-		gbManager.setModeFast(true); 
+		gbManager.setFastMode(true); 
 		
 		gbManager.setGrainBocager(dataPath+"grain_bocager_50m_61_2020.tif");
-		gbManager.setGrainBocagerFonctionnel(dataPath+"grain_bocager_fonctionnel_50m_61_2020.tif");
-		gbManager.setClusterGrainBocagerFonctionnel(dataPath+"grain_bocager_cluster_50m_61_2020.tif");
+		gbManager.setFunctionalGrainBocager(dataPath+"grain_bocager_fonctionnel_50m_61_2020.tif");
+		gbManager.setFunctionalGrainBocagerClustering(dataPath+"grain_bocager_cluster_50m_61_2020.tif");
 		
-		gbManager.setEnjeuxCellSize(200);
-		gbManager.setEnjeuxWindowRadius(5000);
+		gbManager.setIssuesCellSize(200);
+		gbManager.setIssuesWindowRadius(5000);
 		
-		gbManager.setProportionGrainBocagerFonctionnel(dataPath+"proportion_grain_bocager_fonc_5km_61_2020.tif");
-		gbManager.setZoneFragmentationGrainBocagerFonctionnel(dataPath+"fragmentation_grain_bocager_fonc_5km_61_2020.tif");
+		gbManager.setFunctionalGrainBocagerProportion(dataPath+"proportion_grain_bocager_fonc_5km_61_2020.tif");
+		gbManager.setFunctionalGrainBocagerFragmentation(dataPath+"fragmentation_grain_bocager_fonc_5km_61_2020.tif");
 		
 		GrainBocagerProcedure gbProcedure = gbManager.build();
 		

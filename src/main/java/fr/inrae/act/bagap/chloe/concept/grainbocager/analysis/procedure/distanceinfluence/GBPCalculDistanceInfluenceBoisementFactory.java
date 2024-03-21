@@ -6,47 +6,48 @@ import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBoc
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedureFactory;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.detectionboisement.GBPDetectionTypeBoisementFactory;
+import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.recuperationhauteur.GBPRecuperationHauteurBoisementFactory;
 
 public class GBPCalculDistanceInfluenceBoisementFactory extends GrainBocagerProcedureFactory {
 
 	@Override
 	public boolean check(GrainBocagerManager manager) {
 		
-		if(new File(manager.hauteurBoisement()).exists()
-				&& new File(manager.typeBoisement()).exists()){
+		if(!manager.force() && new File(manager.woodHeight()).exists() && new File(manager.woodType()).exists()){
+			
 			return true;
+			
 		}else{
-			System.out.println("input file for 'type_boisement' is missing");
-			return new GBPDetectionTypeBoisementFactory().check(manager);
+			
+			if(new File(manager.woodType()).exists()) {
+				
+				System.out.println("WARNING : input file for 'wood_height' is missing");
+				
+				setParentFactory(new GBPRecuperationHauteurBoisementFactory());
+				
+				return checkParent(manager);
+				
+			}else {
+				
+				System.out.println("WARNING : input file for 'wood_type' is missing");
+				
+				setParentFactory(new GBPDetectionTypeBoisementFactory());
+				
+				return checkParent(manager);
+			}
 		}
-		
-		//boolean ok = true;
-		/*if(manager.outputPath().equalsIgnoreCase("") && manager.outputFile().equalsIgnoreCase("") ){
-			System.err.println("output folder 'output_path' and output file 'output_file' are both missing");
-			ok = false;
-		}*//*
-		if(manager.distanceInfluenceBoisement().equalsIgnoreCase("") ){
-			System.err.println("output file for 'distance_influence_boisement' is missing");
-			ok = false;
-		}
-		if(manager.hauteurBoisement().equalsIgnoreCase("")){
-			System.err.println("input file for 'hauteur_boisement' is missing");
-			ok = false;
-		}
-		if(manager.typeBoisement().equalsIgnoreCase("")){
-			System.err.println("input file for 'type_boisement' is missing");
-			ok = false;
-		}*/
-		//return ok;
 	}
 
 	@Override
 	public GrainBocagerProcedure create(GrainBocagerManager manager) {
 		
-		if(manager.tile() == null){
-			return new GBPCalculDistanceInfluenceBoisement(manager);
+		if(manager.hugeMode()){
+			
+			return new HugeGBPCalculDistanceInfluenceBoisement(this, manager);
+			
 		}else{
-			return new HugeGBPCalculDistanceInfluenceBoisement(manager);
+			
+			return new GBPCalculDistanceInfluenceBoisement(this, manager);
 		}
 	}
 

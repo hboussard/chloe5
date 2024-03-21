@@ -5,36 +5,38 @@ import java.io.File;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.HugeGrainBocager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
+import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedureFactory;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 
 public class HugeGBPDetectionTypeBoisement extends GrainBocagerProcedure {
 
-	public HugeGBPDetectionTypeBoisement(GrainBocagerManager manager) {
-		super(manager);
+	public HugeGBPDetectionTypeBoisement(GrainBocagerProcedureFactory factory, GrainBocagerManager manager) {
+		super(factory, manager);
 	}
 
 	@Override
-	public Coverage run() {
+	public void doInit() {
 		
-		Coverage covHauteurBoisement = null;
-		if(manager().force() || !new File(manager().hauteurBoisement()).exists()){
-			//covHauteurBoisement = new HugeGBPRecuperationHauteurBoisement(manager()).run();
-		}else{
-			covHauteurBoisement = CoverageManager.getCoverage(manager().hauteurBoisement());
+		if(manager().force() || !new File(manager().woodHeight()).exists()){
+			
+			factory().parentFactory().create(manager()).run();
+			
 		}
+	}
+	
+	@Override
+	public void doRun() {
+		
+		Coverage covHauteurBoisement = CoverageManager.getCoverage(manager().woodHeight());
 		
 		System.out.println("detection des types de boisements");
 		
-		if(!manager().typeBoisement().equalsIgnoreCase("")){
-			// TODO
-		}
-		
-		Coverage covTypeBoisement = HugeGrainBocager.detectionTypeBoisement(manager().typeBoisement(), manager().outputPath()+"TypeBoisementPhase1/", manager().outputPath()+"DistanceBoisement/", covHauteurBoisement, manager().tile(), manager().modeFast());
+		Coverage covTypeBoisement = HugeGrainBocager.detectionTypeBoisement(manager().woodType(), manager().outputFolder()+"woodTypePhase1/", manager().outputFolder()+"woodDistance/", covHauteurBoisement, manager().tile(), manager().fastMode());
 		
 		covHauteurBoisement.dispose();
 		
-		return covTypeBoisement;
+		covTypeBoisement.dispose();
 	}
 
 }

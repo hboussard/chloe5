@@ -110,12 +110,12 @@ public class ScriptDepartementGrain2D{
 		String outputPath = localPath+"grain_bocager/";
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_grain_bocager");
-		gbManager.setModeFast(true);
+		gbManager.setFastMode(true);
 		gbManager.setBufferArea(0);
-		gbManager.setSeuils(0.2, 0.33, 0.45);
-		gbManager.setHauteurBoisement(localPath+"data/MNH_"+dpt+".tif");
-		gbManager.setTypeBoisement(outputPath+dpt+"_type_boisement.tif");
-		gbManager.setDistanceInfluenceBoisement(outputPath+dpt+"_distance_influence.tif");
+		gbManager.setThresholds(0.2, 0.33, 0.45);
+		gbManager.setWoodHeight(localPath+"data/MNH_"+dpt+".tif");
+		gbManager.setWoodType(outputPath+dpt+"_type_boisement.tif");
+		gbManager.setInfluenceDistance(outputPath+dpt+"_distance_influence.tif");
 		gbManager.setGrainBocager(outputPath+dpt+"_grain_bocager_5m.tif");
 		gbManager.setGrainBocager4Classes(outputPath+dpt+"_grain_bocager_5m_4classes.tif");
 		
@@ -131,11 +131,11 @@ public class ScriptDepartementGrain2D{
 		String outputPath = localPath+"grain_bocager/";
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_grain_bocager");
-		gbManager.setModeFast(true);
+		gbManager.setFastMode(true);
 		gbManager.setBufferArea(0);
-		gbManager.setSeuils(0.2, 0.33, 0.45);
-		gbManager.setGrainCellSize(50.0);
-		gbManager.setDistanceInfluenceBoisement(outputPath+dpt+"_distance_influence.tif");
+		gbManager.setThresholds(0.2, 0.33, 0.45);
+		gbManager.setGrainBocagerCellSize(50.0);
+		gbManager.setInfluenceDistance(outputPath+dpt+"_distance_influence.tif");
 		gbManager.setGrainBocager(outputPath+dpt+"_grain_bocager_50m.tif");
 		gbManager.setGrainBocager4Classes(outputPath+dpt+"_grain_bocager_50m_4classes.tif");
 		
@@ -152,14 +152,14 @@ public class ScriptDepartementGrain2D{
 		String localPath = path+dpt+"/grain_bocager/";
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_enjeux_globaux");
-		gbManager.setModeFast(true); 
+		gbManager.setFastMode(true); 
 		gbManager.setGrainBocager(localPath+dpt+"_grain_bocager_50m.tif");
-		gbManager.setGrainBocagerFonctionnel(localPath+dpt+"_grain_bocager_fonctionnel_50m.tif");
-		gbManager.setClusterGrainBocagerFonctionnel(localPath+dpt+"_grain_bocager_cluster_50m.tif");
-		gbManager.setEnjeuxCellSize(200);
-		gbManager.setEnjeuxWindowRadius(ewr);
-		gbManager.setProportionGrainBocagerFonctionnel(localPath+dpt+"_proportion_grain_bocager_fonc_"+km+"km.tif");
-		gbManager.setZoneFragmentationGrainBocagerFonctionnel(localPath+dpt+"_fragmentation_grain_bocager_fonc_"+km+"km.tif");
+		gbManager.setFunctionalGrainBocager(localPath+dpt+"_grain_bocager_fonctionnel_50m.tif");
+		gbManager.setFunctionalGrainBocagerClustering(localPath+dpt+"_grain_bocager_cluster_50m.tif");
+		gbManager.setIssuesCellSize(200);
+		gbManager.setIssuesWindowRadius(ewr);
+		gbManager.setFunctionalGrainBocagerProportion(localPath+dpt+"_proportion_grain_bocager_fonc_"+km+"km.tif");
+		gbManager.setFunctionalGrainBocagerFragmentation(localPath+dpt+"_fragmentation_grain_bocager_fonc_"+km+"km.tif");
 		
 		GrainBocagerProcedure gbProcedure = gbManager.build();
 		
