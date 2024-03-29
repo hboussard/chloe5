@@ -7,10 +7,10 @@ import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceF
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inrae.act.bagap.chloe.distance.analysis.functional.TabRCMDistanceAnalysis;
-import fr.inrae.act.bagap.chloe.window.kernel.selected.DoubleSelectedLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.selected.SelectedLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 
-public abstract class SelectedFunctionalKernel extends DoubleSelectedLandscapeMetricKernel {
+public abstract class SelectedFunctionalKernel extends SelectedLandscapeMetricKernel {
 	
 	private double cellSize;
 	
@@ -58,7 +58,7 @@ public abstract class SelectedFunctionalKernel extends DoubleSelectedLandscapeMe
 				for (int dx = -mid; dx <= mid; dx += 1) {
 					if(((x + dx) >= 0) && ((x + dx) < width())){
 						ic = ((dy+mid) * windowSize()) + (dx+mid);
-						resistance[ic] = inDatas2()[((y + dy) * width()) + (x + dx)];
+						resistance[ic] = inDatas(2)[((y + dy) * width()) + (x + dx)];
 					}
 				}
 			}

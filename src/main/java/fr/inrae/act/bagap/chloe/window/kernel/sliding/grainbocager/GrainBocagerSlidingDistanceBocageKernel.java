@@ -1,8 +1,8 @@
 package fr.inrae.act.bagap.chloe.window.kernel.sliding.grainbocager;
 
-import fr.inrae.act.bagap.chloe.window.kernel.sliding.AbstractDoubleSlidingLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
 
-public class GrainBocagerSlidingDistanceBocageKernel extends AbstractDoubleSlidingLandscapeMetricKernel {
+public class GrainBocagerSlidingDistanceBocageKernel extends SlidingLandscapeMetricKernel {
 
 	private float cellSize; // = 5; // la taille du pixel en metre (IGN)
 	
@@ -61,7 +61,7 @@ public class GrainBocagerSlidingDistanceBocageKernel extends AbstractDoubleSlidi
 											}
 											
 											r = cellSize*Math.sqrt((dx*dx)+(dy*dy));
-											R = v * inDatas2()[((y + dy) * width()) + (x + dx)];	
+											R = v * inDatas(2)[((y + dy) * width()) + (x + dx)];	
 											
 											if(r < R){
 												min = (float) Math.min(min, r/R);

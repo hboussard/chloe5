@@ -23,7 +23,7 @@ import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.counting.CoupleCounting;
 import fr.inrae.act.bagap.chloe.window.counting.DegatErosionCounting;
-import fr.inrae.act.bagap.chloe.window.counting.ErosionCounting;
+import fr.inrae.act.bagap.chloe.window.counting.SourceErosionCounting;
 import fr.inrae.act.bagap.chloe.window.counting.PatchCounting;
 import fr.inrae.act.bagap.chloe.window.counting.QuantitativeCounting;
 import fr.inrae.act.bagap.chloe.window.counting.SlopeCounting;
@@ -36,8 +36,9 @@ import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingCountValueKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingPatchKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingQuantitativeKernel;
-import fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion.SlidingDegatErosionKernel;
-import fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion.SlidingErosionKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion.SlidingDegatErosionAltitudeKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion.SlidingDegatErosionPenteKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion.SlidingSourceErosionKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.slope.SlidingSlopeKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.gaussian.FastGaussianWeightedCountCoupleKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.gaussian.FastGaussianWeightedCountValueAndCoupleKernel;
@@ -118,7 +119,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			windowSize = builder.getWindowSize();
 		} else if (builder.getWindowRadius() > 0) {
 			double v = (2 * builder.getWindowRadius() / inCellSize);
-			windowSize = v % 2 == 0 ? new Double(v + 1).intValue() : new Double(v).intValue();
+			windowSize = v % 2 == 0 ? (int)(v + 1) : (int)(v);
 		} else {
 			throw new IllegalArgumentException("windowSize must be defined");
 		}
@@ -429,11 +430,14 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 					coverageFriction = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
 				} else if (builder.getCoverage2() != null) {
 					coverageFriction = builder.getCoverage2();
+				} else if (builder.getRasterTabs() != null) {
+					coverageFriction = new TabCoverage(builder.getRasterTabs()[1], coverage.getEntete());
 				} else {
 					throw new IllegalArgumentException("no raster2 declared");
 				}
 
-				return createDouble(coverage, coverageFriction, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+				return createMultiple(new Coverage[] {coverage, coverageFriction}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+				//return createDouble(coverage, coverageFriction, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 
 			} else {
 				
@@ -490,6 +494,8 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 					coverageBocage = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
 				} else if (builder.getCoverage2() != null) {
 					coverageBocage = builder.getCoverage2();
+				} else if (builder.getRasterTabs() != null) {
+					coverageBocage = new TabCoverage(builder.getRasterTabs()[1], coverage.getEntete());
 				} else {
 					throw new IllegalArgumentException("no raster 'type de boisement' declared");
 				}
@@ -507,7 +513,8 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				}
 
 				// analysis
-				return createDouble(coverage, coverageBocage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+				return createMultiple(new Coverage[] {coverage, coverageBocage}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+				//return createDouble(coverage, coverageBocage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 				
 
 			} else if (metrics.size() == 1 && metrics.iterator().next().getName().equalsIgnoreCase("GBBocage")) {
@@ -576,19 +583,22 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				coverageFriction = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
 			} else if (builder.getCoverage2() != null) {
 				coverageFriction = builder.getCoverage2();
+			} else if (builder.getRasterTabs() != null) {
+				coverageFriction = new TabCoverage(builder.getRasterTabs()[1], coverage.getEntete());
 			} else {
 				throw new IllegalArgumentException("no raster2 declared");
 			}
 
-			return createDouble(coverage, coverageFriction, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+			return createMultiple(new Coverage[] {coverage, coverageFriction}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+			//return createDouble(coverage, coverageFriction, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 			
-		}else if (MetricManager.hasOnlyErosionMetric(metrics)) { // erosion
+		}else if (MetricManager.hasOnlySourceErosionMetric(metrics)) { // erosion
 		
 			nbValues = 6;
 			
-			kernel = new SlidingErosionKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, inCellSize, coverage.getEntete());
+			kernel = new SlidingSourceErosionKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, inCellSize, coverage.getEntete());
 			
-			counting = new ErosionCounting(theoreticalSize);
+			counting = new SourceErosionCounting(theoreticalSize);
 
 			// add metrics to counting
 			for (Metric m : metrics) {
@@ -607,6 +617,8 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				coverageAltitude = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
 			} else if (builder.getCoverage2() != null) {
 				coverageAltitude = builder.getCoverage2();
+			} else if (builder.getRasterTabs() != null) {
+				coverageAltitude = new TabCoverage(builder.getRasterTabs()[1], coverage.getEntete());
 			} else {
 				throw new IllegalArgumentException("no raster2 declared");
 			}
@@ -618,17 +630,18 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				coverageInfiltration = new TabCoverage(builder.getRasterTab3(), coverage.getEntete());
 			} else if (builder.getCoverage3() != null) {
 				coverageInfiltration = builder.getCoverage3();
+			} else if (builder.getRasterTabs() != null) {
+				coverageInfiltration = new TabCoverage(builder.getRasterTabs()[2], coverage.getEntete());
 			} else {
 				throw new IllegalArgumentException("no raster3 declared");
 			}
 
-			return createTriple(coverage, coverageAltitude, coverageInfiltration, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+			return createMultiple(new Coverage[] {coverage, coverageAltitude, coverageInfiltration}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+			//return createTriple(coverage, coverageAltitude, coverageInfiltration, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 			
 		}else if (MetricManager.hasOnlyDegatErosionMetric(metrics)) { // degat erosion
 		
 			nbValues = 6;
-			
-			kernel = new SlidingDegatErosionKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, inCellSize, coverage.getEntete(), (int) dMax);
 			
 			counting = new DegatErosionCounting(theoreticalSize);
 
@@ -642,6 +655,11 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				counting.addObserver(co);
 			}
 
+			/*
+			// version avec altitude 
+			 
+			kernel = new SlidingDegatErosionAltitudeKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, inCellSize, coverage.getEntete(), (int) dMax);
+			 
 			Coverage coverageAltitude = null;
 			if (builder.getRasterFile2() != null) {
 				coverageAltitude = CoverageManager.getCoverage(builder.getRasterFile2());
@@ -649,6 +667,8 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				coverageAltitude = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
 			} else if (builder.getCoverage2() != null) {
 				coverageAltitude = builder.getCoverage2();
+			} else if (builder.getRasterTabs() != null) {
+				coverageAltitude = new TabCoverage(builder.getRasterTabs()[1], coverage.getEntete());
 			} else {
 				throw new IllegalArgumentException("no raster2 declared");
 			}
@@ -660,11 +680,55 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				coverageInfiltration = new TabCoverage(builder.getRasterTab3(), coverage.getEntete());
 			} else if (builder.getCoverage3() != null) {
 				coverageInfiltration = builder.getCoverage3();
+			} else if (builder.getRasterTabs() != null) {
+				coverageInfiltration = new TabCoverage(builder.getRasterTabs()[2], coverage.getEntete());
 			} else {
 				throw new IllegalArgumentException("no raster3 declared");
 			}
-
-			return createTriple(coverage, coverageAltitude, coverageInfiltration, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+			
+			return createMultiple(new Coverage[] {coverage, coverageAltitude, coverageInfiltration}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+			
+			*/
+			
+			// version avec pente
+			
+			kernel = new SlidingDegatErosionPenteKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, inCellSize, coverage.getEntete(), (int) dMax);
+			
+			Coverage coverageSlopeIntensity = null;
+			if (builder.getRasterFile2() != null) {
+				coverageSlopeIntensity = CoverageManager.getCoverage(builder.getRasterFile2());
+			} else if (builder.getRasterTab2() != null) {
+				coverageSlopeIntensity = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
+			} else if (builder.getCoverage2() != null) {
+				coverageSlopeIntensity = builder.getCoverage2();
+			} else if (builder.getRasterTabs() != null) {
+				coverageSlopeIntensity = new TabCoverage(builder.getRasterTabs()[1], coverage.getEntete());
+			} else {
+				throw new IllegalArgumentException("no raster2 declared");
+			}
+			
+			Coverage coverageSlopeDirection = null;
+			if (builder.getRasterFile2() != null) {
+				coverageSlopeDirection = CoverageManager.getCoverage(builder.getRasterFile3());
+			} else if (builder.getRasterTab2() != null) {
+				coverageSlopeDirection = new TabCoverage(builder.getRasterTab3(), coverage.getEntete());
+			} else if (builder.getCoverage2() != null) {
+				coverageSlopeDirection = builder.getCoverage3();
+			} else if (builder.getRasterTabs() != null) {
+				coverageSlopeDirection = new TabCoverage(builder.getRasterTabs()[2], coverage.getEntete());
+			} else {
+				throw new IllegalArgumentException("no raster3 declared");
+			}
+			
+			Coverage coverageInfiltration = null;
+			if (builder.getRasterTabs() != null) {
+				coverageInfiltration = new TabCoverage(builder.getRasterTabs()[3], coverage.getEntete());
+			} else {
+				throw new IllegalArgumentException("no raster4 declared");
+			}
+			
+			return createMultiple(new Coverage[] {coverage, coverageSlopeIntensity, coverageSlopeDirection, coverageInfiltration}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+			
 			
 		}else{ // qualitative or patch
 			
@@ -767,11 +831,14 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 							coverageFriction = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
 						} else if (builder.getCoverage2() != null) {
 							coverageFriction = builder.getCoverage2();
+						} else if (builder.getRasterTabs() != null) {
+							coverageFriction = new TabCoverage(builder.getRasterTabs()[1], coverage.getEntete());
 						} else {
 							throw new IllegalArgumentException("no raster2 declared");
 						}
 
-						return createDouble(coverage, coverageFriction, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+						return createMultiple(new Coverage[] {coverage, coverageFriction}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+						//return createDouble(coverage, coverageFriction, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 
 					} else {
 						if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN){
@@ -820,11 +887,14 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 							coverageFriction = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
 						} else if (builder.getCoverage2() != null) {
 							coverageFriction = builder.getCoverage2();
+						} else if (builder.getRasterTabs() != null) {
+							coverageFriction = new TabCoverage(builder.getRasterTabs()[1], coverage.getEntete());
 						} else {
 							throw new IllegalArgumentException("no raster2 declared");
 						}
 
-						return createDouble(coverage, coverageFriction, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+						return createMultiple(new Coverage[] {coverage, coverageFriction}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+						//return createDouble(coverage, coverageFriction, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 						
 					}else{
 						
@@ -874,11 +944,14 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 							coverageFriction = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
 						} else if (builder.getCoverage2() != null) {
 							coverageFriction = builder.getCoverage2();
+						} else if (builder.getRasterTabs() != null) {
+							coverageFriction = new TabCoverage(builder.getRasterTabs()[1], coverage.getEntete());
 						} else {
 							throw new IllegalArgumentException("no raster2 declared");
 						}
 
-						return createDouble(coverage, coverageFriction, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+						return createMultiple(new Coverage[] {coverage, coverageFriction}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+						//return createDouble(coverage, coverageFriction, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 						
 					}else{
 						
@@ -933,13 +1006,12 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 	
 	protected abstract int[] readValues(Coverage coverage, Rectangle roi, int noDataValue);
 	
+	
+	
 	protected abstract SlidingLandscapeMetricAnalysis createSingle(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, 
 			int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nb, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting);
 	
-	protected abstract SlidingLandscapeMetricAnalysis createDouble(Coverage coverage, Coverage coverage2, int roiX, int roiY, int roiWidth, int roiHeight, 
-			int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nb, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting);
-	
-	protected abstract SlidingLandscapeMetricAnalysis createTriple(Coverage coverage, Coverage coverage2, Coverage coverage3, int roiX, int roiY, int roiWidth, int roiHeight, 
+	protected abstract SlidingLandscapeMetricAnalysis createMultiple(Coverage[] coverages, int roiX, int roiY, int roiWidth, int roiHeight, 
 			int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nb, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting);
 	
 

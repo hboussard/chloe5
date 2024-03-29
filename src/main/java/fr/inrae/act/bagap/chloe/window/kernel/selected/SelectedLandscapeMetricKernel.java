@@ -24,7 +24,7 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel implements La
 	
 	private final EnteteRaster entete;
 	
-	private float[] inDatas;
+	private float[][] inDatas;
 	
 	private Map<Pixel, double[]> outDatas;
 	
@@ -114,12 +114,16 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel implements La
 		this.bufferROIYMax = bufferROIYMax;
 	}
 
-	public void setInDatas(float[] inDatas){
+	public void setInDatas(float[][] inDatas){
 		this.inDatas = inDatas;
 	}
 	
 	protected float[] inDatas(){
-		return inDatas;
+		return inDatas[0];
+	}
+	
+	protected float[] inDatas(int index){
+		return inDatas[index-1];
 	}
 	
 	public void setOutDatas(Map<Pixel, double[]> outDatas){

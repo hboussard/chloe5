@@ -6,7 +6,7 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 public class SlopeIntensityMetric extends Metric implements SlopeMetric {
 
 	public SlopeIntensityMetric() {
-		super("slopeintensity");
+		super("slope-intensity");
 	}
 
 	@Override

@@ -117,6 +117,11 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	}
 	
 	@Override
+	public void addRasterFile(String rasterFile){
+		this.inputRaster = rasterFile;
+	}
+	
+	@Override
 	public void setRasterFile(String rasterFile){
 		this.inputRaster = rasterFile;
 	}

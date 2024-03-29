@@ -15,7 +15,7 @@ public class TinyGridLandscapeMetricAnalysisFactory extends GridLandscapeMetricA
 	}
 
 	@Override
-	protected GridLandscapeMetricAnalysis create(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight,
+	protected GridLandscapeMetricAnalysis createSingle(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight,
 			int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues,
 			GridLandscapeMetricKernel kernel, Counting counting) {
 

@@ -3,12 +3,12 @@ package fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion;
 import java.util.Arrays;
 
 import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
-import fr.inrae.act.bagap.chloe.distance.analysis.slope.TabDegatErosionRCMDistanceAnalysis;
-import fr.inrae.act.bagap.chloe.window.kernel.sliding.AbstractTripleSlidingLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.distance.analysis.slope.TabDegatErosionAltitudeRCMDistanceAnalysis;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 
-public class SlidingDegatErosionKernel extends AbstractTripleSlidingLandscapeMetricKernel {
+public class SlidingDegatErosionAltitudeKernel extends SlidingLandscapeMetricKernel {
 
 	private float cellSize;
 	
@@ -18,7 +18,7 @@ public class SlidingDegatErosionKernel extends AbstractTripleSlidingLandscapeMet
 	
 	private int dMax;
 	
-	public SlidingDegatErosionKernel(int windowSize, int displacement, int noDataValue, int[] unfilters, float cellSize, EnteteRaster entete, int dMax){	
+	public SlidingDegatErosionAltitudeKernel(int windowSize, int displacement, int noDataValue, int[] unfilters, float cellSize, EnteteRaster entete, int dMax){	
 		super(windowSize, displacement, null, noDataValue, unfilters);
 		this.cellSize = cellSize;
 		localSurface = (float) Math.pow(cellSize, 2);
@@ -101,11 +101,9 @@ public class SlidingDegatErosionKernel extends AbstractTripleSlidingLandscapeMet
 				outDatas()[ind][4] = surface;
 				outDatas()[ind][5] = volume;
 				
-				
 			} else{
 					
 				outDatas()[ind][0] = 0; // filtre pas ok 
-				
 			}
 		}
 	}
@@ -139,7 +137,7 @@ public class SlidingDegatErosionKernel extends AbstractTripleSlidingLandscapeMet
 				for (int dx = -mid; dx <= mid; dx += 1) {
 					if(((x + dx) >= 0) && ((x + dx) < width())){
 						ic = ((dy+mid) * windowSize()) + (dx+mid);
-						dataAltitude[ic] = inDatas2()[((y + dy) * width()) + (x + dx)];
+						dataAltitude[ic] = inDatas(2)[((y + dy) * width()) + (x + dx)];
 					}
 				}
 			}
@@ -158,7 +156,7 @@ public class SlidingDegatErosionKernel extends AbstractTripleSlidingLandscapeMet
 				for (int dx = -mid; dx <= mid; dx += 1) {
 					if(((x + dx) >= 0) && ((x + dx) < width())){
 						ic = ((dy+mid) * windowSize()) + (dx+mid);
-						dataInfiltration[ic] = inDatas3()[((y + dy) * width()) + (x + dx)];
+						dataInfiltration[ic] = inDatas(3)[((y + dy) * width()) + (x + dx)];
 					}
 				}
 			}
@@ -170,7 +168,8 @@ public class SlidingDegatErosionKernel extends AbstractTripleSlidingLandscapeMet
 	protected float[] calculateDegatErosion(float[] dataAltitude, float[] dataInfiltration) {
 		
 		float[] dataErosion = new float[windowSize()*windowSize()];
-		TabDegatErosionRCMDistanceAnalysis rcm = new TabDegatErosionRCMDistanceAnalysis(dataErosion, dataAltitude, dataInfiltration, windowSize(), windowSize(), cellSize, noDataValue(), dMax);
+		TabDegatErosionAltitudeRCMDistanceAnalysis rcm = new TabDegatErosionAltitudeRCMDistanceAnalysis(dataErosion, dataAltitude, dataInfiltration, windowSize(), windowSize(), cellSize, noDataValue(), dMax);
+		//TabDegatErosionPenteRCMDistanceAnalysis rcm = new TabDegatErosionPenteRCMDistanceAnalysis(dataErosion, dataAltitude, dataInfiltration, windowSize(), windowSize(), cellSize, noDataValue(), dMax);
 		rcm.allRun();
 		
 		return dataErosion;

@@ -48,6 +48,8 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	
 	private float[] rasterTab, rasterTab2, rasterTab3, entityRasterTab;
 	
+	private float[][] rasterTabs;
+	
 	private EnteteRaster entete;
 	
 	private int displacement, windowSize;
@@ -142,6 +144,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		this.rasterTab = null;
 		this.rasterTab2 = null;
 		this.rasterTab3 = null;
+		this.rasterTabs = null;
 		this.entete = null;
 		this.entityRasterFile = null;
 		this.entityRasterTab = null;
@@ -236,6 +239,11 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	@Override
 	public void setRasterTab3(float[] inputDatas3) {
 		this.rasterTab3 = inputDatas3;
+	}
+	
+	@Override
+	public void setRasterTabs(float[]... dataTabs) {
+		this.rasterTabs = dataTabs;
 	}
 	
 	@Override
@@ -632,6 +640,10 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	
 	public float[] getRasterTab3() {
 		return rasterTab3;
+	}
+	
+	public float[][] getRasterTabs() {
+		return rasterTabs;
 	}
 	
 	public EnteteRaster getEntete() {

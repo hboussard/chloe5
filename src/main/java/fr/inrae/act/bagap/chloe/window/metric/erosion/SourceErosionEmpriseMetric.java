@@ -3,15 +3,15 @@ package fr.inrae.act.bagap.chloe.window.metric.erosion;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
-public class ErosionIntensityMetric extends Metric implements ErosionMetric {
+public class SourceErosionEmpriseMetric extends Metric implements SourceErosionMetric {
 
-	public ErosionIntensityMetric() {
-		super("erosionintensity");
+	public SourceErosionEmpriseMetric() {
+		super("source-erosion-emprise");
 	}
 
 	@Override
 	protected void doCalculate(Counting co) {
-		value = co.erosionIntensity();
+		value = co.sourceErosionEmprise();
 	}
 	
 }

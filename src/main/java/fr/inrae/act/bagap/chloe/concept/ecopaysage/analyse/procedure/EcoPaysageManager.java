@@ -2,11 +2,9 @@ package fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.calculmetrics.EPPCalculMetricsFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.clustering.EPPClusteringFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.gradient.EPPGradientFactory;
@@ -26,6 +24,8 @@ public class EcoPaysageManager {
 	private Map<Integer, String> metricsFiles; // csv des metriques par echelle
 	
 	private String xyFile; // csv des XY
+	
+	private String carto; // nom de la carto
 	
 	private String inputRaster; // raster d'entree
 	
@@ -107,7 +107,6 @@ public class EcoPaysageManager {
 		gradientFiles = new TreeMap<Integer, String>();
 		gradientMapFiles = new TreeMap<Integer, Map<Integer, String>>();
 		headerFile = null;
-		
 	}
 	
 	public EcoPaysageProcedure build(){
@@ -176,6 +175,7 @@ public class EcoPaysageManager {
 	
 	public void setInputRaster(String inputRaster) {
 		this.inputRaster = inputRaster;
+		this.carto = new File(inputRaster).getName().replace(".tif", "").replace(".asc", "");
 	}
 	
 	public void setOutputFolder(String outputFolder) {
@@ -308,14 +308,14 @@ public class EcoPaysageManager {
 	
 	public String metricsFile(int scale) {
 		if(!metricsFiles.containsKey(scale)) {
-			metricsFiles.put(scale, outputFolder()+"metrics_scale_"+scale+"m.csv");
+			metricsFiles.put(scale, outputFolder()+"metrics_"+carto+"_scale_"+scale+"m.csv");
 		}
 		return metricsFiles.get(scale);
 	}
 	
 	public String xyFile() {
 		if(xyFile == null) {
-			setXYFile(outputFolder()+"metrics_XY.csv");
+			setXYFile(outputFolder()+"metrics_"+carto+"_XY.csv");
 		}
 		return xyFile;
 	}
@@ -327,7 +327,7 @@ public class EcoPaysageManager {
 	public String compoFile(int scale) {
 		if(!compoFiles.containsKey(scale)) {
 			String name = new File(metricsFile(scale)).getName().replace(".txt", "").replace(".csv", "");
-			compoFiles.put(scale, outputFolder()+name+"_compo.csv");
+			compoFiles.put(scale, outputFolder()+name+"_"+carto+"_compo.csv");
 		}
 		return compoFiles.get(scale);
 	}
@@ -339,7 +339,7 @@ public class EcoPaysageManager {
 	public String configFile(int scale) {
 		if(!configFiles.containsKey(scale)) {
 			String name = new File(metricsFile(scale)).getName().replace(".txt", "").replace(".csv", "");
-			configFiles.put(scale, outputFolder()+name+"_config.csv");
+			configFiles.put(scale, outputFolder()+name+"_"+carto+"_config.csv");
 		}
 		return configFiles.get(scale);
 	}
@@ -347,7 +347,7 @@ public class EcoPaysageManager {
 	public String normFile() {
 		if(normFile == null) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(outputFolder()+"norm");
+			sb.append(outputFolder()+"norm_"+carto);
 			for(int scale : scales) {
 				sb.append("_"+scale+"m");
 			}
@@ -360,7 +360,7 @@ public class EcoPaysageManager {
 	public String normFile(int scale) {
 		if(!normFiles.containsKey(scale)) {
 			String name = new File(metricsFile(scale)).getName().replace(".txt", "").replace(".csv", "");
-			normFiles.put(scale, outputFolder()+name+"_norm.csv");
+			normFiles.put(scale, outputFolder()+name+"_"+carto+"_norm.csv");
 		}
 		return normFiles.get(scale);
 	}
@@ -368,7 +368,7 @@ public class EcoPaysageManager {
 	public String ruptureFile() {
 		if(ruptureFile == null) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(outputFolder()+"rupture");
+			sb.append(outputFolder()+"rupture_"+carto);
 			for(int scale : scales) {
 				sb.append("_"+scale+"m");
 			}
@@ -413,7 +413,7 @@ public class EcoPaysageManager {
 	public String ecoFile(int k) {
 		if(!ecoFiles.containsKey(k)) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(outputFolder()+"ecopaysages_"+k+"classes");
+			sb.append(outputFolder()+"ecopaysages_"+carto+"_"+k+"classes");
 			for(int scale : scales) {
 				sb.append("_"+scale+"m");
 			}
@@ -426,7 +426,7 @@ public class EcoPaysageManager {
 	public String infoFile(int k) {
 		if(!infoFiles.containsKey(k)) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(outputFolder()+"info_ecopaysages_"+k+"classes");
+			sb.append(outputFolder()+"info_ecopaysages_"+carto+"_"+k+"classes");
 			for(int scale : scales) {
 				sb.append("_"+scale+"m");
 			}
@@ -439,7 +439,7 @@ public class EcoPaysageManager {
 	public String mapFile(int k) {
 		if(!mapFiles.containsKey(k)) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(outputFolder()+"ecopaysages_"+k+"classes");
+			sb.append(outputFolder()+"ecopaysages_"+carto+"_"+k+"classes");
 			for(int scale : scales) {
 				sb.append("_"+scale+"m");
 			}
@@ -452,7 +452,7 @@ public class EcoPaysageManager {
 	public String gradientFile(int k) {
 		if(!gradientFiles.containsKey(k)) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(outputFolder()+"gradient_ecopaysages_"+k+"classes");
+			sb.append(outputFolder()+"gradient_ecopaysages_"+carto+"_"+k+"classes");
 			for(int scale : scales) {
 				sb.append("_"+scale+"m");
 			}
@@ -465,7 +465,7 @@ public class EcoPaysageManager {
 	public String gradientMapFile(int k, int ik) {
 		if(!gradientMapFiles.containsKey(k) || !gradientMapFiles.get(k).containsKey(ik)) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(outputFolder()+"gradient_ecopaysages_"+k+"classes_ecop"+ik);
+			sb.append(outputFolder()+"gradient_ecopaysages_"+carto+"_"+k+"classes_ecop"+ik);
 			for(int scale : scales) {
 				sb.append("_"+scale+"m");
 			}

@@ -333,7 +333,6 @@ public class TabInverseSlopeDirectionRCMDistanceAnalysis extends Analysis {
 						}
 					}
 				}
-				
 			}
 		}
 	}

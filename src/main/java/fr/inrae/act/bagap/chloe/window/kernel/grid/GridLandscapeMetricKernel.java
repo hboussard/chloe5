@@ -74,16 +74,16 @@ public abstract class GridLandscapeMetricKernel extends Kernel implements Landsc
 		this.bufferROIYMax = bufferROIYMax;
 	}
 
-	public void setInDatas(float[] inDatas){
-		this.inDatas = inDatas;
-	}
-	
 	public void setTheY(int theY){
 		this.theY = theY;
 	}
-
+	
+	public void setInDatas(float[] inDatas) {
+		this.inDatas = inDatas;
+	}
+	
 	protected float[] inDatas(){
-		return inDatas;
+		return this.inDatas;
 	}
 	
 	public void setOutDatas(double[][] outDatas){

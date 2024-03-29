@@ -15,6 +15,10 @@ public class HugeSlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 		super(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 	}
 	
+	public HugeSlidingLandscapeMetricAnalysis(Coverage[] coverages, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {	
+		super(coverages, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+	}
+	
 	@Override
 	protected void doInit() {
 		
@@ -88,13 +92,21 @@ public class HugeSlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 	protected void doClose() {
 		super.doClose();
 		LandscapeMetricAnalysis.setTileYSize(1000);
-		coverage().dispose();
+		
+		for(int i=0; i<coverages().length; i++) {
+			coverages()[i].dispose();
+		}
 	}
 	
 	@Override
 	protected void manageInDatas(Rectangle roi) {
+		
 		// gestion des entrees
-		kernel().setInDatas(coverage().getData(roi));
+		float[][] inDatas = new float[coverages().length][];
+		for(int i=0; i<coverages().length; i++) {
+			inDatas[i] = coverages()[i].getData(roi);
+		}
+		kernel().setInDatas(inDatas);
 	}
 
 }

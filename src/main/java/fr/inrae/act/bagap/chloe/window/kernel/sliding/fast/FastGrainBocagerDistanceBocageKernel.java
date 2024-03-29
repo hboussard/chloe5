@@ -1,6 +1,6 @@
 package fr.inrae.act.bagap.chloe.window.kernel.sliding.fast;
 
-public abstract class FastGrainBocagerDistanceBocageKernel extends DoubleFastKernel {
+public abstract class FastGrainBocagerDistanceBocageKernel extends FastKernel {
 
 	private float cellSize; // = 5; // la taille du pixel en metre (IGN)
 	
@@ -52,7 +52,7 @@ public abstract class FastGrainBocagerDistanceBocageKernel extends DoubleFastKer
 					}
 					
 					r = cellSize * Math.abs(dy); // distance au centroid
-					C = inDatas2()[((y + dy) * width()) + x];
+					C = inDatas(2)[((y + dy) * width()) + x];
 					R = v * C;
 					
 					if(r < R){

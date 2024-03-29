@@ -3,13 +3,13 @@ package fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion;
 import java.util.Arrays;
 
 import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
-import fr.inrae.act.bagap.chloe.distance.analysis.slope.TabErosionAltitudeRCMDistanceAnalysis;
-import fr.inrae.act.bagap.chloe.distance.analysis.slope.TabErosionPenteRCMDistanceAnalysis;
-import fr.inrae.act.bagap.chloe.window.kernel.sliding.AbstractTripleSlidingLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.distance.analysis.slope.TabSourceErosionPenteRCMDistanceAnalysis;
+import fr.inrae.act.bagap.chloe.distance.analysis.slope.TabSourceErosionAltitudeRCMDistanceAnalysis;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 
-public class SlidingErosionKernel extends AbstractTripleSlidingLandscapeMetricKernel {
+public class SlidingSourceErosionKernel extends SlidingLandscapeMetricKernel {
 
 	private float cellSize;
 	
@@ -17,7 +17,7 @@ public class SlidingErosionKernel extends AbstractTripleSlidingLandscapeMetricKe
 	
 	private EnteteRaster entete;
 	
-	public SlidingErosionKernel(int windowSize, int displacement, int noDataValue, int[] unfilters, float cellSize, EnteteRaster entete){	
+	public SlidingSourceErosionKernel(int windowSize, int displacement, int noDataValue, int[] unfilters, float cellSize, EnteteRaster entete){	
 		super(windowSize, displacement, null, noDataValue, unfilters);
 		this.cellSize = cellSize;
 		localSurface = (float) Math.pow(cellSize, 2);
@@ -60,7 +60,6 @@ public class SlidingErosionKernel extends AbstractTripleSlidingLandscapeMetricKe
 					//exportTab("C:/Data/projet/coterra/essai_magdelaine/data/erosion/filters/coeff_"+x+"_"+y+".tif", coeff(), x, y);
 				}
 				
-				
 				//System.out.println("2");
 				int ic;
 				int v;
@@ -95,11 +94,9 @@ public class SlidingErosionKernel extends AbstractTripleSlidingLandscapeMetricKe
 				outDatas()[ind][4] = surface;
 				outDatas()[ind][5] = volume;
 				
-				
 			} else{
 					
 				outDatas()[ind][0] = 0; // filtre pas ok 
-				
 			}
 		}
 	}
@@ -114,7 +111,7 @@ public class SlidingErosionKernel extends AbstractTripleSlidingLandscapeMetricKe
 				for (int dx = -mid; dx <= mid; dx += 1) {
 					if(((x + dx) >= 0) && ((x + dx) < width())){
 						ic = ((dy+mid) * windowSize()) + (dx+mid);
-						dataAltitude[ic] = inDatas2()[((y + dy) * width()) + (x + dx)];
+						dataAltitude[ic] = inDatas(2)[((y + dy) * width()) + (x + dx)];
 					}
 				}
 			}
@@ -133,7 +130,7 @@ public class SlidingErosionKernel extends AbstractTripleSlidingLandscapeMetricKe
 				for (int dx = -mid; dx <= mid; dx += 1) {
 					if(((x + dx) >= 0) && ((x + dx) < width())){
 						ic = ((dy+mid) * windowSize()) + (dx+mid);
-						dataInfiltration[ic] = inDatas3()[((y + dy) * width()) + (x + dx)];
+						dataInfiltration[ic] = inDatas(3)[((y + dy) * width()) + (x + dx)];
 					}
 				}
 			}
@@ -150,8 +147,8 @@ public class SlidingErosionKernel extends AbstractTripleSlidingLandscapeMetricKe
 			Arrays.fill(dataErosion, versement+1);
 		}else {
 			//System.out.println("versement = "+((int) versement));
-			TabErosionAltitudeRCMDistanceAnalysis rcm = new TabErosionAltitudeRCMDistanceAnalysis(dataErosion, dataAltitude, dataInfiltration, windowSize(), windowSize(), cellSize, noDataValue(), (int) versement);
-			//TabErosionPenteRCMDistanceAnalysis rcm = new TabErosionPenteRCMDistanceAnalysis(dataErosion, dataAltitude, dataInfiltration, windowSize(), windowSize(), cellSize, noDataValue(), (int) versement);
+			//TabSourceErosionAltitudeRCMDistanceAnalysis rcm = new TabSourceErosionAltitudeRCMDistanceAnalysis(dataErosion, dataAltitude, dataInfiltration, windowSize(), windowSize(), cellSize, noDataValue(), (int) versement);
+			TabSourceErosionPenteRCMDistanceAnalysis rcm = new TabSourceErosionPenteRCMDistanceAnalysis(dataErosion, dataAltitude, dataInfiltration, windowSize(), windowSize(), cellSize, noDataValue(), (int) versement);
 			rcm.allRun();
 		}
 		

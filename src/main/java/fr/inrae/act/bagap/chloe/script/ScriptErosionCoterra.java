@@ -21,27 +21,29 @@ public class ScriptErosionCoterra {
 	private static final String bv = path+"bv_magdelaine.tif";
 	private static final String bv_os_bre = path+"bv_magdelaine_OSO_bre.tif";
 	private static final String bv_altitude = path+"bv_altitude.tif";
-	private static final String bv_intensity = path+"bv_intensity.tif";
-	private static final String bv_direction = path+"bv_direction.tif";
 	private static final String bv_infiltration_map = path+"infiltration_map.txt";
 	private static final String bv_versement_map = path+"versement_map.txt";
 	private static final String bv_friction_maximale = path+"bv_friction_maximale.tif";
 	
 	// situation initiale	
 	private static final String bv_os = path+"bv_magdelaine_OS.tif"; 
-	private static final String output_path = path+"erosion/";
+	private static final String output_path = path+"erosion2/";
+	private static final String bv_intensity = output_path+"bv_intensity.tif";
+	private static final String bv_direction = output_path+"bv_direction.tif";
 	private static final String bv_infiltration = output_path+"bv_infiltration.tif";
 	private static final String bv_versement = output_path+"bv_versement.tif";
 	private static final String bv_intensite_versement = output_path+"bv_intensite_versement.tif";
-	private static final String bv_erosion_emprise = output_path+"bv_erosion_emprise_max10_min2.tif";
-	private static final String bv_erosion_intensity = output_path+"bv_erosion_intensity_max10_min2.tif";
-	private static final String bv_degat_erosion_emprise = output_path+"bv_degat_erosion_emprise_max10_min2.tif";
-	private static final String bv_degat_erosion_intensity = output_path+"bv_degat_erosion_intensity_max10_min2.tif";
+	private static final String bv_source_erosion_emprise = output_path+"bv_source_erosion_emprise_pente.tif";
+	private static final String bv_source_erosion_intensity = output_path+"bv_source_erosion_intensity_pente.tif";
+	private static final String bv_degat_erosion_emprise = output_path+"bv_degat_erosion_emprise_pente.tif";
+	private static final String bv_degat_erosion_intensity = output_path+"bv_degat_erosion_intensity_pente.tif";
 	private static final String bv_norm_erosion_intensity = output_path+"bv_norm_erosion_intensity.tif";
 	private static final String bv_norm_degat_erosion_intensity = output_path+"bv_norm_degat_erosion_intensity.tif";
 	private static final String bv_norm_factor_erosion_intensity = output_path+"bv_norm_factor_erosion_intensity.tif";
 	
 	public static void main(String[] args) {
+		
+		Util.createAccess(output_path);
 		
 		// initialisation
 		//convertRGE();
@@ -56,162 +58,15 @@ public class ScriptErosionCoterra {
 		//generationIntensiteVersement();
 		//generationFrictionMaximales();		
 		
-		calculErosion();
-		calculDegatErosion();
+		//calculSourceErosion();
+		
+		//calculDegatErosionAltitude();
+		calculDegatErosionPente();
 				
 		//normalize(bv_erosion_intensity, bv_norm_erosion_intensity, 100000000);
 		//normalize(bv_degat_erosion_intensity, bv_norm_degat_erosion_intensity, 100000000);
 		//factor(bv_norm_erosion_intensity, bv_norm_degat_erosion_intensity, bv_norm_factor_erosion_intensity);
 		
-		//test();
-	}
-	
-	private static void test2() {
-		
-		float cote_oppose = 5;
-		float cote_adjacent = 10;
-		float tangente = cote_oppose/cote_adjacent;
-		double arctangente = Math.atan(tangente);
-		double angle = Math.toDegrees(arctangente);
-		
-		System.out.println(tangente+" "+arctangente+" "+angle);
-		System.out.println(Math.toDegrees(Math.atan(0.8)));
-		
-	}
-	
-	private static void test() {
-		float si, inf, fr;
-		/*
-		si = getSlopeIntensity(100, 100, 10);
-		inf = 0;
-		fr = friction(si, inf);
-		System.out.println(si+" "+inf+" "+fr);
-		System.out.println();
-		
-		si = getSlopeIntensity(100, 90, 10);
-		fr = friction(si, inf);
-		System.out.println(si+" "+inf+" "+fr);
-		System.out.println();
-		
-		si = getSlopeIntensity(100, 95, 10);
-		fr = friction(si, inf);
-		System.out.println(si+" "+inf+" "+fr);
-		System.out.println();
-		
-		si = getSlopeIntensity(100, 110, 10);
-		fr = friction(si, inf);
-		System.out.println(si+" "+inf+" "+fr);
-		System.out.println();
-		
-		si = getSlopeIntensity(100, 105, 10);
-		fr = friction(si, inf);
-		System.out.println(si+" "+inf+" "+fr);
-		System.out.println();
-		
-		si = getSlopeIntensity(100, 120, 10);
-		fr = friction(si, inf);
-		System.out.println(si+" "+inf+" "+fr);
-		System.out.println();
-		
-		si = getSlopeIntensity(100, 80, 10);
-		fr = friction(si, inf);
-		System.out.println(si+" "+inf+" "+fr);
-		System.out.println();
-		*/
-		
-		si = getSlopeIntensity(100, 100, 10);
-		System.out.println(si);
-		System.out.println();
-		
-		si = getSlopeIntensity(100, 90, 10);
-		System.out.println(si);
-		System.out.println();
-		
-		si = getSlopeIntensity(100, 95, 10);
-		System.out.println(si);
-		System.out.println();
-		
-		si = getSlopeIntensity(100, 110, 10);
-		System.out.println(si);
-		System.out.println();
-		
-		si = getSlopeIntensity(100, 105, 10);
-		System.out.println(si);
-		System.out.println();
-		
-		si = getSlopeIntensity(100, 120, 10);
-		System.out.println(si);
-		System.out.println();
-		
-		si = getSlopeIntensity(100, 80, 10);
-		System.out.println(si);
-		System.out.println();
-		
-		
-		/*
-		System.out.println(getSlopeIntensity(90));
-		System.out.println(getSlopeIntensity(100));
-		System.out.println(getSlopeIntensity(80));
-		System.out.println(getSlopeIntensity(135));
-		System.out.println(getSlopeIntensity(45));
-		System.out.println(getSlopeIntensity(145));
-		System.out.println(getSlopeIntensity(35));
-		*/
-	}
-	
-	private static float getSlopeIntensity(float alt, float nalt, float dist) {
-		/*
-		if(alt == nalt) {
-			return 0;
-		}*/
-		
-		float cote_oppose = alt - nalt;
-		float cote_adjacent = dist;
-		float tangente = cote_oppose/cote_adjacent;
-		double arctangente = Math.atan(tangente);
-		double angle = Math.toDegrees(arctangente);
-		
-		System.out.println(cote_oppose+" "+cote_adjacent+" "+tangente+" "+arctangente+" "+angle);
-		
-		//float tangente2 = dist/(alt - nalt);
-		//float tangente2 = (alt - nalt)/dist;
-		//System.out.println("ici "+((180 + Math.toDegrees(Math.atan(tangente2)))%180.0));
-		
-		//float v =  (float) ((90 + (90 + Math.toDegrees(Math.atan(tangente))))%180.0);
-		//float v =  (float) (Math.toDegrees(Math.atan(tangente))%180.0);
-		
-		float v =  (float) ((90 - angle)%180.0);
-		System.out.println(v);
-		if(v <= 45){
-			return  1;
-		}else if(v >= 135){
-			return  -1;
-		}else{
-			return (float) ((90-v)/45.0);
-		}
-	}
-	
-	private static float getSlopeIntensity(float angle) {
-		
-		//float v =  (float) ((180 + angle)%180.0);
-		//float v =  (float) (angle%180.0);
-		float v = angle;
-		
-		if(v <= 45){
-			return  1;
-		}else if(v >= 135){
-			return  -1;
-		}else{
-			return (float) ((90-v)/45.0);
-		}
-	}
-	
-	private static float friction(float slopeIntensity, float infiltration) {
-		float friction = 1 + 9*infiltration - slopeIntensity;
-		/*if(friction >= 9) {
-			friction *= 10;
-		}*/
-		return friction;
 	}
 	
 	private static void detectionPente(){
@@ -226,17 +81,17 @@ public class ScriptErosionCoterra {
 		builder.setEntete(entete);
 		builder.setWindowShapeType(WindowShapeType.SQUARE);
 		builder.setUnfilters(new int[]{-1});
-		builder.addMetric("slopedirection");
-		builder.addMetric("slopeintensity");
+		builder.addMetric("slope-direction");
+		builder.addMetric("slope-intensity");
 		builder.setWindowSize(3);
-		builder.addGeoTiffOutput("slopedirection", bv_direction);
-		builder.addGeoTiffOutput("slopeintensity", bv_intensity);
+		builder.addGeoTiffOutput("slope-direction", bv_direction);
+		builder.addGeoTiffOutput("slope-intensity", bv_intensity);
 		LandscapeMetricAnalysis analysis = builder.build();
 		
 		analysis.allRun();
 	}
 	
-	private static void calculErosion(){
+	private static void calculSourceErosion(){
 		
 		Coverage intVersCov = CoverageManager.getCoverage(bv_intensite_versement);
 		EnteteRaster entete = intVersCov.getEntete();
@@ -258,46 +113,81 @@ public class ScriptErosionCoterra {
 		builder.setEntete(entete);
 		builder.setWindowShapeType(WindowShapeType.FUNCTIONAL);
 		builder.setUnfilters(new int[]{-1});
-		builder.addMetric("erosionemprise");
-		builder.addMetric("erosionintensity");
-		builder.setWindowSize(201);
-		//builder.setDisplacement(100);
-		builder.addGeoTiffOutput("erosionemprise", bv_erosion_emprise);
-		builder.addGeoTiffOutput("erosionintensity", bv_erosion_intensity);
-		LandscapeMetricAnalysis analysis = builder.build();
-		
-		analysis.allRun();
-	}
-	
-	private static void calculDegatErosion(){
-		
-		Coverage intVersCov = CoverageManager.getCoverage(bv_intensite_versement);
-		EnteteRaster entete = intVersCov.getEntete();
-		float[] intVersData = intVersCov.getData();
-		intVersCov.dispose();
-		
-		Coverage altCov = CoverageManager.getCoverage(bv_altitude);
-		float[] altData = altCov.getData();
-		altCov.dispose();
-		
-		Coverage infilCov = CoverageManager.getCoverage(bv_infiltration);
-		float[] infilData = infilCov.getData();
-		infilCov.dispose();
-		
-		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setRasterTab(intVersData);
-		builder.setRasterTab2(altData);
-		builder.setRasterTab3(infilData);
-		builder.setEntete(entete);
-		builder.setWindowShapeType(WindowShapeType.FUNCTIONAL);
-		builder.setUnfilters(new int[]{-1});
-		builder.addMetric("degaterosionemprise");
-		builder.addMetric("degaterosionintensity");
+		builder.addMetric("source-erosion-emprise");
+		builder.addMetric("source-erosion-intensity");
 		builder.setWindowSize(201);
 		//builder.setDisplacement(100);
 		builder.setDMax(500.0);
-		builder.addGeoTiffOutput("degaterosionemprise", bv_degat_erosion_emprise);
-		builder.addGeoTiffOutput("degaterosionintensity", bv_degat_erosion_intensity);
+		builder.addGeoTiffOutput("source-erosion-emprise", bv_source_erosion_emprise);
+		builder.addGeoTiffOutput("source-erosion-intensity", bv_source_erosion_intensity);
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+	}
+	
+	private static void calculDegatErosionAltitude(){
+		
+		Coverage intVersCov = CoverageManager.getCoverage(bv_intensite_versement);
+		EnteteRaster entete = intVersCov.getEntete();
+		float[] intVersData = intVersCov.getData();
+		intVersCov.dispose();
+		
+		Coverage altCov = CoverageManager.getCoverage(bv_altitude);
+		float[] altData = altCov.getData();
+		altCov.dispose();
+		
+		Coverage infilCov = CoverageManager.getCoverage(bv_infiltration);
+		float[] infilData = infilCov.getData();
+		infilCov.dispose();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterTabs(intVersData, altData, infilData);
+		builder.setEntete(entete);
+		builder.setWindowShapeType(WindowShapeType.FUNCTIONAL);
+		builder.setUnfilters(new int[]{-1});
+		builder.addMetric("degat-erosion-emprise");
+		builder.addMetric("degat-erosion-intensity");
+		builder.setWindowSize(201);
+		//builder.setDisplacement(100);
+		builder.setDMax(500.0);
+		builder.addGeoTiffOutput("degat-erosion-emprise", bv_degat_erosion_emprise);
+		builder.addGeoTiffOutput("degat-erosion-intensity", bv_degat_erosion_intensity);
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+	}
+	
+	private static void calculDegatErosionPente(){
+		
+		Coverage intVersCov = CoverageManager.getCoverage(bv_intensite_versement);
+		EnteteRaster entete = intVersCov.getEntete();
+		float[] intVersData = intVersCov.getData();
+		intVersCov.dispose();
+		
+		Coverage slopeIntCov = CoverageManager.getCoverage(bv_intensity);
+		float[] slopeIntData = slopeIntCov.getData();
+		slopeIntCov.dispose();
+		
+		Coverage slopeDirCov = CoverageManager.getCoverage(bv_direction);
+		float[] slopeDirData = slopeDirCov.getData();
+		slopeDirCov.dispose();
+		
+		Coverage infilCov = CoverageManager.getCoverage(bv_infiltration);
+		float[] infilData = infilCov.getData();
+		infilCov.dispose();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterTabs(intVersData, slopeIntData, slopeDirData, infilData);
+		builder.setEntete(entete);
+		builder.setWindowShapeType(WindowShapeType.FUNCTIONAL);
+		builder.setUnfilters(new int[]{-1});
+		builder.addMetric("degat-erosion-emprise");
+		builder.addMetric("degat-erosion-intensity");
+		builder.setWindowSize(201);
+		//builder.setDisplacement(100);
+		builder.setDMax(500.0);
+		builder.addGeoTiffOutput("degat-erosion-emprise", bv_degat_erosion_emprise);
+		builder.addGeoTiffOutput("degat-erosion-intensity", bv_degat_erosion_intensity);
 		LandscapeMetricAnalysis analysis = builder.build();
 		
 		analysis.allRun();
@@ -530,6 +420,154 @@ public class ScriptErosionCoterra {
 		cal.run();
 		
 		CoverageManager.write(output, outData, entete);
+	}
+	
+	private static void test2() {
+		
+		float cote_oppose = 5;
+		float cote_adjacent = 10;
+		float tangente = cote_oppose/cote_adjacent;
+		double arctangente = Math.atan(tangente);
+		double angle = Math.toDegrees(arctangente);
+		
+		System.out.println(tangente+" "+arctangente+" "+angle);
+		System.out.println(Math.toDegrees(Math.atan(0.8)));
+		
+	}
+	
+	private static void test() {
+		float si, inf, fr;
+		/*
+		si = getSlopeIntensity(100, 100, 10);
+		inf = 0;
+		fr = friction(si, inf);
+		System.out.println(si+" "+inf+" "+fr);
+		System.out.println();
+		
+		si = getSlopeIntensity(100, 90, 10);
+		fr = friction(si, inf);
+		System.out.println(si+" "+inf+" "+fr);
+		System.out.println();
+		
+		si = getSlopeIntensity(100, 95, 10);
+		fr = friction(si, inf);
+		System.out.println(si+" "+inf+" "+fr);
+		System.out.println();
+		
+		si = getSlopeIntensity(100, 110, 10);
+		fr = friction(si, inf);
+		System.out.println(si+" "+inf+" "+fr);
+		System.out.println();
+		
+		si = getSlopeIntensity(100, 105, 10);
+		fr = friction(si, inf);
+		System.out.println(si+" "+inf+" "+fr);
+		System.out.println();
+		
+		si = getSlopeIntensity(100, 120, 10);
+		fr = friction(si, inf);
+		System.out.println(si+" "+inf+" "+fr);
+		System.out.println();
+		
+		si = getSlopeIntensity(100, 80, 10);
+		fr = friction(si, inf);
+		System.out.println(si+" "+inf+" "+fr);
+		System.out.println();
+		*/
+		
+		si = getSlopeIntensity(100, 100, 10);
+		System.out.println(si);
+		System.out.println();
+		
+		si = getSlopeIntensity(100, 90, 10);
+		System.out.println(si);
+		System.out.println();
+		
+		si = getSlopeIntensity(100, 95, 10);
+		System.out.println(si);
+		System.out.println();
+		
+		si = getSlopeIntensity(100, 110, 10);
+		System.out.println(si);
+		System.out.println();
+		
+		si = getSlopeIntensity(100, 105, 10);
+		System.out.println(si);
+		System.out.println();
+		
+		si = getSlopeIntensity(100, 120, 10);
+		System.out.println(si);
+		System.out.println();
+		
+		si = getSlopeIntensity(100, 80, 10);
+		System.out.println(si);
+		System.out.println();
+		
+		
+		/*
+		System.out.println(getSlopeIntensity(90));
+		System.out.println(getSlopeIntensity(100));
+		System.out.println(getSlopeIntensity(80));
+		System.out.println(getSlopeIntensity(135));
+		System.out.println(getSlopeIntensity(45));
+		System.out.println(getSlopeIntensity(145));
+		System.out.println(getSlopeIntensity(35));
+		*/
+	}
+	
+	private static float getSlopeIntensity(float alt, float nalt, float dist) {
+		/*
+		if(alt == nalt) {
+			return 0;
+		}*/
+		
+		float cote_oppose = alt - nalt;
+		float cote_adjacent = dist;
+		float tangente = cote_oppose/cote_adjacent;
+		double arctangente = Math.atan(tangente);
+		double angle = Math.toDegrees(arctangente);
+		
+		System.out.println(cote_oppose+" "+cote_adjacent+" "+tangente+" "+arctangente+" "+angle);
+		
+		//float tangente2 = dist/(alt - nalt);
+		//float tangente2 = (alt - nalt)/dist;
+		//System.out.println("ici "+((180 + Math.toDegrees(Math.atan(tangente2)))%180.0));
+		
+		//float v =  (float) ((90 + (90 + Math.toDegrees(Math.atan(tangente))))%180.0);
+		//float v =  (float) (Math.toDegrees(Math.atan(tangente))%180.0);
+		
+		float v =  (float) ((90 - angle)%180.0);
+		System.out.println(v);
+		if(v <= 45){
+			return  1;
+		}else if(v >= 135){
+			return  -1;
+		}else{
+			return (float) ((90-v)/45.0);
+		}
+	}
+	
+	private static float getSlopeIntensity(float angle) {
+		
+		//float v =  (float) ((180 + angle)%180.0);
+		//float v =  (float) (angle%180.0);
+		float v = angle;
+		
+		if(v <= 45){
+			return  1;
+		}else if(v >= 135){
+			return  -1;
+		}else{
+			return (float) ((90-v)/45.0);
+		}
+	}
+	
+	private static float friction(float slopeIntensity, float infiltration) {
+		float friction = 1 + 9*infiltration - slopeIntensity;
+		/*if(friction >= 9) {
+			friction *= 10;
+		}*/
+		return friction;
 	}
 	
 }

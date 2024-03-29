@@ -44,11 +44,11 @@ AI2m;couple;value;fr.inrae.act.bagap.chloe.window.metric.couple.AggregationIndex
 EMS;value;other;fr.inrae.act.bagap.chloe.window.metric.value.EffectiveMeshSizeMetric;1
 EMS-class;value;value;fr.inrae.act.bagap.chloe.window.metric.value.EffectiveMeshSizeClassMetric;1
 Majority;value;other;fr.inrae.act.bagap.chloe.window.metric.value.MajorityClassMetric;1
-slopedirection;slope;other;fr.inrae.act.bagap.chloe.window.metric.slope.SlopeDirectionMetric;6
-slopeintensity;slope;other;fr.inrae.act.bagap.chloe.window.metric.slope.SlopeIntensityMetric;6
+slope-direction;slope;other;fr.inrae.act.bagap.chloe.window.metric.slope.SlopeDirectionMetric;6
+slope-intensity;slope;other;fr.inrae.act.bagap.chloe.window.metric.slope.SlopeIntensityMetric;6
 surface;continuity;other;fr.inrae.act.bagap.chloe.window.metric.continuity.SurfaceAccessibilityMetric;7
 volume;continuity;other;fr.inrae.act.bagap.chloe.window.metric.continuity.VolumeMovementMetric;7
-erosionemprise;erosion;other;fr.inrae.act.bagap.chloe.window.metric.erosion.ErosionEmpriseMetric;8
-erosionintensity;erosion;other;fr.inrae.act.bagap.chloe.window.metric.erosion.ErosionIntensityMetric;8
-degaterosionemprise;degaterosion;other;fr.inrae.act.bagap.chloe.window.metric.erosion.DegatErosionEmpriseMetric;9
-degaterosionintensity;degaterosion;other;fr.inrae.act.bagap.chloe.window.metric.erosion.DegatErosionIntensityMetric;9
+source-erosion-emprise;erosion;other;fr.inrae.act.bagap.chloe.window.metric.erosion.SourceErosionEmpriseMetric;8
+source-erosion-intensity;erosion;other;fr.inrae.act.bagap.chloe.window.metric.erosion.SourceErosionIntensityMetric;8
+degat-erosion-emprise;degaterosion;other;fr.inrae.act.bagap.chloe.window.metric.erosion.DegatErosionEmpriseMetric;9
+degat-erosion-intensity;degaterosion;other;fr.inrae.act.bagap.chloe.window.metric.erosion.DegatErosionIntensityMetric;9

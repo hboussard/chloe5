@@ -1,8 +1,8 @@
 package fr.inrae.act.bagap.chloe.window.kernel.sliding.grainbocager;
 
-import fr.inrae.act.bagap.chloe.window.kernel.sliding.AbstractSlidingLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
 
-public class GrainBocagerSlidingDetectionBocageKernel extends AbstractSlidingLandscapeMetricKernel {
+public class GrainBocagerSlidingDetectionBocageKernel extends SlidingLandscapeMetricKernel {
 
 	private float minHauteur; //= 3; // hauteur en metres minimum de l'element boise pour etre pris en compte
 	

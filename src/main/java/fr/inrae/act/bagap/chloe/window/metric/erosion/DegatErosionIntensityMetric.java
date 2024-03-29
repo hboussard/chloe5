@@ -6,7 +6,7 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 public class DegatErosionIntensityMetric extends Metric implements DegatErosionMetric {
 
 	public DegatErosionIntensityMetric() {
-		super("degaterosionintensity");
+		super("degat-erosion-intensity");
 	}
 
 	@Override

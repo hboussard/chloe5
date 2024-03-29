@@ -19,6 +19,13 @@ public class HugeSelectedLandscapeMetricAnalysis extends SelectedLandscapeMetric
 		super(coverage, pixels, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax,
 				nbValues, kernel, counting);
 	}
+	
+	public HugeSelectedLandscapeMetricAnalysis(Coverage[] coverages, Set<Pixel> pixels, int roiX, int roiY, int roiWidth,
+			int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues,
+			SelectedLandscapeMetricKernel kernel, Counting counting) {
+		super(coverages, pixels, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax,
+				nbValues, kernel, counting);
+	}
 
 	@Override
 	protected void doInit() {
@@ -75,13 +82,22 @@ public class HugeSelectedLandscapeMetricAnalysis extends SelectedLandscapeMetric
 	@Override
 	protected void doClose() {
 		super.doClose();
-		coverage().dispose();
+		
+		for(int i=0; i<coverages().length; i++) {
+			coverages()[i].dispose();
+		}
 	}
 	
 	@Override
 	protected void manageInDatas(Rectangle roi) {
+		
 		// gestion des entrees
-		kernel().setInDatas(coverage().getData(roi));
+		float[][] inDatas = new float[coverages().length][];
+		for(int i=0; i<coverages().length; i++) {
+			inDatas[i] = coverages()[i].getData(roi);
+		}
+		kernel().setInDatas(inDatas);
+	
 	}
 
 }

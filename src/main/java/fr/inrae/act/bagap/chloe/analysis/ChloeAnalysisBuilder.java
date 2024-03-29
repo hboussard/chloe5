@@ -104,6 +104,10 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 	
+	public void setRasterTabs(float[]... dataTabs) {
+		throw new UnsupportedOperationException();
+	}
+	
 	public void setShapefile(String shapefile){
 		throw new UnsupportedOperationException();
 	}

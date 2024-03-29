@@ -1,6 +1,6 @@
 package fr.inrae.act.bagap.chloe.window.kernel.sliding;
 
-public class SlidingBasicKernel extends AbstractSlidingLandscapeMetricKernel {
+public class SlidingBasicKernel extends SlidingLandscapeMetricKernel {
 	
 	public SlidingBasicKernel(int windowSize, int displacement, float[] coeff, int noDataValue, int[] unfilters){		
 		super(windowSize, displacement, coeff, noDataValue, unfilters);

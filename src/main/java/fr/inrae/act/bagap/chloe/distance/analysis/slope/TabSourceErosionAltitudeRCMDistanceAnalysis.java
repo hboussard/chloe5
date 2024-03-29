@@ -5,7 +5,7 @@ import java.util.List;
 
 import fr.inra.sad.bagap.apiland.analysis.Analysis;
 
-public class TabErosionAltitudeRCMDistanceAnalysis extends Analysis {
+public class TabSourceErosionAltitudeRCMDistanceAnalysis extends Analysis {
 
 	private static final float sqrt2 = (float) Math.sqrt(2);
 	
@@ -27,11 +27,11 @@ public class TabErosionAltitudeRCMDistanceAnalysis extends Analysis {
 	
 	private List<Integer>[] waits;
 	
-	public TabErosionAltitudeRCMDistanceAnalysis(float[] outDatas, float[] altitudeDatas, float[] infiltrationDatas, int width, int height, float cellSize, int noDataValue, float threshold) {
+	public TabSourceErosionAltitudeRCMDistanceAnalysis(float[] outDatas, float[] altitudeDatas, float[] infiltrationDatas, int width, int height, float cellSize, int noDataValue, float threshold) {
 		this(outDatas, null, altitudeDatas, infiltrationDatas, width, height, cellSize, noDataValue, null, threshold);		
 	}
 	
-	public TabErosionAltitudeRCMDistanceAnalysis(float[] outDatas, float[] inDatas, float[] altitudeDatas, float[] infiltrationDatas, int width, int height, float cellSize, int noDataValue, int[] codes, float threshold) {
+	public TabSourceErosionAltitudeRCMDistanceAnalysis(float[] outDatas, float[] inDatas, float[] altitudeDatas, float[] infiltrationDatas, int width, int height, float cellSize, int noDataValue, int[] codes, float threshold) {
 		this.outDatas = outDatas;
 		this.inDatas = inDatas;
 		this.infiltrationDatas = infiltrationDatas;
@@ -103,7 +103,7 @@ public class TabErosionAltitudeRCMDistanceAnalysis extends Analysis {
 			inDatas = null;
 			
 			if(hasValue){
-				// afin de limiter le nombre de calculs de diffusion, ne diffuser qu'� partir des bords d'habitats
+				// afin de limiter le nombre de calculs de diffusion, ne diffuser qu'a partir des bords
 				boolean maj;
 				for (int yt = 0; yt < height; yt++) {
 					for (int xt = 0; xt < width; xt++) {
@@ -202,9 +202,9 @@ public class TabErosionAltitudeRCMDistanceAnalysis extends Analysis {
 	
 	private float friction(float slopeIntensity, float infiltration) {
 		float friction = 2 + 9*infiltration - slopeIntensity;
-		/*if(friction >= 9) {
+		if(friction >= 9) {
 			friction *= 10;
-		}*/
+		}
 		return friction;
 	}
 	
@@ -241,7 +241,7 @@ public class TabErosionAltitudeRCMDistanceAnalysis extends Analysis {
 				int x = p%width;
 				int y = p/width;
 				
-				// en haut � gauche
+				// en haut a gauche
 				np = p - width - 1;
 				if(x > 0 && y > 0 && everDatas[np] != 1){
 					nalt = altitudeDatas[np]; 
@@ -279,7 +279,7 @@ public class TabErosionAltitudeRCMDistanceAnalysis extends Analysis {
 					}
 				}
 				
-				// en haut � droite
+				// en haut a droite
 				np = p - width + 1;
 				if(x < (width-1) && y > 0 && everDatas[np] != 1){
 					nalt = altitudeDatas[np]; 
@@ -298,7 +298,7 @@ public class TabErosionAltitudeRCMDistanceAnalysis extends Analysis {
 					}
 				}
 				
-				// � gauche
+				// a gauche
 				np = p - 1;
 				if(x > 0 && everDatas[np] != 1){
 					nalt = altitudeDatas[np]; 
@@ -317,7 +317,7 @@ public class TabErosionAltitudeRCMDistanceAnalysis extends Analysis {
 					}
 				}
 				
-				// � droite
+				// a droite
 				np = p + 1;
 				if(x < (width-1) && everDatas[np] != 1){
 					nalt = altitudeDatas[np]; 
@@ -336,7 +336,7 @@ public class TabErosionAltitudeRCMDistanceAnalysis extends Analysis {
 					}
 				}
 				
-				// en bas � gauche
+				// en bas a gauche
 				np = p + width - 1;
 				if(x > 0 && y < (height-1) && everDatas[np] != 1){
 					nalt = altitudeDatas[np]; 
@@ -374,7 +374,7 @@ public class TabErosionAltitudeRCMDistanceAnalysis extends Analysis {
 					}
 				}
 				
-				// en bas � droite
+				// en bas a droite
 				np = p + width + 1;
 				if(x < (width-1) && y < (height-1) && everDatas[np] != 1){
 					nalt = altitudeDatas[np]; 

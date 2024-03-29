@@ -22,7 +22,17 @@ public class HugeSlidingLandscapeMetricAnalysisFactory extends SlidingLandscapeM
 		return new HugeSlidingLandscapeMetricAnalysis(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin,
 				bufferROIXMax, bufferROIYMin, bufferROIYMax, nb, displacement, kernel, counting);
 	}
+	
+	@Override
+	protected SlidingLandscapeMetricAnalysis createMultiple(Coverage[] coverages, int roiX, int roiY, int roiWidth,
+			int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nb,
+			int displacement, SlidingLandscapeMetricKernel kernel, Counting counting) {
+		
+		return new HugeSlidingLandscapeMetricAnalysis(coverages, roiX, roiY, roiWidth, roiHeight, bufferROIXMin,
+				bufferROIXMax, bufferROIYMin, bufferROIYMax, nb, displacement, kernel, counting);
+	}
 
+	/*
 	@Override
 	protected SlidingLandscapeMetricAnalysis createDouble(Coverage coverage, Coverage coverage2, int roiX, int roiY,
 			int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax,
@@ -39,5 +49,5 @@ public class HugeSlidingLandscapeMetricAnalysisFactory extends SlidingLandscapeM
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	*/
 }

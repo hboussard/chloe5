@@ -16,7 +16,7 @@ public abstract class Counting implements
 	PatchCountingInterface,
 	SlopeCountingInterface,
 	ContinuityCountingInterface,
-	ErosionCountingInterface,
+	SourceErosionCountingInterface,
 	DegatErosionCountingInterface{//,
 	//MetricObserver {
 	
@@ -389,12 +389,12 @@ public abstract class Counting implements
 	}
 	
 	@Override
-	public double erosionEmprise(){
+	public double sourceErosionEmprise(){
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public double erosionIntensity(){
+	public double sourceErosionIntensity(){
 		throw new UnsupportedOperationException();
 	}
 	

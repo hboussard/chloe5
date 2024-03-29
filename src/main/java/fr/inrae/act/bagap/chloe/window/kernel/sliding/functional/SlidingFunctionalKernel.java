@@ -3,10 +3,10 @@ package fr.inrae.act.bagap.chloe.window.kernel.sliding.functional;
 import java.util.Arrays;
 
 import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
-import fr.inrae.act.bagap.chloe.window.kernel.sliding.AbstractDoubleSlidingLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.distance.analysis.functional.TabRCMDistanceAnalysis;
 
-public abstract class SlidingFunctionalKernel extends AbstractDoubleSlidingLandscapeMetricKernel {
+public abstract class SlidingFunctionalKernel extends SlidingLandscapeMetricKernel {
 
 	private double cellSize;
 	
@@ -54,7 +54,7 @@ public abstract class SlidingFunctionalKernel extends AbstractDoubleSlidingLands
 				for (int dx = -mid; dx <= mid; dx += 1) {
 					if(((x + dx) >= 0) && ((x + dx) < width())){
 						ic = ((dy+mid) * windowSize()) + (dx+mid);
-						resistance[ic] = inDatas2()[((y + dy) * width()) + (x + dx)];
+						resistance[ic] = inDatas(2)[((y + dy) * width()) + (x + dx)];
 					}
 				}
 			}

@@ -1,12 +1,12 @@
 package fr.inrae.act.bagap.chloe.window.counting;
 
-public class ErosionCounting extends Counting implements ErosionCountingInterface {
+public class SourceErosionCounting extends Counting implements SourceErosionCountingInterface {
 
 	private double emprise;
 	
 	private double intensity;
 	
-	public ErosionCounting(double theoreticalSize){
+	public SourceErosionCounting(double theoreticalSize){
 		super(theoreticalSize);
 	}
 	/*
@@ -21,18 +21,17 @@ public class ErosionCounting extends Counting implements ErosionCountingInterfac
 	 */
 	@Override
 	public void doSetCounts(double[] counts){
-	
 		emprise = counts[4];
 		intensity = counts[5];
 	}
 	
 	@Override
-	public double erosionEmprise(){
+	public double sourceErosionEmprise(){
 		return emprise;
 	}
 	
 	@Override
-	public double erosionIntensity(){
+	public double sourceErosionIntensity(){
 		return intensity;
 	}
 	

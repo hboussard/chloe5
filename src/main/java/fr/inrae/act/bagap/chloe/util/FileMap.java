@@ -1,9 +1,9 @@
 package fr.inrae.act.bagap.chloe.util;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.jumpmind.symmetric.csv.CsvReader;
 
@@ -12,7 +12,7 @@ public class FileMap {
 	private Map<Float, Float> map;
 	
 	public FileMap(String file, String from, String to){
-		map = new HashMap<Float, Float>();
+		map = new TreeMap<Float, Float>();
 		read(file, from, to);
 	}
 	

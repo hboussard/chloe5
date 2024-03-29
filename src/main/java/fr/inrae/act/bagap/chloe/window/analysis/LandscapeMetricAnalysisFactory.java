@@ -58,6 +58,14 @@ public class LandscapeMetricAnalysisFactory {
 			
 			coverage = new TabCoverage(builder.getRasterTab(), builder.getEntete());
 			
+		}else if(builder.getRasterTabs() != null){
+			
+			inWidth = builder.getEntete().width();
+			inHeight = builder.getEntete().height();
+			inCellSize = builder.getEntete().cellsize();
+			
+			coverage = new TabCoverage(builder.getRasterTabs()[0], builder.getEntete());
+			
 		}else{
 			throw new IllegalArgumentException("no raster declared");
 		}

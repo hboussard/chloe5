@@ -18,6 +18,11 @@ public abstract class SelectedLandscapeMetricAnalysis extends SingleLandscapeMet
 		this.pixels = pixels;
 	}
 	
+	public SelectedLandscapeMetricAnalysis(Coverage[] coverages, Set<Pixel> pixels, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, SelectedLandscapeMetricKernel kernel, Counting counting){
+		super(coverages, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
+		this.pixels = pixels;
+	}
+	
 	@Override
 	public SelectedLandscapeMetricKernel kernel() {
 		return (SelectedLandscapeMetricKernel) super.kernel();

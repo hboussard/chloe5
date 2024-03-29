@@ -1,8 +1,8 @@
 package fr.inrae.act.bagap.chloe.window.kernel.sliding.fast;
 
-import fr.inrae.act.bagap.chloe.window.kernel.sliding.AbstractSlidingLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
 
-public abstract class FastKernel extends AbstractSlidingLandscapeMetricKernel {
+public abstract class FastKernel extends SlidingLandscapeMetricKernel {
 	
 	private float[][] buf;
 	

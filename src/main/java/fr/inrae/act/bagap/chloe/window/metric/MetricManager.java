@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import org.jumpmind.symmetric.csv.CsvReader;
 
@@ -17,7 +16,7 @@ import fr.inrae.act.bagap.chloe.window.metric.basic.BasicMetric;
 import fr.inrae.act.bagap.chloe.window.metric.continuity.ContinuityMetric;
 import fr.inrae.act.bagap.chloe.window.metric.couple.CoupleMetric;
 import fr.inrae.act.bagap.chloe.window.metric.erosion.DegatErosionMetric;
-import fr.inrae.act.bagap.chloe.window.metric.erosion.ErosionMetric;
+import fr.inrae.act.bagap.chloe.window.metric.erosion.SourceErosionMetric;
 import fr.inrae.act.bagap.chloe.window.metric.patch.PatchMetric;
 import fr.inrae.act.bagap.chloe.window.metric.quantitative.QuantitativeMetric;
 import fr.inrae.act.bagap.chloe.window.metric.slope.SlopeMetric;
@@ -142,8 +141,8 @@ public class MetricManager {
 				Class<?> c = Class.forName(metrics.get(metric));
 				metric = m.replace(metric+"_", "");
 				StringTokenizer st = new StringTokenizer(metric, "-");
-				short c1 = new Short(st.nextToken());
-				short c2 = new Short(st.nextToken());
+				short c1 = Short.parseShort(st.nextToken());
+				short c2 = Short.parseShort(st.nextToken());
 				return (Metric) c.getConstructor(short.class, short.class).newInstance(c1, c2);
 				
 			}else if(isProcessValueMetric(m)){
@@ -160,7 +159,7 @@ public class MetricManager {
 					short[] v = new short[s.length];
 					int i=0;
 					for(String ss : s){
-						v[i++] = new Short(ss);
+						v[i++] = Short.parseShort(ss);
 					}
 					return (Metric) c.getConstructor(short[].class).newInstance(v);
 				}if(metric.contains("&")){
@@ -168,11 +167,11 @@ public class MetricManager {
 					short[] v = new short[s.length];
 					int i=0;
 					for(String ss : s){
-						v[i++] = new Short(ss);
+						v[i++] = Short.parseShort(ss);
 					}
 					return (Metric) c.getConstructor(short[].class).newInstance(v);
 				}else{
-					short v = new Short(metric);
+					short v = Short.parseShort(metric);
 					return (Metric) c.getConstructor(short.class).newInstance(v);
 				}
 				
@@ -361,9 +360,9 @@ public class MetricManager {
 		return true;
 	}
 	
-	public static boolean hasOnlyErosionMetric(Set<Metric> metrics) {
+	public static boolean hasOnlySourceErosionMetric(Set<Metric> metrics) {
 		for(Metric m : metrics){
-			if(!(m instanceof ErosionMetric) && !(m instanceof BasicMetric)){
+			if(!(m instanceof SourceErosionMetric) && !(m instanceof BasicMetric)){
 				return false;
 			}
 		}
@@ -410,7 +409,5 @@ public class MetricManager {
 		}
 		return cMetrics;
 	}
-
-
 	
 }

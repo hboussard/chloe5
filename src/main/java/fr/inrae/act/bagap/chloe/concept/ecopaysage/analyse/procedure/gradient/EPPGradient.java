@@ -69,12 +69,7 @@ public class EPPGradient extends EcoPaysageProcedure {
 				
 				EcoPaysage.exportMap(manager().gradientMapFile(k, ik), manager().gradientFile(k), ik, header);
 			}
-			
-			
 		}
-		
-		
-		
 	}
 	
 }

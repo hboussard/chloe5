@@ -6,10 +6,10 @@ import fr.inrae.act.bagap.raster.Coverage;
 
 public abstract class SingleLandscapeMetricAnalysis extends LandscapeMetricAnalysis {
 
-	private final Coverage coverage;
+	private final Coverage[] coverages;
 	
 	/**
-	 * coordonnees en pixels (X, Y) du premier pixel en haut à gauche du ROI a analyser
+	 * coordonnees en pixels (X, Y) du premier pixel en haut ï¿½ gauche du ROI a analyser
 	 * info relative par rapport au coverage
 	 */
 	private final int roiX, roiY; 
@@ -32,8 +32,8 @@ public abstract class SingleLandscapeMetricAnalysis extends LandscapeMetricAnaly
 	
 	private final Counting counting;
 	
-	public SingleLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, LandscapeMetricKernel kernel, Counting counting){
-		this.coverage = coverage;
+	public SingleLandscapeMetricAnalysis(Coverage[] coverages, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, LandscapeMetricKernel kernel, Counting counting){
+		this.coverages = coverages;
 		this.roiX = roiX;
 		this.roiY = roiY;
 		this.roiWidth = roiWidth;
@@ -47,8 +47,20 @@ public abstract class SingleLandscapeMetricAnalysis extends LandscapeMetricAnaly
 		this.counting = counting;
 	}
 	
+	public SingleLandscapeMetricAnalysis(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, LandscapeMetricKernel kernel, Counting counting){
+		this(new Coverage[] {coverage}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
+	}
+	
+	protected Coverage[] coverages(){
+		return coverages;
+	}
+	
 	protected Coverage coverage(){
-		return coverage;
+		return coverages[0];
+	}
+	
+	protected Coverage coverage(int index){
+		return coverages[index-1];
 	}
 	
 	public int roiX() {

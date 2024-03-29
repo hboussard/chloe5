@@ -174,7 +174,7 @@ public class GrainBocagerManager {
 	
 	private boolean initEntete(){
 		
-		if(!bocage().equalsIgnoreCase("")){
+		if(bocage() != null){
 			
 			// recuperation de l'entete du bocage
 			Coverage covBocage = CoverageManager.getCoverage(bocage());
@@ -204,8 +204,6 @@ public class GrainBocagerManager {
 				entete = EnteteRaster.getEntete(entete, envelope);
 			}
 			
-			//initHugeMode();
-			
 			return true;
 		}
 		
@@ -215,8 +213,6 @@ public class GrainBocagerManager {
 			Coverage covHauteurBoisement = CoverageManager.getCoverage(woodHeight());
 			entete = covHauteurBoisement.getEntete();
 			covHauteurBoisement.dispose();
-			
-			//initHugeMode();
 			
 			return true;
 		}
@@ -228,8 +224,6 @@ public class GrainBocagerManager {
 			entete = covDistanceInfluence.getEntete();
 			covDistanceInfluence.dispose();
 			
-			//initHugeMode();
-			
 			return true;
 		}
 		
@@ -239,8 +233,6 @@ public class GrainBocagerManager {
 			Coverage covGrainBocager = CoverageManager.getCoverage(grainBocager());
 			entete = covGrainBocager.getEntete();
 			covGrainBocager.dispose();
-			
-			//initHugeMode();
 			
 			return true;
 		}
@@ -252,23 +244,11 @@ public class GrainBocagerManager {
 			entete = covClusterGrainBocager.getEntete();
 			covClusterGrainBocager.dispose();
 			
-			//initHugeMode();
-			
 			return true;
 		}
 		
 		return false;
 	}
-	
-	/*
-	private void initHugeMode() {
-		if(entete.width()*entete.height() > ChloeAnalysis.maxTile()){
-			hugeMode = true;
-		}else {
-			hugeMode = false;
-		}
-	}
-	*/
 
 	public GrainBocagerProcedure build(){
 		if(factory.check(this)){
@@ -500,9 +480,9 @@ public class GrainBocagerManager {
 	public String grainBocager() {
 		if(grainBocager == null) {
 			if(tile == null) {
-				setGrainBocager(outputFolder()+outputPrefix()+"grain_bocager_"+grainBocagerCellSize()+"m.tif");
+				setGrainBocager(outputFolder()+outputPrefix()+"grain_bocager_"+(int)grainBocagerCellSize()+"m.tif");
 			}else {
-				setGrainBocager(outputFolder()+outputPrefix()+"grain_bocager_"+grainBocagerCellSize()+"/");
+				setGrainBocager(outputFolder()+outputPrefix()+"grain_bocager_"+(int)grainBocagerCellSize()+"m/");
 			}
 		}
 		return grainBocager;
@@ -511,9 +491,9 @@ public class GrainBocagerManager {
 	public String grainBocager4Classes() {
 		if(grainBocager4Classes == null) {
 			if(tile == null) {
-				setGrainBocager4Classes(outputFolder()+outputPrefix()+"grain_bocager_4classes_"+grainBocagerCellSize()+"m.tif");
+				setGrainBocager4Classes(outputFolder()+outputPrefix()+"grain_bocager_4classes_"+(int)grainBocagerCellSize()+"m.tif");
 			}else {
-				setGrainBocager4Classes(outputFolder()+outputPrefix()+"grain_bocager_4classes_"+grainBocagerCellSize()+"/");
+				setGrainBocager4Classes(outputFolder()+outputPrefix()+"grain_bocager_4classes_"+(int)grainBocagerCellSize()+"m/");
 			}
 		}
 		return grainBocager4Classes;
@@ -522,9 +502,9 @@ public class GrainBocagerManager {
 	public String functionalGrainBocager() {
 		if(functionalGrainBocager == null) {
 			if(tile == null) {
-				setFunctionalGrainBocager(outputFolder()+outputPrefix()+"grain_bocager_fonctionnel_"+grainBocagerCellSize()+"m.tif");
+				setFunctionalGrainBocager(outputFolder()+outputPrefix()+"grain_bocager_fonctionnel_"+(int)grainBocagerCellSize()+"m.tif");
 			}else {
-				
+				setFunctionalGrainBocager(outputFolder()+outputPrefix()+"grain_bocager_fonctionnel_"+(int)grainBocagerCellSize()+"m/");
 			}
 		}
 		return functionalGrainBocager;
@@ -533,9 +513,9 @@ public class GrainBocagerManager {
 	public String functionalGrainBocagerClustering() {
 		if(functionalGrainBocagerClustering == null) {
 			if(tile == null) {
-				setFunctionalGrainBocagerClustering(outputFolder()+outputPrefix()+"cluster_grain_bocager_fonctionnel_"+grainBocagerCellSize()+"m.tif");
+				setFunctionalGrainBocagerClustering(outputFolder()+outputPrefix()+"cluster_grain_bocager_fonctionnel_"+(int)grainBocagerCellSize()+"m.tif");
 			}else {
-				setFunctionalGrainBocagerClustering(outputFolder()+outputPrefix()+"cluster_grain_bocager_fonctionnel_"+grainBocagerCellSize()+"m.tif/");
+				setFunctionalGrainBocagerClustering(outputFolder()+outputPrefix()+"cluster_grain_bocager_fonctionnel_"+(int)grainBocagerCellSize()+"m/");
 			}
 		}
 		return functionalGrainBocagerClustering;
@@ -544,9 +524,9 @@ public class GrainBocagerManager {
 	public String functionalGrainBocagerProportion() {
 		if(functionalGrainBocagerProportion == null) {
 			if(tile == null) {
-				setFunctionalGrainBocagerProportion(outputFolder()+outputPrefix()+"proportion_grain_bocager_fonctionnel_"+issuesCellSize()+"m.tif");
+				setFunctionalGrainBocagerProportion(outputFolder()+outputPrefix()+"proportion_grain_bocager_fonctionnel_"+(int)issuesWindowRadius()+"m.tif");
 			}else {
-				setFunctionalGrainBocagerProportion(outputFolder()+outputPrefix()+"proportion_grain_bocager_fonctionnel_"+issuesCellSize()+"/");
+				setFunctionalGrainBocagerProportion(outputFolder()+outputPrefix()+"proportion_grain_bocager_fonctionnel_"+(int)issuesWindowRadius()+"m/");
 			}
 		}
 		return functionalGrainBocagerProportion;
@@ -555,9 +535,9 @@ public class GrainBocagerManager {
 	public String functionalGrainBocagerFragmentation() {
 		if(functionalGrainBocagerFragmentation == null) {
 			if(tile == null) {
-				setFunctionalGrainBocagerFragmentation(outputFolder()+outputPrefix()+"fragmentation_grain_bocager_fonctionnel_"+issuesCellSize()+"m.tif");
+				setFunctionalGrainBocagerFragmentation(outputFolder()+outputPrefix()+"fragmentation_grain_bocager_fonctionnel_"+(int)issuesWindowRadius()+"m.tif");
 			}else {
-				setFunctionalGrainBocagerFragmentation(outputFolder()+outputPrefix()+"fragmentation_grain_bocager_fonctionnel_"+issuesCellSize()+"/");
+				setFunctionalGrainBocagerFragmentation(outputFolder()+outputPrefix()+"fragmentation_grain_bocager_fonctionnel_"+(int)issuesWindowRadius()+"m/");
 			}
 		}
 		return functionalGrainBocagerFragmentation;

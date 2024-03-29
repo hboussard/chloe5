@@ -15,6 +15,11 @@ public abstract class SlidingLandscapeMetricAnalysis extends SingleLandscapeMetr
 		super(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
 		this.displacement = displacement;
 	}
+	
+	public SlidingLandscapeMetricAnalysis(Coverage[] coverages, int roiX, int roiY, int roiWidth, int roiHeight, int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting){
+		super(coverages, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
+		this.displacement = displacement;
+	}
 
 	public int displacement() {
 		return displacement;

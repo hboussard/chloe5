@@ -16,7 +16,8 @@ import fr.inrae.act.bagap.raster.converter.ShapeFile2CoverageConverter;
 public class ScriptDepartementGrain2D{
 
 	//private static final String path = "E:/FRC_AURA/data/grain2d/";
-	private static final String path = "E:/CERFE/grain2d/";
+	//private static final String path = "E:/CERFE/grain2d/";
+	private static final String path = "E:/FRC_OCCITANIE/data/grain2d/";
 	
 	public static void main(String[] args) {
 		/*
@@ -54,12 +55,25 @@ public class ScriptDepartementGrain2D{
 		calculZoneEnjeux("38", 5);
 		calculZoneEnjeux("42", 5);
 		*/
-		
+		/*
 		prepaMNH("08");
 		calculGrainBocager5m("08");
 		calculGrainBocager50m("08");
 		calculZoneEnjeux("08", 1);
 		calculZoneEnjeux("08", 5);
+		*/
+		
+		//analyseDepartement("31");
+		analyseDepartement("34");
+		analyseDepartement("81");
+	}
+	
+	private static void analyseDepartement(String codeDpt) {
+		prepaMNH(codeDpt);
+		calculGrainBocager5m(codeDpt);
+		calculGrainBocager50m(codeDpt);
+		calculZoneEnjeux(codeDpt, 1);
+		calculZoneEnjeux(codeDpt, 5);
 	}
 
 	private static void prepaMNH(String dpt) {
@@ -109,7 +123,7 @@ public class ScriptDepartementGrain2D{
 		String localPath = path+dpt+"/";
 		String outputPath = localPath+"grain_bocager/";
 		
-		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_grain_bocager");
+		GrainBocagerManager gbManager = new GrainBocagerManager("grain_bocager_calculation");
 		gbManager.setFastMode(true);
 		gbManager.setBufferArea(0);
 		gbManager.setThresholds(0.2, 0.33, 0.45);
@@ -130,7 +144,7 @@ public class ScriptDepartementGrain2D{
 		String localPath = path+dpt+"/";
 		String outputPath = localPath+"grain_bocager/";
 		
-		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_grain_bocager");
+		GrainBocagerManager gbManager = new GrainBocagerManager("grain_bocager_calculation");
 		gbManager.setFastMode(true);
 		gbManager.setBufferArea(0);
 		gbManager.setThresholds(0.2, 0.33, 0.45);
@@ -151,7 +165,7 @@ public class ScriptDepartementGrain2D{
 		
 		String localPath = path+dpt+"/grain_bocager/";
 		
-		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_enjeux_globaux");
+		GrainBocagerManager gbManager = new GrainBocagerManager("global_issues_calculation");
 		gbManager.setFastMode(true); 
 		gbManager.setGrainBocager(localPath+dpt+"_grain_bocager_50m.tif");
 		gbManager.setFunctionalGrainBocager(localPath+dpt+"_grain_bocager_fonctionnel_50m.tif");

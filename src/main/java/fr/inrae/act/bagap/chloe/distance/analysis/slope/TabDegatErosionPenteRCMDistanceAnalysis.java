@@ -5,13 +5,13 @@ import java.util.List;
 
 import fr.inra.sad.bagap.apiland.analysis.Analysis;
 
-public class TabDegatErosionRCMDistanceAnalysis extends Analysis {
+public class TabDegatErosionPenteRCMDistanceAnalysis extends Analysis {
 
 	private static final float sqrt2 = (float) Math.sqrt(2);
 	
 	private static final float coeffReg = 314.0f;
 	
-	private float[] outDatas, inDatas, infiltrationDatas, altitudeDatas, everDatas;
+	private float[] outDatas, inDatas, infiltrationDatas, slopeIntensityDatas, slopeDirectionDatas, everDatas;
 	
 	private int[] codes;
 
@@ -27,15 +27,16 @@ public class TabDegatErosionRCMDistanceAnalysis extends Analysis {
 	
 	private List<Integer>[] waits;
 	
-	public TabDegatErosionRCMDistanceAnalysis(float[] outDatas, float[] altitudeDatas, float[] infiltrationDatas, int width, int height, float cellSize, int noDataValue, float threshold) {
-		this(outDatas, null, altitudeDatas, infiltrationDatas, width, height, cellSize, noDataValue, null, threshold);		
+	public TabDegatErosionPenteRCMDistanceAnalysis(float[] outDatas, float[] slopeIntensityDatas, float[] slopeDirectionDatas, float[] infiltrationDatas, int width, int height, float cellSize, int noDataValue, float threshold) {
+		this(outDatas, null, slopeIntensityDatas, slopeDirectionDatas, infiltrationDatas, width, height, cellSize, noDataValue, null, threshold);		
 	}
 	
-	public TabDegatErosionRCMDistanceAnalysis(float[] outDatas, float[] inDatas, float[] altitudeDatas, float[] infiltrationDatas, int width, int height, float cellSize, int noDataValue, int[] codes, float threshold) {
+	public TabDegatErosionPenteRCMDistanceAnalysis(float[] outDatas, float[] inDatas, float[] slopeIntensityDatas, float[] slopeDirectionDatas, float[] infiltrationDatas, int width, int height, float cellSize, int noDataValue, int[] codes, float threshold) {
 		this.outDatas = outDatas;
 		this.inDatas = inDatas;
+		this.slopeIntensityDatas = slopeIntensityDatas;
+		this.slopeDirectionDatas = slopeDirectionDatas;
 		this.infiltrationDatas = infiltrationDatas;
-		this.altitudeDatas = altitudeDatas;
 		this.width = width;
 		this.height = height;
 		this.cellSize = cellSize;
@@ -158,62 +159,15 @@ public class TabDegatErosionRCMDistanceAnalysis extends Analysis {
 		//System.out.println("nombre de diffusions = "+indexG);
 		setResult(outDatas);
 	}
-
-	private static float getSlopeIntensity(float alt, float nalt, float cote_adjacent) {
-		
-		if(alt == nalt) {
-			return 0;
-		}
-		
-		float cote_oppose = alt - nalt;
-		float tangente = cote_oppose/cote_adjacent;
-		double arctangente = Math.atan(tangente);
-		double angle = Math.toDegrees(arctangente);
-		
-		//System.out.println(cote_oppose+" "+cote_adjacent+" "+tangente+" "+arctangente+" "+angle);
-		
-		float v =  (float) ((90 - angle)%180.0);
-		if(v <= 45){
-			return  1;
-		}else if(v >= 135){
-			return  -1;
-		}else{
-			return (float) ((90-v)/45.0);
-		}
-	}
 	
 	private float friction(float slopeIntensity, float infiltration) {
 		float friction = 2 + 9*infiltration - slopeIntensity;
-		/*if(friction >= 9) {
-			friction *= 10;
-		}*/
-		return friction;
-	}
-	/*
-	private float getSlopeIntensity(float alt, float nalt, float dist) {
-		
-		if(alt == nalt) {
-			return 0;
-		}
-		
-		float tangente = dist/(alt - nalt);
-		float v =  (float) ((90 + (90 + Math.toDegrees(Math.atan(tangente))))%180.0);
-		
-		if(v <= 45){
-			return  1;
-		}else{
-			return (float) ((90-v)/45.0);
-		}
-	}
-	
-	private float friction(float slopeIntensity, float infiltration) {
-		float friction = 1 + 9*infiltration - slopeIntensity;
 		if(friction >= 9) {
 			friction *= 10;
 		}
 		return friction;
 	}
-	*/
+	
 	private void diffusionPaquet(int dd, List<Integer> wait){
 		for(int p : wait){
 			diffusion(p, dd/coeffReg);
@@ -221,7 +175,11 @@ public class TabDegatErosionRCMDistanceAnalysis extends Analysis {
 	}
 
 	public void setPixelAndValue(int pixel, float dist) {
+		
 		if(dist < (int) (threshold/cellSize)){
+			
+			//System.out.println("ici "+pixel+" "+dist);
+			
 			if (waits[(int) (dist*coeffReg)] == null) {
 				waits[(int) (dist*coeffReg)] = new ArrayList<Integer>();
 			}
@@ -229,35 +187,35 @@ public class TabDegatErosionRCMDistanceAnalysis extends Analysis {
 		}
 	}
 	
+	private static float getSlopeIntensity(float slopeIntensity) {
+		return (float) ((90-slopeIntensity)/45.0);
+	}
+	
 	private void diffusion(int p, double dd) {
 		//++indexG;
-		//System.out.println("diffusion de puis "+p);
+		//System.out.println("diffusion depuis "+p);
 		if (everDatas[p] != 1 && ((int) threshold/cellSize) > dd) {
 			
 			everDatas[p] = 1; // marquage de diffusion du pixel
 			
 			if (outDatas[p] != noDataValue) {
-				float alt = altitudeDatas[p]; // altitude au point de diffusion
+				float fd = friction(getSlopeIntensity(slopeIntensityDatas[p]), infiltrationDatas[p]); // friction au point de diffusion
 				int np;
-				float v, infc, d;
-				float nalt;
-				float sInt;
-				float friction;
-				
+				float v, fc, d;
+				int dir, ndir;
 				int x = p%width;
 				int y = p/width;
 				
-				// en haut � gauche
+				// en haut a gauche
 				np = p - width - 1;
-				if(x > 0 && y > 0 && everDatas[np] != 1){
-					nalt = altitudeDatas[np]; 
-					if(alt <= nalt){
+				dir = 1;
+				ndir = (int) slopeDirectionDatas[np];
+				if(ndir == 0 || ndir+dir == 9){
+					if(x > 0 && y > 0 && everDatas[np] != 1){
 						v = outDatas[np]; // valeur au point diagonal
 						if (v != noDataValue) {
-							infc = infiltrationDatas[np];
-							sInt = getSlopeIntensity(alt, nalt, sqrt2 * cellSize);
-							friction = friction(sInt, infc);
-							d = (float) (dd + sqrt2 * friction); // distance au point diagonal
+							fc = friction(getSlopeIntensity(slopeIntensityDatas[np]), infiltrationDatas[np]);
+							d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
 							if (v == -2 || d * cellSize < v) { // MAJ ?
 								outDatas[np] = d * cellSize;
 								setPixelAndValue(np, d);
@@ -268,15 +226,14 @@ public class TabDegatErosionRCMDistanceAnalysis extends Analysis {
 				
 				// en haut
 				np = p - width;
-				if(y > 0 && everDatas[np] != 1){
-					nalt = altitudeDatas[np]; 
-					if(alt <= nalt){
+				dir = 2;
+				ndir = (int) slopeDirectionDatas[np];
+				if(ndir == 0 || ndir+dir == 9){
+					if(y > 0 && everDatas[np] != 1){
 						v = outDatas[np]; // valeur au point cardinal
 						if (v != noDataValue) {
-							infc = infiltrationDatas[np];
-							sInt = getSlopeIntensity(alt, nalt, cellSize);
-							friction = friction(sInt, infc);
-							d = (float) (dd + friction); // distance au point cardinal
+							fc = friction(getSlopeIntensity(slopeIntensityDatas[np]), infiltrationDatas[np]);
+							d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
 							if (v == -2 || d * cellSize < v) { // MAJ ?
 								outDatas[np] = d * cellSize;
 								setPixelAndValue(np, d);
@@ -285,17 +242,16 @@ public class TabDegatErosionRCMDistanceAnalysis extends Analysis {
 					}
 				}
 				
-				// en haut � droite
+				// en haut a droite
 				np = p - width + 1;
-				if(x < (width-1) && y > 0 && everDatas[np] != 1){
-					nalt = altitudeDatas[np]; 
-					if(alt <= nalt){
+				dir = 3;
+				ndir = (int) slopeDirectionDatas[np];
+				if(ndir == 0 || ndir+dir == 9){
+					if(x < (width-1) && y > 0 && everDatas[np] != 1){
 						v = outDatas[np]; // valeur au point diagonal
 						if (v != noDataValue) {
-							infc = infiltrationDatas[np];
-							sInt = getSlopeIntensity(alt, nalt, sqrt2 * cellSize);
-							friction = friction(sInt, infc);
-							d = (float) (dd + sqrt2 * friction); // distance au point diagonal
+							fc = friction(getSlopeIntensity(slopeIntensityDatas[np]), infiltrationDatas[np]);
+							d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
 							if (v == -2 || d * cellSize < v) { // MAJ ?
 								outDatas[np] = d * cellSize;
 								setPixelAndValue(np, d);
@@ -304,17 +260,16 @@ public class TabDegatErosionRCMDistanceAnalysis extends Analysis {
 					}
 				}
 				
-				// � gauche
+				// a gauche
 				np = p - 1;
-				if(x > 0 && everDatas[np] != 1){
-					nalt = altitudeDatas[np]; 
-					if(alt <= nalt){
+				dir = 4;
+				ndir = (int) slopeDirectionDatas[np];
+				if(ndir == 0 || ndir+dir == 9){
+					if(x > 0 && everDatas[np] != 1){
 						v = outDatas[np]; // valeur au point cardinal
 						if (v != noDataValue) {
-							infc = infiltrationDatas[np];
-							sInt = getSlopeIntensity(alt, nalt, cellSize);
-							friction = friction(sInt, infc);
-							d = (float) (dd + friction); // distance au point cardinal
+							fc = friction(getSlopeIntensity(slopeIntensityDatas[np]), infiltrationDatas[np]);
+							d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
 							if (v == -2 || d * cellSize < v) { // MAJ ?
 								outDatas[np] = d * cellSize;
 								setPixelAndValue(np, d);
@@ -323,17 +278,16 @@ public class TabDegatErosionRCMDistanceAnalysis extends Analysis {
 					}
 				}
 				
-				// � droite
+				// a droite
 				np = p + 1;
-				if(x < (width-1) && everDatas[np] != 1){
-					nalt = altitudeDatas[np]; 
-					if(alt <= nalt){
+				dir = 5;
+				ndir = (int) slopeDirectionDatas[np];
+				if(ndir == 0 || ndir+dir == 9){
+					if(x < (width-1) && everDatas[np] != 1){
 						v = outDatas[np]; // valeur au point cardinal
 						if (v != noDataValue) {
-							infc = infiltrationDatas[np];
-							sInt = getSlopeIntensity(alt, nalt, cellSize);
-							friction = friction(sInt, infc);
-							d = (float) (dd + friction); // distance au point cardinal
+							fc = friction(getSlopeIntensity(slopeIntensityDatas[np]), infiltrationDatas[np]);
+							d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
 							if (v == -2 || d * cellSize < v) { // MAJ ?
 								outDatas[np] = d * cellSize;
 								setPixelAndValue(np, d);
@@ -342,36 +296,34 @@ public class TabDegatErosionRCMDistanceAnalysis extends Analysis {
 					}
 				}
 				
-				// en bas � gauche
+				// en bas a gauche
 				np = p + width - 1;
-				if(x > 0 && y < (height-1) && everDatas[np] != 1){
-					nalt = altitudeDatas[np]; 
-					if(alt <= nalt){
+				dir = 6;
+				ndir = (int) slopeDirectionDatas[np];
+				if(ndir == 0 || ndir+dir == 9){
+					if(x > 0 && y < (height-1) && everDatas[np] != 1){
 						v = outDatas[np]; // valeur au point diagonal
 						if (v != noDataValue) {
-							infc = infiltrationDatas[np];
-							sInt = getSlopeIntensity(alt, nalt, sqrt2 * cellSize);
-							friction = friction(sInt, infc);
-							d = (float) (dd + sqrt2 * friction); // distance au point diagonal
+							fc = friction(getSlopeIntensity(slopeIntensityDatas[np]), infiltrationDatas[np]);
+							d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
 							if (v == -2 || d * cellSize < v) { // MAJ ?
 								outDatas[np] = d * cellSize;
 								setPixelAndValue(np, d);
 							}
 						}
-					}	
+					}
 				}
 				
 				// en bas
 				np = p + width;
-				if(y < (height-1) && everDatas[np] != 1){
-					nalt = altitudeDatas[np]; 
-					if(alt <= nalt){
+				dir = 7;
+				ndir = (int) slopeDirectionDatas[np];
+				if(ndir == 0 || ndir+dir == 9){
+					if(y < (height-1) && everDatas[np] != 1){
 						v = outDatas[np]; // valeur au point cardinal
 						if (v != noDataValue) {
-							infc = infiltrationDatas[np];
-							sInt = getSlopeIntensity(alt, nalt, cellSize);
-							friction = friction(sInt, infc);
-							d = (float) (dd + friction); // distance au point cardinal
+							fc = friction(getSlopeIntensity(slopeIntensityDatas[np]), infiltrationDatas[np]);
+							d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
 							if (v == -2 || d * cellSize < v) { // MAJ ?
 								outDatas[np] = d * cellSize;
 								setPixelAndValue(np, d);
@@ -380,17 +332,16 @@ public class TabDegatErosionRCMDistanceAnalysis extends Analysis {
 					}
 				}
 				
-				// en bas � droite
+				// en bas a droite
 				np = p + width + 1;
-				if(x < (width-1) && y < (height-1) && everDatas[np] != 1){
-					nalt = altitudeDatas[np]; 
-					if(alt <= nalt){
+				dir = 8;
+				ndir = (int) slopeDirectionDatas[np];
+				if(ndir == 0 || ndir+dir == 9){
+					if(x < (width-1) && y < (height-1) && everDatas[np] != 1){
 						v = outDatas[np]; // valeur au point diagonal
 						if (v != noDataValue) {
-							infc = infiltrationDatas[np];
-							sInt = getSlopeIntensity(alt, nalt, sqrt2 * cellSize);
-							friction = friction(sInt, infc);
-							d = (float) (dd + sqrt2 * friction); // distance au point diagonal
+							fc = friction(getSlopeIntensity(slopeIntensityDatas[np]), infiltrationDatas[np]);
+							d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
 							if (v == -2 || d * cellSize < v) { // MAJ ?
 								outDatas[np] = d * cellSize;
 								setPixelAndValue(np, d);
@@ -398,7 +349,6 @@ public class TabDegatErosionRCMDistanceAnalysis extends Analysis {
 						}
 					}
 				}
-				
 			}
 		}
 	}
@@ -408,7 +358,8 @@ public class TabDegatErosionRCMDistanceAnalysis extends Analysis {
 		waits = null;
 		inDatas = null;
 		infiltrationDatas = null;
-		altitudeDatas = null;
+		slopeDirectionDatas = null;
+		slopeIntensityDatas = null;
 		everDatas = null;
 	}
 

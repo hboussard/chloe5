@@ -27,9 +27,6 @@ import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.AsciiGridOutput;
 import fr.inrae.act.bagap.chloe.window.output.CsvOutput;
 import fr.inrae.act.bagap.chloe.window.output.GeoTiffOutput;
-import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineGeoTiffOutput;
-import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineLinearAsciiGridOutput;
-import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineLinearCsvOutput;
 import fr.inrae.act.bagap.raster.Coverage;
 
 public abstract class GridLandscapeMetricAnalysisFactory {
@@ -290,12 +287,12 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 		}
 						
 		// analysis
-		return create(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
+		return createSingle(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, kernel, counting);
 	}
 	
 	protected abstract int[] readValues(Coverage coverage, Rectangle roi, int noDataValue);
 	
-	protected abstract GridLandscapeMetricAnalysis create(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, 
+	protected abstract GridLandscapeMetricAnalysis createSingle(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, 
 			int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nbValues, GridLandscapeMetricKernel kernel, Counting counting);
 	
 }

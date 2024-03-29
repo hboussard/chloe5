@@ -3,10 +3,10 @@ package fr.inrae.act.bagap.chloe.window.kernel.selected.grainbocager;
 import java.util.Set;
 
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inrae.act.bagap.chloe.window.kernel.selected.DoubleSelectedLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.selected.SelectedLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 
-public class GrainBocagerSelectedDistanceBocageKernel extends DoubleSelectedLandscapeMetricKernel{
+public class GrainBocagerSelectedDistanceBocageKernel extends SelectedLandscapeMetricKernel{
 	
 	//private float cellSize; // = 5; // la taille du pixel en metre (IGN)
 	
@@ -51,7 +51,7 @@ public class GrainBocagerSelectedDistanceBocageKernel extends DoubleSelectedLand
 										v = seuilMax;
 									}
 									r = cellSize()*Math.sqrt((dx*dx)+(dy*dy));
-									R = v * inDatas2()[((y + dy) * width()) + (x + dx)];
+									R = v * inDatas(2)[((y + dy) * width()) + (x + dx)];
 									if(r < R){
 										min = (float) Math.min(min, r/R);
 									}

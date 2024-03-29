@@ -1,8 +1,8 @@
 package fr.inrae.act.bagap.chloe.window.kernel.sliding.slope;
 
-import fr.inrae.act.bagap.chloe.window.kernel.sliding.AbstractSlidingLandscapeMetricKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
 
-public class SlidingSlopeKernel extends AbstractSlidingLandscapeMetricKernel {
+public class SlidingSlopeKernel extends SlidingLandscapeMetricKernel {
 	
 	private float cellSize;
 	
