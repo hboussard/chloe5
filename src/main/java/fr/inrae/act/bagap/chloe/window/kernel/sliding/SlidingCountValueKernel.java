@@ -20,6 +20,8 @@ public class SlidingCountValueKernel extends SlidingLandscapeMetricKernel {
 	@Override
 	protected void processPixel(int x, int y, int localY) {
 		
+		//System.out.println(x+" "+y+" "+localY);
+		
 		if((x-bufferROIXMin())%displacement() == 0 && (y-bufferROIYMin())%displacement() == 0){
 			
 			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
@@ -36,7 +38,7 @@ public class SlidingCountValueKernel extends SlidingLandscapeMetricKernel {
 				
 				final int mid = windowSize() / 2;
 				int ic;
-				short v;
+				int v;
 				int mv;	
 				float coeff;
 				float nb = 0;
@@ -49,7 +51,7 @@ public class SlidingCountValueKernel extends SlidingLandscapeMetricKernel {
 								ic = ((dy+mid) * windowSize()) + (dx+mid);
 								coeff = coeff()[ic];
 								if(coeff > 0){
-									v = (short) inDatas()[((y + dy) * width()) + (x + dx)];
+									v = (int) inDatas()[((y + dy) * width()) + (x + dx)];
 									nb += coeff;
 									if(v == noDataValue()){
 										nb_nodata += coeff;

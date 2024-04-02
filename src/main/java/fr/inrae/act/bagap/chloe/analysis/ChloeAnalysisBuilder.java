@@ -2,6 +2,9 @@ package fr.inrae.act.bagap.chloe.analysis;
 
 import java.util.Map;
 import java.util.Set;
+
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.RefPoint;
 import fr.inra.sad.bagap.apiland.domain.Domain;
@@ -373,6 +376,10 @@ public abstract class ChloeAnalysisBuilder {
 	}
 	
 	public void setTypeMime(RasterTypeMime typeMime) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setCRS(CoordinateReferenceSystem crs) {
 		throw new UnsupportedOperationException();
 	}
 

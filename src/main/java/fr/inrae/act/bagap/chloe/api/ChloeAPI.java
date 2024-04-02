@@ -11,6 +11,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
+import org.geotools.referencing.CRS;
+import org.opengis.referencing.FactoryException;
+
 import fr.inra.sad.bagap.apiland.domain.Domain;
 import fr.inra.sad.bagap.apiland.domain.DomainFactory;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysis;
@@ -24,6 +27,9 @@ import fr.inrae.act.bagap.chloe.util.analysis.ChloeUtilAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
+import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.raster.CoverageManager;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class ChloeAPI {
 
@@ -316,11 +322,6 @@ public class ChloeAPI {
 			builder.setAnalysisType(ChloeAnalysisType.RASTER_FROM_CSV);
 				
 			importInputCsv(builder, properties);
-			importOutputRaster(builder, properties);
-			importOutputPrefix(builder, properties);
-			importOutputFolder(builder, properties);
-			importOutputSuffix(builder, properties);
-			importTypeMime(builder, properties);
 			importVariables(builder, properties);
 			importWidth(builder, properties);
 			importHeight(builder, properties);
@@ -328,6 +329,15 @@ public class ChloeAPI {
 			importYMin(builder, properties);
 			importCellSize(builder, properties);
 			importNoDataValue(builder, properties);
+			importCRS(builder, properties);
+			importEntete(builder, properties);
+			importRefRaster(builder, properties);
+			importOutputRaster(builder, properties);
+			importOutputPrefix(builder, properties);
+			importOutputFolder(builder, properties);
+			importOutputSuffix(builder, properties);
+			importTypeMime(builder, properties);
+			
 			
 			ChloeAnalysis analysis = builder.build();
 			analysis.allRun();
@@ -339,7 +349,7 @@ public class ChloeAPI {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static void launchRasterFromShapefile(Properties properties) {
 		try{
 			long begin = System.currentTimeMillis();
@@ -348,7 +358,6 @@ public class ChloeAPI {
 			builder.setAnalysisType(ChloeAnalysisType.RASTER_FROM_SHAPEFILE);
 				
 			importInputShapefile(builder, properties);
-			importOutputRaster(builder, properties);
 			importAttribute(builder, properties);
 			importXMin(builder, properties);
 			importXMax(builder, properties);
@@ -357,6 +366,9 @@ public class ChloeAPI {
 			importCellSize(builder, properties);
 			importNoDataValue(builder, properties);
 			importFillValue(builder, properties);
+			importEntete(builder, properties);
+			importRefRaster(builder, properties);
+			importOutputRaster(builder, properties);
 			
 			ChloeAnalysis analysis = builder.build();
 			analysis.allRun();
@@ -667,6 +679,39 @@ public class ChloeAPI {
 		}
 	}
 	
+	private static void importEntete(ChloeAnalysisBuilder builder, Properties properties) {
+		if(properties.containsKey("entete")){
+			EnteteRaster entete = EnteteRaster.read(properties.getProperty("entete"));
+			builder.setWidth(entete.width());
+			builder.setHeight(entete.height());
+			builder.setXMin(entete.minx());
+			builder.setXMax(entete.maxx());
+			builder.setYMin(entete.miny());
+			builder.setYMax(entete.maxy());
+			builder.setCellSize(entete.cellsize());
+			builder.setNoDataValue(entete.noDataValue());
+			builder.setCRS(entete.crs());;
+		}
+	}
+	
+	private static void importRefRaster(ChloeAnalysisBuilder builder, Properties properties) {
+		if(properties.containsKey("ref_raster")){
+			Coverage cov = CoverageManager.getCoverage(properties.getProperty("ref_raster"));
+			EnteteRaster entete = cov.getEntete();
+			cov.dispose();
+			builder.setWidth(entete.width());
+			builder.setHeight(entete.height());
+			builder.setXMin(entete.minx());
+			builder.setXMax(entete.maxx());
+			builder.setYMin(entete.miny());
+			builder.setYMax(entete.maxy());
+			builder.setCellSize(entete.cellsize());
+			builder.setNoDataValue(entete.noDataValue());
+			builder.setCRS(entete.crs());
+		}
+	}
+
+	
 	// not required 
 	public static void importOutputRaster(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("output_raster")){
@@ -852,6 +897,17 @@ public class ChloeAPI {
 	public static void importNoDataValue(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
 		if(properties.containsKey("nodata_value")){
 			builder.setNoDataValue(Integer.parseInt(properties.getProperty("nodata_value")));
+		}
+	}
+	
+	
+	private static void importCRS(ChloeAnalysisBuilder builder, Properties properties) {
+		if(properties.containsKey("crs")){
+			try {
+				builder.setCRS(CRS.decode(properties.getProperty("crs")));
+			} catch (FactoryException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

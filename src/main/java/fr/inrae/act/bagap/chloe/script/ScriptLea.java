@@ -12,6 +12,7 @@ import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysis;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.util.analysis.ChloeUtilAnalysisBuilder;
+import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
@@ -44,7 +45,17 @@ public class ScriptLea {
 	
 	private static final String classifHaie = path+"classification_haie_5classes.tif";
 	
+	private static final String rasterDiversite = path+"diversite.tif";
+	
+	private static final String centralDiversite = path+"central_diversite.tif";
+	
+	private static final String rasterParcelle = path+"parcelle.tif";
+	
+	private static final String centralParcelle = path+"central_parcelle.tif";
+	
 	private static final String decision = path+"decision.tif";
+	
+	private static final String analyseParcelleParCategorie = path+"analyse_parcelle_par_categorie.csv";
 	
 	public static void main(String[] args) {
 		
@@ -54,10 +65,14 @@ public class ScriptLea {
 		
 		//analyseHaie();
 		
-		decision();
+		//analyseDiversite();
+		
+		//decision();
+		
+		analyseParcelle();
 		
 	}
-	
+
 	private static void decision() {
 		
 		Coverage covBio = CoverageManager.getCoverage(centralBio);
@@ -85,9 +100,13 @@ public class ScriptLea {
 		float[] dataHaie = covHaie.getData();
 		covHaie.dispose();
 		
+		Coverage covDiversite = CoverageManager.getCoverage(centralDiversite);
+		float[] dataDiversite = covDiversite.getData();
+		covDiversite.dispose();
+		
 		float[] data = new float[entete.width()*entete.height()];
 		
-		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(data, dataBio, dataCulture, dataBois, dataImpermeabilise, dataEau, dataHaie){
+		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(data, dataBio, dataCulture, dataBois, dataImpermeabilise, dataEau, dataHaie, dataDiversite){
 			@Override
 			protected float doTreat(float[] v) {
 				float vBio = v[0];
@@ -98,26 +117,29 @@ public class ScriptLea {
 				if(v[1] > 0.8 && v[2] < 0.1 && v[3] < 0.1 && v[4] < 0.1) {
 					
 					float vHaie = v[5];
-					if(vBio == 1) { // BIO
+					float vDiversite = v[6];
+					if(vDiversite > 0) {
+						if(vBio == 1) { // BIO
+							
+							switch((int) vHaie) {
+							case 1 : return 1+((vDiversite-1)*10); 
+							case 2 : return 2+((vDiversite-1)*10); 
+							case 3 : return 3+((vDiversite-1)*10); 
+							case 4 : return 4+((vDiversite-1)*10);  
+							case 5 : return 5+((vDiversite-1)*10); 
+							default : break;
+							}
 						
-						switch((int) vHaie) {
-						case 1 : return 1; 
-						case 2 : return 2; 
-						case 3 : return 3; 
-						case 4 : return 4; 
-						case 5 : return 5; 
-						default : break;
-						}
-					
-					}else if(vBio == 2){ // pas BIO
-						
-						switch((int) vHaie) {
-						case 1 : return 6; 
-						case 2 : return 7; 
-						case 3 : return 8; 
-						case 4 : return 9; 
-						case 5 : return 10; 
-						default : break;
+						}else if(vBio == 2){ // pas BIO
+							
+							switch((int) vHaie) {
+							case 1 : return 6+((vDiversite-1)*10); 
+							case 2 : return 7+((vDiversite-1)*10);  
+							case 3 : return 8+((vDiversite-1)*10);  
+							case 4 : return 9+((vDiversite-1)*10);  
+							case 5 : return 10+((vDiversite-1)*10); 
+							default : break;
+							}
 						}
 					}
 				}
@@ -129,7 +151,74 @@ public class ScriptLea {
 		
 		CoverageManager.write(decision, data, entete);
 	}
+	
+	private static void analyseParcelle() {
+		
+		//rasterisationParcelle(path+"sequence_zaa_bio_diversity_2015_2022.shp");
+		//analyseLocaleParcelle();
+		analyseNbParcelleParCategorie();
+		
+	}
+	
+	private static void rasterisationParcelle(String parcelleShapeFile){
+		
+		ShapeFile2CoverageConverter.rasterize(rasterParcelle, parcelleShapeFile, "code", 5, -1, null);
+		
+	}
+	
+	private static void analyseLocaleParcelle(){
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(rasterParcelle);
+		builder.addMetric("Central");
+		builder.setWindowSize(3);
+		builder.setDisplacement(10);
+		builder.addGeoTiffOutput("Central", centralParcelle);
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+	}
+	
+	private static void analyseNbParcelleParCategorie() {
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
+		builder.setRasterFile(centralParcelle);
+		builder.setEntityRasterFile(decision);
+		builder.addMetric("Nclass");
+		builder.addCsvOutput(analyseParcelleParCategorie);
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+	}
+	
+	private static void analyseDiversite(){
+		
+		rasterisationDiversite(path+"sequence_zaa_bio_diversity_2015_2022.shp");
+		analyseLocaleDiversite();
+	}
 
+	private static void rasterisationDiversite(String diversiteShapeFile){
+		
+		ShapeFile2CoverageConverter.rasterize(rasterDiversite, diversiteShapeFile, "Diversity_", 5, -1, null);
+	}
+	
+	private static void analyseLocaleDiversite(){
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterFile(rasterDiversite);
+		builder.addMetric("Central");
+		builder.setWindowSize(3);
+		builder.setDisplacement(10);
+		builder.addGeoTiffOutput("Central", centralDiversite);
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+	}
+	
 	private static void analyseBio(){
 		
 		rasterisationBio(path+"sequence_zaa_bio_2015_2022.shp");
@@ -194,12 +283,14 @@ public class ScriptLea {
 	private static void analyseLandscapeOccSol(){
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
 		builder.setRasterFile(rasterOccSol);
 		builder.addMetric("pNVm_28&3000");
 		builder.addMetric("pNV_6");
 		builder.addMetric("pNVm_3&8&16&42");
 		builder.addMetric("pNV_11");
-		builder.setWindowSize(401);
+		//builder.setWindowSize(401);
+		builder.setWindowSize(601);
 		builder.setDisplacement(10);
 		builder.addGeoTiffOutput("pNVm_28&3000", propCulture);
 		builder.addGeoTiffOutput("pNV_6", propBois);
@@ -213,8 +304,8 @@ public class ScriptLea {
 
 	private static void analyseHaie(){
 		
-		//recuperationHaie();
-		//analyseLandscapeHaie();
+		recuperationHaie();
+		analyseLandscapeHaie();
 		classificationHaie();
 		
 	}
@@ -237,9 +328,11 @@ public class ScriptLea {
 	private static void analyseLandscapeHaie() {
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
 		builder.setRasterFile(rasterHaie);
 		builder.addMetric("pNVm_1&10");
-		builder.setWindowSize(401);
+		//builder.setWindowSize(401);
+		builder.setWindowSize(601);
 		builder.setDisplacement(10);
 		builder.addGeoTiffOutput("pNVm_1&10", propHaie);
 		LandscapeMetricAnalysis analysis = builder.build();

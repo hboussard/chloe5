@@ -6,6 +6,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.geotools.referencing.CRS;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
 import fr.inra.sad.bagap.apiland.domain.Domain;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysis;
@@ -42,6 +46,8 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	private float cellSize, fillValue;
 	
 	private int width, height, noDataValue;
+	
+	private CoordinateReferenceSystem crs;
 	
 	private double xMin, xMax, yMin, yMax;
 	
@@ -90,6 +96,11 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 		this.clusterType = ClusterType.QUEEN;
 		this.maxDistance = -1;
 		this.sources = new HashSet<Integer>();
+		try {
+			this.crs = CRS.decode("EPSG:2154");
+		} catch (FactoryException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -198,6 +209,11 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	@Override
 	public void setYMax(double yMax) {
 		this.yMax = yMax;
+	}
+	
+	@Override
+	public void setCRS(CoordinateReferenceSystem crs) {
+		this.crs = crs;
 	}
 	
 	@Override
