@@ -50,18 +50,18 @@ public class ScriptErosionCoterra {
 		//rasterizeBV();
 		//recuperationAltitude();
 		//recuperationOS();
-		//detectionPente();
+		detectionPente();
 		
 		// situation
-		//generationCoeffInfiltration();
+		generationCoeffInfiltration();
 		//generationCoeffVersement();
-		//generationIntensiteVersement();
+		generationIntensiteVersement();
 		//generationFrictionMaximales();		
 		
 		//calculSourceErosion();
 		
 		//calculDegatErosionAltitude();
-		calculDegatErosionPente();
+		//calculDegatErosionPente();
 				
 		//normalize(bv_erosion_intensity, bv_norm_erosion_intensity, 100000000);
 		//normalize(bv_degat_erosion_intensity, bv_norm_degat_erosion_intensity, 100000000);

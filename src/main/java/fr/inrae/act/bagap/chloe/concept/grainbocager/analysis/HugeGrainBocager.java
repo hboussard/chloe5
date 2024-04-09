@@ -41,6 +41,9 @@ public class HugeGrainBocager {
 		Coverage covTypeBoisementDistanceBoisement = calculDistanceMassifsBoisesEuclidian_2(rasterDistanceBoisement, covTypeBoisementPhase1, tile);
 		//Coverage covTypeBoisementDistanceBoisement = CoverageManager.getCoverage(rasterDistanceBoisement);
 		
+		
+		covTypeBoisementPhase1 = CoverageManager.getCoverage(rasterTypeBoisementPhase1);
+		
 		// detection des boisements phase 2
 		//Coverage covTypeBoisement = detectionTypeBoisementPhase2(rasterTypeBoisement, covTypeBoisementPhase1, covTypeBoisementDistanceBoisement);
 		Coverage covTypeBoisement = detectionTypeBoisementPhase2_2(rasterTypeBoisement, covTypeBoisementPhase1, covTypeBoisementDistanceBoisement);
@@ -246,6 +249,7 @@ public class HugeGrainBocager {
 			builder.setWindowSize(windowSize);
 		}
 		builder.addTileGeoTiffOutput("average", rasterGrainBocager, tile);
+		//builder.addGeoTiffOutput("average", rasterGrainBocager);
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 		

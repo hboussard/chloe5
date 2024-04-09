@@ -24,7 +24,7 @@ public class ScriptSelected {
 		//analyse2Friction();
 		//split();
 		//analyseSelectedMultiple();
-		analyseSelected();
+		//analyseSelected();
 	}
 	
 	private static void analyseSelected(){

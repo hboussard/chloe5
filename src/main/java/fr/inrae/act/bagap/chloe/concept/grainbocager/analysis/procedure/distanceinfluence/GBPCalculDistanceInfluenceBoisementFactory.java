@@ -13,13 +13,18 @@ public class GBPCalculDistanceInfluenceBoisementFactory extends GrainBocagerProc
 	@Override
 	public boolean check(GrainBocagerManager manager) {
 		
-		if(!manager.force() && new File(manager.woodHeight()).exists() && new File(manager.woodType()).exists()){
+		File fWoodHeight = new File(manager.woodHeight());
+		File fWoodType = new File(manager.woodType());
+		
+		if(!manager.force() 
+				&& ((fWoodHeight.isFile() && fWoodHeight.exists()) || (fWoodHeight.isDirectory() && fWoodHeight.list().length > 0)
+				&& ((fWoodType.isFile() && fWoodType.exists()) || (fWoodType.isDirectory() && fWoodType.list().length > 0)))){
 			
 			return true;
 			
 		}else{
 			
-			if(new File(manager.woodType()).exists()) {
+			if(((fWoodType.isFile() && fWoodType.exists()) || (fWoodType.isDirectory() && fWoodType.list().length > 0))) {
 				
 				System.out.println("WARNING : input file for 'wood_height' is missing");
 				

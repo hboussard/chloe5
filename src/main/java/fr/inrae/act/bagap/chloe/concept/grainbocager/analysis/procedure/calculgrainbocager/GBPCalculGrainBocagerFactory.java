@@ -35,6 +35,7 @@ public class GBPCalculGrainBocagerFactory extends GrainBocagerProcedureFactory {
 			
 		}else{
 			
+			//return new HugeGBPCalculGrainBocager(this, manager);
 			return new GBPCalculGrainBocager(this, manager);
 		}
 	}
