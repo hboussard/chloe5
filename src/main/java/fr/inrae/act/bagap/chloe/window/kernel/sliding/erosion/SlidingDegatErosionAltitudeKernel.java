@@ -88,7 +88,7 @@ public class SlidingDegatErosionAltitudeKernel extends SlidingLandscapeMetricKer
 									}else{
 										surface += coeff*localSurface;
 										//volume += coeff*localSurface*(dMax-dataErosion[ic]);
-										volume += coeff*localSurface*(dataVersement[ic]-dataErosion[ic]);
+										volume += coeff/**localSurface*/*(dataVersement[ic]-dataErosion[ic]);
 									}
 								}
 							}

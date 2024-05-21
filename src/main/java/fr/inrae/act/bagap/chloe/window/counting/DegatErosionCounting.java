@@ -36,4 +36,9 @@ public class DegatErosionCounting extends Counting implements DegatErosionCounti
 		return intensity;
 	}
 	
+	@Override
+	public double massCumul(){
+		return intensity;
+	}
+	
 }

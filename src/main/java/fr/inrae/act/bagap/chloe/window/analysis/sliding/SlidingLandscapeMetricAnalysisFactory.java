@@ -37,7 +37,7 @@ import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKern
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingPatchKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion.SlidingDegatErosionAltitudeKernel;
-import fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion.SlidingDegatErosionPenteKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion.SlidingMassCumulKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion.SlidingSourceErosionKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.slope.SlidingSlopeKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.gaussian.FastGaussianWeightedCountCoupleKernel;
@@ -596,7 +596,16 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 		
 			nbValues = 6;
 			
-			kernel = new SlidingSourceErosionKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, inCellSize, coverage.getEntete());
+			String outputDegatIntensity = null;
+			String outputDepotIntensity = null;
+			if(builder.getGeoTiffOutputs(windowSize) != null) {
+				outputDegatIntensity = builder.getGeoTiffOutputs(windowSize).get("degat-erosion-intensity");
+				outputDepotIntensity = builder.getGeoTiffOutputs(windowSize).get("depot-erosion-intensity");
+			}
+			
+			EnteteRaster outEntete = new EnteteRaster(outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, (float) outCellSize, coverage.getEntete().noDataValue());
+			
+			kernel = new SlidingSourceErosionKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, coverage.getEntete(), outEntete, builder.getInterpolation(), outputDegatIntensity, outputDepotIntensity);
 			
 			counting = new SourceErosionCounting(theoreticalSize);
 
@@ -635,13 +644,25 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			} else {
 				throw new IllegalArgumentException("no raster3 declared");
 			}
+			
+			Coverage coverageSlopeIntensity = null;
+			if (builder.getRasterTabs() != null) {
+				coverageSlopeIntensity = new TabCoverage(builder.getRasterTabs()[3], coverage.getEntete());
+			} else {
+				throw new IllegalArgumentException("no raster4 declared");
+			}
 
-			return createMultiple(new Coverage[] {coverage, coverageAltitude, coverageInfiltration}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+			return createMultiple(new Coverage[] {coverage, coverageAltitude, coverageInfiltration, coverageSlopeIntensity}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 			//return createTriple(coverage, coverageAltitude, coverageInfiltration, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 			
 		}else if (MetricManager.hasOnlyDegatErosionMetric(metrics)) { // degat erosion
 		
 			nbValues = 6;
+			
+			String outputDegatIntensity = null;
+			if(builder.getGeoTiffOutputs(windowSize) != null) {
+				outputDegatIntensity = builder.getGeoTiffOutputs(windowSize).get("degat-mass-cumul");
+			}
 			
 			counting = new DegatErosionCounting(theoreticalSize);
 
@@ -654,44 +675,39 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			for (CountingObserver co : observers) {
 				counting.addObserver(co);
 			}
-
-			/*
+			
+			EnteteRaster outEntete = new EnteteRaster(outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, (float) outCellSize, coverage.getEntete().noDataValue());
+			
 			// version avec altitude 
-			 
-			kernel = new SlidingDegatErosionAltitudeKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, inCellSize, coverage.getEntete(), (int) dMax);
-			 
+			kernel = new SlidingMassCumulKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, coverage.getEntete(), outEntete, outputDegatIntensity);
+			
 			Coverage coverageAltitude = null;
-			if (builder.getRasterFile2() != null) {
-				coverageAltitude = CoverageManager.getCoverage(builder.getRasterFile2());
-			} else if (builder.getRasterTab2() != null) {
-				coverageAltitude = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
-			} else if (builder.getCoverage2() != null) {
-				coverageAltitude = builder.getCoverage2();
-			} else if (builder.getRasterTabs() != null) {
+			if (builder.getRasterTabs() != null) {
 				coverageAltitude = new TabCoverage(builder.getRasterTabs()[1], coverage.getEntete());
 			} else {
 				throw new IllegalArgumentException("no raster2 declared");
 			}
 			
 			Coverage coverageInfiltration = null;
-			if (builder.getRasterFile3() != null) {
-				coverageInfiltration = CoverageManager.getCoverage(builder.getRasterFile3());
-			} else if (builder.getRasterTab3() != null) {
-				coverageInfiltration = new TabCoverage(builder.getRasterTab3(), coverage.getEntete());
-			} else if (builder.getCoverage3() != null) {
-				coverageInfiltration = builder.getCoverage3();
-			} else if (builder.getRasterTabs() != null) {
+			if (builder.getRasterTabs() != null) {
 				coverageInfiltration = new TabCoverage(builder.getRasterTabs()[2], coverage.getEntete());
 			} else {
 				throw new IllegalArgumentException("no raster3 declared");
 			}
 			
-			return createMultiple(new Coverage[] {coverage, coverageAltitude, coverageInfiltration}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+			Coverage coverageSlopeIntensity = null;
+			if (builder.getRasterTabs() != null) {
+				coverageSlopeIntensity = new TabCoverage(builder.getRasterTabs()[3], coverage.getEntete());
+			} else {
+				throw new IllegalArgumentException("no raster4 declared");
+			}
 			
-			*/
+			return createMultiple(new Coverage[] {coverage, coverageAltitude, coverageInfiltration, coverageSlopeIntensity}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+			//return createMultiple(new Coverage[] {coverage, coverageAltitude, coverageInfiltration}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+			
 			
 			// version avec pente
-			
+			/*
 			kernel = new SlidingDegatErosionPenteKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, inCellSize, coverage.getEntete(), (int) dMax);
 			
 			Coverage coverageSlopeIntensity = null;
@@ -728,7 +744,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			}
 			
 			return createMultiple(new Coverage[] {coverage, coverageSlopeIntensity, coverageSlopeDirection, coverageInfiltration}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
-			
+			*/
 			
 		}else{ // qualitative or patch
 			

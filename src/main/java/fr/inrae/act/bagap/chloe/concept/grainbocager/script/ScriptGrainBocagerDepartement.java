@@ -7,35 +7,30 @@ public class ScriptGrainBocagerDepartement {
 
 	public static void main(String[] args){
 		
+		//procedureGrainBocager(14, 2020);
+		//procedureGrainBocager(22, 2018);
+		//procedureGrainBocager(29, 2018);
+		//procedureGrainBocager(35, 2020);
+		//procedureGrainBocager(44, 2020);
+		//procedureGrainBocager(50, 2019);
+		//procedureGrainBocager(53, 2019);
+		//procedureGrainBocager(56, 2019);
+		//procedureGrainBocager(61, 2020);
 		
-		//calculGrainBocager5m(22, 2018);
-		//calculGrainBocager5m(29, 2018);
-		//calculGrainBocager5m(35, 2020);
-		//calculGrainBocager5m(53, 2019);
-		//calculGrainBocager5m(56, 2019);
-		//calculGrainBocager5m(14, 2020);
-		//calculGrainBocager5m(61, 2020);
+		procedureGrainBocager(16, 2020);
+		procedureGrainBocager(79, 2020);
+		procedureGrainBocager(87, 2020);
 		
-		//calculGrainBocager50m(14, 2020);
-		//calculGrainBocager50m(61, 2020);
-		//calculGrainBocager50m(22, 2018);
-		//calculGrainBocager50m(29, 2018);
-		//calculGrainBocager50m(35, 2020);
-		//calculGrainBocager50m(56, 2019);
 		
-		//calculZoneEnjeux(14, 2020, 1);
-		//calculZoneEnjeux(61, 2020, 1);
-		//calculZoneEnjeux(22, 2018, 1);
-		//calculZoneEnjeux(29, 2018, 1);
-		//calculZoneEnjeux(35, 2020, 1);
-		//calculZoneEnjeux(56, 2019, 1);
+	}
+	
+	private static void procedureGrainBocager(int numDep, int annee) {
 		
-		//calculZoneEnjeux(14, 2020, 5);
-		//calculZoneEnjeux(61, 2020, 5);
-		//calculZoneEnjeux(22, 2018, 5);
-		//calculZoneEnjeux(29, 2018, 5);
-		//calculZoneEnjeux(35, 2020, 5);
-		//calculZoneEnjeux(56, 2019, 5);
+		calculGrainBocager5m(numDep, annee);
+		calculGrainBocager50m(numDep, annee);
+		calculZoneEnjeux(numDep, annee, 1);
+		calculZoneEnjeux(numDep, annee, 5);
+		
 	}
 	
 	private static void calculGrainBocager5m(int numDep, int annee) {
@@ -43,7 +38,7 @@ public class ScriptGrainBocagerDepartement {
 		String dataPath = "E:/IGN/data/";
 		String outputPath = "E:/grain_bocager/data/";
 		
-		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_grain_bocager");
+		GrainBocagerManager gbManager = new GrainBocagerManager("grain_bocager_calculation");
 		gbManager.setFastMode(true);
 		gbManager.setBufferArea(0);
 		gbManager.setThresholds(0.2, 0.33, 0.45);
@@ -64,7 +59,7 @@ public class ScriptGrainBocagerDepartement {
 		
 		String outputPath = "E:/grain_bocager/data/";
 		
-		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_grain_bocager");
+		GrainBocagerManager gbManager = new GrainBocagerManager("grain_bocager_calculation");
 		gbManager.setFastMode(true);
 		gbManager.setBufferArea(0);
 		gbManager.setThresholds(0.2, 0.33, 0.45);
@@ -87,7 +82,7 @@ public class ScriptGrainBocagerDepartement {
 		
 		String outputPath = "E:/grain_bocager/data/";
 		
-		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_enjeux_globaux");
+		GrainBocagerManager gbManager = new GrainBocagerManager("global_issues_calculation");
 		gbManager.setFastMode(true); 
 		gbManager.setGrainBocager(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_grain_bocager_50m.tif");
 		gbManager.setFunctionalGrainBocager(outputPath+numDep+"/"+annee+"/"+numDep+"_"+annee+"_grain_bocager_fonctionnel_50m.tif");

@@ -1,7 +1,6 @@
 package fr.inrae.act.bagap.chloe.window.analysis.sliding;
 
 import java.awt.Rectangle;
-
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
@@ -37,7 +36,6 @@ public class TinySlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAn
 		// ce bug n'est effectif que sur les coverage issus de fichiers AsciiGrid
 		// pas de problème sur fichier TIF
 		Rectangle roi = new Rectangle(roiX() - bufferROIXMin(), roiY() - bufferROIYMin(), roiWidth() + bufferROIXMin() + bufferROIXMax(), roiHeight() + bufferROIYMin() + bufferROIYMax());
-		
 		// gestion des entrees
 		manageInDatas(roi);
 		

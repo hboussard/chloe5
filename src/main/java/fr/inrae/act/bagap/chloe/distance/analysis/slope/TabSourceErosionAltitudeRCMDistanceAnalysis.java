@@ -11,7 +11,7 @@ public class TabSourceErosionAltitudeRCMDistanceAnalysis extends Analysis {
 	
 	private static final float coeffReg = 314.0f;
 	
-	private float[] outDatas, inDatas, infiltrationDatas, altitudeDatas, everDatas;
+	private float[] outDatas, inDatas, infiltrationDatas, altitudeDatas, slopeIntensityDatas, everDatas;
 	
 	private int[] codes;
 
@@ -21,24 +21,28 @@ public class TabSourceErosionAltitudeRCMDistanceAnalysis extends Analysis {
 	
 	private float cellSize;
 	
+	private float localSurface;
+	
 	private int noDataValue;
 	
 	private boolean hasValue;
 	
 	private List<Integer>[] waits;
 	
-	public TabSourceErosionAltitudeRCMDistanceAnalysis(float[] outDatas, float[] altitudeDatas, float[] infiltrationDatas, int width, int height, float cellSize, int noDataValue, float threshold) {
-		this(outDatas, null, altitudeDatas, infiltrationDatas, width, height, cellSize, noDataValue, null, threshold);		
+	public TabSourceErosionAltitudeRCMDistanceAnalysis(float[] outDatas, float[] altitudeDatas, float[] infiltrationDatas, float[] slopeIntensityDatas, int width, int height, float cellSize, int noDataValue, float threshold) {
+		this(outDatas, null, altitudeDatas, infiltrationDatas, slopeIntensityDatas, width, height, cellSize, noDataValue, null, threshold);		
 	}
 	
-	public TabSourceErosionAltitudeRCMDistanceAnalysis(float[] outDatas, float[] inDatas, float[] altitudeDatas, float[] infiltrationDatas, int width, int height, float cellSize, int noDataValue, int[] codes, float threshold) {
+	public TabSourceErosionAltitudeRCMDistanceAnalysis(float[] outDatas, float[] inDatas, float[] altitudeDatas, float[] infiltrationDatas, float[] slopeIntensityDatas, int width, int height, float cellSize, int noDataValue, int[] codes, float threshold) {
 		this.outDatas = outDatas;
 		this.inDatas = inDatas;
 		this.infiltrationDatas = infiltrationDatas;
 		this.altitudeDatas = altitudeDatas;
+		this.slopeIntensityDatas = slopeIntensityDatas;
 		this.width = width;
 		this.height = height;
 		this.cellSize = cellSize;
+		this.localSurface = (float) Math.pow(cellSize, 2);
 		this.noDataValue = noDataValue;
 		this.codes = codes;
 		this.threshold = threshold;
@@ -54,8 +58,6 @@ public class TabSourceErosionAltitudeRCMDistanceAnalysis extends Analysis {
 		
 		everDatas = new float[outDatas.length];
 		waits = new ArrayList[(int) ((threshold * coeffReg)/cellSize)];
-		//System.out.println(threshold);
-		//System.out.println((int) ((threshold * coeffReg)/cellSize));
 		waits[0] = new ArrayList<Integer>();
 		
 		hasValue = false;
@@ -128,14 +130,74 @@ public class TabSourceErosionAltitudeRCMDistanceAnalysis extends Analysis {
 								}
 							}
 							if(maj){
-								setPixelAndValue(yt * width + xt, 0.0f);
+								setPixelAndValue(yt * width + xt, 0.0f); // point de diffusion initial
 							}
 						}
-						
 					}
 				}
 			}
 		}
+	}
+	
+	private static float getSlopeIntensity(float alt, float nalt, float cote_adjacent) {
+		
+		if(alt == nalt) {
+			return 0;
+		}
+		
+		float cote_oppose = alt - nalt;
+		float tangente = cote_oppose/cote_adjacent;
+		double arctangente = Math.atan(tangente);
+		double angle = Math.toDegrees(arctangente);
+		
+		//System.out.println(cote_oppose+" "+cote_adjacent+" "+tangente+" "+arctangente+" "+angle);
+		
+		float v =  (float) ((90 - angle)%180.0);
+		if(v <= 45){
+			return  1;
+		}else if(v >= 135){
+			return  -1;
+		//}else if(v >= 90){
+			//return  0;
+		}else{
+			return (float) ((90-v)/45.0);
+		}
+	}
+	
+	private static float getSlopeIntensity(float slopIntMax) {
+		
+		float v =  slopIntMax;
+		
+		if(v <= 45){
+			return  1;
+		}else if(v >= 135){
+			return  -1;
+		//}else if(v >= 90){
+		//	return  0;
+		}else{
+			return (float) ((90-v)/45.0);
+		}
+	}
+	
+	private float friction(/*float slopeIntensity, */float infiltration) {
+		//float friction = 2 + 9*infiltration - slopeIntensity;
+		/*if(friction >= 9) {
+			friction *= 10;
+		}*/
+		//float friction = 10 + 9*infiltration - 9*slopeIntensity;
+		//float friction = 9 - 9*slopeIntensity + 90*infiltration;
+		//float friction = 9 - 9*slopeIntensity + ((float) (50*Math.pow(infiltration, 2)));
+		//float friction = 9 - 9*slopeIntensity + 27*infiltration;
+		//float friction = 9 - 9*slopeIntensity + ((float) (27*Math.pow(infiltration, 2)));
+		//float friction = ((float) Math.pow((1 - slopeIntensity), 5)) + ((float) (27*Math.pow(infiltration, 2)));
+		//float friction = ((float) Math.pow((1 - slopeIntensity), 5)) + ((float) (100*Math.pow(infiltration, 2)));
+		//float friction = 1 + (float) (100*Math.pow(infiltration, 2));
+		//float friction = 1 + (float) (50*Math.pow(infiltration, 2));
+		//float friction = (float) (100*Math.pow(infiltration, 2));
+		//float friction = 1 + (float) (30*Math.pow(infiltration, 2));
+		float friction = 1 + (float) (50*Math.pow(infiltration, 10));
+		//System.out.println(slopeIntensity+" "+infiltration+" "+friction);
+		return friction;
 	}
 
 	@Override
@@ -158,55 +220,6 @@ public class TabSourceErosionAltitudeRCMDistanceAnalysis extends Analysis {
 		//System.out.println("nombre de diffusions = "+indexG);
 		setResult(outDatas);
 	}
-
-	/*
-	private float getSlopeIntensity(float alt, float nalt, float dist) {
-		
-		if(alt == nalt) {
-			return 0;
-		}
-		
-		float tangente = dist/(alt - nalt);
-		float v =  (float) ((90 + (90 + Math.toDegrees(Math.atan(tangente))))%180.0);
-		
-		if(v <= 45){
-			return  1;
-		}else{
-			return (float) ((90-v)/45.0);
-		}
-	}
-	*/
-	
-	private static float getSlopeIntensity(float alt, float nalt, float cote_adjacent) {
-		
-		if(alt == nalt) {
-			return 0;
-		}
-		
-		float cote_oppose = alt - nalt;
-		float tangente = cote_oppose/cote_adjacent;
-		double arctangente = Math.atan(tangente);
-		double angle = Math.toDegrees(arctangente);
-		
-		//System.out.println(cote_oppose+" "+cote_adjacent+" "+tangente+" "+arctangente+" "+angle);
-		
-		float v =  (float) ((90 - angle)%180.0);
-		if(v <= 45){
-			return  1;
-		}else if(v >= 135){
-			return  -1;
-		}else{
-			return (float) ((90-v)/45.0);
-		}
-	}
-	
-	private float friction(float slopeIntensity, float infiltration) {
-		float friction = 2 + 9*infiltration - slopeIntensity;
-		if(friction >= 9) {
-			friction *= 10;
-		}
-		return friction;
-	}
 	
 	private void diffusionPaquet(int dd, List<Integer> wait){
 		for(int p : wait){
@@ -223,176 +236,235 @@ public class TabSourceErosionAltitudeRCMDistanceAnalysis extends Analysis {
 		}
 	}
 	
-	private void diffusion(int p, double dd) {
-		//++indexG;
+	private void diffusion(int p, float dd) {
+		
 		//System.out.println("diffusion de puis "+p);
 		if (everDatas[p] != 1 && ((int) threshold/cellSize) > dd) {
 			
 			everDatas[p] = 1; // marquage de diffusion du pixel
 			
 			if (outDatas[p] != noDataValue) {
-				float alt = altitudeDatas[p]; // altitude au point de diffusion
-				int np;
-				float v, infc, d;
-				float nalt;
-				float sInt;
-				float friction;
 				
+				float alt = altitudeDatas[p]; // altitude au point de diffusion
+				float sIntMax = getSlopeIntensity(slopeIntensityDatas[p]); // intensite de pente maximal local
+				int np;
 				int x = p%width;
 				int y = p/width;
 				
 				// en haut a gauche
 				np = p - width - 1;
 				if(x > 0 && y > 0 && everDatas[np] != 1){
-					nalt = altitudeDatas[np]; 
-					if(alt >= nalt){
-						v = outDatas[np]; // valeur au point diagonal
-						if (v != noDataValue) {
-							infc = infiltrationDatas[np];
-							sInt = getSlopeIntensity(alt, nalt, sqrt2 * cellSize);
-							friction = friction(sInt, infc);
-							d = (float) (dd + sqrt2 * friction); // distance au point diagonal
-							if (v == -2 || d * cellSize < v) { // MAJ ?
-								outDatas[np] = d * cellSize;
-								setPixelAndValue(np, d);
-							}
-						}
-					}
+			
+					doPrefRoad(p, np, alt, dd, sIntMax, sqrt2);
 				}
 				
 				// en haut
 				np = p - width;
 				if(y > 0 && everDatas[np] != 1){
-					nalt = altitudeDatas[np]; 
-					if(alt >= nalt){
-						v = outDatas[np]; // valeur au point cardinal
-						if (v != noDataValue) {
-							infc = infiltrationDatas[np];
-							sInt = getSlopeIntensity(alt, nalt, cellSize);
-							friction = friction(sInt, infc);
-							d = (float) (dd + friction); // distance au point cardinal
-							if (v == -2 || d * cellSize < v) { // MAJ ?
-								outDatas[np] = d * cellSize;
-								setPixelAndValue(np, d);
-							}
-						}
-					}
+					
+					doPrefRoad(p, np, alt, dd, sIntMax, 1);
 				}
 				
 				// en haut a droite
 				np = p - width + 1;
 				if(x < (width-1) && y > 0 && everDatas[np] != 1){
-					nalt = altitudeDatas[np]; 
-					if(alt >= nalt){
-						v = outDatas[np]; // valeur au point diagonal
-						if (v != noDataValue) {
-							infc = infiltrationDatas[np];
-							sInt = getSlopeIntensity(alt, nalt, sqrt2 * cellSize);
-							friction = friction(sInt, infc);
-							d = (float) (dd + sqrt2 * friction); // distance au point diagonal
-							if (v == -2 || d * cellSize < v) { // MAJ ?
-								outDatas[np] = d * cellSize;
-								setPixelAndValue(np, d);
-							}
-						}
-					}
+					
+					doPrefRoad(p, np, alt, dd, sIntMax, sqrt2);
 				}
 				
 				// a gauche
 				np = p - 1;
 				if(x > 0 && everDatas[np] != 1){
-					nalt = altitudeDatas[np]; 
-					if(alt >= nalt){
-						v = outDatas[np]; // valeur au point cardinal
-						if (v != noDataValue) {
-							infc = infiltrationDatas[np];
-							sInt = getSlopeIntensity(alt, nalt, cellSize);
-							friction = friction(sInt, infc);
-							d = (float) (dd + friction); // distance au point cardinal
-							if (v == -2 || d * cellSize < v) { // MAJ ?
-								outDatas[np] = d * cellSize;
-								setPixelAndValue(np, d);
-							}
-						}
-					}
+					
+					doPrefRoad(p, np, alt, dd, sIntMax, 1);
 				}
 				
 				// a droite
 				np = p + 1;
 				if(x < (width-1) && everDatas[np] != 1){
-					nalt = altitudeDatas[np]; 
-					if(alt >= nalt){
-						v = outDatas[np]; // valeur au point cardinal
-						if (v != noDataValue) {
-							infc = infiltrationDatas[np];
-							sInt = getSlopeIntensity(alt, nalt, cellSize);
-							friction = friction(sInt, infc);
-							d = (float) (dd + friction); // distance au point cardinal
-							if (v == -2 || d * cellSize < v) { // MAJ ?
-								outDatas[np] = d * cellSize;
-								setPixelAndValue(np, d);
-							}
-						}
-					}
+					
+					doPrefRoad(p, np, alt, dd, sIntMax, 1);
 				}
 				
 				// en bas a gauche
 				np = p + width - 1;
 				if(x > 0 && y < (height-1) && everDatas[np] != 1){
-					nalt = altitudeDatas[np]; 
-					if(alt >= nalt){
-						v = outDatas[np]; // valeur au point diagonal
-						if (v != noDataValue) {
-							infc = infiltrationDatas[np];
-							sInt = getSlopeIntensity(alt, nalt, sqrt2 * cellSize);
-							friction = friction(sInt, infc);
-							d = (float) (dd + sqrt2 * friction); // distance au point diagonal
-							if (v == -2 || d * cellSize < v) { // MAJ ?
-								outDatas[np] = d * cellSize;
-								setPixelAndValue(np, d);
-							}
-						}
-					}	
+
+					doPrefRoad(p, np, alt, dd, sIntMax, sqrt2);
 				}
 				
 				// en bas
 				np = p + width;
 				if(y < (height-1) && everDatas[np] != 1){
-					nalt = altitudeDatas[np]; 
-					if(alt >= nalt){
-						v = outDatas[np]; // valeur au point cardinal
-						if (v != noDataValue) {
-							infc = infiltrationDatas[np];
-							sInt = getSlopeIntensity(alt, nalt, cellSize);
-							friction = friction(sInt, infc);
-							d = (float) (dd + friction); // distance au point cardinal
-							if (v == -2 || d * cellSize < v) { // MAJ ?
-								outDatas[np] = d * cellSize;
-								setPixelAndValue(np, d);
-							}
-						}
-					}
+					
+					doPrefRoad(p, np, alt, dd, sIntMax, 1);
 				}
 				
 				// en bas a droite
 				np = p + width + 1;
 				if(x < (width-1) && y < (height-1) && everDatas[np] != 1){
-					nalt = altitudeDatas[np]; 
-					if(alt >= nalt){
-						v = outDatas[np]; // valeur au point diagonal
-						if (v != noDataValue) {
-							infc = infiltrationDatas[np];
-							sInt = getSlopeIntensity(alt, nalt, sqrt2 * cellSize);
-							friction = friction(sInt, infc);
-							d = (float) (dd + sqrt2 * friction); // distance au point diagonal
-							if (v == -2 || d * cellSize < v) { // MAJ ?
-								outDatas[np] = d * cellSize;
-								setPixelAndValue(np, d);
-							}
-						}
-					}
+					
+					doPrefRoad(p, np, alt, dd, sIntMax, sqrt2);
 				}
+			}
+		}
+	}
+	
+	private void doPrefRoad1(int p, int np, float alt, float dd, float sIntMax, float ld) {
+		
+		float v = outDatas[np]; // valeur au point
+		if (v != noDataValue) {
+			float nalt = altitudeDatas[np]; 
+			float infc = infiltrationDatas[np];
+			float sInt = getSlopeIntensity(alt, nalt, ld * cellSize);
 				
+			if((sIntMax < 0 && sIntMax == sInt) || (sIntMax >= 0 && sInt >= 0)) {
+				float friction = friction(infc);
+				float d;
+				if((sIntMax < 0) || sIntMax == 0 && sInt == 0) {
+					d = (dd + ld * friction); // distance au point
+				}else {
+					d = (dd + ld * friction + ((1 - (sInt/sIntMax)) * ((threshold / cellSize) - dd))); // distance au point
+				}
+				if (v == -2 || d * cellSize < v) { // MAJ ?
+					outDatas[np] = d * cellSize;
+					setPixelAndValue(np, d);
+				}
+			}
+		}
+	}
+	
+	private void doPrefRoad2(int p, int np, float alt, float dd, float sIntMax, float ld) {
+		
+		float v = outDatas[np]; // valeur au point
+		if (v != noDataValue) {
+			float nalt = altitudeDatas[np]; 
+			float infc = infiltrationDatas[np];
+			float sInt = getSlopeIntensity(alt, nalt, ld * cellSize);
+				
+			if(sInt > 0) {
+				float friction = friction(infc);
+				float d;
+				d = (dd + ld * friction + ((1 - (sInt/sIntMax)) * ((threshold / cellSize) - dd))); // distance au point
+				//d = (dd + ld * friction + ((1 - (sInt/sIntMax)) * ((threshold / localSurface) - dd))); // distance au point
+				
+				if (v == -2 || d * cellSize < v) { // MAJ ?
+					outDatas[np] = d * cellSize;
+					setPixelAndValue(np, d);
+				}
+			}else if(sInt == 0) {
+				float friction = friction(infc);
+				float d;
+				d = (dd + ld * friction); // distance au point
+				if (v == -2 || d * cellSize < v) { // MAJ ?
+					outDatas[np] = d * cellSize;
+					setPixelAndValue(np, d);
+				}
+			}/*else if(sInt < 0) {
+				float friction = friction(infc);
+				float d;
+				d = (dd + ld * friction + ((1 - sInt) * ((threshold / cellSize) - dd))); // distance au pointt
+				if (v == -2 || d * cellSize < v) { // MAJ ?
+					outDatas[np] = d * cellSize;
+					setPixelAndValue(np, d);
+				}
+			}*/
+		}
+	}
+	
+	private void doPrefRoad3(int p, int np, float alt, float dd, float sIntMax, float ld) {
+		
+		float v = outDatas[np]; // valeur au point
+		if (v != noDataValue) {
+			float nalt = altitudeDatas[np]; 
+			float infc = infiltrationDatas[np];
+			float sInt = getSlopeIntensity(alt, nalt, ld * cellSize);
+			
+			if(sInt == sIntMax) {
+				float friction = friction(infc);
+				float d;
+				d = (dd + ld * friction); // distance au point
+				if (v == -2 || d * cellSize < v) { // MAJ ?
+					outDatas[np] = d * cellSize;
+					setPixelAndValue(np, d);
+				}
+			}else {
+				float friction = friction(infc);
+				float d;
+				d = (dd + ld * friction + ((1 - ((1+sInt)/(1+sIntMax))) * ((threshold / cellSize) - dd))); // distance au point
+				if (v == -2 || d * cellSize < v) { // MAJ ?
+					outDatas[np] = d * cellSize;
+					setPixelAndValue(np, d);
+				}
+			}
+		}
+	}
+	
+	private void doPrefRoad4(int p, int np, float alt, float dd, float sIntMax, float ld) {
+		
+		float v = outDatas[np]; // valeur au point
+		if (v != noDataValue) {
+			float nalt = altitudeDatas[np]; 
+			float infc = infiltrationDatas[np];
+			float sInt = getSlopeIntensity(alt, nalt, ld * cellSize);
+			
+			if(sInt == sIntMax) {
+				float friction = friction(infc);
+				float d;
+				d = (dd + ld * friction); // distance au point
+				if (v == -2 || d * cellSize < v) { // MAJ ?
+					outDatas[np] = d * cellSize;
+					setPixelAndValue(np, d);
+				}
+			}else if (sInt >= 0){
+				float friction = friction(infc);
+				float d;
+				d = (dd + ld * friction + ((1 - ((1+sInt)/(1+sIntMax))) * ((threshold / cellSize) - dd))); // distance au point
+				if (v == -2 || d * cellSize < v) { // MAJ ?
+					outDatas[np] = d * cellSize;
+					setPixelAndValue(np, d);
+				}
+			}
+		}
+	}
+	
+	private void doPrefRoad(int p, int np, float alt, float dd, float sIntMax, float ld) {
+		
+		float v = outDatas[np]; // valeur au point
+		if (v != noDataValue) {
+			float nalt = altitudeDatas[np]; 
+			float inf = infiltrationDatas[p];
+			float infc = infiltrationDatas[np];
+			float sInt = getSlopeIntensity(alt, nalt, ld * cellSize);
+			
+			float friction = friction(infc);
+			float d;
+			d = (dd + ld * friction + ((1 - ((1+sInt)/(1+sIntMax))) * ((threshold / cellSize) - dd))); // distance au point
+			//d = (dd + ld * friction + ((1 - ((1+sInt)/(1+sIntMax))) * ((threshold / localSurface) - dd))); // distance au point
+			if (v == -2 || d * cellSize < v) { // MAJ ?
+				outDatas[np] = d * cellSize;
+				setPixelAndValue(np, d);
+			}
+		}
+	}
+	
+	private void doPrefRoad6(int p, int np, float alt, float dd, float sIntMax, float ld) {
+		
+		float v = outDatas[np]; // valeur au point
+		if (v != noDataValue) {
+			float nalt = altitudeDatas[np]; 
+			float inf = infiltrationDatas[p];
+			float infc = infiltrationDatas[np];
+			float sInt = getSlopeIntensity(alt, nalt, ld * cellSize);
+			
+			if(sInt >= 0) {
+				float friction = friction(infc);
+				float d;
+				d = (dd + ld * friction + ((1 - ((1+sInt)/(1+sIntMax))) * ((threshold / cellSize) - dd))); // distance au point
+				if (v == -2 || d * cellSize < v) { // MAJ ?
+					outDatas[np] = d * cellSize;
+					setPixelAndValue(np, d);
+				}
 			}
 		}
 	}
@@ -403,6 +475,7 @@ public class TabSourceErosionAltitudeRCMDistanceAnalysis extends Analysis {
 		inDatas = null;
 		infiltrationDatas = null;
 		altitudeDatas = null;
+		slopeIntensityDatas = null;
 		everDatas = null;
 	}
 

@@ -72,7 +72,7 @@ public class ScriptJacquesDepartement {
 	private static void analyseDepartement(int numDep, int annee) {
 		
 		//calculGrainBocager5m(numDep, annee);
-		//calculGrainBocager50m(numDep, annee);
+		calculGrainBocager50m(numDep, annee);
 		calculZoneEnjeux(numDep, annee, 1);
 		calculZoneEnjeux(numDep, annee, 5);
 	}
@@ -131,12 +131,12 @@ public class ScriptJacquesDepartement {
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
 		builder.setAnalysisType(ChloeAnalysisType.SLIDING);
-		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		//builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
 		builder.addRasterFile(dataPath+"boisement/");
 		builder.addMetric("pNV_1");
 		builder.setDisplacement(10);
 		builder.addWindowSize(181);
-		builder.addGeoTiffOutput("pNV_1", dataPath+"proportion_boisement_bretagne_450m_50m.tif");
+		builder.addGeoTiffOutput("pNV_1", dataPath+"proportion_boisement_bretagne_450m_50m_threshold.tif");
 		
 		LandscapeMetricAnalysis analysis = builder.build();
 		

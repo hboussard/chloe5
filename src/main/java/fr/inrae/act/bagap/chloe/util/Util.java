@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +16,8 @@ import org.jumpmind.symmetric.csv.CsvReader;
 
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.raster.TabCoverage;
 
 public class Util {
 
@@ -112,4 +115,51 @@ public class Util {
 		return null;		
 	}
 	
+	public static Coverage reduce(Coverage coverage, int displacement) {
+		
+		EnteteRaster inEntete = coverage.getEntete();
+		
+		int inWidth = inEntete.width();
+		int inHeight = inEntete.height();
+		double inMinX = inEntete.minx();
+		double inMinY = inEntete.miny();
+		double inMaxX = inEntete.maxx();
+		double inMaxY = inEntete.maxy();
+		float inCellSize = inEntete.cellsize();
+		
+		// taille de sortie
+		int outWidth = (int) (((inWidth - 1) / displacement) + 1);
+		int outHeight = (int) (((inHeight - 1) / displacement) + 1);
+		float outCellSize = inCellSize * displacement;
+		double outMinX = inMinX + inCellSize / 2.0 - outCellSize / 2.0;
+		double outMaxX = outMinX + outWidth * outCellSize;
+		double outMaxY = inMaxY - inCellSize / 2.0 + outCellSize / 2.0;
+		double outMinY = outMaxY - outHeight * outCellSize;
+		
+		EnteteRaster outEntete = new EnteteRaster(outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, outCellSize, inEntete.noDataValue());
+		
+		float[] inData = coverage.getData();
+		float[] outData = new float[outWidth*outHeight];
+		for(int j=0, y=0; j<inHeight; j+=displacement, y++) {
+			for(int i=0, x=0; i<inWidth; i+=displacement, x++) {
+				outData[y*outWidth + x] = inData[j*inWidth + i];
+			}
+		}
+		
+		return new TabCoverage(outData, outEntete);
+	}
+	
+	public static float[] extend(float[] inData, EnteteRaster inEntete, EnteteRaster outEntete, int displacement) {
+		
+		float[] outData = new float[outEntete.width()*outEntete.height()];
+		Arrays.fill(outData, outEntete.noDataValue());
+		
+		for(int j=0, y=0; j<inEntete.height(); j++, y+=displacement) {
+			for(int i=0, x=0; i<inEntete.width(); i++, x+=displacement) {
+				outData[y*outEntete.width()+x] = inData[j*inEntete.width()+i];
+			}
+		}
+		
+		return outData;
+	}
 }

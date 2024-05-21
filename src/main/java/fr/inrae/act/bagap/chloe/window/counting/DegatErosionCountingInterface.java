@@ -6,4 +6,6 @@ public interface DegatErosionCountingInterface {
 	
 	double degatErosionIntensity();
 	
+	double massCumul();
+	
 }

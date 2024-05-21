@@ -22,7 +22,6 @@ public class EPPClustering extends EcoPaysageProcedure {
 			if(manager().force() || !new File(manager().normFile(scale)).exists()) {
 				
 				new EPPStandardization(manager(), scale).run();
-				break;
 			}
 		}
 	}
@@ -48,7 +47,12 @@ public class EPPClustering extends EcoPaysageProcedure {
 		
 		System.out.println("integration des donnees");
 		
-		Instances data = EcoPaysage.readData(manager().normFile());
+		Instances data = null;
+		if(manager().factor() == 1) {
+			data = EcoPaysage.readData(manager().normFile());
+		}else {
+			data = EcoPaysage.readData(manager().normFile(), manager().factor(), dataXY.length);
+		}
 		
 		SimpleKMeans kmeans;
 		for(int k : manager().classes()) {
@@ -59,13 +63,17 @@ public class EPPClustering extends EcoPaysageProcedure {
 			
 			System.out.println("export en csv vers "+manager().ecoFile(k));
 			
-			EcoPaysage.exportCSV(manager().ecoFile(k), kmeans, k, dataXY, data);
+			if(manager().factor() == 1) {
+				EcoPaysage.exportCSV(manager().ecoFile(k), kmeans, k, dataXY, data);
+			}else {
+				EcoPaysage.exportCSV(manager().ecoFile(k), kmeans, k, dataXY, manager().normFile(), data);
+			}
 			
 			System.out.println("export des infos vers "+manager().infoFile(k));
 			
 			EcoPaysage.exportInfo(manager().infoFile(k), kmeans, k, data);
 		}
-		
+	
 	}
 	
 }

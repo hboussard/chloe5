@@ -407,4 +407,9 @@ public abstract class Counting implements
 	public double degatErosionIntensity(){
 		throw new UnsupportedOperationException();
 	}
+	
+	@Override
+	public double massCumul(){
+		throw new UnsupportedOperationException();
+	}
 }

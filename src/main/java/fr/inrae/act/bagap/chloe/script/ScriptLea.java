@@ -71,11 +71,11 @@ public class ScriptLea {
 	
 	//private static final String centralParcelle = path+"central_parcelle.tif";
 	
-	private static final String decision = path+"decision_4_5m.tif";
+	private static final String decision = path+"decision_c65_b10_p14.tif";
 	
-	private static final String analyseParcelleParCategorie = path+"analyse_parcelle_par_categorie_4_5m.csv";
+	private static final String analyseParcelleParCategorie = path+"analyse_parcelle_par_categorie_c65_b10_p14.csv";
 	
-	private static final String analyseCategorieParParcelle = path+"analyse_categorie_par_parcelle_4_5m.csv";
+	private static final String analyseCategorieParParcelle = path+"analyse_categorie_par_parcelle_c65_b10_p14.csv";
 	
 	public static void main(String[] args) {
 		
@@ -87,14 +87,14 @@ public class ScriptLea {
 		
 		//analyseDiversite();
 		
-		//decision();
+		decision(0.14f);
 		
-		//analyseParcelle();
+		analyseParcelle();
 		
-		appelConnu();
+		//appelConnu();
 	}
 
-	private static void decision() {
+	private static void decision(float prop) {
 		
 		Coverage covBio = CoverageManager.getCoverage(rasterBio);
 		EnteteRaster entete = covBio.getEntete();
@@ -140,7 +140,7 @@ public class ScriptLea {
 					return -1;
 				}
 				
-				if(v[1] > 0.8 && v[2] < 0.1 && v[3] < 0.1 && v[4] < 0.1) {
+				if(v[1] > 0.65 && v[2] < 0.1 && v[3] < prop && v[4] < prop) {
 					
 					float vHaie = v[5];
 					float vDiversite = v[6];
@@ -277,7 +277,6 @@ public class ScriptLea {
 		
 		ShapeFile2CoverageConverter.rasterize(rasterBio, bioShapeFile, "bio_zaa", codes, 5, -1, 0, null);
 	}
-	
 	/*
 	private static void analyseLocaleBio(){
 		

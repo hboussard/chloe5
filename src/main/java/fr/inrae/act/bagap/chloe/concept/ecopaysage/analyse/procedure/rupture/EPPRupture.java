@@ -1,8 +1,6 @@
 package fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.rupture;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
 
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.EcoPaysage;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageManager;

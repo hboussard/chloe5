@@ -55,7 +55,7 @@ public class ScriptContinuitesRennesMetropole {
 		
 		//calculContinuityBoise();
 		//calculContinuityHumide();
-		//calculContinuity("prairial", 125);
+		calculContinuity("prairial", 125);
 		//calculContinuity("prairial", 250);
 		//calculContinuity("prairial", 500);
 		

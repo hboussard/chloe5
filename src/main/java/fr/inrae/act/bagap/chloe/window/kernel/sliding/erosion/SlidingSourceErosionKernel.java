@@ -3,8 +3,8 @@ package fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion;
 import java.util.Arrays;
 
 import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
-import fr.inrae.act.bagap.chloe.distance.analysis.slope.TabSourceErosionPenteRCMDistanceAnalysis;
 import fr.inrae.act.bagap.chloe.distance.analysis.slope.TabSourceErosionAltitudeRCMDistanceAnalysis;
+import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
@@ -15,13 +15,32 @@ public class SlidingSourceErosionKernel extends SlidingLandscapeMetricKernel {
 	
 	private float localSurface; 
 	
-	private EnteteRaster entete;
+	private EnteteRaster inEntete, outEntete;
 	
-	public SlidingSourceErosionKernel(int windowSize, int displacement, int noDataValue, int[] unfilters, float cellSize, EnteteRaster entete){	
+	private boolean interpolate;
+	
+	private String outputDegatIntensity, outputDepotIntensity;
+	
+	private float[] dataDegatIntensity, dataDepotIntensity;
+	
+	public SlidingSourceErosionKernel(int windowSize, int displacement, int noDataValue, int[] unfilters, EnteteRaster inEntete,  EnteteRaster outEntete, boolean interpolate, String outputDegatIntensity, String outputDepotIntensity){	
 		super(windowSize, displacement, null, noDataValue, unfilters);
-		this.cellSize = cellSize;
-		localSurface = (float) Math.pow(cellSize, 2);
-		this.entete = entete;
+		this.inEntete = inEntete;
+		this.cellSize = inEntete.cellsize();
+		this.outEntete = outEntete;
+		localSurface = (float) Math.pow(this.cellSize, 2);
+		this.interpolate = interpolate;
+		//System.out.println(entete);
+		if(outputDegatIntensity != null) {
+			this.dataDegatIntensity = new float[outEntete.width()*outEntete.height()];
+			Arrays.fill(dataDegatIntensity, 0);
+			this.outputDegatIntensity = outputDegatIntensity;
+		}
+		if(outputDepotIntensity != null) {
+			this.dataDepotIntensity = new float[outEntete.width()*outEntete.height()];
+			Arrays.fill(dataDepotIntensity, 0);
+			this.outputDepotIntensity = outputDepotIntensity;
+		}
 	}
 	
 	@Override
@@ -31,13 +50,13 @@ public class SlidingSourceErosionKernel extends SlidingLandscapeMetricKernel {
 			//System.out.println("a");
 			int ind = ((((localY-bufferROIYMin())/displacement()))*((((width() - bufferROIXMin() - bufferROIXMax())-1)/displacement())+1) + (((x-bufferROIXMin())/displacement())));
 			
-			if(!hasFilter() || filterValue((int) inDatas()[(y * width()) + x])){ // gestion des filtres
-				
+			int versement = (int ) inDatas()[(y * width()) + x];
+			
+			if(!hasFilter() || filterValue(versement)){ // gestion des filtres
+			
 				outDatas()[ind][0] = 1; // filtre ok 
-				
-				outDatas()[ind][1] = inDatas()[(y * width()) + x]; // affectation de la valeur du pixel central
-				
-				int versement = (int) outDatas()[ind][1]; 
+					
+				outDatas()[ind][1] = versement; // affectation de la valeur du pixel central
 				
 				for(int i=2; i<outDatas()[0].length; i++){
 					outDatas()[ind][i] = 0f;
@@ -49,16 +68,19 @@ public class SlidingSourceErosionKernel extends SlidingLandscapeMetricKernel {
 				
 				float[] dataInfiltration = generateInfiltration(x, y, mid);
 				
-				float[] dataErosion = calculateErosion(dataAltitude, dataInfiltration, versement);
+				float[] dataSlopeIntensity = generateSlopeIntensity(x, y, mid);
+				
+				float[] dataErosion = calculateErosion(dataAltitude, dataInfiltration, dataSlopeIntensity, versement);
 				
 				generateCoeff(dataErosion, versement);
-				
+				/*
 				if(versement > 0) {
-					//if(x == 2000 && y == 1400) {
-					//System.out.println("versement = "+versement);
-					//exportTab("C:/Data/projet/coterra/essai_magdelaine/data/erosion/filters/erosion_"+x+"_"+y+"_"+versement+".tif", dataErosion, x, y);
-					//exportTab("C:/Data/projet/coterra/essai_magdelaine/data/erosion/filters/coeff_"+x+"_"+y+".tif", coeff(), x, y);
-				}
+					//if(x >= 800 && x < 1000 && y >= 300 && y < 500) {
+						//System.out.println("versement = "+versement);
+						exportTab("C:/Data/projet/coterra/essai_petit_magdelaine/data/erosion/filters/erosion_"+x+"_"+y+"_"+versement+".tif", dataErosion, x, y);
+						exportTab("C:/Data/projet/coterra/essai_petit_magdelaine/data/erosion/filters/coeff_"+x+"_"+y+".tif", coeff(), x, y);
+					//}
+				}*/
 				
 				//System.out.println("2");
 				int ic;
@@ -81,7 +103,21 @@ public class SlidingSourceErosionKernel extends SlidingLandscapeMetricKernel {
 										nb_nodata += coeff;
 									}else{
 										surface += coeff*localSurface;
-										volume += coeff*localSurface*(versement-dataErosion[ic]);
+										volume += coeff/**localSurface*/*(versement-dataErosion[ic]);
+										if(((y + dy) * width())%displacement() == 0 &&  + (x + dx)%displacement() == 0) {
+											int lind = ((y + dy)/displacement())*outEntete.width() + ((x + dx)/displacement());
+											float de = dataErosion[ic];
+											if(outputDegatIntensity != null) {
+												synchronized(dataDegatIntensity) {
+													dataDegatIntensity[lind] += versement-de;
+												}
+											}
+											if(outputDepotIntensity != null) {
+												synchronized(dataDepotIntensity) {
+													dataDepotIntensity[lind] += de;
+												}
+											}
+										}
 									}
 								}
 							}
@@ -103,43 +139,39 @@ public class SlidingSourceErosionKernel extends SlidingLandscapeMetricKernel {
 	
 	protected float[] generateAltitude(int x, int y, int mid){
 		
-		float[] dataAltitude = new float[windowSize()*windowSize()];
-		Arrays.fill(dataAltitude, noDataValue());
-		int ic;
-		for (int dy = -mid; dy <= mid; dy += 1) {
-			if(((y + dy) >= 0) && ((y + dy) < height())){
-				for (int dx = -mid; dx <= mid; dx += 1) {
-					if(((x + dx) >= 0) && ((x + dx) < width())){
-						ic = ((dy+mid) * windowSize()) + (dx+mid);
-						dataAltitude[ic] = inDatas(2)[((y + dy) * width()) + (x + dx)];
-					}
-				}
-			}
-		}
-		
-		return dataAltitude;
+		return getLocalData(2, x, y, mid);
 	}
 	
 	protected float[] generateInfiltration(int x, int y, int mid){
 		
-		float[] dataInfiltration = new float[windowSize()*windowSize()];
-		Arrays.fill(dataInfiltration, noDataValue());
+		return getLocalData(3, x, y, mid);
+	}
+	
+	protected float[] generateSlopeIntensity(int x, int y, int mid){
+		
+		return getLocalData(4, x, y, mid);
+	}
+	
+	protected float[] getLocalData(int covIndex, int x, int y, int mid){
+		
+		float[] data = new float[windowSize()*windowSize()];
+		Arrays.fill(data, noDataValue());
 		int ic;
 		for (int dy = -mid; dy <= mid; dy += 1) {
 			if(((y + dy) >= 0) && ((y + dy) < height())){
 				for (int dx = -mid; dx <= mid; dx += 1) {
 					if(((x + dx) >= 0) && ((x + dx) < width())){
 						ic = ((dy+mid) * windowSize()) + (dx+mid);
-						dataInfiltration[ic] = inDatas(3)[((y + dy) * width()) + (x + dx)];
+						data[ic] = inDatas(covIndex)[((y + dy) * width()) + (x + dx)];
 					}
 				}
 			}
 		}
 		
-		return dataInfiltration;
+		return data;
 	}
 	
-	protected float[] calculateErosion(float[] dataAltitude, float[] dataInfiltration, float versement) {
+	protected float[] calculateErosion(float[] dataAltitude, float[] dataInfiltration, float[] dataSlopeIntensity, float versement) {
 		
 		float[] dataErosion = new float[windowSize()*windowSize()];
 		if(versement == 0) {
@@ -147,8 +179,8 @@ public class SlidingSourceErosionKernel extends SlidingLandscapeMetricKernel {
 			Arrays.fill(dataErosion, versement+1);
 		}else {
 			//System.out.println("versement = "+((int) versement));
-			//TabSourceErosionAltitudeRCMDistanceAnalysis rcm = new TabSourceErosionAltitudeRCMDistanceAnalysis(dataErosion, dataAltitude, dataInfiltration, windowSize(), windowSize(), cellSize, noDataValue(), (int) versement);
-			TabSourceErosionPenteRCMDistanceAnalysis rcm = new TabSourceErosionPenteRCMDistanceAnalysis(dataErosion, dataAltitude, dataInfiltration, windowSize(), windowSize(), cellSize, noDataValue(), (int) versement);
+			TabSourceErosionAltitudeRCMDistanceAnalysis rcm = new TabSourceErosionAltitudeRCMDistanceAnalysis(dataErosion, dataAltitude, dataInfiltration, dataSlopeIntensity, windowSize(), windowSize(), cellSize, noDataValue(), (int) versement);
+			//TabSourceErosionPenteRCMDistanceAnalysis rcm = new TabSourceErosionPenteRCMDistanceAnalysis(dataErosion, dataAltitude, dataInfiltration, windowSize(), windowSize(), cellSize, noDataValue(), (int) versement);
 			rcm.allRun();
 		}
 		
@@ -157,8 +189,9 @@ public class SlidingSourceErosionKernel extends SlidingLandscapeMetricKernel {
 
 	protected void generateCoeff(float[] dataErosion, float versement) {
 		float[] coeff = new float[windowSize()*windowSize()];
+		float dist;
 		for(int ind=0; ind<dataErosion.length; ind++){
-			float dist = dataErosion[ind];
+			dist = dataErosion[ind];
 			if(dist >= 0 && dist <= versement){
 				coeff[ind] = 1;
 			}else{
@@ -172,24 +205,54 @@ public class SlidingSourceErosionKernel extends SlidingLandscapeMetricKernel {
 	@Override
 	public void dispose(){
 		super.dispose();
+		
+		if(outputDegatIntensity != null) {
+			if(displacement() > 1 && !interpolate) {
+				
+				CoverageManager.write(outputDegatIntensity, dataDegatIntensity, outEntete);
+				
+			}else if(displacement() > 1 && interpolate) {
+				
+				CoverageManager.write(outputDegatIntensity, Util.extend(dataDegatIntensity, outEntete, inEntete, displacement()), inEntete);
+				
+			}else {
+				
+				CoverageManager.write(outputDegatIntensity, dataDegatIntensity, inEntete);
+			}
+		}
+		if(outputDepotIntensity != null) {
+			if(displacement() > 1 && !interpolate) {
+				
+				CoverageManager.write(outputDepotIntensity, dataDepotIntensity, outEntete);
+				
+			}else if(displacement() > 1 && interpolate) {
+				
+				CoverageManager.write(outputDepotIntensity, Util.extend(dataDepotIntensity, outEntete, inEntete, displacement()), inEntete);
+				
+			}else {
+				
+				CoverageManager.write(outputDepotIntensity, dataDepotIntensity, inEntete);
+			}
+		}
 	}
 
 	private void exportTab(String output, float[] tab, int x, int y){
 		
 		int mid = windowSize() / 2;
 
+		/*
 		double X, Y;
 		X = CoordinateManager.getProjectedX(entete, x);
 		Y = CoordinateManager.getProjectedY(entete, y);
+		 */
 			
-		double minx = CoordinateManager.getProjectedX(entete, x-mid)-(entete.cellsize()/2);
-		double maxx = CoordinateManager.getProjectedX(entete, x+mid)+(entete.cellsize()/2);
-		double miny = CoordinateManager.getProjectedY(entete, y-mid)+(entete.cellsize()/2);
-		double maxy = CoordinateManager.getProjectedY(entete, y+mid)-(entete.cellsize()/2);	
+		double minx = CoordinateManager.getProjectedX(inEntete, x-mid)-(inEntete.cellsize()/2);
+		double maxx = CoordinateManager.getProjectedX(inEntete, x+mid)+(inEntete.cellsize()/2);
+		double miny = CoordinateManager.getProjectedY(inEntete, y-mid)+(inEntete.cellsize()/2);
+		double maxy = CoordinateManager.getProjectedY(inEntete, y+mid)-(inEntete.cellsize()/2);	
 
-		EnteteRaster localEntete = new EnteteRaster(windowSize(), windowSize(), minx, maxx, miny, maxy, entete.cellsize(), entete.noDataValue());
+		EnteteRaster localEntete = new EnteteRaster(windowSize(), windowSize(), minx, maxx, miny, maxy, inEntete.cellsize(), inEntete.noDataValue());
 		CoverageManager.write(output, tab, localEntete);
-		
 	}
 	
 }

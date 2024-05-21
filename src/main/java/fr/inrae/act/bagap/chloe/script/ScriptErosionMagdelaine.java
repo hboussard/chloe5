@@ -23,34 +23,470 @@ public class ScriptErosionMagdelaine {
 	private static final String bv = path+"bv_magdelaine.tif";
 	private static final String bv_os_bre = path+"bv_magdelaine_OSO_bre.tif";
 	private static final String bv_os = path+"bv_magdelaine_OS.tif"; 
-	private static final String bv_os_prairie = path+"bv_magdelaine_OS_prairie.tif"; 
 	private static final String bv_altitude = path+"bv_altitude.tif";
 	private static final String bv_infiltration_map = path+"infiltration_map.txt";
 	private static final String bv_versement_map = path+"versement_map.txt";
+	private static final String bocageAmenagement = path+"bocage_amenagement.shp";
 	
-	private static final String output_path = path+"erosion/";
-	private static final String bv_intensity = output_path+"bv_intensity.tif";
-	private static final String bv_direction = output_path+"bv_direction.tif";
+	// initial
+	private static final String output_path = path+"erosion37/";
+	private static final int quantitetEAU = 10; // mm
+	private static final int displacement = 5;
+	//private static final String bv_os_prairie = path+"bv_magdelaine_OS_prairie.tif";
+	private static final String bv_os_prairie = path+"bv_magdelaine_OS_amenagement.tif";
+	private static final String bv_slope_intensity = output_path+"bv_slope_intensity.tif";
 	private static final String bv_infiltration = output_path+"bv_infiltration.tif";
 	private static final String bv_versement = output_path+"bv_versement.tif";
-	private static final String bv_intensite_versement = output_path+"bv_intensite_versement.tif";
+	private static final String bv_masse_eau_initial = output_path+"bv_masse_eau_initial_"+quantitetEAU+"mm.tif";
+	private static final String bv_masse_eau_cumul = output_path+"bv_masse_eau_cumul_"+quantitetEAU+"mm.tif";
+	private static final String bv_intensite_versement = output_path+"bv_intensite_versement_"+quantitetEAU+"mm.tif";
+	private static final String bv_source_erosion_intensity = output_path+"bv_source_erosion_intensity_"+quantitetEAU+"mm.tif";
+	//private static final String bv_depot_erosion_intensity = output_path+"bv_depot_erosion_intensity_"+quantitetEAU+"mm.tif";
+	private static final String bv_degat_erosion_intensity = output_path+"bv_degat_erosion_intensity_"+quantitetEAU+"mm.tif";
+	private static final String bv_norm_slope_intensity = output_path+"bv_norm_slope_intensity.tif";
 	
 	public static void main(String[] args) {
 		
 		Util.createAccess(output_path);
 		
+		//recuperationOccupationSolAmenagement();
+		
 		//rasterizeBV();
 		//recuperationOS();
 		//recuperationAltitude();
 		//recuperePrairieFromRPG();
-		//detectionPente();
+		detectionPente();
+		normalizeSlopeIntensity();
+		generationMasseEau();
 		
 		// situation
-		generationCoeffInfiltration();
-		generationCoeffVersement();
-		generationIntensiteVersement();
+		generationInfiltrationMap();
+		generationVersementMap();
 	
+		generationCumulMasseEau(bv_masse_eau_cumul, displacement, 201);
+		
+		generationIntensiteVersement();
+		
+		calculErosion(displacement, 201);
+		
+		/*
+		//normalize(bv_source_erosion_intensity, bv_norm_source_erosion_intensity, 5000000);
+		//normalize(bv_degat_erosion_intensity, bv_norm_degat_erosion_intensity, 5000000);
+		*/
 	}
+	
+	private static void generationCumulMasseEau(String masseEauCumul, int displacement, int windowSize) {
+		
+		Coverage massInitCov = CoverageManager.getCoverage(bv_masse_eau_initial);
+		EnteteRaster entete = massInitCov.getEntete();
+		float[] massInitData = massInitCov.getData();
+		massInitCov.dispose();
+		
+		Coverage altCov = CoverageManager.getCoverage(bv_altitude);
+		float[] altData = altCov.getData();
+		altCov.dispose();
+		
+		Coverage infilCov = CoverageManager.getCoverage(bv_infiltration);
+		float[] infilData = infilCov.getData();
+		infilCov.dispose();
+		
+		Coverage slopIntCov = CoverageManager.getCoverage(bv_slope_intensity);
+		float[] slopIntData = slopIntCov.getData();
+		slopIntCov.dispose();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterTabs(massInitData, altData, infilData, slopIntData);
+		builder.setEntete(entete);
+		builder.setWindowShapeType(WindowShapeType.FUNCTIONAL);
+		builder.setUnfilters(new int[]{-1});
+		builder.addMetric("mass-cumul");
+		builder.setWindowSize(windowSize);
+		//builder.setDMax(masseEauInitiale*Math.pow(entete.cellsize(), 2));
+		builder.setDisplacement(displacement);
+		builder.addGeoTiffOutput("degat-mass-cumul", masseEauCumul);
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+	}
+
+	private static void calculErosion(int displacement, int windowSize){
+		
+		Coverage intVersCov = CoverageManager.getCoverage(bv_intensite_versement);
+		EnteteRaster entete = intVersCov.getEntete();
+		float[] intVersData = intVersCov.getData();
+		intVersCov.dispose();
+		
+		Coverage altCov = CoverageManager.getCoverage(bv_altitude);
+		float[] altData = altCov.getData();
+		altCov.dispose();
+		
+		Coverage infilCov = CoverageManager.getCoverage(bv_infiltration);
+		float[] infilData = infilCov.getData();
+		infilCov.dispose();
+		
+		Coverage slopIntCov = CoverageManager.getCoverage(bv_slope_intensity);
+		float[] slopIntData = slopIntCov.getData();
+		slopIntCov.dispose();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterTabs(intVersData, altData, infilData, slopIntData);
+		builder.setEntete(entete);
+		builder.setWindowShapeType(WindowShapeType.FUNCTIONAL);
+		builder.setUnfilters(new int[]{-1});
+		//builder.addMetric("source-erosion-intensity");
+		builder.addMetric("mass-cumul");
+		builder.setWindowSize(windowSize);
+		builder.setDisplacement(displacement);
+		builder.addGeoTiffOutput("mass-cumul", bv_source_erosion_intensity);
+		builder.addGeoTiffOutput("degat-mass-cumul", bv_degat_erosion_intensity);
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+	}
+	
+	private static void calculDegatErosion(int displacement, boolean interpolation, int windowSize){
+		
+		Coverage massInitCov = CoverageManager.getCoverage(bv_intensite_versement);
+		EnteteRaster entete = massInitCov.getEntete();
+		float[] massInitData = massInitCov.getData();
+		massInitCov.dispose();
+		
+		Coverage altCov = CoverageManager.getCoverage(bv_altitude);
+		float[] altData = altCov.getData();
+		altCov.dispose();
+		
+		Coverage infilCov = CoverageManager.getCoverage(bv_infiltration);
+		float[] infilData = infilCov.getData();
+		infilCov.dispose();
+		
+		Coverage slopIntCov = CoverageManager.getCoverage(bv_slope_intensity);
+		float[] slopIntData = slopIntCov.getData();
+		slopIntCov.dispose();
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setRasterTabs(massInitData, altData, infilData, slopIntData);
+		builder.setEntete(entete);
+		builder.setWindowShapeType(WindowShapeType.FUNCTIONAL);
+		builder.setUnfilters(new int[]{-1});
+		builder.addMetric("degat-erosion-intensity");
+		builder.setWindowSize(windowSize);
+		builder.setDMax(2500);
+		builder.setDisplacement(displacement);
+		builder.setInterpolation(interpolation);
+		builder.addGeoTiffOutput("degat-erosion-intensity", bv_degat_erosion_intensity);
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+	}
+	
+	private static void normalizeSlopeIntensity() {
+		
+		Coverage intCov = CoverageManager.getCoverage(bv_slope_intensity);
+		float[] intData = intCov.getData();
+		EnteteRaster entete = intCov.getEntete();
+		intCov.dispose();
+		
+		float[] data = new float[entete.width()*entete.height()];
+		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(data, intData){
+			@Override
+			protected float doTreat(float[] v) {
+				float vi = v[0];
+				if(vi == -1){
+					return -1;
+				}
+				return getSlopeIntensity(vi);
+			}
+		};
+		cal.run();
+		
+		CoverageManager.write(bv_norm_slope_intensity, data, entete);
+	}
+	
+	private static void generationIntensiteVersement() {
+		
+		//Coverage versCov = Util.reduce(CoverageManager.getCoverage(bv_versement), 10);
+		Coverage versCov = CoverageManager.getCoverage(bv_versement);
+		EnteteRaster outEntete = versCov.getEntete();
+		float[] versData = versCov.getData();
+		versCov.dispose();
+		
+		Coverage degatCov = CoverageManager.getCoverage(bv_masse_eau_cumul);
+		EnteteRaster inEntete = degatCov.getEntete();
+		//float[] degatData = degatCov.getData();
+		float[] degatData = Util.extend(degatCov.getData(), inEntete, outEntete, displacement);
+		degatCov.dispose();
+		
+		//Coverage intCov = Util.reduce(CoverageManager.getCoverage(bv_norm_slope_intensity), 10);
+		Coverage intCov = CoverageManager.getCoverage(bv_norm_slope_intensity);
+		float[] intData = intCov.getData();
+		intCov.dispose();
+		
+		float[] data = new float[outEntete.width()*outEntete.height()];
+		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(data, versData, degatData, intData){
+			@Override
+			protected float doTreat(float[] v) {
+				float vv = v[0];
+				if(vv == -1){
+					return -1;
+				}
+				float vd = v[1];
+				float vi = v[2];
+				if(vi > 0 && vd != -1) {
+					//return (vv * vd * vi) / 10;
+					return (vv * vd * vi);
+				}else {
+					return 0;
+				}
+			}
+		};
+		cal.run();
+		
+		CoverageManager.write(bv_intensite_versement, data, outEntete);
+	}
+	
+	private static void generationMasseEau() {
+		Coverage cov = CoverageManager.getCoverage(bv_os_prairie);
+		EnteteRaster entete = cov.getEntete();
+		float[] bvData = cov.getData();
+		cov.dispose();
+		
+		float masseInitiale = (float) (quantitetEAU * Math.pow(entete.cellsize(), 2));
+		
+		float[] data = new float[entete.width()*entete.height()];
+		for(int i=0; i<data.length; i++) {
+			if(bvData[i] == -1) {
+				data[i] = -1;
+			}else {
+				data[i] = masseInitiale;
+			}
+		}
+		
+		CoverageManager.write(bv_masse_eau_initial, data, entete);
+	}
+
+	private static void normalize(String input, String output, int max){
+		Coverage cov = CoverageManager.getCoverage(input);
+		EnteteRaster entete = cov.getEntete();
+		float[] data = cov.getData();
+		cov.dispose();
+		
+		float[] outData = new float[entete.width() * entete.height()];
+		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(outData, data){
+			@Override
+			protected float doTreat(float[] v) {
+				float value = v[0];
+				if(value == -1){
+					return -1;
+				}
+				if(value >= max) {
+					return 1;
+				}
+				return (float) (value/max);
+			}
+		};
+		cal.run();
+		
+		CoverageManager.write(output, outData, entete);
+	}
+	
+	private static void factor(String input1, String input2, String output){
+		Coverage cov1 = CoverageManager.getCoverage(input1);
+		EnteteRaster entete = cov1.getEntete();
+		float[] data1 = cov1.getData();
+		cov1.dispose();
+		
+		Coverage cov2 = CoverageManager.getCoverage(input2);
+		float[] data2 = cov2.getData();
+		cov2.dispose();
+		
+		float[] outData = new float[entete.width() * entete.height()];
+		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(outData, data1, data2){
+			@Override
+			protected float doTreat(float[] v) {
+				float v1 = v[0];
+				if(v1 == -1){
+					return -1;
+				}
+				return v1*v[1];
+			}
+		};
+		cal.run();
+		
+		CoverageManager.write(output, outData, entete);
+	}
+	
+	private static void recuperationOccupationSolAmenagement(){
+		Coverage cov = CoverageManager.getCoverage(path+"bv_magdelaine_OS_prairie.tif");
+		EnteteRaster entete = cov.getEntete();
+		float[] dataOS = cov.getData();
+		cov.dispose();
+		
+		Coverage covAmenagement = ShapeFile2CoverageConverter.getSurfaceCoverage(bocageAmenagement, entete, 25, 0);
+		float[] dataAm = covAmenagement.getData();
+		covAmenagement.dispose();
+		
+		float[] data = new float[entete.width()*entete.height()];
+		
+		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(data, dataOS, dataAm){
+			@Override
+			protected float doTreat(float[] v) {
+				float vam = v[1];
+				if(vam == 25){
+					return vam;
+				}
+				return v[0];
+			}
+		};
+		cal.run();
+		
+		CoverageManager.write(path+"bv_magdelaine_OS_amenagement.tif" , data, entete);
+	}
+	
+	private static float getSlopeIntensity(float alt, float nalt, float cote_adjacent) {
+		
+		if(alt == nalt) {
+			return 0;
+		}
+		
+		float cote_oppose = alt - nalt;
+		float tangente = cote_oppose/cote_adjacent;
+		double arctangente = Math.atan(tangente);
+		double angle = Math.toDegrees(arctangente);
+		
+		//System.out.println(cote_oppose+" "+cote_adjacent+" "+tangente+" "+arctangente+" "+angle);
+		
+		float v =  (float) ((90 - angle)%180.0);
+		if(v <= 45){
+			return  1;
+		}else if(v >= 135){
+			return  -1;
+		//}else if(v >= 90){
+			//return  0;
+		}else{
+			return (float) ((90-v)/45.0);
+		}
+	}
+	
+	private static float getSlopeIntensity(float slopIntMax) {
+		
+		float v =  slopIntMax;
+		
+		if(v <= 45){
+			return  1;
+		}else if(v >= 135){
+			return  -1;
+		//}else if(v >= 90){
+		//	return  0;
+		}else{
+			return (float) ((90-v)/45.0);
+		}
+	}
+	
+	private static float friction(float slopeIntensity, float infiltration) {
+		//float friction = 2 + 9*infiltration - slopeIntensity;
+		/*if(friction >= 9) {
+			friction *= 10;
+		}*/
+		//float friction = (9 - 9*slopeIntensity + 27*infiltration) / 9.0f;
+		//float friction = 9 - 9*slopeIntensity + ((float) (27*Math.pow(infiltration, 2)));
+		//float friction = (9 - 9*slopeIntensity + ((float) (27*Math.pow(infiltration, 2)))) / 9.0f;
+		//friction = (float) Math.pow(friction, 2);
+		
+		//float friction = 1 - slopeIntensity + ((float) (30*Math.pow(infiltration, 2)));
+		//float friction = 9 - 9*slopeIntensity + ((float) (27*Math.pow(infiltration, 2)));
+		
+		//float friction = 1 - slopeIntensity + ((float) (27*Math.pow(infiltration, 2)));
+		
+		//float friction = ((float) Math.pow((1 - slopeIntensity), 5)) + ((float) (27*Math.pow(infiltration, 2)));
+		float friction = ((float) Math.pow((1 - slopeIntensity), 5)) + ((float) (100*Math.pow(infiltration, 2)));
+		
+		System.out.println(slopeIntensity+" "+infiltration+" "+friction);
+		return friction;
+	}
+	
+	private static void calculTestCompression(){
+		
+		Coverage cov;
+		EnteteRaster entete;
+		float[] data;
+		
+		cov = CoverageManager.getCoverage("C:/Data/projet/coterra/essai_petit_magdelaine/data/bv_altitude.tif");
+		entete = cov.getEntete();
+		data = cov.getData();
+		cov.dispose();
+		
+		//CoverageManager.write("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_init.tif", data, entete);
+		//CoverageManager.write("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_CCITT_RLE.tif", data, entete);
+		//CoverageManager.write("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_CCITT_T_4.tif", data, entete);
+		//CoverageManager.write("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_CCITT_T_6.tif", data, entete);
+		//CoverageManager.write("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_LZW.tif", data, entete);
+		//CoverageManager.write("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_JPEG.tif", data, entete);
+		//CoverageManager.write("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_ZLib.tif", data, entete);
+		//CoverageManager.write("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_PackBits.tif", data, entete);
+		//CoverageManager.write("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_Deflate.tif", data, entete);
+		//CoverageManager.write("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_EXIF_JPEG.tif", data, entete);
+		//CoverageManager.write("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_ZSTD.tif", data, entete);
+		
+		 
+		/*
+		cov = CoverageManager.getCoverage("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_CCITT_RLE.tif");
+		entete = cov.getEntete();
+		data = cov.getData();
+		cov.dispose();
+		*/
+		/*
+		cov = CoverageManager.getCoverage("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_CCITT_T_4.tif");
+		entete = cov.getEntete();
+		data = cov.getData();
+		cov.dispose();
+		*/
+		/*
+		cov = CoverageManager.getCoverage("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_CCITT_T_6.tif");
+		entete = cov.getEntete();
+		data = cov.getData();
+		cov.dispose();
+		*/
+		
+		cov = CoverageManager.getCoverage("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_LZW.tif");
+		entete = cov.getEntete();
+		data = cov.getData();
+		cov.dispose();
+		/*
+		cov = CoverageManager.getCoverage("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_JPEG.tif");
+		entete = cov.getEntete();
+		data = cov.getData();
+		cov.dispose();
+		*/
+		cov = CoverageManager.getCoverage("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_ZLib.tif");
+		entete = cov.getEntete();
+		data = cov.getData();
+		cov.dispose();
+		
+		cov = CoverageManager.getCoverage("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_PackBits.tif");
+		entete = cov.getEntete();
+		data = cov.getData();
+		cov.dispose();
+		
+		cov = CoverageManager.getCoverage("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_Deflate.tif");
+		entete = cov.getEntete();
+		data = cov.getData();
+		cov.dispose();
+		/*
+		cov = CoverageManager.getCoverage("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_EXIF_JPEG.tif");
+		entete = cov.getEntete();
+		data = cov.getData();
+		cov.dispose();
+		*/
+		cov = CoverageManager.getCoverage("C:/Data/projet/coterra/essai_petit_magdelaine/data/test_compression/altitude_ZSTD.tif");
+		entete = cov.getEntete();
+		data = cov.getData();
+		cov.dispose();
+		
+	}
+	
+	
 	
 	private static void detectionPente(){
 		
@@ -64,17 +500,17 @@ public class ScriptErosionMagdelaine {
 		builder.setEntete(entete);
 		builder.setWindowShapeType(WindowShapeType.SQUARE);
 		builder.setUnfilters(new int[]{-1});
-		builder.addMetric("slope-direction");
+		//builder.addMetric("slope-direction");
 		builder.addMetric("slope-intensity");
 		builder.setWindowSize(3);
-		builder.addGeoTiffOutput("slope-direction", bv_direction);
-		builder.addGeoTiffOutput("slope-intensity", bv_intensity);
+		//builder.addGeoTiffOutput("slope-direction", bv_slope_direction);
+		builder.addGeoTiffOutput("slope-intensity", bv_slope_intensity);
 		LandscapeMetricAnalysis analysis = builder.build();
 		
 		analysis.allRun();
 	}
 	
-	private static void generationCoeffInfiltration() {
+	private static void generationInfiltrationMap() {
 		Coverage osCov = CoverageManager.getCoverage(bv_os_prairie);
 		EnteteRaster osEntete = osCov.getEntete();
 		float[] osData = osCov.getData();
@@ -89,7 +525,7 @@ public class ScriptErosionMagdelaine {
 		CoverageManager.write(bv_infiltration, data, osEntete);
 	}
 	
-	private static void generationCoeffVersement() {
+	private static void generationVersementMap() {
 		Coverage osCov = CoverageManager.getCoverage(bv_os_prairie);
 		EnteteRaster osEntete = osCov.getEntete();
 		float[] osData = osCov.getData();
@@ -104,9 +540,9 @@ public class ScriptErosionMagdelaine {
 		CoverageManager.write(bv_versement, data, osEntete);
 	}
 	
-	private static void generationIntensiteVersement() {
+	private static void generationIntensiteVersementMap() {
 		
-		Coverage cov1 = CoverageManager.getCoverage(bv_intensity);
+		Coverage cov1 = CoverageManager.getCoverage(bv_slope_intensity);
 		EnteteRaster entete = cov1.getEntete();
 		float[] data1 = cov1.getData();
 		cov1.dispose();
@@ -119,13 +555,14 @@ public class ScriptErosionMagdelaine {
 		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(data, data1, data2){
 			@Override
 			protected float doTreat(float[] v) {
-				float v1 = v[0];
-				if(v1 == -1){
+				float vInt = v[0];
+				if(vInt == -1){
 					return -1;
 				}
-				v1 = Math.abs(90-v1);
-				float v2 = v[1];
-				return v1*v2*100.0f;
+				//v1 = Math.abs(90-v1);
+				vInt = 90-Math.min(vInt, 90);
+				float vVers = v[1];
+				return vInt*vVers*100.0f;
 			}
 		};
 		cal.run();
@@ -143,7 +580,7 @@ public class ScriptErosionMagdelaine {
 		Map<String, Integer> codes = new HashMap<String, Integer>();
 		codes.put("PPH", 24);
 		codes.put("PRL", 24);
-		codes.put("SPL", 24);
+		codes.put("SPH", 24);
 		
 		Coverage cov = ShapeFile2CoverageConverter.getSurfaceCoverage(path+"rpg/parcelle_rpg_2020.shp", "CODE_CULTU", codes, bvEntete, -1);
 		float[] data = cov.getData();

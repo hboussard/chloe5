@@ -1,9 +1,11 @@
 package fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse;
 
 import java.awt.Rectangle;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,6 +27,8 @@ import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 import weka.clusterers.SimpleKMeans;
+import weka.core.Attribute;
+import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.SelectedTag;
@@ -327,6 +331,49 @@ public class EcoPaysage {
 	    return null;
 	}
 	
+	public static Instances readData(String dataFile, int factor, int size) {
+		
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(dataFile));
+			String[] attributs = reader.readLine().split(";");
+			
+			ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+			for(int i=0; i<attributs.length; i++) {
+				attributes.add(new Attribute(attributs[i]));
+			}
+			
+			Instances data = new Instances("metrics", attributes, size/factor);
+			String line;
+			String[] stringValues;
+			double[] values;
+			Instance instance;
+			int index = 0;
+			while((line = reader.readLine()) != null) {
+				if(index++ % factor == 0) {
+					//System.out.println(index+" / "+size);
+					stringValues = line.split(";");
+					values = new double[stringValues.length];
+					for(int i=0; i<stringValues.length; i++) {
+						values[i] = Double.parseDouble(stringValues[i]);
+					}
+					instance = new DenseInstance(1.0, values);
+					data.add(instance);
+				}
+			}
+			
+			reader.close();
+			
+			return data;
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
 	public static SimpleKMeans kmeans(Instances data, int k){	
 		
 		try {
@@ -342,7 +389,7 @@ public class EcoPaysage {
 			kmeans.setInitializationMethod(new SelectedTag(SimpleKMeans.FARTHEST_FIRST, SimpleKMeans.TAGS_SELECTION));
 			//kmeans.setInitializationMethod(new SelectedTag(SimpleKMeans.CANOPY, SimpleKMeans.TAGS_SELECTION));
 			kmeans.buildClusterer(data);
-		
+			
 			return kmeans;
 			
 			//System.out.println(kmeans);
@@ -382,6 +429,47 @@ public class EcoPaysage {
 				writer.newLine();
 			}
 			writer.close();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void exportCSV(String ecoFile, SimpleKMeans kmeans, int k, String[][] dataXY, String dataFile, Instances data) {
+		
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(ecoFile));
+			writer.write("X;");
+			writer.write("Y;");
+			writer.write("ecop_"+k);
+			writer.newLine();
+			
+			BufferedReader reader = new BufferedReader(new FileReader(dataFile));
+			reader.readLine(); // 1ere ligne d'attributs
+			
+			String[] iXY;
+			String[] stringValues;
+			double[] values;
+			Instance instance;
+			for(int i=0; i<dataXY.length; i++){
+				
+				stringValues = reader.readLine().split(";");
+				values = new double[stringValues.length];
+				for(int j=0; j<stringValues.length; j++) {
+					values[j] = Double.parseDouble(stringValues[j]);
+				}
+				instance = new DenseInstance(1.0, values);
+				instance.setDataset(data);
+				
+				iXY = dataXY[i];
+				writer.write(iXY[0]+";");
+				writer.write(iXY[1]+";");
+				writer.write((1+kmeans.clusterInstance(instance))+"");
+				writer.newLine();
+			}
+			
+			writer.close();
+			reader.close();
 			
 		} catch (Exception e) {
 			e.printStackTrace();

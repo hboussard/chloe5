@@ -50,7 +50,7 @@ public class ScriptErosionCoterra {
 		//rasterizeBV();
 		//recuperationAltitude();
 		//recuperationOS();
-		detectionPente();
+		//detectionPente();
 		
 		// situation
 		generationCoeffInfiltration();

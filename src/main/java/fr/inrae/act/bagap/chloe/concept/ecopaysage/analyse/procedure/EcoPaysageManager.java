@@ -45,6 +45,8 @@ public class EcoPaysageManager {
 	
 	private int[] classes; // les nombres de classes à générer
 	
+	private int factor; // facteur de clusterisation
+	
 	private Map<Integer, String> ecoFiles, mapFiles, infoFiles, gradientFiles;
 	
 	private Map<Integer, Map<Integer, String>> gradientMapFiles;
@@ -107,6 +109,7 @@ public class EcoPaysageManager {
 		gradientFiles = new TreeMap<Integer, String>();
 		gradientMapFiles = new TreeMap<Integer, Map<Integer, String>>();
 		headerFile = null;
+		factor = 1;
 	}
 	
 	public EcoPaysageProcedure build(){
@@ -208,6 +211,10 @@ public class EcoPaysageManager {
 
 	public void setClasses(int[] classes){
 		this.classes = classes;
+	}
+	
+	public void setFactor(int factor) {
+		this.factor = factor;
 	}
 	
 	public void addCompositionMetric(String metric) {
@@ -408,6 +415,10 @@ public class EcoPaysageManager {
 	
 	public int[] classes() {
 		return classes;
+	}
+	
+	public int factor() {
+		return factor;
 	}
 	
 	public String ecoFile(int k) {
