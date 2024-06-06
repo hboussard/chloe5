@@ -51,7 +51,8 @@ public class EPPClustering extends EcoPaysageProcedure {
 		if(manager().factor() == 1) {
 			data = EcoPaysage.readData(manager().normFile());
 		}else {
-			data = EcoPaysage.readData(manager().normFile(), manager().factor(), dataXY.length);
+			//data = EcoPaysage.readData(manager().normFile(), manager().factor(), dataXY.length);
+			data = EcoPaysage.readData(manager().normFile(), dataXY, manager().factor(), manager().entete());
 		}
 		
 		SimpleKMeans kmeans;

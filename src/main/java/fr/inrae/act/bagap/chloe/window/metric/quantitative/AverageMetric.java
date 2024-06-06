@@ -13,6 +13,7 @@ public class AverageMetric extends Metric implements QuantitativeMetric {
 	protected void doCalculate(Counting co) {
 		if(co.validValues() > 0){
 			value = co.average();
+			//System.out.println(value);
 		}
 	}
 	

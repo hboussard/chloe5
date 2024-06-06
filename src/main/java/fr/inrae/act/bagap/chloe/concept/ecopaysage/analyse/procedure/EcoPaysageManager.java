@@ -12,6 +12,9 @@ import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.mapping.EPP
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.rupture.EPPRuptureFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.standardization.EPPStandardizationFactory;
 import fr.inrae.act.bagap.chloe.util.Util;
+import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.raster.CoverageManager;
+import fr.inrae.act.bagap.raster.EnteteRaster;
 
 public class EcoPaysageManager {
 
@@ -52,6 +55,8 @@ public class EcoPaysageManager {
 	private Map<Integer, Map<Integer, String>> gradientMapFiles;
 	
 	private String headerFile; // le fichier d'entete raster
+	
+	private EnteteRaster inEntete;
 	
 	public EcoPaysageManager(String treatment){
 		setTreatment(treatment);
@@ -178,6 +183,9 @@ public class EcoPaysageManager {
 	
 	public void setInputRaster(String inputRaster) {
 		this.inputRaster = inputRaster;
+		Coverage cov = CoverageManager.getCoverage(inputRaster);
+		this.inEntete = cov.getEntete();
+		cov.dispose();
 		this.carto = new File(inputRaster).getName().replace(".tif", "").replace(".asc", "");
 	}
 	
@@ -419,6 +427,10 @@ public class EcoPaysageManager {
 	
 	public int factor() {
 		return factor;
+	}
+	
+	public EnteteRaster entete() {
+		return inEntete;
 	}
 	
 	public String ecoFile(int k) {

@@ -18,10 +18,25 @@ public class ScriptRennesMetropole {
 		//clustering(radius);
 		//mapping(radius);
 		
-		int scale = 3000; // m
-		ecolandscape(scale);
+		int scale = 1000; // m
+		//ecolandscape(scale);
+		ecolandscapeTest(scale);
 		
 		
+	}
+	
+	private static void ecolandscapeTest(int scale) {
+		
+		EcoPaysageManager epManager = new EcoPaysageManager("mapping");
+		epManager.setInputRaster("E:/rennes_metropole/data/rm_os_bre.tif");
+		epManager.setScale(scale);
+		epManager.setFactor(3);
+		epManager.setOutputFolder("E:/rennes_metropole/ecopaysage/essaie10/scale_"+scale+"m/");
+		epManager.setClasses(new int[]{5});
+		
+		EcoPaysageProcedure epProcedure = epManager.build();
+		
+		epProcedure.run();
 	}
 
 	private static void calculMetrics(int scale) {

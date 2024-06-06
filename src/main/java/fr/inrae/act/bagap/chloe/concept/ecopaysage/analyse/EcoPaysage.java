@@ -9,7 +9,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,6 +17,7 @@ import java.util.TreeMap;
 import org.jumpmind.symmetric.csv.CsvReader;
 import org.jumpmind.symmetric.csv.CsvWriter;
 
+import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
 import fr.inrae.act.bagap.apiland.util.SpatialCsvManager;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
@@ -331,6 +331,7 @@ public class EcoPaysage {
 	    return null;
 	}
 	
+	/*
 	public static Instances readData(String dataFile, int factor, int size) {
 		
 		try {
@@ -359,6 +360,64 @@ public class EcoPaysage {
 					instance = new DenseInstance(1.0, values);
 					data.add(instance);
 				}
+			}
+			
+			reader.close();
+			
+			return data;
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	*/
+	
+	public static Instances readData(String dataFile, String[][] dataXY, int factor, EnteteRaster entete) {
+		
+		try {
+			
+			int size = 0;
+			int x, y;
+			for(String[] dXY : dataXY) {
+				x = CoordinateManager.getLocalX(entete, Double.parseDouble(dXY[0]));
+				y = CoordinateManager.getLocalY(entete, Double.parseDouble(dXY[1]));
+				if(x%factor == 0 && y%factor == 0) {
+					size++;
+				}
+			}
+			
+			BufferedReader reader = new BufferedReader(new FileReader(dataFile));
+			String[] attributs = reader.readLine().split(";");
+			
+			ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+			for(int i=0; i<attributs.length; i++) {
+				attributes.add(new Attribute(attributs[i]));
+			}
+			
+			Instances data = new Instances("metrics", attributes, size);
+			String line;
+			String[] stringValues;
+			double[] values;
+			Instance instance;
+			int index = 0;
+			while((line = reader.readLine()) != null) {
+				x = CoordinateManager.getLocalX(entete, Double.parseDouble(dataXY[index][0]));
+				y = CoordinateManager.getLocalY(entete, Double.parseDouble(dataXY[index][1]));
+				if(x%factor == 0 && y%factor == 0) {
+					//System.out.println(index+" / "+size);
+					stringValues = line.split(";");
+					values = new double[stringValues.length];
+					for(int i=0; i<stringValues.length; i++) {
+						values[i] = Double.parseDouble(stringValues[i]);
+					}
+					instance = new DenseInstance(1.0, values);
+					data.add(instance);
+				}
+				index++;
 			}
 			
 			reader.close();

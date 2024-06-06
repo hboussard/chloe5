@@ -16,7 +16,7 @@ import fr.inrae.act.bagap.chloe.window.WindowShapeType;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.output.CoverageOutput;
-import fr.inrae.act.bagap.chloe.window.output.DataOutput;
+import fr.inrae.act.bagap.chloe.window.output.DataInPixelOutput;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 import fr.inrae.act.bagap.raster.Tile;
@@ -243,11 +243,11 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 	
-	public void addDataOutput(String metric, Map<RefPoint, Float> datas){
+	public void addDataInPixelOutput(String metric, Map<RefPoint, Float> datas){
 		throw new UnsupportedOperationException();
 	}
 	
-	public void addDataOutput(DataOutput dout){
+	public void addDataInPixelOutput(DataInPixelOutput dout){
 		throw new UnsupportedOperationException();
 	}
 	

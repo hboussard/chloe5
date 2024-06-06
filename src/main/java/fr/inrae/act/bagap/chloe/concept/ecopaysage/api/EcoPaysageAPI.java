@@ -8,12 +8,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Properties;
 
-import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.api.NoParameterException;
-import fr.inrae.act.bagap.chloe.api.RasterTypeMime;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageManager;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageProcedure;
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 
 public class EcoPaysageAPI {
 
@@ -60,15 +57,17 @@ public class EcoPaysageAPI {
 		
 			importForce(manager, properties);
 			importInputRaster(manager, properties);
+			importXYFile(manager, properties);
 			importScales(manager, properties);
 			importClasses(manager, properties);
 			importOutputFolder(manager, properties);
+			
 		
 		} catch (NoParameterException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static void importForce(EcoPaysageManager manager, Properties properties) {
 		if(properties.containsKey("force")){
 			boolean force = Boolean.parseBoolean(properties.getProperty("force"));
@@ -88,6 +87,13 @@ public class EcoPaysageAPI {
 			return;
 		}
 		throw new NoParameterException("input_raster");
+	}
+	
+	private static void importXYFile(EcoPaysageManager manager, Properties properties) {
+		if(properties.containsKey("xy_file")){
+			String prop = properties.getProperty("xy_file");
+			manager.setXYFile(prop);
+		}
 	}
 	
 	public static void importScales(EcoPaysageManager builder, Properties properties) throws NoParameterException {

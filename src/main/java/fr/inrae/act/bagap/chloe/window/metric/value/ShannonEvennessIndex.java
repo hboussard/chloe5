@@ -11,7 +11,7 @@ public class ShannonEvennessIndex extends Metric implements ValueMetric {
 
 	@Override
 	protected void doCalculate(Counting co) {
-		if(co.countValues() > 0){
+		if(co.validValues() > 0){
 			value = 0;
 			double p; 
 			for(int v : co.values()){

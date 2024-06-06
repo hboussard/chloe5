@@ -18,11 +18,11 @@ public class SlidingMassCumulKernel extends SlidingLandscapeMetricKernel {
 	
 	private int massInit;
 	
-	private String outputDegatIntensity;
+	private String outputDegatIntensity/*, outputDepotIntensity*/;
 	
-	private float[] dataDegatIntensity;
+	private float[] dataDegatIntensity/*, dataDepotIntensity*/;
 	
-	public SlidingMassCumulKernel(int windowSize, int displacement, int noDataValue, int[] unfilters, EnteteRaster inEntete,  EnteteRaster outEntete, String outputDegatIntensity){	
+	public SlidingMassCumulKernel(int windowSize, int displacement, int noDataValue, int[] unfilters, EnteteRaster inEntete,  EnteteRaster outEntete, String outputDegatIntensity/*, String outputDepotIntensity*/){	
 		super(windowSize, displacement, null, noDataValue, unfilters);
 		
 		this.inEntete = inEntete;
@@ -36,6 +36,11 @@ public class SlidingMassCumulKernel extends SlidingLandscapeMetricKernel {
 			Arrays.fill(dataDegatIntensity, 0);
 			this.outputDegatIntensity = outputDegatIntensity;
 		}
+		/*if(outputDepotIntensity != null) {
+			this.dataDepotIntensity = new float[outEntete.width()*outEntete.height()];
+			Arrays.fill(dataDepotIntensity, 0);
+			this.outputDepotIntensity = outputDepotIntensity;
+		}*/
 	}
 	
 	@Override
@@ -88,6 +93,7 @@ public class SlidingMassCumulKernel extends SlidingLandscapeMetricKernel {
 				float nb_nodata = 0;
 				float surface = 0;
 				float volume = 0;
+				float inflocal;
 				for (int dy = -mid; dy <= mid; dy += 1) {
 					if(((y + dy) >= 0) && ((y + dy) < height())){
 						for (int dx = -mid; dx <= mid; dx += 1) {
@@ -114,7 +120,13 @@ public class SlidingMassCumulKernel extends SlidingLandscapeMetricKernel {
 											synchronized(dataDegatIntensity) {
 												dataDegatIntensity[lind] += dm;
 											}
-										}
+										}/*
+										if(outputDepotIntensity != null) {
+											inflocal = friction(dataInfiltration[ic])*localSurface;
+											synchronized(dataDepotIntensity) {
+												dataDepotIntensity[lind] += inflocal;
+											}
+										}*/
 										//}
 									}
 								}
@@ -133,6 +145,11 @@ public class SlidingMassCumulKernel extends SlidingLandscapeMetricKernel {
 				outDatas()[ind][0] = 0; // filtre pas ok 
 			}
 		}
+	}
+	
+	private float friction(float infiltration) {
+		float friction = 1 + (float) (9*Math.pow(infiltration, 5));
+		return friction;
 	}
 	
 	protected float[] generateMassInit(int x, int y, int mid){
@@ -206,6 +223,11 @@ public class SlidingMassCumulKernel extends SlidingLandscapeMetricKernel {
 		if(outputDegatIntensity != null) {
 			CoverageManager.write(outputDegatIntensity, dataDegatIntensity, outEntete);
 		}
+		/*
+		if(outputDepotIntensity != null) {
+			CoverageManager.write(outputDepotIntensity, dataDepotIntensity, outEntete);
+		}
+		*/
 	}
 
 	private void exportTab(String output, float[] tab, int x, int y){

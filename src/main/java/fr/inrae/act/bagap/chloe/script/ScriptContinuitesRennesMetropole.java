@@ -19,6 +19,7 @@ import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.cluster.TabClusteringOutput;
 import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenClusteringAnalysis;
 import fr.inrae.act.bagap.chloe.cluster.distance.TabDistanceClusteringAnalysis;
+import fr.inrae.act.bagap.chloe.distance.analysis.euclidian.TabChamferDistanceAnalysis;
 import fr.inrae.act.bagap.chloe.distance.analysis.functional.TabRCMDistanceAnalysis;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
@@ -35,12 +36,12 @@ public class ScriptContinuitesRennesMetropole {
 		
 		long begin = System.currentTimeMillis();
 		
-		convert();
+		//convert();
 		
 		//prepaOS();
 		//rasterizeZoneHumide();
 		//prepaHabitats();
-		prepaPermeabilite();
+		//prepaPermeabilite();
 		//calculDistanceFonctionnelle();
 		
 		//rasterizeCGTV();
@@ -55,7 +56,7 @@ public class ScriptContinuitesRennesMetropole {
 		
 		//calculContinuityBoise();
 		//calculContinuityHumide();
-		calculContinuity("prairial", 125);
+		//calculContinuity("prairial", 125);
 		//calculContinuity("prairial", 250);
 		//calculContinuity("prairial", 500);
 		
@@ -217,10 +218,125 @@ public class ScriptContinuitesRennesMetropole {
 		//double d = Math.pow(2, 24);
 		//System.out.println(d);
 		
+		clusteringContinuity();
+		
 		long end = System.currentTimeMillis();
 		System.out.println("time computing : "+(end - begin));
 	}
 	
+	private static void clusteringContinuity() {
+		
+		String path = "E:/rennes_metropole/continuite_ecologique/clustering2/";
+		
+		Coverage cov = CoverageManager.getCoverage(path+"indice_deplacement_250m.tif");
+		float[] inData = cov.getData();
+		EnteteRaster entete = cov.getEntete();
+		cov.dispose();
+		/*
+		float[] dataClassif = new float[entete.width()*entete.height()];
+		
+		Map<Domain<Float, Float>, Integer> domains = new HashMap<Domain<Float, Float>, Integer>();
+		domains.put(DomainFactory.getFloatDomain("[0,0.1]"), 0);
+		domains.put(DomainFactory.getFloatDomain("]0.1,0.2]"), 1);
+		domains.put(DomainFactory.getFloatDomain("]0.2,0.3]"), 2);
+		domains.put(DomainFactory.getFloatDomain("]0.3,0.4]"), 3);
+		domains.put(DomainFactory.getFloatDomain("]0.4,0.5]"), 4);
+		domains.put(DomainFactory.getFloatDomain("]0.5,0.6]"), 5);
+		domains.put(DomainFactory.getFloatDomain("]0.6,0.7]"), 6);
+		domains.put(DomainFactory.getFloatDomain("]0.7,0.8]"), 7);
+		domains.put(DomainFactory.getFloatDomain("]0.8,0.9]"), 8);
+		domains.put(DomainFactory.getFloatDomain("]0.9,1]"), 9);
+		domains.put(DomainFactory.getFloatDomain("]1,]"), 10);
+		ClassificationPixel2PixelTabCalculation cal = new ClassificationPixel2PixelTabCalculation(dataClassif, inData, entete.noDataValue(), domains);
+		cal.run();
+		
+		CoverageManager.write(path+"classif_indice_deplacement_250m.tif", dataClassif, entete);
+		
+		TabChamferDistanceAnalysis da;
+		TabDistanceClusteringAnalysis ca;
+		float[] dataDistance, dataCluster;
+		int[] values;
+		for(int k=10; k>0; k--) {
+			
+			values = new int[10-k+1];
+			for(int v=k, i=0; v<=10; v++, i++) {
+				values[i] = v;
+			}
+			
+			dataDistance = new float[entete.width()*entete.height()];
+			
+			da = new TabChamferDistanceAnalysis(dataDistance, dataClassif, entete.width(), entete.height(), entete.cellsize(), entete.noDataValue(), values, 15);
+			da.allRun();
+			
+			ca = new TabDistanceClusteringAnalysis(dataClassif, dataDistance, entete.width(), entete.height(), values, 10, entete.noDataValue());
+			dataCluster = (float[]) ca.allRun();
+					
+			CoverageManager.writeGeotiff(path+"cluster_indice_deplacement_250m_"+k+".tif", dataCluster, entete);
+		}
+		*/
+		/*
+		LandscapeMetricAnalysisBuilder builder;
+		LandscapeMetricAnalysis analysis;
+		for(int k=10; k>0; k--) {
+			
+			builder = new LandscapeMetricAnalysisBuilder();
+			builder.setRasterFile(path+"cluster_indice_deplacement_250m_"+k+".tif");
+			//builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+			builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
+			builder.setWindowSize(401);
+			builder.setDisplacement(10);
+			builder.addMetric("pN-values");
+			builder.addGeoTiffOutput("pN-values", path+"pnvalues_cluster_indice_deplacement_250m_"+k+".tif");
+			builder.addMetric("SHDI2");
+			builder.addGeoTiffOutput("SHDI2", path+"shdi2_cluster_indice_deplacement_250m_"+k+".tif");
+			analysis = builder.build();
+			
+			analysis.allRun();
+		}
+		*/
+		/*
+		float[][] datas = new float[10][];
+ 		for(int k=10; k>0; k--) {
+ 			cov = CoverageManager.getCoverage(path+"shdi2_cluster_indice_deplacement_250m_"+k+".tif");
+ 			datas[k-1] = cov.getData();
+ 			entete = cov.getEntete();
+ 			cov.dispose();
+		}
+		
+		float[] outData = new float[entete.width()*entete.height()];
+		
+		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(outData, datas){
+			@Override
+			protected float doTreat(float[] v) {
+				return (v[0]+v[1]+v[2]+v[3]+v[4]+v[5]+v[6]+v[7]+v[8]+v[9]) / 10.0f;
+			}
+		};
+		cal.run();
+		
+		CoverageManager.write(path+"sum_shdi2_cluster_indice_deplacement_250m.tif", outData, entete);
+		*/
+		float[][] datas = new float[10][];
+ 		for(int k=10; k>0; k--) {
+ 			cov = CoverageManager.getCoverage(path+"pnvalues_cluster_indice_deplacement_250m_"+k+".tif");
+ 			datas[k-1] = cov.getData();
+ 			entete = cov.getEntete();
+ 			cov.dispose();
+		}
+		
+		float[] outData = new float[entete.width()*entete.height()];
+		
+		Pixel2PixelTabCalculation cal = new Pixel2PixelTabCalculation(outData, datas){
+			@Override
+			protected float doTreat(float[] v) {
+				return (v[0]+v[1]+v[2]+v[3]+v[4]+v[5]+v[6]+v[7]+v[8]+v[9]) / 10.0f;
+			}
+		};
+		cal.run();
+		
+		CoverageManager.write(path+"sum_pnvalues_cluster_indice_deplacement_250m.tif", outData, entete);
+		
+	}
+
 	private static void analyseGlobale(String inputRaster, String outputCsv) {
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();

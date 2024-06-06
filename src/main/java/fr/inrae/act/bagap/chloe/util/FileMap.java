@@ -37,6 +37,10 @@ public class FileMap {
 		return map;
 	}
 	
+	public void change(float source, float target) {
+		map.put(source, target);
+	}
+	
 	public void display(){
 		for(Entry<Float, Float> e : map.entrySet()){
 			System.out.println(e.getKey()+" --> "+e.getValue());

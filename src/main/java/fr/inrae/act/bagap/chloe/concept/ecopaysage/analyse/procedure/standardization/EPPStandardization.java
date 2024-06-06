@@ -47,15 +47,15 @@ public class EPPStandardization extends EcoPaysageProcedure {
 		
 		EcoPaysage.splitCompoConfig(manager().metricsFile(scale), manager().xyFile(), manager().compoFile(scale), manager().configFile(scale), manager().compoMetrics(), manager().configMetrics());
 		
-		System.out.println("nomalisation des donnees de composition");
+		System.out.println("standardisation des donnees de composition");
 		
 		EcoPaysage.normalize(manager().compoFile(scale), manager().compoMetrics());
 		
-		System.out.println("nomalisation des donnees de configuration");
+		System.out.println("standardisation des donnees de configuration");
 		
 		EcoPaysage.normalize(manager().configFile(scale), manager().configMetrics());
 		
-		System.out.println("compilation des donnees normalisees de composition et de configuration");
+		System.out.println("compilation des donnees standardisees de composition et de configuration");
 		
 		EcoPaysage.compileNormCompoConfig(manager().normFile(scale), manager().compoFile(scale), manager().configFile(scale), manager().compoMetrics(), manager().configMetrics());
 		

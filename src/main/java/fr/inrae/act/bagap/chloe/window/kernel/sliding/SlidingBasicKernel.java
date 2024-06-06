@@ -25,7 +25,7 @@ public class SlidingBasicKernel extends SlidingLandscapeMetricKernel {
 				
 				final int mid = windowSize() / 2;
 				int ic;
-				short v;
+				float v;
 				float coeff;
 				float nb = 0;
 				float nb_nodata = 0;
@@ -37,7 +37,7 @@ public class SlidingBasicKernel extends SlidingLandscapeMetricKernel {
 								ic = ((dy+mid) * windowSize()) + (dx+mid);
 								coeff = coeff()[ic];
 								if(coeff > 0){
-									v = (short) inDatas()[((y + dy) * width()) + (x + dx)];
+									v = inDatas()[((y + dy) * width()) + (x + dx)];
 									nb += coeff;
 									if(v == noDataValue()){
 										nb_nodata += coeff;

@@ -121,7 +121,7 @@ public class ScriptEcopaysageGrandOuest {
 		EcoPaysageManager epManager = new EcoPaysageManager("mapping");
 		epManager.setInputRaster("E:/rennes_metropole/data/rm_os_bre.tif");
 		epManager.setScales(scales);
-		epManager.setFactor(3);
+		//epManager.setFactor(3);
 		epManager.setOutputFolder("E:/rennes_metropole/ecopaysage/essaie7/");
 		epManager.setClasses(new int[]{8});
 		

@@ -8,7 +8,9 @@ public class ScriptGrainBocagerDepartement {
 	public static void main(String[] args){
 		
 		//procedureGrainBocager(14, 2020);
+		//procedureGrainBocager(16, 2020);
 		//procedureGrainBocager(22, 2018);
+		//procedureGrainBocager(23, 2020);
 		//procedureGrainBocager(29, 2018);
 		//procedureGrainBocager(35, 2020);
 		//procedureGrainBocager(44, 2020);
@@ -16,10 +18,8 @@ public class ScriptGrainBocagerDepartement {
 		//procedureGrainBocager(53, 2019);
 		//procedureGrainBocager(56, 2019);
 		//procedureGrainBocager(61, 2020);
-		
-		procedureGrainBocager(16, 2020);
-		procedureGrainBocager(79, 2020);
-		procedureGrainBocager(87, 2020);
+		//procedureGrainBocager(79, 2020);
+		//procedureGrainBocager(87, 2020);
 		
 		
 	}

@@ -405,7 +405,9 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 		// gestion specifiques des analyses quantitatives ou qualitatives
 		if(MetricManager.hasOnlyBasicMetric(metrics)){
 			
-			nbValues = 4;
+			System.out.println("comptage basique");
+			
+			nbValues = 5;
 			
 			counting = new BasicCounting(theoreticalSize);
 
@@ -659,9 +661,10 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 		
 			nbValues = 6;
 			
-			String outputDegatIntensity = null;
+			String outputDegatIntensity = null,  outputDepotIntensity = null;
 			if(builder.getGeoTiffOutputs(windowSize) != null) {
 				outputDegatIntensity = builder.getGeoTiffOutputs(windowSize).get("degat-mass-cumul");
+				outputDepotIntensity = builder.getGeoTiffOutputs(windowSize).get("depot-mass-cumul");
 			}
 			
 			counting = new DegatErosionCounting(theoreticalSize);
@@ -679,7 +682,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			EnteteRaster outEntete = new EnteteRaster(outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, (float) outCellSize, coverage.getEntete().noDataValue());
 			
 			// version avec altitude 
-			kernel = new SlidingMassCumulKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, coverage.getEntete(), outEntete, outputDegatIntensity);
+			kernel = new SlidingMassCumulKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, coverage.getEntete(), outEntete, outputDegatIntensity/*, outputDepotIntensity*/);
 			
 			Coverage coverageAltitude = null;
 			if (builder.getRasterTabs() != null) {

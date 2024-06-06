@@ -445,7 +445,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	}
 	
 	@Override
-	public void addDataOutput(String metric, Map<RefPoint, Float> datas){
+	public void addDataInPixelOutput(String metric, Map<RefPoint, Float> datas){
 		this.datas = datas;
 	}
 	

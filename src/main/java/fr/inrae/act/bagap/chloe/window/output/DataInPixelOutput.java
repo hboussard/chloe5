@@ -12,7 +12,7 @@ import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 
-public class DataOutput implements CountingObserver{
+public class DataInPixelOutput implements CountingObserver{
 	
 	private Set<PixelWithID> pixels;
 	
@@ -20,11 +20,11 @@ public class DataOutput implements CountingObserver{
 	
 	private final Metric metric;
 	
-	public DataOutput(String metric, Set<PixelWithID> pixels){
+	public DataInPixelOutput(String metric, Set<PixelWithID> pixels){
 		this(MetricManager.get(metric), pixels);
 	}
 	
-	public DataOutput(Metric metric, Set<PixelWithID> pixels){
+	public DataInPixelOutput(Metric metric, Set<PixelWithID> pixels){
 		this.pixels = pixels;
 		this.internalDatas = new HashMap<PixelWithID, Float>();
 		this.metric = metric;
