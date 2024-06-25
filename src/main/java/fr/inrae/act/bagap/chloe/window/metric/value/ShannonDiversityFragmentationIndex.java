@@ -3,10 +3,10 @@ package fr.inrae.act.bagap.chloe.window.metric.value;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
-public class ShannonDiversityIndex2 extends Metric implements ValueMetric {
+public class ShannonDiversityFragmentationIndex extends Metric implements ValueMetric {
 
-	public ShannonDiversityIndex2() {
-		super("SHDI2");
+	public ShannonDiversityFragmentationIndex() {
+		super("SHDI-frag");
 	}
 
 	@Override

@@ -10,7 +10,7 @@ NV;value;value;fr.inrae.act.bagap.chloe.window.metric.value.CountValueMetric;1
 pNV;value;value;fr.inrae.act.bagap.chloe.window.metric.value.RateValueMetric;1
 pNVm;value;value;fr.inrae.act.bagap.chloe.window.metric.value.RateValueMultipleMetric;1
 SHDI;value;other;fr.inrae.act.bagap.chloe.window.metric.value.ShannonDiversityIndex;1
-SHDI2;value;other;fr.inrae.act.bagap.chloe.window.metric.value.ShannonDiversityIndex2;1
+SHDI-frag;value;other;fr.inrae.act.bagap.chloe.window.metric.value.ShannonDiversityFragmentationIndex;1
 SHEI;value;other;fr.inrae.act.bagap.chloe.window.metric.value.ShannonEvennessIndex;1
 NC;couple;couple;fr.inrae.act.bagap.chloe.window.metric.couple.CountCoupleMetric;1
 pNC;couple;couple;fr.inrae.act.bagap.chloe.window.metric.couple.RateCoupleMetric;1

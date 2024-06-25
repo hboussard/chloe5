@@ -604,7 +604,8 @@ public class GrainBocager {
 		int windowSize = LandscapeMetricAnalysis.getWindowSize(entete.cellsize(), windowRadius);
 		int displacement = LandscapeMetricAnalysis.getDisplacement(entete.cellsize(), outputCellSize);
 		
-		CoverageOutput covOutput = new CoverageOutput("SHDI");
+		//CoverageOutput covOutput = new CoverageOutput("SHDI");
+		CoverageOutput covOutput = new CoverageOutput("SHDI-frag");
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
 		builder.setRasterTab(dataClusterGrainFonctionnel);
@@ -614,7 +615,8 @@ public class GrainBocager {
 		}else{
 			builder.setWindowDistanceType(WindowDistanceType.WEIGHTED);
 		}
-		builder.addMetric("SHDI");
+		//builder.addMetric("SHDI");
+		builder.addMetric("SHDI-frag");
 		builder.setWindowSize(windowSize);
 		builder.setDisplacement(displacement);
 		builder.addCoverageOutput(covOutput);

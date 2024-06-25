@@ -11,7 +11,7 @@ public class FastGaussianWeightedCountValueKernel extends FastCountValueKernel i
 
 		this.gauss = new float[rayon()];
 		
-		float r=(rayon()-1)/2.f; // sigma = r/sqrt(2), rayon = 2*sqrt(2)*sigma
+		float r = (rayon()-1)/2.f; // sigma = r/sqrt(2), rayon = 2*sqrt(2)*sigma
 		for(int i=0; i<rayon(); i++) {
 			float d = i/r; // distance en nombre de rayons
 			gauss[i] = (float) Math.exp(-d*d);
