@@ -60,6 +60,7 @@ public class GrainBocagerAPI {
 		importWoodRemoval(manager, properties);
 		importWoodPlanting(manager, properties);
 		importHeightPlantingAttribute(manager, properties);
+		importHeightPlanting(manager, properties);
 		importWoodHeight(manager, properties);
 		importWoodType(manager, properties);
 		importInfluenceDistance(manager, properties);
@@ -152,6 +153,13 @@ public class GrainBocagerAPI {
 		if(properties.containsKey("height_planting_attribute")){
 			String prop = properties.getProperty("height_planting_attribute");
 			manager.setHeightPlantingAttribute(prop);
+		}
+	}
+	
+	private static void importHeightPlanting(GrainBocagerManager manager, Properties properties) {
+		if(properties.containsKey("height_planting")){
+			String prop = properties.getProperty("height_planting");
+			manager.setHeightPlanting(Float.parseFloat(prop));
 		}
 	}
 	

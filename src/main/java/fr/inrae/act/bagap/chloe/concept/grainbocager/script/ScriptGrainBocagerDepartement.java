@@ -34,16 +34,11 @@ public class ScriptGrainBocagerDepartement {
 		//procedureGrainBocager("85", "2019");
 		//procedureGrainBocager("87", "2020");
 		
-
-		
 		//procedureGrainBocager(14, 2020);
 		//procedureGrainBocager(23, 2020);
 		//procedureGrainBocager(50, 2019);
 		//procedureGrainBocager(61, 2020);
 		//procedureGrainBocager(87, 2020);
-		
-		
-		
 		
 	}
 	

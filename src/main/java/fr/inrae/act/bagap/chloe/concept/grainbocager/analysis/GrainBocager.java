@@ -137,6 +137,27 @@ public class GrainBocager {
 		return covHauteurReplantation;
 	}
 	
+	public static Coverage recuperationHauteurPlantation(String plantation, float hauteurPlantation, EnteteRaster entete) {
+		
+		Coverage covHauteurReplantation = null;
+		
+		if (ShapeFile2CoverageConverter.getShapeType(plantation).isPolygonType()) {
+			
+			covHauteurReplantation = ShapeFile2CoverageConverter.getSurfaceCoverage(plantation, entete, hauteurPlantation, 0);
+			
+		} else if (ShapeFile2CoverageConverter.getShapeType(plantation).isLineType()) {
+			
+			covHauteurReplantation = ShapeFile2CoverageConverter.getLinearCoverage(plantation, entete, hauteurPlantation, 0, entete.cellsize());
+			
+		} /*else if (ShapeFile2CoverageConverter.getShapeType(plantation).isPointType()) {
+			
+		} */else {
+			throw new IllegalArgumentException(plantation);
+		}
+		
+		return covHauteurReplantation;
+	}
+	
 	// ajoute hauteurs de boisement des plantations
 	
 	public static Coverage ajouteHauteurPlantation(Coverage bocage, Coverage plantation){

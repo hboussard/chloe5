@@ -1,18 +1,10 @@
 package fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.locationtech.jts.geom.Envelope;
-
-import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysis;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.calculgrainbocager.GBPCalculGrainBocagerFactory;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.clusterisationfonctionnalite.GBPClusterisationFonctionnaliteFactory;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.detectionboisement.GBPDetectionTypeBoisementFactory;
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.diagnosticexploitation.GBPDiagnosticExploitationFactory;
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.diagnosticterritoire.GBPDiagnosticTerritoireFactory;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.distanceinfluence.GBPCalculDistanceInfluenceBoisementFactory;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.enjeuxglobaux.GBPCalculEnjeuxGlobauxFactory;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.recuperationhauteur.GBPRecuperationHauteurBoisementFactory;
@@ -72,6 +64,8 @@ public class GrainBocagerManager {
 	private String woodPlanting;			// ajout de lineaires bocagers ou surfaces de bocage
 	
 	private String heightPlantingAttribute;		// attribut des valeurs de hauteur dans la couche de plantation
+	
+	private float heightPlanting; 			// valeur de hauteur de plantation uniforme 
 	
 	private String woodRemoval;			// suppression de surfaces de bocage 
 	
@@ -146,6 +140,7 @@ public class GrainBocagerManager {
 		//attributCodeEA = "id_ea";
 		//attributSecteur = "secteur";
 		heightPlantingAttribute = "hauteur";
+		heightPlanting = -1;
 		outputFolder = new File(System.getProperty("java.io.tmpdir")).toString().replace("\\", "/")+"/grain_bocager/";
 		Util.createAccess(outputFolder);
 		/*File tmpDir = new File(outputFolder);
@@ -382,6 +377,10 @@ public class GrainBocagerManager {
 		this.heightPlantingAttribute = heightPlantingAttribute;
 	}
 	
+	public void setHeightPlanting(float heightPlanting) {
+		this.heightPlanting = heightPlanting;
+	}
+	
 	public void setWoodRemoval(String woodRemoval) {
 		this.woodRemoval = woodRemoval;
 	}
@@ -591,6 +590,10 @@ public class GrainBocagerManager {
 	
 	public String heightPlantingAttribute(){
 		return heightPlantingAttribute;
+	}
+	
+	public float heightPlanting() {
+		return heightPlanting;
 	}
 	
 	public EnteteRaster entete(){

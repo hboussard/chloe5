@@ -40,7 +40,16 @@ public class GBPRecuperationHauteurBoisement extends GrainBocagerProcedure {
 		
 		if(manager().woodPlanting() != null){ // ajout des plantations
 
-			Coverage covHauteurPlantation = GrainBocager.recuperationHauteurPlantation(manager().woodPlanting(), manager().heightPlantingAttribute(), manager().entete());
+			Coverage covHauteurPlantation = null;
+			
+			if(manager().heightPlanting() != -1) { // hauteur de plantation uniforme
+				
+				covHauteurPlantation = GrainBocager.recuperationHauteurPlantation(manager().woodPlanting(), manager().heightPlanting(), manager().entete());
+				
+			} else { // hauteur de plantation declare par un attribut de la table attributaire
+				
+				covHauteurPlantation = GrainBocager.recuperationHauteurPlantation(manager().woodPlanting(), manager().heightPlantingAttribute(), manager().entete());
+			}
 			
 			float[] dataHauteurBoisement = covHauteurBoisement.getData();
 			float[] dataHauteurPlantation = covHauteurPlantation.getData();
