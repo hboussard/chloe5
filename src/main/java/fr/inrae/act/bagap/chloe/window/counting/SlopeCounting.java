@@ -6,8 +6,8 @@ public class SlopeCounting extends Counting implements QuantitativeCountingInter
 	
 	private double slopeIntensity;
 	
-	public SlopeCounting(double theoreticalSize) {
-		super(theoreticalSize);
+	public SlopeCounting(double resolution, double theoreticalSize) {
+		super(resolution, theoreticalSize);
 	}
 	
 	/**

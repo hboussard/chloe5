@@ -240,7 +240,7 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 						
 					kernel = new GridCountValueKernel(gridSize, coverage.getEntete().noDataValue(), values);
 							
-					counting = new ValueCounting(values, theoreticalSize);	
+					counting = new ValueCounting(inCellSize, values, theoreticalSize);	
 						
 				}else if(MetricManager.hasOnlyCoupleMetric(metrics)){
 					
@@ -250,7 +250,7 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 						
 					kernel = new GridCountCoupleKernel(gridSize, coverage.getEntete().noDataValue(), values);
 						
-					counting = new CoupleCounting(values.length, couples, theoreticalSize, theoreticalCoupleSize);
+					counting = new CoupleCounting(inCellSize, values.length, couples, theoreticalSize, theoreticalCoupleSize);
 					
 				}else{
 					
@@ -260,18 +260,18 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 						
 					kernel = new GridCountValueAndCoupleKernel(gridSize, coverage.getEntete().noDataValue(), values);
 										
-					counting = new ValueAndCoupleCounting(values, couples, theoreticalSize, theoreticalCoupleSize);
+					counting = new ValueAndCoupleCounting(inCellSize, values, couples, theoreticalSize, theoreticalCoupleSize);
 					
 				}
 			}else if(MetricManager.hasOnlyPatchMetric(metrics)){ // patch
 					
 				System.out.println("comptage des patchs");
 					
-				nbValues = 7 + 3*values.length;
+				nbValues = 8 + 4*values.length;
 						
 				kernel = new GridPatchKernel(gridSize, coverage.getEntete().noDataValue(), values, inCellSize);
 					
-				counting = new PatchCounting(values, theoreticalSize);
+				counting = new PatchCounting(inCellSize, values, theoreticalSize);
 					
 			}	
 		}

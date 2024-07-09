@@ -30,6 +30,8 @@ public abstract class Counting implements
 	 */
 	private boolean validCounting;
 	
+	private double resolution;
+	
 	private double theoreticalSize;
 	
 	private double centralValue;
@@ -53,7 +55,8 @@ public abstract class Counting implements
 	 */
 	private Set<CountingObserver> observers;
 	
-	public Counting(double theoreticalSize){
+	public Counting(double resolution, double theoreticalSize){
+		this.resolution = resolution;
 		this.theoreticalSize = theoreticalSize;
 		//metrics = new TreeMap<Metric, Double>();
 		metrics = new TreeSet<Metric>();
@@ -215,6 +218,10 @@ public abstract class Counting implements
 		this.validCounting = vc;
 	}
 	
+	public double resolution() {
+		return resolution;
+	}
+	
 	@Override
 	public double theoreticalSize(){
 		if(theoreticalSize == 0){
@@ -352,6 +359,11 @@ public abstract class Counting implements
 	public double maxSurface(){
 		throw new UnsupportedOperationException();
 	}
+	
+	@Override
+	public double totalSurfaceCarre() {
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
 	public int nbPatches(int v){
@@ -365,6 +377,11 @@ public abstract class Counting implements
 
 	@Override
 	public double maxSurface(int v){
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public double totalSurfaceCarre(int v) {
 		throw new UnsupportedOperationException();
 	}
 	

@@ -31,17 +31,22 @@ public class MapPatchKernel extends MapLandscapeMetricKernel {
 		outDatas()[4] = cto.getNbPatch();
 		outDatas()[5] = (float) cto.getTotalSurface();
 		outDatas()[6] = (float) cto.getMaxSurface();
+		outDatas()[7] = (float) cto.getTotalSurfaceCarre();
 		
 		for(int i=0; i<values.length; i++){
-			outDatas()[i+7] = cto.getNbPatch(values[i]);
+			outDatas()[i+8] = cto.getNbPatch(values[i]);
 		}
 		
 		for(int i=0; i<values.length; i++){
-			outDatas()[i+7+values.length] = (float) cto.getTotalSurface(values[i]);
+			outDatas()[i+8+values.length] = (float) cto.getTotalSurface(values[i]);
 		}
 		
 		for(int i=0; i<values.length; i++){
-			outDatas()[i+7+2*values.length] = (float) cto.getMaxSurface(values[i]);
+			outDatas()[i+8+2*values.length] = (float) cto.getMaxSurface(values[i]);
+		}
+		
+		for(int i=0; i<values.length; i++){
+			outDatas()[i+8+3*values.length] = (float) cto.getTotalSurfaceCarre(values[i]);
 		}
 	}
 	

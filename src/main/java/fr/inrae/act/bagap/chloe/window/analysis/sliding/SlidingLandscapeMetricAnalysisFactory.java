@@ -409,7 +409,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			
 			nbValues = 5;
 			
-			counting = new BasicCounting(theoreticalSize);
+			counting = new BasicCounting(inCellSize, theoreticalSize);
 
 			// add metrics to counting
 			for (Metric m : metrics) {
@@ -455,7 +455,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			
 			kernel = new SlidingSlopeKernel(coverage.getEntete().noDataValue(), inCellSize);
 			
-			counting = new SlopeCounting(theoreticalSize);
+			counting = new SlopeCounting(inCellSize, theoreticalSize);
 
 			// add metrics to counting
 			for (Metric m : metrics) {
@@ -566,7 +566,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			
 			kernel = new SlidingFunctionalContinuityKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, inCellSize, function, dMax);
 			
-			counting = new ContinuityCounting(theoreticalSize);
+			counting = new ContinuityCounting(inCellSize, theoreticalSize);
 
 			// add metrics to counting
 			for (Metric m : metrics) {
@@ -609,7 +609,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			
 			kernel = new SlidingSourceErosionKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, coverage.getEntete(), outEntete, builder.getInterpolation(), outputDegatIntensity, outputDepotIntensity);
 			
-			counting = new SourceErosionCounting(theoreticalSize);
+			counting = new SourceErosionCounting(inCellSize, theoreticalSize);
 
 			// add metrics to counting
 			for (Metric m : metrics) {
@@ -667,7 +667,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				outputDepotIntensity = builder.getGeoTiffOutputs(windowSize).get("depot-mass-cumul");
 			}
 			
-			counting = new DegatErosionCounting(theoreticalSize);
+			counting = new DegatErosionCounting(inCellSize, theoreticalSize);
 
 			// add metrics to counting
 			for (Metric m : metrics) {
@@ -827,7 +827,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 
 					nbValues = 5 + values.length;
 					
-					counting = new ValueCounting(values, theoreticalSize);
+					counting = new ValueCounting(inCellSize, values, theoreticalSize);
 
 					// add metrics to counting
 					for (Metric m : metrics) {
@@ -883,7 +883,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 
 					nbValues = 7 + couples.length;
 					
-					counting = new CoupleCounting(values.length, couples, theoreticalSize, theoreticalCoupleSize);
+					counting = new CoupleCounting(inCellSize, values.length, couples, theoreticalSize, theoreticalCoupleSize);
 
 					// add metrics to counting
 					for (Metric m : metrics) {
@@ -940,7 +940,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 
 					nbValues = 5 + values.length + 3 + couples.length;
 					
-					counting = new ValueAndCoupleCounting(values, couples, theoreticalSize, theoreticalCoupleSize);
+					counting = new ValueAndCoupleCounting(inCellSize, values, couples, theoreticalSize, theoreticalCoupleSize);
 
 					// add metrics to counting
 					for (Metric m : metrics) {
@@ -997,11 +997,11 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 
 				System.out.println("comptage des patchs");
 				
-				nbValues = 7 + 3 * values.length;
+				nbValues = 8 + 4 * values.length;
 
 				kernel = new SlidingPatchKernel(windowSize, displacement, coeffs, coverage.getEntete().noDataValue(), values, inCellSize, unfilters);
 				
-				counting = new PatchCounting(values, theoreticalSize);
+				counting = new PatchCounting(inCellSize, values, theoreticalSize);
 
 				// add metrics to counting
 				for (Metric m : metrics) {

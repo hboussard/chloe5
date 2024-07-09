@@ -10,7 +10,6 @@ import fr.inra.sad.bagap.apiland.analysis.combination.CombinationExpressionFacto
 import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
 import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
 import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.PixelWithID;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
@@ -178,7 +177,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 			
 			kernel = new SelectedBasicKernel(windowSize, pixels, coeffs, coverage.getEntete(), builder.getWindowsPath());
 			
-			counting = new BasicCounting(theoreticalSize);
+			counting = new BasicCounting(inCellSize, theoreticalSize);
 
 			// add metrics to counting
 			for (Metric m : metrics) {
@@ -287,7 +286,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 
 					nbValues = 5 + values.length;
 					
-					counting = new ValueCounting(values, theoreticalSize);
+					counting = new ValueCounting(inCellSize, values, theoreticalSize);
 						
 					// add metrics to counting
 					for(Metric m : metrics){
@@ -329,7 +328,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 
 					nbValues = 7 + couples.length;
 					
-					counting = new CoupleCounting(values.length, couples, theoreticalSize, theoreticalCoupleSize);
+					counting = new CoupleCounting(inCellSize, values.length, couples, theoreticalSize, theoreticalCoupleSize);
 						
 					// add metrics to counting
 					for(Metric m : metrics){
@@ -370,7 +369,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 					
 					nbValues = 5 + values.length + 3 + couples.length;
 					
-					counting = new ValueAndCoupleCounting(values, couples, theoreticalSize, theoreticalCoupleSize);
+					counting = new ValueAndCoupleCounting(inCellSize, values, couples, theoreticalSize, theoreticalCoupleSize);
 					
 					// add metrics to counting
 					for(Metric m : metrics){
@@ -409,11 +408,11 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 					
 			}else if(MetricManager.hasOnlyPatchMetric(metrics)){ // patch
 					
-				nbValues = 7 + 3 * values.length;
+				nbValues = 8 + 4 * values.length;
 				
 				kernel = new SelectedPatchKernel(windowSize, pixels, coeffs, coverage.getEntete(), values, builder.getWindowsPath());
 				
-				counting =  new PatchCounting(values, theoreticalSize);
+				counting =  new PatchCounting(inCellSize, values, theoreticalSize);
 					
 				// add metrics to counting
 				for(Metric m : metrics){

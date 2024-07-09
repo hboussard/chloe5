@@ -38,7 +38,7 @@ public class EPPCalculMetrics extends EcoPaysageProcedure {
 		
 		System.out.println("calcul des metriques à l'echelle "+scale+"m");
 		
-		EcoPaysage.calculMetrics(manager().metricsFile(scale), manager().inputRaster(), scale, manager().compoMetrics(), manager().configMetrics());
+		EcoPaysage.calculMetrics(manager().metricsFile(scale), manager().inputRaster(), scale, manager().compoMetrics(), manager().configMetrics(), manager().unfilters());
 		
 	}
 

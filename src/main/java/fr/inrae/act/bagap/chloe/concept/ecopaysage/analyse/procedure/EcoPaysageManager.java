@@ -56,6 +56,10 @@ public class EcoPaysageManager {
 	
 	private String headerFile; // le fichier d'entete raster
 	
+	private int noDataValue;
+	
+	private int[] unfilters;
+	
 	private EnteteRaster inEntete;
 	
 	public EcoPaysageManager(String treatment){
@@ -104,6 +108,7 @@ public class EcoPaysageManager {
 		inputRaster = null;
 		//scale = -1;
 		scales = null;
+		unfilters = null;
 		compoMetrics = null;
 		configMetrics = null;
 		outputFolder = null;
@@ -115,6 +120,7 @@ public class EcoPaysageManager {
 		gradientMapFiles = new TreeMap<Integer, Map<Integer, String>>();
 		headerFile = null;
 		factor = 1;
+		noDataValue = -1;
 	}
 	
 	public EcoPaysageProcedure build(){
@@ -202,11 +208,19 @@ public class EcoPaysageManager {
 	public void setScales(int[] scales) {
 		this.scales = scales;
 	}
+	
+	public void setUnfilters(int[] unfilters) {
+		this.unfilters = unfilters;
+	}
 
 	public void setCodes(int[] codes){
 		setCompositionMetrics(codes);
 		setConfigurationMetrics(codes);
 		setInitMetrics(true);
+	}
+	
+	public void setNoDataValue(int noDataValue) {
+		this.noDataValue = noDataValue;
 	}
 	
 	private void setInitMetrics(boolean initMetrics) {
@@ -407,6 +421,17 @@ public class EcoPaysageManager {
 	
 	public int[] scales() {
 		return scales;
+	}
+	
+	public int[] unfilters() {
+		if(unfilters == null) {
+			unfilters = new int[] {noDataValue()};
+		}
+		return unfilters;
+	}
+	
+	public int noDataValue() {
+		return noDataValue;
 	}
 	
 	public boolean hasMultipleScales() {

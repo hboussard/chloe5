@@ -8,6 +8,8 @@ public class TabClusteringOutput extends Analysis {
 	
 	private double totalSurface;
 	
+	private double totalSurfaceCarre;
+	
 	private int[] counts;
 	
 	private int[] sizes;
@@ -27,6 +29,8 @@ public class TabClusteringOutput extends Analysis {
 	private int[] nbPatches;
 	
 	private double[] totalSurfaces;
+	
+	private double[] totalSurfacesCarres;
 	
 	private double[] maxSurfaces;
 	
@@ -48,6 +52,10 @@ public class TabClusteringOutput extends Analysis {
 		return totalSurface;
 	}
 	
+	public double getTotalSurfaceCarre(){
+		return totalSurfaceCarre;
+	}
+	
 	public double getMaxSurface(){
 		return maxSurface;
 	}
@@ -60,6 +68,10 @@ public class TabClusteringOutput extends Analysis {
 		return totalSurfaces[v];
 	}
 	
+	public double getTotalSurfaceCarre(int v){
+		return totalSurfacesCarres[v];
+	}
+	
 	public double getMaxSurface(int v){
 		return maxSurfaces[v];
 	}
@@ -68,6 +80,7 @@ public class TabClusteringOutput extends Analysis {
 	protected void doInit() {
 		nbPatch = 0;
 		totalSurface = 0;
+		totalSurfaceCarre = 0;
 		int vMax = 0;
 		for(float vC : tabCluster){
 			if(vC != noDataValue && vC != 0){
@@ -86,6 +99,7 @@ public class TabClusteringOutput extends Analysis {
 		
 		nbPatches = new int[vMax+1];
 		totalSurfaces = new double[vMax+1];
+		totalSurfacesCarres = new double[vMax+1];
 		maxSurfaces = new double[vMax+1];
 	}
 	
@@ -124,13 +138,18 @@ public class TabClusteringOutput extends Analysis {
 			totalSurfaces[i] *= Math.pow(cellSize, 2)/10000.0;
 		}
 		
-		maxSurface = 0; 
+		maxSurface = 0;
+		double surfaceCarre;
 		ind = 0;
 		for(int s : sizes){
-			maxSurface = Math.max(maxSurface, s);
 			if(s > 0){
 				cover = values[ind];
+				maxSurface = Math.max(maxSurface, s);
 				maxSurfaces[cover] = Math.max(maxSurfaces[cover], s);
+				
+				surfaceCarre = Math.pow(s*Math.pow(cellSize, 2)/10000.0, 2);
+				totalSurfaceCarre += surfaceCarre;
+				totalSurfacesCarres[cover] += surfaceCarre;
 			}
 			ind++;
 		}

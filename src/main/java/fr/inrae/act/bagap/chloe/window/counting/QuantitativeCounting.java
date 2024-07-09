@@ -4,12 +4,12 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 	
 	private double sum, squareSum, minimum, maximum;
 	
-	public QuantitativeCounting(double theoriticalSize) {
-		super(theoriticalSize);
+	public QuantitativeCounting(double resolution, double theoriticalSize) {
+		super(resolution, theoriticalSize);
 	}
 	
-	public QuantitativeCounting() {
-		this(0);
+	public QuantitativeCounting(double resolution) {
+		this(resolution, 0);
 	}
 	
 	/**

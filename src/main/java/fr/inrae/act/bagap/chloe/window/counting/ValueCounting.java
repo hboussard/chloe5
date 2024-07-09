@@ -14,14 +14,14 @@ public class ValueCounting extends Counting implements ValueCountingInterface {
 	
 	private int countClass;
 	
-	public ValueCounting(int[] values, double theoreticalSize){
-		super(theoreticalSize);
+	public ValueCounting(double resolution, int[] values, double theoreticalSize){
+		super(resolution, theoreticalSize);
 		this.values = values;
 		this.countValues = new HashMap<Integer, Double>();
 	}
 	
-	public ValueCounting(int[] values){
-		this(values, 0);
+	public ValueCounting(double resolution, int[] values){
+		this(resolution, values, 0);
 	}
 	
 	/**

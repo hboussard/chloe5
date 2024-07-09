@@ -6,8 +6,8 @@ public class SourceErosionCounting extends Counting implements SourceErosionCoun
 	
 	private double intensity;
 	
-	public SourceErosionCounting(double theoreticalSize){
-		super(theoreticalSize);
+	public SourceErosionCounting(double resolution, double theoreticalSize){
+		super(resolution, theoreticalSize);
 	}
 	/*
 	public ContinuityCounting(){

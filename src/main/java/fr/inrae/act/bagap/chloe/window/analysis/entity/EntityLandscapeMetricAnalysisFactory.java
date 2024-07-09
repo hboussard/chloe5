@@ -182,7 +182,7 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 			
 			kernel = new EntityQuantitativeKernel(Raster.getNoDataValue());
 			
-			counting = new QuantitativeCounting();
+			counting = new QuantitativeCounting(inCellSize);
 						
 		}else{ // qualitative
 			
@@ -217,7 +217,7 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 				
 				kernel = new EntityCountValueKernel(Raster.getNoDataValue(), values);
 				
-				counting = new ValueCounting(values);
+				counting = new ValueCounting(inCellSize, values);
 				
 			}else if(MetricManager.hasOnlyCoupleMetric(metrics)){
 				
@@ -227,7 +227,7 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 				
 				kernel = new EntityCountCoupleKernel(Raster.getNoDataValue(), values);
 				
-				counting = new CoupleCounting(values.length, couples);
+				counting = new CoupleCounting(inCellSize, values.length, couples);
 			
 			}else{
 				
@@ -237,7 +237,7 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 				
 				kernel = new EntityCountValueAndCoupleKernel(Raster.getNoDataValue(), values);
 				
-				counting = new ValueAndCoupleCounting(values, couples);
+				counting = new ValueAndCoupleCounting(inCellSize, values, couples);
 				
 			}
 		}

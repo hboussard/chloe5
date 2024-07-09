@@ -6,8 +6,8 @@ public class DegatErosionCounting extends Counting implements DegatErosionCounti
 	
 	private double intensity;
 	
-	public DegatErosionCounting(double theoreticalSize){
-		super(theoreticalSize);
+	public DegatErosionCounting(double resolution, double theoreticalSize){
+		super(resolution, theoreticalSize);
 	}
 	/*
 	public ContinuityCounting(){

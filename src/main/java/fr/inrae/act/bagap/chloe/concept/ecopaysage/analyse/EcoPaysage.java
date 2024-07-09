@@ -46,7 +46,13 @@ public class EcoPaysage {
 		return codes;
 	}
 	
+	/*
 	public static void calculMetrics(String metricsFile, String inputRaster, int radius, List<String> compoMetrics, List<String> configMetrics) {
+		calculMetrics(metricsFile, inputRaster, radius, compoMetrics, configMetrics, new int[]{-1});
+	}
+	*/
+	
+	public static void calculMetrics(String metricsFile, String inputRaster, int radius, List<String> compoMetrics, List<String> configMetrics, int[] unfilters) {
 		
 		Coverage cov = CoverageManager.getCoverage(inputRaster);
 		EnteteRaster entete = cov.getEntete();
@@ -65,7 +71,7 @@ public class EcoPaysage {
 		}
 		builder.addWindowSize(ws);
 		builder.setDisplacement(20);
-		builder.setUnfilters(new int[]{-1});
+		builder.setUnfilters(unfilters);
 		builder.addCsvOutput(metricsFile);
 		
 		LandscapeMetricAnalysis analysis = builder.build();
@@ -408,7 +414,7 @@ public class EcoPaysage {
 				x = CoordinateManager.getLocalX(entete, Double.parseDouble(dataXY[index][0]));
 				y = CoordinateManager.getLocalY(entete, Double.parseDouble(dataXY[index][1]));
 				if(x%factor == 0 && y%factor == 0) {
-					//System.out.println(index+" / "+size);
+					System.out.println(index+" / "+size);
 					stringValues = line.split(";");
 					values = new double[stringValues.length];
 					for(int i=0; i<stringValues.length; i++) {
@@ -566,9 +572,13 @@ public class EcoPaysage {
 	}
 	
 	
-	public static EnteteRaster getHeader(String headerFile) {
+	public static EnteteRaster getHeader(String headerFile, int noDataValue) {
 	
-		return EnteteRaster.read(headerFile);
+		EnteteRaster entete = EnteteRaster.read(headerFile);
+		
+		entete.setNoDataValue(noDataValue);
+		
+		return entete;
 	}
 	
 	public static void exportMap(String outputRaster, String ecoFile, int k, EnteteRaster header) {

@@ -19,6 +19,7 @@ NC-hete;couple;other;fr.inrae.act.bagap.chloe.window.metric.couple.CountHeteroge
 pNC-hete;couple;other;fr.inrae.act.bagap.chloe.window.metric.couple.RateHeterogeneousCouple;1
 HET;couple;other;fr.inrae.act.bagap.chloe.window.metric.couple.HeterogeneityIndex;1
 HET-frag;couple;other;fr.inrae.act.bagap.chloe.window.metric.couple.HeterogeneityFragmentationIndex;1
+HET-config;couple;other;fr.inrae.act.bagap.chloe.window.metric.couple.HeterogeneityConfigurationIndex;1
 average;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.AverageMetric;3
 sum;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.SumMetric;3
 standard_deviation;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.StandardDeviationMetric;3
@@ -44,8 +45,8 @@ AI-class;couple;value;fr.inrae.act.bagap.chloe.window.metric.couple.AggregationC
 AI;couple;other;fr.inrae.act.bagap.chloe.window.metric.couple.AggregationIndex;1
 AIm;couple;value;fr.inrae.act.bagap.chloe.window.metric.couple.AggregationIndexMultiple;1
 AI2m;couple;value;fr.inrae.act.bagap.chloe.window.metric.couple.AggregationIndexMultiple2;1
-EMS;value;other;fr.inrae.act.bagap.chloe.window.metric.value.EffectiveMeshSizeMetric;1
-EMS-class;value;value;fr.inrae.act.bagap.chloe.window.metric.value.EffectiveMeshSizeClassMetric;1
+EMS;patch;other;fr.inrae.act.bagap.chloe.window.metric.patch.EffectiveMeshSizeMetric;4
+EMS-class;patch;value;fr.inrae.act.bagap.chloe.window.metric.patch.EffectiveMeshSizeClassMetric;4
 Majority;value;other;fr.inrae.act.bagap.chloe.window.metric.value.MajorityClassMetric;1
 slope-direction;slope;other;fr.inrae.act.bagap.chloe.window.metric.slope.SlopeDirectionMetric;6
 slope-intensity;slope;other;fr.inrae.act.bagap.chloe.window.metric.slope.SlopeIntensityMetric;6

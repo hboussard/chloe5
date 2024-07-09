@@ -35,7 +35,7 @@ public class EPPMapping extends EcoPaysageProcedure {
 		
 		System.out.println("recuperation de l'entete raster");
 		
-		EnteteRaster header = EcoPaysage.getHeader(manager().headerFile());
+		EnteteRaster header = EcoPaysage.getHeader(manager().headerFile(), manager().noDataValue());
 		
 		for(int k : manager().classes()) {
 			

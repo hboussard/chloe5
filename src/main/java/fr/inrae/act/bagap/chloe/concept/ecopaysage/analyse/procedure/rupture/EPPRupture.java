@@ -35,7 +35,7 @@ public class EPPRupture extends EcoPaysageProcedure {
 		
 		System.out.println("recuperation de l'entete raster");
 		
-		EnteteRaster header = EcoPaysage.getHeader(manager().headerFile());
+		EnteteRaster header = EcoPaysage.getHeader(manager().headerFile(), manager().noDataValue());
 		
 		System.out.println("analyse de fronts de rupture");
 		
