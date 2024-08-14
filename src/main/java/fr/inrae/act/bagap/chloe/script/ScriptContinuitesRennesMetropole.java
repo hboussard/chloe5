@@ -1398,13 +1398,13 @@ public class ScriptContinuitesRennesMetropole {
 		
 		String path = "G:/AUDIAR/Donn�es2Hugues/Donn�es2Hugues/ZonesHumides/";
 		Coverage cov2;
-		cov2 = ShapeFile2CoverageConverter.getSurfaceCoverage(data, path+"izh_sage_vilaine/izh_sage_vilaine.shp", "code", entete);
+		cov2 = ShapeFile2CoverageConverter.getSurfaceCoverage(data, entete, path+"izh_sage_vilaine/izh_sage_vilaine.shp", "code");
 		cov2.dispose();
 		
-		cov2 = ShapeFile2CoverageConverter.getSurfaceCoverage(data, path+"zone_humide_sage_couesnon/zone_humide_sage_couesnon.shp", "code", entete);
+		cov2 = ShapeFile2CoverageConverter.getSurfaceCoverage(data, entete, path+"zone_humide_sage_couesnon/zone_humide_sage_couesnon.shp", "code");
 		cov2.dispose();
 		
-		cov2 = ShapeFile2CoverageConverter.getSurfaceCoverage(data, path+"zonehumidesagerfbb/zonehumidesagerfbb.shp", "code", entete);
+		cov2 = ShapeFile2CoverageConverter.getSurfaceCoverage(data, entete, path+"zonehumidesagerfbb/zonehumidesagerfbb.shp", "code");
 		cov2.dispose();
 		
 		CoverageManager.write(path+"zone_humide.tif", data, entete);
@@ -1671,7 +1671,7 @@ public class ScriptContinuitesRennesMetropole {
 		Coverage cov = CoverageManager.getCoverage("G:/data/sig/grand_ouest/GO_2021_ebr.tif");
 		EnteteRaster entete = cov.getEntete();
 		
-		float[] data = cov.getData(EnteteRaster.getROI(entete, new Envelope(enteteRef.minx(), enteteRef.maxx(), enteteRef.miny(), enteteRef.maxy())));
+		float[] data = cov.getData(EnteteRaster.getROI(entete, enteteRef.getEnvelope()));
 		cov.dispose();
 		
 		//System.out.println(enteteRef);
@@ -1697,7 +1697,7 @@ public class ScriptContinuitesRennesMetropole {
 		for(String file : new File(path+"CoSIA_D035_2020/").list()){
 			if(file.endsWith(".shp")){
 				System.out.println(file);
-				Coverage cov2 = ShapeFile2CoverageConverter.getSurfaceCoverage(data, path+"CoSIA_D035_2020/"+file, "numero", entete);
+				Coverage cov2 = ShapeFile2CoverageConverter.getSurfaceCoverage(data, entete, path+"CoSIA_D035_2020/"+file, "numero");
 				data = cov2.getData();
 				cov2.dispose();
 			}

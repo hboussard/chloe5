@@ -15,8 +15,8 @@ public class ScriptEcopaysagesBretagne {
 
 	public static void main(String[] args) {
 		
-		//int[] scales = new int[] {2500}; // m
-		//ecolandscape(scales);
+		int[] scales = new int[] {500, 3000}; // m
+		ecolandscape(scales);
 		
 		/*
 		int[] echelles = new int[] {500,1000,1500,2000,2500,3000};
@@ -32,7 +32,7 @@ public class ScriptEcopaysagesBretagne {
 			}	
 		}*/
 		
-		sumRuptures("D:/data/sig/bretagne/ecopaysage/sum_rupture.tif", "D:/data/sig/bretagne/ecopaysage/rupture/");
+		//sumRuptures("D:/data/sig/bretagne/ecopaysage/sum_rupture.tif", "D:/data/sig/bretagne/ecopaysage/rupture/");
 	}
 	
 	private static void sumRuptures(String ruptureRaster, String folder) {
@@ -69,9 +69,9 @@ public class ScriptEcopaysagesBretagne {
 	private static void ecolandscape(int[] scales) {
 		
 		EcoPaysageManager epManager = new EcoPaysageManager("rupture");
-		epManager.setInputRaster("D:/data/sig/bretagne/Bretagne_2019_dispositif_bocage_ebr.tif");
+		epManager.setInputRaster("F:/data/sig/bretagne/Bretagne_2019_dispositif_bocage_ebr.tif");
 		epManager.setScales(scales);
-		epManager.setOutputFolder("D:/data/sig/bretagne/ecopaysage/");
+		epManager.setOutputFolder("F:/data/sig/bretagne/ecopaysage/");
 		epManager.setClasses(new int[]{10,11,12,13,14,15});
 		
 		EcoPaysageProcedure epProcedure = epManager.build();

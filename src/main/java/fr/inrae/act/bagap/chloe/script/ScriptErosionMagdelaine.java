@@ -32,7 +32,7 @@ public class ScriptErosionMagdelaine {
 	//private static final String bv_os_prairie = path+"bv_magdelaine_OS_amenagement.tif";
 	
 	// initial
-	private static final int quantitetEAU = 6; // mm
+	private static final int quantitetEAU = 10; // mm
 	private static final int displacement = 1;
 	
 	private static final String bv_slope_intensity = "bv_slope_intensity.tif";
@@ -71,7 +71,7 @@ public class ScriptErosionMagdelaine {
 	
 	private static void analyseErosion() {
 		
-		String outputPath = path+"test_"+quantitetEAU+"mm/";
+		String outputPath = path+"test2_"+quantitetEAU+"mm/";
 		
 		Util.createAccess(outputPath);
 		

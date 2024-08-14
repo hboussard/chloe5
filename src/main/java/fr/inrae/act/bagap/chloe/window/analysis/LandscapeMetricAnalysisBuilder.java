@@ -96,6 +96,8 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	
 	private RasterTypeMime typeMime;
 	
+	private String thematicDistanceFile;
+	
 	/*
 	@Override
 	public LandscapeMetricAnalysisBuilder clone() {
@@ -168,6 +170,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		this.datas = null;
 		this.coverageOutputs = new HashSet<CoverageOutput>();
 		this.typeMime = RasterTypeMime.GEOTIFF;
+		this.thematicDistanceFile = null;
 	}
 	
 	@Override
@@ -348,6 +351,10 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	@Override
 	public void setMetrics(Set<Metric> metrics) {
 		this.metrics = metrics;
+	}
+	
+	public void setThematicDistanceFile(String thematicDistanceFile) {
+		this.thematicDistanceFile = thematicDistanceFile;
 	}
 
 	@Override
@@ -696,6 +703,10 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		return metrics;
 	}
 
+	public String getThematicDistanceFile() {
+		return thematicDistanceFile;
+	}
+	
 	/*
 	public Set<CountingObserver> getObservers() {
 		return observers;

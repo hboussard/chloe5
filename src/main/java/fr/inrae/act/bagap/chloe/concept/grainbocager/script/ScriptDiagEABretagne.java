@@ -2,10 +2,7 @@ package fr.inrae.act.bagap.chloe.concept.grainbocager.script;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.geotools.data.shapefile.dbf.DbaseFileHeader;
@@ -17,6 +14,8 @@ import org.jumpmind.symmetric.csv.CsvWriter;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
+import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
+import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.farm.DiagnosticGrainBocagerExploitation;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.farm.DiagnosticGrainBocagerExploitationBuilder;
 
@@ -24,30 +23,50 @@ public class ScriptDiagEABretagne {
 
 	public static void main(String[] args) {
 		
+		test();
+		//script();
+		
+	}
+	
+	private static void test() {
+
+		String inputPath = "F:/FDCCA/diag_ea/data/analyse_bretagne/";
+		String outputPath = "F:/FDCCA/diag_ea/data/analyse_bretagne/test/";
+		
+		GrainBocagerManager gbManager = new GrainBocagerManager("grain_bocager_calculation");
+		gbManager.setBocage(inputPath+"hauteur_boisement_total_014033171_existant.tif");
+		gbManager.setOutputFolder(outputPath);
+		gbManager.setOuputPrefix("test");
+		
+		GrainBocagerProcedure gbProcedure = gbManager.build();
+		
+		gbProcedure.run();
+	}
+	
+	private static void script() {
+
 		//int max = 23738;
 		int max = 100;
 		
 		//String[] codesExploitation = recuperationCodesExploitation();
-		String[] codesExploitation = new String[]{"014024505"};
+		String[] codesExploitation = new String[]{"014033171"};
 		System.out.println(codesExploitation.length);
 		
-		CsvWriter writer = DiagnosticGrainBocagerExploitation.prepareIndices("G:/FDCCA/diag_ea/data/analyse_bretagne/analyse_bretagne_test.csv");
-		
+		CsvWriter writer = DiagnosticGrainBocagerExploitation.prepareIndices("F:/FDCCA/diag_ea/data/analyse_bretagne/analyse_bretagne_test.csv");
 		
 		int index = 0;
 		for(String codeExploitation : codesExploitation){
 			System.out.println("diag EA sur exploitation "+codeExploitation);
-			scriptExploitation(codeExploitation, 50, writer);
+			scriptExploitation(codeExploitation, 5, writer);
 			if(++index >= max){
 				break;
 			}
 		}
 		
 		DiagnosticGrainBocagerExploitation.fermeIndices(writer);
-		
 	}
 	
-	private static String[] recuperationCodesExploitation(){
+ 	private static String[] recuperationCodesExploitation(){
 		String parcellaire = "G:/data/sig/RPG/rpg-2020/surfaces_2020_parcelles_graphiques_constatees_FRCB.shp";
 		String attributeCodeEA = "pacage";
 		
@@ -96,14 +115,14 @@ public class ScriptDiagEABretagne {
 		
 		DiagnosticGrainBocagerExploitationBuilder builder = new DiagnosticGrainBocagerExploitationBuilder();
 		
-		builder.setOutputPath("G:/FDCCA/diag_ea/data/analyse_bretagne/");
+		builder.setOutputPath("F:/FDCCA/diag_ea/data/analyse_bretagne/");
 		builder.setCsvWriter(writer);
-		builder.setBocage("G:/FDCCA/diag_ea/data/mnhc/");
-		builder.setParcellaire("G:/data/sig/RPG/rpg-2020/surfaces_2020_parcelles_graphiques_constatees_FRCB.shp");
+		builder.setBocage("F:/FDCCA/diag_ea/data/mnhc/");
+		builder.setParcellaire("F:/data/sig/RPG/rpg-2020/surfaces_2020_parcelles_graphiques_constatees_FRCB.shp");
 		builder.setAttributCodeEA("pacage");
-		builder.setZoneBocageExploitation("G:/data/sig/RPG/rpg-2020/surfaces_2020_parcelles_graphiques_constatees_FRCB.shp");
+		builder.setZoneBocageExploitation("F:/data/sig/RPG/rpg-2020/surfaces_2020_parcelles_graphiques_constatees_FRCB.shp");
 		builder.setBufferZoneBocageExploitation(10);
-		builder.setSeuil(0.35);
+		builder.setSeuil(0.33);
 		builder.setCodeEA(exploitation);
 		builder.addScenario("existant");
 		builder.setOutCellSize(outCellSize);

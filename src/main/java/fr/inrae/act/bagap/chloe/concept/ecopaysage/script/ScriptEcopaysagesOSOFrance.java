@@ -37,7 +37,7 @@ public class ScriptEcopaysagesOSOFrance {
 		epManager.setScales(scales);
 		epManager.setFactor(15);
 		epManager.setOutputFolder("D:/sig/oso_thiea/ecopaysage/");
-		epManager.setClasses(new int[]{20,25,30});
+		epManager.setClasses(new int[]{5, 10 ,15, 20, 25, 30, 35, 40, 45, 50});
 		
 		EcoPaysageProcedure epProcedure = epManager.build();
 		

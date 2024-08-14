@@ -50,7 +50,7 @@ public class EcoPaysageManager {
 	
 	private int factor; // facteur de clusterisation
 	
-	private Map<Integer, String> ecoFiles, mapFiles, infoFiles, gradientFiles;
+	private Map<Integer, String> ecoFiles, mapFiles, infoFiles, gradientFiles, thematicDistanceFiles;
 	
 	private Map<Integer, Map<Integer, String>> gradientMapFiles;
 	
@@ -117,6 +117,7 @@ public class EcoPaysageManager {
 		mapFiles = new TreeMap<Integer, String>();
 		infoFiles = new TreeMap<Integer, String>();
 		gradientFiles = new TreeMap<Integer, String>();
+		thematicDistanceFiles = new TreeMap<Integer, String>();
 		gradientMapFiles = new TreeMap<Integer, Map<Integer, String>>();
 		headerFile = null;
 		factor = 1;
@@ -293,6 +294,11 @@ public class EcoPaysageManager {
 		infoFiles.put(k, infoFile);
 	}
 	
+	public void setThematicDistanceFile(int k, String thematicDistanceFile) {
+		Util.createAccess(thematicDistanceFile);
+		thematicDistanceFiles.put(k, thematicDistanceFile);
+	}
+	
 	public void setMapFile(int k, String mapFile) {
 		Util.createAccess(mapFile);
 		mapFiles.put(k, mapFile);
@@ -411,6 +417,10 @@ public class EcoPaysageManager {
 		return inputRaster;
 	}
 	
+	public String carto() {
+		return carto;
+	}
+	
 	public String outputFolder() {
 		return outputFolder;
 	}
@@ -484,6 +494,19 @@ public class EcoPaysageManager {
 		return infoFiles.get(k);
 	}
 	
+	public String thematicDistanceFile(int k) {
+		if(!thematicDistanceFiles.containsKey(k)) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(outputFolder()+"distance_ecopaysages_"+carto+"_"+k+"classes");
+			for(int scale : scales) {
+				sb.append("_"+scale+"m");
+			}
+			sb.append(".txt");
+			setThematicDistanceFile(k, sb.toString());
+		}
+		return thematicDistanceFiles.get(k);
+	}
+	
 	public String mapFile(int k) {
 		if(!mapFiles.containsKey(k)) {
 			StringBuilder sb = new StringBuilder();
@@ -521,6 +544,15 @@ public class EcoPaysageManager {
 			setGradientMapFile(k, ik, sb.toString());
 		}
 		return gradientMapFiles.get(k).get(ik);
+	}
+	
+	public String[] thematicDistanceFiles() {
+		if(thematicDistanceFiles.size() == 0) {
+			for(int k : classes()) {
+				thematicDistanceFile(k);
+			}
+		}
+		return thematicDistanceFiles.values().toArray(new String[thematicDistanceFiles.size()]);
 	}
 	
 	public String[] mapFiles() {

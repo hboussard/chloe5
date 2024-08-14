@@ -37,9 +37,16 @@ public class EPPRupture extends EcoPaysageProcedure {
 		
 		EnteteRaster header = EcoPaysage.getHeader(manager().headerFile(), manager().noDataValue());
 		
+		System.out.println("genereation des fichiers de distance thematique");
+		
+		for(int k : manager().classes()) {
+			
+			EcoPaysage.generateThematicDistanceFile(manager().infoFile(k), manager().thematicDistanceFile(k));	
+		}
+		
 		System.out.println("analyse de fronts de rupture");
 		
-		EcoPaysage.analyseRuptures(manager().ruptureFile(), manager().mapFiles(), header);
+		EcoPaysage.analyseRuptures(manager().ruptureFile(), manager().mapFiles(), manager().thematicDistanceFiles(), header);
 		
 	}
 	

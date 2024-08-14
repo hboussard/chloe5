@@ -60,17 +60,17 @@ public class ScriptErosionRuissellement {
 	public static void main(String[] args) {
 		
 		// initialisation
-		//convertRGE();
-		//recuperationBV();
+		convertRGE();
+		recuperationBV();
 		recuperationAltitude();
 		//cleanAltitude();
 		//detectionPente();
 		//detectioncreux();
 		//cleanIntensite();
-		//recuperationTronconHydrographique();
+		recuperationTronconHydrographique();
 		//recuperationOccupationSol();
 		//recuperationSurfaceHydrographique();
-		//recuperationReseauHydrographique();
+		recuperationReseauHydrographique();
 		
 		// situation
 		generationFrictionAbattement();

@@ -59,6 +59,7 @@ import fr.inrae.act.bagap.chloe.window.kernel.sliding.grainbocager.GrainBocagerS
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.grainbocager.GrainBocagerSlidingDistanceBocageKernel;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
+import fr.inrae.act.bagap.chloe.window.metric.ThematicDistanceMetric;
 import fr.inrae.act.bagap.chloe.window.output.AsciiGridOutput;
 import fr.inrae.act.bagap.chloe.window.output.CoverageOutput;
 import fr.inrae.act.bagap.chloe.window.output.CsvOutput;
@@ -803,6 +804,13 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 			
 			
 			if (MetricManager.hasOnlyQualitativeMetric(metrics)) { // qualitative
+				
+				// initialisation des metriques de distance thematique
+				for(Metric m : metrics) {
+					if(m instanceof ThematicDistanceMetric) {
+						MetricManager.initThematicDistanceMetric(builder.getThematicDistanceFile(), (ThematicDistanceMetric) m, values);
+					}
+				}
 				
 				// recuperation des couples
 				float[] couples = null;

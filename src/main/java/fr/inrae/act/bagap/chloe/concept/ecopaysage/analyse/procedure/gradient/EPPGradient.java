@@ -1,8 +1,6 @@
 package fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.gradient;
 
 import java.io.File;
-import java.util.Map;
-
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.EcoPaysage;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageManager;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageProcedure;

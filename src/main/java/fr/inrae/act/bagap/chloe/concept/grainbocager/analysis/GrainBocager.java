@@ -90,8 +90,12 @@ public class GrainBocager {
 		// detection des types de boisement
 		Coverage covTypeBoisement = detectionTypeBoisement(dataHauteurBoisement, entete, fastMode);
 		
+		CoverageManager.write("F:/FDCCA/diag_ea/data/analyse_bretagne/type_boisement.tif", covTypeBoisement.getData(), covTypeBoisement.getEntete());
+		
 		// calcul de distances ponderees
 		Coverage covDistanceInfluence = calculDistancesInfluences(dataHauteurBoisement, covTypeBoisement.getData(), entete, fastMode);
+		
+		CoverageManager.write("F:/FDCCA/diag_ea/data/analyse_bretagne/distance_influence.tif", covDistanceInfluence.getData(), covDistanceInfluence.getEntete());
 		
 		// moyenne globale du grain bocager
 		return calculGrainBocager(covDistanceInfluence, windowRadius, outputCellSize, fastMode);

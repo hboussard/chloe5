@@ -1,6 +1,7 @@
 package fr.inrae.act.bagap.chloe.window.metric;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
@@ -12,6 +13,9 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 import org.jumpmind.symmetric.csv.CsvReader;
 
+import fr.inra.sad.bagap.apiland.analysis.process.metric.DistanceValueMetric;
+import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inra.sad.bagap.apiland.core.util.DistanceValueMatrix;
 import fr.inrae.act.bagap.chloe.window.metric.basic.BasicMetric;
 import fr.inrae.act.bagap.chloe.window.metric.continuity.ContinuityMetric;
 import fr.inrae.act.bagap.chloe.window.metric.couple.CoupleMetric;
@@ -21,6 +25,7 @@ import fr.inrae.act.bagap.chloe.window.metric.patch.PatchMetric;
 import fr.inrae.act.bagap.chloe.window.metric.quantitative.QuantitativeMetric;
 import fr.inrae.act.bagap.chloe.window.metric.slope.SlopeMetric;
 import fr.inrae.act.bagap.chloe.window.metric.value.ValueMetric;
+import weka.gui.SysErrLog;
 
 public class MetricManager {
 
@@ -408,6 +413,40 @@ public class MetricManager {
 			}
 		}
 		return cMetrics;
+	}
+	
+	public static void initThematicDistanceMetric(String distanceFile, ThematicDistanceMetric metric, int[] values) {
+		
+		if(new File(distanceFile).exists()) {
+			try {
+				CsvReader cr = new CsvReader(distanceFile);
+				cr.setDelimiter(';');
+				cr.readHeaders();
+				int max = -1;
+				for(int h=1; h<cr.getHeaderCount(); h++) {
+					max = Math.max(max, Integer.parseInt(cr.getHeader(h)));
+				}
+				
+				float[][] distances = new float[max+1][max+1];
+				
+				while(cr.readRecord()){
+					for(int v1 : values){
+						int v2 = Integer.parseInt(cr.get("distance"));
+						float d = Float.parseFloat(cr.get(v1+""));
+						distances[v1][v2] = d;
+						distances[v2][v1] = d;
+					}
+				}
+				cr.close();
+			
+				metric.setThematicDistance(distances);
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}else {
+			System.err.println("WARNING: Thematic distance file "+distanceFile+" doesn't exists.");
+		}
 	}
 	
 }

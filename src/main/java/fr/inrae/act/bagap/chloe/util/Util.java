@@ -14,8 +14,10 @@ import java.util.TreeSet;
 
 import org.jumpmind.symmetric.csv.CsvReader;
 
+import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
 import fr.inrae.act.bagap.raster.TabCoverage;
 
@@ -161,5 +163,86 @@ public class Util {
 		}
 		
 		return outData;
+	}
+	
+	public static Coverage extendAndFill(Coverage inCoverage, Coverage refCoverage, int displacement) {
+		
+		EnteteRaster outEntete = refCoverage.getEntete();
+		float[] refData = refCoverage.getData();
+		int outWidth = outEntete.width();
+		int outHeight = outEntete.height();
+		
+		EnteteRaster inEntete = inCoverage.getEntete();
+		float[] inData = inCoverage.getData(EnteteRaster.getROI(inEntete, outEntete.getEnvelope()));
+		inEntete = EnteteRaster.getEntete(inEntete, outEntete.getEnvelope());
+		int inWidth = inEntete.width();
+		int inHeight = inEntete.height();
+		
+		float[] outData = new float[outWidth*outHeight];
+		
+		for(int j=0; j<outHeight; j++) {
+			int y = CoordinateManager.getLocalY(inEntete, CoordinateManager.getProjectedY(outEntete, j));
+			for(int i=0; i<outWidth; i++) {
+				int x = CoordinateManager.getLocalX(inEntete, CoordinateManager.getProjectedX(outEntete, i));
+				
+				outData[j*outWidth + i] = inData[y*inWidth + x];
+			}	
+		}
+		
+		float value;
+		for(int j=0; j<inHeight; j++) {
+			for(int i=0; i<inWidth; i++) {
+				value = inData[j*inWidth + i];
+				for(int y=(j*displacement); y<((j*displacement)+displacement) && y<outHeight; y++) {
+					for(int x=(i*displacement); x<((i*displacement)+displacement) && x<outWidth; x++) {
+						if(refData[y*outWidth + x] != outEntete.noDataValue()) {
+							outData[y*outWidth + x] = value;	
+						}else {
+							outData[y*outWidth + x] = outEntete.noDataValue();
+						}
+					}
+				}
+			}
+		}
+		
+		return new TabCoverage(outData, outEntete);
+	}
+	
+	public static Coverage extendAndFill(Coverage inCoverage, EnteteRaster outEntete, int displacement) {
+		
+		int outWidth = outEntete.width();
+		int outHeight = outEntete.height();
+		
+		EnteteRaster inEntete = inCoverage.getEntete();
+		float[] inData = inCoverage.getData(EnteteRaster.getROI(inEntete, outEntete.getEnvelope()));
+		inEntete = EnteteRaster.getEntete(inEntete, outEntete.getEnvelope());
+		int inWidth = inEntete.width();
+		int inHeight = inEntete.height();
+		
+		float[] outData = new float[outWidth*outHeight];
+		Arrays.fill(outData, outEntete.noDataValue());
+		
+		for(int j=0; j<outHeight; j++) {
+			int y = CoordinateManager.getLocalY(inEntete, CoordinateManager.getProjectedY(outEntete, j));
+			for(int i=0; i<outWidth; i++) {
+				int x = CoordinateManager.getLocalX(inEntete, CoordinateManager.getProjectedX(outEntete, i));
+				
+				outData[j*outWidth + i] = inData[y*inWidth + x];
+			}	
+		}
+		
+		float value;
+		for(int j=0; j<inHeight; j++) {
+			for(int i=0; i<inWidth; i++) {
+				value = inData[j*inWidth + i];
+				for(int y=(j*displacement); y<((j*displacement)+displacement) && y<outHeight; y++) {
+					for(int x=(i*displacement); x<((i*displacement)+displacement) && x<outWidth; x++) {
+						outData[y*outWidth + x] = value;
+					}
+				}
+			}
+		}
+		
+		return new TabCoverage(outData, outEntete);
 	}
 }

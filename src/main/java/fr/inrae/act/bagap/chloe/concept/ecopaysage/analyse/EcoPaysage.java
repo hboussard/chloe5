@@ -628,10 +628,11 @@ public class EcoPaysage {
 		
 	}
 	
-	public static void analyseRuptures(String outputRaster, String[] mapRasters, EnteteRaster entete) {
+	public static void analyseRuptures(String outputRaster, String[] mapRasters, String[] thematicDistanceFiles, EnteteRaster entete) {
 		
 		float[] outData = new float[entete.width()*entete.height()];
 		int size = mapRasters.length;
+		int ind = 0;
 		for(String mapRaster : mapRasters) {
 			
 			float[] localData = new float[entete.width()*entete.height()];
@@ -639,8 +640,12 @@ public class EcoPaysage {
 			LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
 			builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
 			builder.addRasterFile(mapRaster);
-			builder.addMetric("SHDI");
+			//builder.addMetric("SHDI");
+			builder.addMetric("RaoQ");
+			builder.setThematicDistanceFile(thematicDistanceFiles[ind++]);
 			builder.addWindowSize(7);
+			//builder.addWindowSize(21);
+			//builder.addWindowSize(51);
 			builder.setUnfilters(new int[]{-1});
 			builder.addTabOutput(localData);
 			LandscapeMetricAnalysis analysis = builder.build();
@@ -707,9 +712,60 @@ public class EcoPaysage {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+	}
 	
+	public static void generateThematicDistanceFile(String infoFile, String thematicDistanceFile) {
 		
+		try {	
+			Map<Integer, float[]> kmeans = new TreeMap<Integer, float[]>();
+			CsvReader crI = new CsvReader(infoFile);
+			crI.setDelimiter(';');
+			crI.readHeaders();
+			int k;
+			int max = -1;
+			while(crI.readRecord()) {
+				k = Integer.parseInt(crI.get("classe"));
+				max = Math.max(max, k);
+				float[] infos = new float[crI.getColumnCount()-1];
+				for(int i=1; i<crI.getColumnCount(); i++) {
+					infos[i-1] = Float.parseFloat(crI.get(i));
+				}
+				kmeans.put(k, infos);
+			}
+			crI.close();
+			
+			float[][] distance = new float[max+1][max+1];
+			for(Entry<Integer, float[]> e1 : kmeans.entrySet()) {
+				for(Entry<Integer, float[]> e2 : kmeans.entrySet()) {
+					if(e1.getKey() < e2.getKey()) {
+						float d = distance(e1.getValue(), e2.getValue());
+						distance[e1.getKey()][e2.getKey()] = d;
+						distance[e2.getKey()][e1.getKey()] = d;
+					}
+				}	
+			}
+			
+			CsvWriter cw = new CsvWriter(thematicDistanceFile);
+			cw.setDelimiter(';');
+			cw.write("distance");
+			for(Integer ki : kmeans.keySet()) {
+				cw.write(ki.toString());
+			}
+			cw.endRecord();
+			for(Integer k1 : kmeans.keySet()) {
+				cw.write(k1.toString());
+				for(Integer k2 : kmeans.keySet()) {
+					cw.write(distance[k1][k2]+"");	
+				}
+				cw.endRecord();
+			}
+			cw.close();
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private static float distance(float[] v1, float[] v2) {

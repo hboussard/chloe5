@@ -46,8 +46,8 @@ public class ScriptErosionCoterra {
 		Util.createAccess(output_path);
 		
 		// initialisation
-		//convertRGE();
-		//rasterizeBV();
+		convertRGE();
+		rasterizeBV();
 		//recuperationAltitude();
 		//recuperationOS();
 		//detectionPente();
@@ -352,22 +352,22 @@ public class ScriptErosionCoterra {
 		
 		for(String file : new File(path+inputPath).list()){ 
 			if(file.endsWith(".asc")){
-				convert(path, inputPath, outputPath, file);
+				convert(path, inputPath, outputPath, file, ".asc", ".tif", -1);
 			}
 		}
 	}
 	
-	private static void convert(String globalPath, String inputPath, String outputPath, String file) {
+	private static void convert(String globalPath, String inputPath, String outputPath, String file, String inputFormat, String outputFormat, int noDataValue) {
 		
 		Util.createAccess(globalPath+outputPath);
 		
 		Coverage cov = CoverageManager.getCoverage(globalPath+inputPath+file);
 		float[] data = cov.getData();
 		EnteteRaster entete = cov.getEntete();
-		entete.setNoDataValue(-1);
+		entete.setNoDataValue(noDataValue);
 		cov.dispose();
 		
-		CoverageManager.write(globalPath+outputPath+file.replace(".asc", ".tif"), data, entete);
+		CoverageManager.write(globalPath+outputPath+file.replace(inputFormat, outputFormat), data, entete);
 		
 	}
 	
