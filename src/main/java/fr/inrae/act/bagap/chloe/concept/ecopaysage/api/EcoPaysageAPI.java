@@ -64,6 +64,7 @@ public class EcoPaysageAPI {
 			importClasses(manager, properties);
 			importOutputFolder(manager, properties);
 			importDisplacement(manager, properties);
+			importFactor(manager, properties);
 		
 		} catch (NoParameterException e) {
 			e.printStackTrace();
@@ -153,6 +154,13 @@ public class EcoPaysageAPI {
 			}else if(prop.equalsIgnoreCase("square")) {
 				builder.setWindowDistanceType(WindowDistanceType.FAST_SQUARE);
 			}
+		}
+	}
+	
+	public static void importFactor(EcoPaysageManager builder, Properties properties) {
+		if(properties.containsKey("factor")){
+			int  prop = Integer.parseInt(properties.getProperty("factor"));
+			builder.setFactor(prop);
 		}
 	}
 	
