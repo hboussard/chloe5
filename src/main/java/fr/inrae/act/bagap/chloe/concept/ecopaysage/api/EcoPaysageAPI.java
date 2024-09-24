@@ -11,6 +11,7 @@ import java.util.Properties;
 import fr.inrae.act.bagap.chloe.api.NoParameterException;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageManager;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageProcedure;
+import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 
 public class EcoPaysageAPI {
 
@@ -57,6 +58,7 @@ public class EcoPaysageAPI {
 		
 			importForce(manager, properties);
 			importInputRaster(manager, properties);
+			importWindowDistanceType(manager, properties);
 			importXYFile(manager, properties);
 			importScales(manager, properties);
 			importClasses(manager, properties);
@@ -140,6 +142,17 @@ public class EcoPaysageAPI {
 		if(properties.containsKey("displacement")){
 			int  prop = Integer.parseInt(properties.getProperty("displacement"));
 			builder.setDisplacement(prop);
+		}
+	}
+	
+	public static void importWindowDistanceType(EcoPaysageManager builder, Properties properties) {
+		if(properties.containsKey("window_distance_type")){
+			String prop = properties.getProperty("window_distance_type");
+			if(prop.equalsIgnoreCase("gaussian")) {
+				builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+			}else if(prop.equalsIgnoreCase("square")) {
+				builder.setWindowDistanceType(WindowDistanceType.FAST_SQUARE);
+			}
 		}
 	}
 	

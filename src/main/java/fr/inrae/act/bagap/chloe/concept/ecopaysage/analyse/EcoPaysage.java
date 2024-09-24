@@ -52,7 +52,7 @@ public class EcoPaysage {
 	}
 	*/
 	
-	public static void calculMetrics(String metricsFile, String inputRaster, int radius, List<String> compoMetrics, List<String> configMetrics, int displacement, int[] unfilters) {
+	public static void calculMetrics(String metricsFile, String inputRaster, int radius, List<String> compoMetrics, List<String> configMetrics, WindowDistanceType distanceType, int displacement, int[] unfilters) {
 		
 		Coverage cov = CoverageManager.getCoverage(inputRaster);
 		EnteteRaster entete = cov.getEntete();
@@ -61,7 +61,7 @@ public class EcoPaysage {
 		//System.out.println(ws);
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
-		builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		builder.setWindowDistanceType(distanceType);
 		builder.setCoverage(cov);
 		for(String cpm : compoMetrics) {
 			builder.addMetric(cpm);

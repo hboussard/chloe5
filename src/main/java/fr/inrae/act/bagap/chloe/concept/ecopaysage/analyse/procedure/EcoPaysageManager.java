@@ -12,6 +12,7 @@ import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.mapping.EPP
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.rupture.EPPRuptureFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.standardization.EPPStandardizationFactory;
 import fr.inrae.act.bagap.chloe.util.Util;
+import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.EnteteRaster;
@@ -63,6 +64,8 @@ public class EcoPaysageManager {
 	private EnteteRaster inEntete;
 	
 	private int displacement;
+	
+	private WindowDistanceType distanceType;
 	
 	public EcoPaysageManager(String treatment){
 		setTreatment(treatment);
@@ -125,6 +128,7 @@ public class EcoPaysageManager {
 		factor = 1;
 		noDataValue = -1;
 		displacement = 20;
+		distanceType = WindowDistanceType.FAST_GAUSSIAN;
 	}
 	
 	public EcoPaysageProcedure build(){
@@ -328,6 +332,10 @@ public class EcoPaysageManager {
 		this.displacement = displacement;
 	}
 	
+	public void setWindowDistanceType(WindowDistanceType distanceType) {
+		this.distanceType = distanceType;
+	}
+	
 	// getters
 	
 	public boolean force() {
@@ -477,6 +485,10 @@ public class EcoPaysageManager {
 	
 	public int displacement() {
 		return displacement;
+	}
+	
+	public WindowDistanceType windowDistanceType() {
+		return distanceType;
 	}
 	
 	public String ecoFile(int k) {
