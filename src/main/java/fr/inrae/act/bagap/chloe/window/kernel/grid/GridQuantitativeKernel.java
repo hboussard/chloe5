@@ -11,7 +11,7 @@ public class GridQuantitativeKernel extends GridLandscapeMetricKernel {
 		
 		outDatas()[x][0] = 1; // filtre ok
 			
-		short v;
+		float v;
 		float nb_nodata = 0;
 		float nb = 0;
 		float sum = 0;
@@ -23,7 +23,7 @@ public class GridQuantitativeKernel extends GridLandscapeMetricKernel {
 				for(int lx=0; lx<gridSize(); lx++) {
 					if((x*gridSize() + lx) < width()){
 						
-						v = (short) inDatas()[((theY+y)*width()) + (x*gridSize() + lx)];	
+						v = inDatas()[((theY+y)*width()) + (x*gridSize() + lx)];	
 						nb += 1;
 						if(v == noDataValue()) {
 							nb_nodata += 1;

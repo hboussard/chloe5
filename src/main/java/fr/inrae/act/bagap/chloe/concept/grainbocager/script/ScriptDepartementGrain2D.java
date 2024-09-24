@@ -15,11 +15,12 @@ import fr.inrae.act.bagap.raster.converter.ShapeFile2CoverageConverter;
 
 public class ScriptDepartementGrain2D{
 
-	//private static final String path = "E:/FRC_AURA/data/grain2d/";
+	private static final String path = "E:/FRC_AURA/data/grain2d/";
 	//private static final String path = "E:/CERFE/grain2d/";
-	private static final String path = "E:/FRC_OCCITANIE/data/grain2d/";
+	//private static final String path = "E:/FRC_OCCITANIE/data/grain2d/";
 	
 	public static void main(String[] args) {
+		
 		/*
 		prepaMNH("01");
 		prepaMNH("03");
@@ -27,6 +28,8 @@ public class ScriptDepartementGrain2D{
 		prepaMNH("38");
 		prepaMNH("42");
 		*/
+		
+		
 		/*
 		calculGrainBocager5m("01");
 		calculGrainBocager5m("03");
@@ -64,8 +67,10 @@ public class ScriptDepartementGrain2D{
 		*/
 		
 		//analyseDepartement("31");
-		analyseDepartement("34");
-		analyseDepartement("81");
+		//analyseDepartement("34");
+		//analyseDepartement("81");
+		//analyseDepartement("43");
+		//analyseDepartement("69");
 	}
 	
 	private static void analyseDepartement(String codeDpt) {

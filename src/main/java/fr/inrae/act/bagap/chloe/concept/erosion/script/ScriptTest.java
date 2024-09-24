@@ -20,39 +20,50 @@ public class ScriptTest {
 		//String evenType = "HARD";
 		
 		
-		String bvShape, bvCode;
+		String bvShape, bvCode, bvAttribute;
 		String[] rge_altis, bd_topos;
+		
 		/*
 		// 0222 - Gardijol
 		bvShape = "C:/Data/projet/coterra/data/BV tests/Zone hydro Gardijol.shp";
+		bvAttribute = "code_zone";
 		bvCode = "O222";	
 		rge_altis = new String[] {rge_alti_11, rge_alti_31};
 		bd_topos = new String[] {bd_topo_11, bd_topo_31};
 		*/
-		
+		/*
 		// O253 - Cédat
 		bvShape = "C:/Data/projet/coterra/data/BV tests/Zone hydro Cédat.shp";
+		bvAttribute = "code_zone";
 		bvCode = "O253";	
 		rge_altis = new String[] {rge_alti_32, rge_alti_31};
 		bd_topos = new String[] {bd_topo_32, bd_topo_31};
-		
-		
+		*/
+		/*
+		//  - test dans le Gers
+		bvShape = "D:/sig/bd_carthage/ZoneHydro_FXX-shp/ZoneHydro_FXX.shp";
+		bvAttribute = "CdZoneHydr";
+		bvCode = "O655";	
+		rge_altis = new String[] {rge_alti_32};
+		bd_topos = new String[] {bd_topo_32};
+		*/
+	
 		//initialisation(bvShape, bvCode, rge_altis, bd_topos);
 		//procedure(bvCode);
 		
-		//wholeProcedure(bvShape, bvCode, rge_altis, bd_topos, "SOFT");
-		//wholeProcedure(bvShape, bvCode, rge_altis, bd_topos, "MEDIUM");
-		//wholeProcedure(bvShape, bvCode, rge_altis, bd_topos, "HARD");
+		//wholeProcedure(bvShape, bvAttribute, bvCode, rge_altis, bd_topos, "SOFT");
+		//wholeProcedure(bvShape, bvAttribute, bvCode, rge_altis, bd_topos, "MEDIUM");
+		//wholeProcedure(bvShape, bvAttribute, bvCode, rge_altis, bd_topos, "HARD");
 	}
-	
-	private static void wholeProcedure(String bvShape, String bvCode, String[] rge_altis, String[] bd_topos, String eventType) {
+
+	private static void wholeProcedure(String bvShape, String bvAttribute, String bvCode, String[] rge_altis, String[] bd_topos, String eventType) {
 		
 		ErosionManager manager = new ErosionManager("erosion_calculation");
 		
 		//manager.setTerritoryShape("D:/sig/bd_carthage/ZoneHydro_FXX-shp/ZoneHydro_FXX.shp");
 		//manager.setTerritoryIDAttribute("CdZoneHydr");
 		manager.setTerritoryShape(bvShape);
-		manager.setTerritoryIDAttribute("code_zone");
+		manager.setTerritoryIDAttribute(bvAttribute);
 		manager.setTerritoryIDValues(bvCode);
 		
 		manager.setEventType(eventType); // type d'evenement meteorologique {"SOFT, "MEDIUM", "HARD"}
@@ -139,14 +150,14 @@ public class ScriptTest {
 		procedure.run();
 	}	
 	
-	private static void initialisation(String bvShape, String bvCode, String[] rge_altis, String[] bd_topos) {
+	private static void initialisation(String bvShape, String bvAttribute, String bvCode, String[] rge_altis, String[] bd_topos) {
 		
 		ErosionManager manager = new ErosionManager("data_initialization");
 		
 		//manager.setTerritoryShape("D:/sig/bd_carthage/ZoneHydro_FXX-shp/ZoneHydro_FXX.shp");
 		//manager.setTerritoryIDAttribute("CdZoneHydr");
 		manager.setTerritoryShape(bvShape);
-		manager.setTerritoryIDAttribute("code_zone");
+		manager.setTerritoryIDAttribute(bvAttribute);
 		manager.setTerritoryIDValues(bvCode);
 		
 		for(String rge_alti : rge_altis) {

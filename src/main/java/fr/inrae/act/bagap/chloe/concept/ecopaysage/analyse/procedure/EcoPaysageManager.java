@@ -62,6 +62,8 @@ public class EcoPaysageManager {
 	
 	private EnteteRaster inEntete;
 	
+	private int displacement;
+	
 	public EcoPaysageManager(String treatment){
 		setTreatment(treatment);
 		init();
@@ -122,6 +124,7 @@ public class EcoPaysageManager {
 		headerFile = null;
 		factor = 1;
 		noDataValue = -1;
+		displacement = 20;
 	}
 	
 	public EcoPaysageProcedure build(){
@@ -321,6 +324,10 @@ public class EcoPaysageManager {
 		this.headerFile = headerFile;
 	}
 	
+	public void setDisplacement(int displacement) {
+		this.displacement = displacement;
+	}
+	
 	// getters
 	
 	public boolean force() {
@@ -466,6 +473,10 @@ public class EcoPaysageManager {
 	
 	public EnteteRaster entete() {
 		return inEntete;
+	}
+	
+	public int displacement() {
+		return displacement;
 	}
 	
 	public String ecoFile(int k) {

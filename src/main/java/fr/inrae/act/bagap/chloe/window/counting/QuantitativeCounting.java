@@ -8,8 +8,8 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 		super(resolution, theoriticalSize);
 	}
 	
-	public QuantitativeCounting(double resolution) {
-		this(resolution, 0);
+	public QuantitativeCounting(double theoriticalSize) {
+		this(1, theoriticalSize);
 	}
 	
 	/**

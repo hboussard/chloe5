@@ -9,7 +9,7 @@ public class MapQuantitativeKernel extends MapLandscapeMetricKernel {
 	@Override
 	public void applyMapWindow(int theY) {
 			
-		short v;
+		float v;
 		float nb_nodata = 0;
 		float nb = 0;
 		float sum = 0;
@@ -19,7 +19,7 @@ public class MapQuantitativeKernel extends MapLandscapeMetricKernel {
 		for(int y=0; y<height(); y++) {
 			for(int x=0; x<width(); x++) {
 					
-				v = (short) inDatas()[(y*width()) + x];	
+				v = inDatas()[(y*width()) + x];	
 				nb += 1;	
 				if(v == noDataValue()) {
 					nb_nodata += 1;

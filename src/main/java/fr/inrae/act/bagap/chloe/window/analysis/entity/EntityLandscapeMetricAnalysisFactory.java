@@ -23,8 +23,10 @@ import fr.inrae.act.bagap.chloe.window.kernel.entity.EntityLandscapeMetricKernel
 import fr.inrae.act.bagap.chloe.window.kernel.entity.EntityQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
+import fr.inrae.act.bagap.chloe.window.output.CsvOutput;
 import fr.inrae.act.bagap.chloe.window.output.EntityCsvOutput;
 import fr.inrae.act.bagap.chloe.window.output.EntityRasterOutput;
+import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineLinearCsvOutput;
 import fr.inrae.act.bagap.raster.Coverage;
 import fr.inrae.act.bagap.raster.CoverageManager;
 import fr.inrae.act.bagap.raster.TabCoverage;
@@ -78,6 +80,10 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 		
 		if(builder.getCsv() != null){
 			EntityCsvOutput csvOutput = new EntityCsvOutput(builder.getCsv());
+			observers.add(csvOutput);
+		}else if (builder.getCsvFolder() != null){
+			String name = builder.getCsvFolder()+new File(builder.getRasterFile()).getName().replace(".tif", "").replace(".asc", "").toString()+".csv";
+			EntityCsvOutput csvOutput = new EntityCsvOutput(name);
 			observers.add(csvOutput);
 		}
 		/*

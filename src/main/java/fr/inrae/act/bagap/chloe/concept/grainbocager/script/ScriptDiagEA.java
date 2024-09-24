@@ -9,7 +9,7 @@ public class ScriptDiagEA {
 		
 		//scriptExploitation("035177652", 5);
 		//scriptExploitation("035177652", 10);
-		scriptExploitation("035177652", 50);
+		//scriptExploitation("035177652", 50);
 		
 		/*
 		System.out.println(f(0));
@@ -29,7 +29,7 @@ public class ScriptDiagEA {
 	public static double f(double v){
 		return Math.log10(9*v+1);
 	}
-	
+	/*
 	private static void scriptExploitation(String exploitation, int outCellSize) {
 
 		long begin = System.currentTimeMillis();
@@ -49,6 +49,6 @@ public class ScriptDiagEA {
 		long end = System.currentTimeMillis();
 		System.out.println("time computing : "+(end - begin));
 		
-	}
+	}*/
 
 }

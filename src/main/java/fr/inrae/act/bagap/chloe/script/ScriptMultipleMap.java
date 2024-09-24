@@ -7,7 +7,21 @@ import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 public class ScriptMultipleMap {
 
 	public static void main(String[] args) {
-		analyseMap();
+		testMap();
+	}
+	
+	private static void testMap(){
+		
+		String path = "E:/FRC_AURA/data/grain2d/69/test3/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(ChloeAnalysisType.MAP);
+		builder.addRasterFile(path+"test3_grain_bocager_5m.tif");
+		builder.addMetric("average");		
+		//builder.setCsvOutputFolder(path+"test");
+		builder.addCsvOutput(path+"test3.csv");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
 	}
 	
 	private static void analyseMap(){

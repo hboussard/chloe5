@@ -61,7 +61,7 @@ public class EcoPaysageAPI {
 			importScales(manager, properties);
 			importClasses(manager, properties);
 			importOutputFolder(manager, properties);
-			
+			importDisplacement(manager, properties);
 		
 		} catch (NoParameterException e) {
 			e.printStackTrace();
@@ -133,6 +133,13 @@ public class EcoPaysageAPI {
 				prop += "/";
 			}
 			builder.setOutputFolder(prop);
+		}
+	}
+	
+	public static void importDisplacement(EcoPaysageManager builder, Properties properties) {
+		if(properties.containsKey("displacement")){
+			int  prop = Integer.parseInt(properties.getProperty("displacement"));
+			builder.setDisplacement(prop);
 		}
 	}
 	

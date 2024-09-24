@@ -17,8 +17,8 @@ public class GBPCalculDistanceInfluenceBoisementFactory extends GrainBocagerProc
 		File fWoodType = new File(manager.woodType());
 		
 		if(!manager.force() 
-				&& ((fWoodHeight.isFile() && fWoodHeight.exists()) || (fWoodHeight.isDirectory() && fWoodHeight.list().length > 0)
-				&& ((fWoodType.isFile() && fWoodType.exists()) || (fWoodType.isDirectory() && fWoodType.list().length > 0)))){
+				&& ((fWoodHeight.isFile() && fWoodHeight.exists()) || (fWoodHeight.isDirectory() && fWoodHeight.list().length > 0))
+				&& ((fWoodType.isFile() && fWoodType.exists()) || (fWoodType.isDirectory() && fWoodType.list().length > 0))){
 			
 			return true;
 			

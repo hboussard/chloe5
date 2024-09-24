@@ -1,14 +1,58 @@
 package fr.inrae.act.bagap.chloe.concept.grainbocager.script;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.locationtech.jts.geom.Envelope;
+
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
+import fr.inrae.act.bagap.chloe.util.Util;
+import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.raster.CoverageManager;
+import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.raster.converter.ShapeFile2CoverageConverter;
 
 public class ScriptGers {
 
 	public static void main(String[] args){
 		//scriptCalculGrainInitial();
 		//scriptCalculGrainAmenagement();
-		scriptCalculGrainAmenagementAlternatif();
+		//scriptCalculGrainAmenagementAlternatif();
+		cleanMNHC();
+	}
+	
+	private static void cleanMNHC() {
+		
+		String path = "E:/temp/gers/wetransfer_suivi-evolutif-grain-2019-2022_2024-09-13_1227/";
+		
+		Coverage cov = CoverageManager.getCoverage(path+"hauteur_arboree_initiale_CCT_2022.tif");
+		EnteteRaster entete = cov.getEntete();
+		float[] dataH = cov.getData();
+		cov.dispose();
+		
+		Map<String, Integer> codes = new HashMap<String, Integer>();
+		codes.put("Bois", 0);
+		codes.put("Forêt fermée de feuillus", 0);
+		codes.put("Forêt fermée de conifères", 0);
+		codes.put("Forêt fermée mixte", 0);
+		codes.put("Forêt ouverte", 0);
+		codes.put("Haie", 0);
+		codes.put("Lande ligneuse", 0);
+		codes.put("Peupleraie", 0);
+		codes.put("Verger", 0);
+		codes.put("Vigne", 1);
+		
+		Coverage covWood = ShapeFile2CoverageConverter.getSurfaceCoverage("D:/sig/bd_topo/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D032_2022-06-15/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D032_2022-06-15/BDTOPO/1_DONNEES_LIVRAISON_2022-06-00168/BDT_3-0_SHP_LAMB93_D032-ED2022-06-15/OCCUPATION_DU_SOL/ZONE_DE_VEGETATION.shp", "NATURE", codes, entete, 0);
+		float[] dataWood = covWood.getData();
+		covWood.dispose();
+		
+		for(int i=0; i<entete.width()*entete.height(); i++) {
+			if(dataWood[i] == 1) {
+				dataH[i] = 0;
+			}
+		}
+		CoverageManager.write(path+"hauteur_arboree_initiale_CCT_2022_cleanVigne.tif", dataH, entete);
 	}
 	
 	private static void scriptCalculGrainInitial() {

@@ -503,7 +503,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 					throw new IllegalArgumentException("no raster 'type de boisement' declared");
 				}
 
-				counting = new QuantitativeCounting(theoreticalSize);
+				counting = new QuantitativeCounting(inCellSize, theoreticalSize);
 
 				// add metrics to counting
 				for (Metric m : metrics) {
@@ -546,7 +546,7 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 				}
 			}
 			
-			counting = new QuantitativeCounting(theoreticalSize);
+			counting = new QuantitativeCounting(inCellSize, theoreticalSize);
 
 			// add metrics to counting
 			for (Metric m : metrics) {

@@ -90,12 +90,12 @@ public class GrainBocager {
 		// detection des types de boisement
 		Coverage covTypeBoisement = detectionTypeBoisement(dataHauteurBoisement, entete, fastMode);
 		
-		CoverageManager.write("F:/FDCCA/diag_ea/data/analyse_bretagne/type_boisement.tif", covTypeBoisement.getData(), covTypeBoisement.getEntete());
+		//CoverageManager.write("F:/FDCCA/diag_ea/data/analyse_bretagne/type_boisement.tif", covTypeBoisement.getData(), covTypeBoisement.getEntete());
 		
 		// calcul de distances ponderees
 		Coverage covDistanceInfluence = calculDistancesInfluences(dataHauteurBoisement, covTypeBoisement.getData(), entete, fastMode);
 		
-		CoverageManager.write("F:/FDCCA/diag_ea/data/analyse_bretagne/distance_influence.tif", covDistanceInfluence.getData(), covDistanceInfluence.getEntete());
+		//CoverageManager.write("F:/FDCCA/diag_ea/data/analyse_bretagne/distance_influence.tif", covDistanceInfluence.getData(), covDistanceInfluence.getEntete());
 		
 		// moyenne globale du grain bocager
 		return calculGrainBocager(covDistanceInfluence, windowRadius, outputCellSize, fastMode);
@@ -118,6 +118,27 @@ public class GrainBocager {
 		Coverage covZoneArrachage = ShapeFile2CoverageConverter.getSurfaceCoverage(arrachage, entete, 0, entete.noDataValue());
 		
 		return covZoneArrachage;
+	}
+	
+	public static Coverage recuperationHauteurPlantation(String plantation, String attributHauteurPlantation, EnteteRaster entete, float fillValue) {
+		
+		Coverage covHauteurReplantation = null;
+		
+		if (ShapeFile2CoverageConverter.getShapeType(plantation).isPolygonType()) {
+			
+			covHauteurReplantation = ShapeFile2CoverageConverter.getSurfaceCoverage(plantation, attributHauteurPlantation, entete.cellsize(), entete.noDataValue(), entete.crs(), entete.minx(), entete.maxx(), entete.miny(), entete.maxy(), fillValue);
+			
+		} else if (ShapeFile2CoverageConverter.getShapeType(plantation).isLineType()) {
+			
+			covHauteurReplantation = ShapeFile2CoverageConverter.getLinearCoverage(plantation, attributHauteurPlantation, entete.cellsize(), entete.noDataValue(), entete.crs(), entete.minx(), entete.maxx(), entete.miny(), entete.maxy(), fillValue, entete.cellsize());
+			
+		} /*else if (ShapeFile2CoverageConverter.getShapeType(plantation).isPointType()) {
+			
+		} */else {
+			throw new IllegalArgumentException(plantation);
+		}
+		
+		return covHauteurReplantation;
 	}
 	
 	public static Coverage recuperationHauteurPlantation(String plantation, String attributHauteurPlantation, EnteteRaster entete) {
