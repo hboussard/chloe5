@@ -1,20 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>fr.inra.sad.bagap.chloe</groupId>
   <artifactId>chloe5</artifactId>
   <version>0.0.1</version>
   <packaging>jar</packaging>
-
   <name>chloe5</name>
-  <url>http://maven.apache.org</url>
 
   <properties>
-        <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-        <geotools.version>21.3</geotools.version>
-    </properties>
-<repositories>
+	<maven.compiler.source>8</maven.compiler.source>
+	<maven.compiler.target>8</maven.compiler.target>
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <geotools.version>21.3</geotools.version>
+  </properties>
+  <repositories>
         <repository>
             <id>repo1.maven.org-maven2</id>
             <name>Central repository</name>
@@ -25,11 +24,13 @@
             <name>Java.net repository</name>
             <url>https://download.java.net/maven/2</url>
         </repository>
+        <!--
         <repository>
 	        <id>com.springsource.repository.bundles.external</id>
 	        <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
 	        <url>https://repository.springsource.com/maven/bundles/external</url>
 	    </repository>
+	    -->
 		<repository>
 			<id>osgeo</id>
 			<name>Open Source Geospatial Foundation Repository</name>
@@ -45,11 +46,11 @@
 			<name>atlassian 3rd Party Repository</name>
 			<url>https://packages.atlassian.com/maven-3rdparty/</url>
 		</repository>	
-		<repository>
+		<!--<repository>
 			<id>geotoolkit</id>
 			<name>geotoolkit Repository</name>
 			<url>https://maven.geotoolkit.org/</url>
-		</repository>	
+		</repository>	-->
     </repositories>
     
     <build>
@@ -95,31 +96,30 @@
     </build>
 
   <dependencies>
-    <dependency>
-    	<groupId>com.aparapi</groupId>
-   		 <artifactId>aparapi</artifactId>
-   		 <version>3.0.0</version>
-	</dependency>
-	
+	<!-- 
 	<dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
-    
-    <dependency>
-       <groupId>org.geotools</groupId>
-       <artifactId>gt-shapefile</artifactId>
-       <version>21.3</version>
-    </dependency>
-     
-    <dependency>
+   
+     <dependency>
        <groupId>org.geotools</groupId>
        <artifactId>gt-swing</artifactId>
        <version>21.3</version>
     </dependency>
-  
+     -->
+   <dependency>
+    	<groupId>com.aparapi</groupId>
+   		<artifactId>aparapi</artifactId>
+   		<version>3.0.0</version>
+	</dependency>
+	<dependency>
+       <groupId>org.geotools</groupId>
+       <artifactId>gt-shapefile</artifactId>
+       <version>21.3</version>
+   </dependency>
    <dependency>
        <groupId>org.geotools</groupId>
        <artifactId>gt-geotiff</artifactId>
@@ -141,6 +141,12 @@
 	    <version>3.5.19</version>
 	</dependency>
 	<dependency>
+    	<groupId>javax.activation</groupId>
+    	<artifactId>activation</artifactId>
+    	<version>1.1.1</version>
+	</dependency>
+	<!--
+	<dependency>
     	<groupId>javax.xml.bind</groupId>
     	<artifactId>jaxb-api</artifactId>
     	<version>2.3.1</version>
@@ -152,37 +158,33 @@
 	</dependency>
 	<dependency>
     	<groupId>com.sun.xml.bind</groupId>
+    	<artifactId>jaxb-ri</artifactId>
+    	<version>2.3.3</version>
+    	<type>pom</type>
+  	</dependency>
+  	<dependency>
+    	<groupId>com.sun.xml.bind</groupId>
     	<artifactId>jaxb-impl</artifactId>
     	<version>2.3.1</version>
-	</dependency>
-	<dependency>
-    	<groupId>javax.activation</groupId>
-    	<artifactId>activation</artifactId>
-    	<version>1.1.1</version>
-	</dependency>
+	</dependency>	
+	-->
 	<dependency>
     	<groupId>jakarta.xml.bind</groupId>
     	<artifactId>jakarta.xml.bind-api</artifactId>
     	<version>4.0.0</version>
   	</dependency>
   	<dependency>
-    	<groupId>com.sun.xml.bind</groupId>
-    	<artifactId>jaxb-ri</artifactId>
-    	<version>2.3.3</version>
-    	<type>pom</type>
-  	</dependency>
-  	<dependency>
     	<groupId>nz.ac.waikato.cms.weka</groupId>
     	<artifactId>weka-stable</artifactId>
     	<version>3.8.4</version>
 	</dependency>
-  	<!--
+	<!--
     <dependency>
     	<groupId>fr.inrae.act.bagap</groupId>
-    	<artifactId>apiland</artifactId>
+    	<artifactId>apiland2</artifactId>
     	<version>1.0</version>
     </dependency>
-       -->
+   -->
   </dependencies>
   
   
