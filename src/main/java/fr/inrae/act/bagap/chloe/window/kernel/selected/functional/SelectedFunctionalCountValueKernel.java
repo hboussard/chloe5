@@ -2,9 +2,9 @@ package fr.inrae.act.bagap.chloe.window.kernel.selected.functional;
 
 import java.util.Set;
 
-import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.analysis.distance.DistanceFunction;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 
 public class SelectedFunctionalCountValueKernel extends SelectedFunctionalKernel {
 

@@ -10,15 +10,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import fr.inra.sad.bagap.apiland.core.element.manager.DynamicLayerFactory;
-import fr.inra.sad.bagap.apiland.core.element.manager.Tool;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.matrix.MatrixManager;
+import fr.inrae.act.bagap.apiland.core.element.manager.DynamicLayerFactory;
+import fr.inrae.act.bagap.apiland.util.Tool;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
-import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 
 public class EntityMultipleAsciiGridOutput implements CountingObserver{
 	
@@ -130,7 +130,7 @@ public class EntityMultipleAsciiGridOutput implements CountingObserver{
 			
 			for(Entry<String, BufferedWriter> ew : writers.entrySet()){
 				ew.getValue().close();
-				Tool.copy(DynamicLayerFactory.class.getResourceAsStream(MatrixManager.epsg()), folder+ew.getKey()+".prj");
+				Tool.copy(DynamicLayerFactory.class.getResourceAsStream(CoverageManager.epsg()), folder+ew.getKey()+".prj");
 			}
 			
 		} catch (IOException e) {

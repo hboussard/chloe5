@@ -4,7 +4,7 @@ import java.awt.Rectangle;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
-import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
 
 public class TinySlidingLandscapeMetricAnalysis extends SlidingLandscapeMetricAnalysis {
 

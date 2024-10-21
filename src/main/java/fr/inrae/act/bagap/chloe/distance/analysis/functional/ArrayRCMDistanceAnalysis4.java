@@ -2,8 +2,8 @@ package fr.inrae.act.bagap.chloe.distance.analysis.functional;
 
 import java.util.ArrayList;
 import java.util.List;
-import fr.inra.sad.bagap.apiland.analysis.Analysis;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inrae.act.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.apiland.raster.Raster;
 
 public class ArrayRCMDistanceAnalysis4 extends Analysis {
 
@@ -115,7 +115,7 @@ public class ArrayRCMDistanceAnalysis4 extends Analysis {
 				int x = p%width;
 				int y = p/width;
 				
-				// en haut à gauche
+				// en haut ï¿½ gauche
 				np = p - width - 1;
 				if(x > 0 && y > 0 && everDatas[np] != 1){
 				//if(np >= 0 && x > 0 && y > 0 && everDatas[np] != 1){
@@ -143,7 +143,7 @@ public class ArrayRCMDistanceAnalysis4 extends Analysis {
 						}
 					}
 				}
-				// en haut à droite
+				// en haut ï¿½ droite
 				np = p - width + 1;
 				if(x < (width-1) && y > 0 && everDatas[np] != 1){
 				//if(np >= 0 && x < (width-1) && y > 0 && everDatas[np] != 1){
@@ -157,7 +157,7 @@ public class ArrayRCMDistanceAnalysis4 extends Analysis {
 						}
 					}
 				}
-				// à gauche
+				// ï¿½ gauche
 				np = p - 1;
 				if(x > 0 && everDatas[np] != 1){
 				//if(np >= 0 && x > 0 && everDatas[np] != 1){
@@ -171,7 +171,7 @@ public class ArrayRCMDistanceAnalysis4 extends Analysis {
 						}
 					}
 				}
-				// à droite
+				// ï¿½ droite
 				np = p + 1;
 				if(x < (width-1) && everDatas[np] != 1){
 				//if(np < width*height && x < (width-1) && everDatas[np] != 1){
@@ -185,7 +185,7 @@ public class ArrayRCMDistanceAnalysis4 extends Analysis {
 						}
 					}
 				}
-				// en bas à gauche
+				// en bas ï¿½ gauche
 				np = p + width - 1;
 				if(x > 0 && y < (height-1) && everDatas[np] != 1){
 				//if(np < width*height && x > 0 && y < (height-1) && everDatas[np] != 1){
@@ -213,7 +213,7 @@ public class ArrayRCMDistanceAnalysis4 extends Analysis {
 						}
 					}
 				}
-				// en bas à droite
+				// en bas ï¿½ droite
 				np = p + width + 1;
 				if(x < (width-1) && y < (height-1) && everDatas[np] != 1){
 				//if(np < width*height && x < (width-1) && y < (height-1) && everDatas[np] != 1){

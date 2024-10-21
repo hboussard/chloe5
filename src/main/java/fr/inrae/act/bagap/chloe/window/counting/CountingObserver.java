@@ -2,7 +2,7 @@ package fr.inrae.act.bagap.chloe.window.counting;
 
 import java.util.Set;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public interface CountingObserver {

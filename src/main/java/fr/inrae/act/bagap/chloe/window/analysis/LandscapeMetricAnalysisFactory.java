@@ -13,9 +13,9 @@ import fr.inrae.act.bagap.chloe.window.analysis.selected.HugeSelectedLandscapeMe
 import fr.inrae.act.bagap.chloe.window.analysis.selected.TinySelectedLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.window.analysis.sliding.HugeSlidingLandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.window.analysis.sliding.TinySlidingLandscapeMetricAnalysisFactory;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.TabCoverage;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.TabCoverage;
 
 public class LandscapeMetricAnalysisFactory {
 	

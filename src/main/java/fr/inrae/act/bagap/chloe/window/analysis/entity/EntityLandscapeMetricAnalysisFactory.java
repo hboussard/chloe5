@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inrae.act.bagap.apiland.raster.Raster;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
@@ -27,9 +27,9 @@ import fr.inrae.act.bagap.chloe.window.output.CsvOutput;
 import fr.inrae.act.bagap.chloe.window.output.EntityCsvOutput;
 import fr.inrae.act.bagap.chloe.window.output.EntityRasterOutput;
 import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineLinearCsvOutput;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.TabCoverage;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.TabCoverage;
 
 public abstract class EntityLandscapeMetricAnalysisFactory {
 

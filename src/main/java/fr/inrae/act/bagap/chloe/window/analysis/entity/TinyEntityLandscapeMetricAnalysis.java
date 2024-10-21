@@ -6,10 +6,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inrae.act.bagap.apiland.raster.Raster;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.kernel.entity.EntityLandscapeMetricKernel;
-import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
 
 public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnalysis {
 	

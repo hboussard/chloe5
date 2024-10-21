@@ -6,12 +6,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import fr.inra.sad.bagap.apiland.analysis.Analysis;
-import fr.inra.sad.bagap.apiland.analysis.tab.SearchAndReplacePixel2PixelTabCalculation;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.TileCoverage;
+import fr.inrae.act.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.apiland.analysis.tab.SearchAndReplacePixel2PixelTabCalculation;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.TileCoverage;
 
 public class TileQueenClusteringAnalysis extends Analysis {
 

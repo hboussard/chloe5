@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
-import fr.inra.sad.bagap.apiland.analysis.Analysis;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inrae.act.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
 
 public class TabRCMDistanceAnalysis2 extends Analysis {
 
@@ -85,7 +85,7 @@ public class TabRCMDistanceAnalysis2 extends Analysis {
 		}
 		inDatas = null;
 		
-		// afin de limiter le nombre de calculs de diffusion, ne diffuser qu'à partir des bords d'habitats
+		// afin de limiter le nombre de calculs de diffusion, ne diffuser qu'ï¿½ partir des bords d'habitats
 		boolean maj;
 		for (int yt = 0; yt < height; yt++) {
 			for (int xt = 0; xt < width; xt++) {
@@ -142,11 +142,11 @@ public class TabRCMDistanceAnalysis2 extends Analysis {
 	private void diffusionPaquet(){
 		
 		Iterator<Entry<Float, Set<Pixel>>> iteEntry = waits.entrySet().iterator();
-		Entry<Float, Set<Pixel>> entry = iteEntry.next(); // c des pixels à diffuser
+		Entry<Float, Set<Pixel>> entry = iteEntry.next(); // c des pixels ï¿½ diffuser
 		iteEntry.remove();
 		
 		if(entry.getValue().size() != 0){
-			double dd = entry.getKey(); // récupération de la valeur de diffusion 
+			double dd = entry.getKey(); // rï¿½cupï¿½ration de la valeur de diffusion 
 			
 			Iterator<Pixel> itePixel = entry.getValue().iterator();
 			Pixel p;
@@ -171,7 +171,8 @@ public class TabRCMDistanceAnalysis2 extends Analysis {
 				
 				Pixel np;
 				float v, d;
-				Iterator<Pixel> ite = p.getCardinalMargins(); // pour chaque pixel cardinal (4)
+				Iterator<Pixel> ite = null;
+				//ite = p.getCardinalMargins(); // pour chaque pixel cardinal (4)
 				while (ite.hasNext()) {
 					np = ite.next();
 						
@@ -192,7 +193,7 @@ public class TabRCMDistanceAnalysis2 extends Analysis {
 						}
 					}
 				}
-				ite = p.getDiagonalMargins(); // pour chaque pixel diagonal (4)
+				//ite = p.getDiagonalMargins(); // pour chaque pixel diagonal (4)
 				while (ite.hasNext()) {
 					np = ite.next();
 						

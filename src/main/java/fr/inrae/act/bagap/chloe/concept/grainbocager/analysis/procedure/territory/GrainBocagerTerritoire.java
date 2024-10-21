@@ -2,12 +2,12 @@ package fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.territo
 
 import org.locationtech.jts.geom.Envelope;
 
-import fr.inra.sad.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
+import fr.inrae.act.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
 //import fr.inrae.act.bagap.chloe.util.Util;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
 
 public class GrainBocagerTerritoire {
 
@@ -16,7 +16,7 @@ public class GrainBocagerTerritoire {
 										// 100m pour le calcul des distances
 										// 250m pour la fenetre glissante 
 	*/
-	private String outputPath; // dossier de génération des sorties
+	private String outputPath; // dossier de gï¿½nï¿½ration des sorties
 	
 	private String bocage; // tuiles MNHC
 	
@@ -53,15 +53,15 @@ public class GrainBocagerTerritoire {
 		// creation du repertoire de sortie
 		//Util.createAccess(outputPath);
 		
-		// récupération de l'entete du bocage
+		// rï¿½cupï¿½ration de l'entete du bocage
 		Coverage covBocage = CoverageManager.getCoverage(bocage);
 		entete = covBocage.getEntete();
 		covBocage.dispose();
 		
-		// récupération de l'enveloppe totale de travail
+		// rï¿½cupï¿½ration de l'enveloppe totale de travail
 		Envelope envelope = ShapeFile2CoverageConverter.getEnvelope(territoire, bufferArea);
 		
-		// récupération de l'entete
+		// rï¿½cupï¿½ration de l'entete
 		entete = EnteteRaster.getEntete(entete, envelope);
 		
 		// lancement du grain bocager
@@ -117,7 +117,7 @@ public class GrainBocagerTerritoire {
 	
 	private float[] getElementsBoises(String bocage, EnteteRaster entete) {
 		
-		//System.out.println("récupération des éléments boisés");
+		//System.out.println("rï¿½cupï¿½ration des ï¿½lï¿½ments boisï¿½s");
 		
 		Coverage covBoisement = CoverageManager.getCoverage(bocage);
 		EnteteRaster enteteMNHC = covBoisement.getEntete();

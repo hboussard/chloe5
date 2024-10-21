@@ -3,13 +3,13 @@ package fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.enjeuxg
 import java.io.File;
 import java.io.IOException;
 
-import fr.inra.sad.bagap.apiland.core.element.manager.Tool;
+import fr.inrae.act.bagap.apiland.util.Tool;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.GrainBocager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedureFactory;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 
 public class GBPCalculEnjeuxGlobaux extends GrainBocagerProcedure {
 

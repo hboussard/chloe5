@@ -3,12 +3,12 @@ package fr.inrae.act.bagap.chloe.script;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.inra.sad.bagap.apiland.analysis.tab.ClassificationPixel2PixelTabCalculation;
-import fr.inra.sad.bagap.apiland.domain.Domain;
-import fr.inra.sad.bagap.apiland.domain.DomainFactory;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.analysis.tab.ClassificationPixel2PixelTabCalculation;
+import fr.inrae.act.bagap.apiland.domain.Domain;
+import fr.inrae.act.bagap.apiland.domain.DomainFactory;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 
 public class ScriptClassification {
 

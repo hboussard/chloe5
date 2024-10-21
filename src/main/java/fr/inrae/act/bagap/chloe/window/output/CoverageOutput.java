@@ -2,14 +2,14 @@ package fr.inrae.act.bagap.chloe.window.output;
 
 import java.util.Set;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.TabCoverage;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
+import fr.inrae.act.bagap.apiland.raster.TabCoverage;
 
 public class CoverageOutput implements CountingObserver{
 	

@@ -6,13 +6,13 @@ import java.util.Set;
 
 import com.aparapi.Kernel;
 
-import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.PixelWithID;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inrae.act.bagap.apiland.util.CoordinateManager;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
+import fr.inrae.act.bagap.apiland.raster.PixelWithID;
+import fr.inrae.act.bagap.apiland.raster.Raster;
 import fr.inrae.act.bagap.chloe.window.kernel.LandscapeMetricKernel;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 
 public abstract class SelectedLandscapeMetricKernel extends Kernel implements LandscapeMetricKernel {
 

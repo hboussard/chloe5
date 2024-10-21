@@ -2,9 +2,9 @@ package fr.inrae.act.bagap.chloe.window.kernel.selected.grainbocager;
 
 import java.util.Set;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
 import fr.inrae.act.bagap.chloe.window.kernel.selected.SelectedLandscapeMetricKernel;
-import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 
 public class GrainBocagerSelectedDetectionBocageKernel extends SelectedLandscapeMetricKernel {
 

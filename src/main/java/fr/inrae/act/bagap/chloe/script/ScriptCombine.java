@@ -1,10 +1,10 @@
 package fr.inrae.act.bagap.chloe.script;
 
-import fr.inra.sad.bagap.apiland.analysis.combination.CombinationExpressionFactory;
-import fr.inra.sad.bagap.apiland.analysis.tab.CombinationExpressionPixel2PixelTabCalculation;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.analysis.combination.CombinationExpressionFactory;
+import fr.inrae.act.bagap.apiland.analysis.tab.CombinationExpressionPixel2PixelTabCalculation;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 
 public class ScriptCombine {
 

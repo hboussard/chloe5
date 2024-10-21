@@ -13,9 +13,6 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 import org.jumpmind.symmetric.csv.CsvReader;
 
-import fr.inra.sad.bagap.apiland.analysis.process.metric.DistanceValueMetric;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
-import fr.inra.sad.bagap.apiland.core.util.DistanceValueMatrix;
 import fr.inrae.act.bagap.chloe.window.metric.basic.BasicMetric;
 import fr.inrae.act.bagap.chloe.window.metric.continuity.ContinuityMetric;
 import fr.inrae.act.bagap.chloe.window.metric.couple.CoupleMetric;
@@ -25,7 +22,6 @@ import fr.inrae.act.bagap.chloe.window.metric.patch.PatchMetric;
 import fr.inrae.act.bagap.chloe.window.metric.quantitative.QuantitativeMetric;
 import fr.inrae.act.bagap.chloe.window.metric.slope.SlopeMetric;
 import fr.inrae.act.bagap.chloe.window.metric.value.ValueMetric;
-import weka.gui.SysErrLog;
 
 public class MetricManager {
 

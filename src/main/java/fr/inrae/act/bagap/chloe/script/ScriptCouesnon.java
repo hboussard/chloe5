@@ -1,11 +1,5 @@
 package fr.inrae.act.bagap.chloe.script;
 
-import org.locationtech.jts.geom.Envelope;
-
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.converter.ShapeFile2CoverageConverter;
 
 public class ScriptCouesnon {
 

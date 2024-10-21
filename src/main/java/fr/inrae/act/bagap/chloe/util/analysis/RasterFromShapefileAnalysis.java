@@ -6,8 +6,8 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import fr.inrae.act.bagap.chloe.util.Util;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
 
 public class RasterFromShapefileAnalysis extends ChloeUtilAnalysis {
 	

@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import fr.inra.sad.bagap.apiland.analysis.Analysis;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inrae.act.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
+import fr.inrae.act.bagap.apiland.raster.Raster;
 
 public class ArrayRCMDistanceAnalysis2 extends Analysis {
 
@@ -74,11 +74,11 @@ public class ArrayRCMDistanceAnalysis2 extends Analysis {
 	private void diffusionPaquet(){
 		
 		Iterator<Entry<Float, List<Pixel>>> iteEntry = waits.entrySet().iterator();
-		Entry<Float, List<Pixel>> entry = iteEntry.next(); // récupération des pixels à diffuser
+		Entry<Float, List<Pixel>> entry = iteEntry.next(); // rï¿½cupï¿½ration des pixels ï¿½ diffuser
 		iteEntry.remove();
 		
 		if(entry.getValue().size() != 0){
-			double dd = entry.getKey(); // récupération de la valeur de diffusion 
+			double dd = entry.getKey(); // rï¿½cupï¿½ration de la valeur de diffusion 
 			
 			Iterator<Pixel> itePixel = entry.getValue().iterator();
 			Pixel p;
@@ -100,7 +100,8 @@ public class ArrayRCMDistanceAnalysis2 extends Analysis {
 				
 				Pixel np;
 				float v, d;
-				Iterator<Pixel> ite = p.getCardinalMargins(); // pour chaque pixel cardinal (4)
+				Iterator<Pixel> ite = null;
+				//ite = p.getCardinalMargins(); // pour chaque pixel cardinal (4)
 				while (ite.hasNext()) {
 					np = ite.next();
 						
@@ -122,7 +123,7 @@ public class ArrayRCMDistanceAnalysis2 extends Analysis {
 						}
 					}
 				}
-				ite = p.getDiagonalMargins(); // pour chaque pixel diagonal (4)
+				//ite = p.getDiagonalMargins(); // pour chaque pixel diagonal (4)
 				while (ite.hasNext()) {
 					np = ite.next();
 						

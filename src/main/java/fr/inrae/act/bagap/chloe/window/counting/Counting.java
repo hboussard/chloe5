@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 

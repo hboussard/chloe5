@@ -9,11 +9,11 @@ import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.distance
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.enjeuxglobaux.GBPCalculEnjeuxGlobauxFactory;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.recuperationhauteur.GBPRecuperationHauteurBoisementFactory;
 import fr.inrae.act.bagap.chloe.util.Util;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.Tile;
-import fr.inrae.act.bagap.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.Tile;
+import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
 
 public class GrainBocagerManager {
 

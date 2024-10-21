@@ -14,12 +14,11 @@ import java.util.TreeSet;
 
 import org.jumpmind.symmetric.csv.CsvReader;
 
-import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
+import fr.inrae.act.bagap.apiland.util.CoordinateManager;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.TabCoverage;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.TabCoverage;
 
 public class Util {
 

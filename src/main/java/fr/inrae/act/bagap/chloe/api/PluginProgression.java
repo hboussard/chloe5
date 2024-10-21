@@ -1,8 +1,8 @@
 package fr.inrae.act.bagap.chloe.api;
 
-import fr.inra.sad.bagap.apiland.analysis.Analysis;
-import fr.inra.sad.bagap.apiland.analysis.AnalysisObserver;
-import fr.inra.sad.bagap.apiland.analysis.AnalysisState;
+import fr.inrae.act.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.apiland.analysis.AnalysisObserver;
+import fr.inrae.act.bagap.apiland.analysis.AnalysisState;
 
 public class PluginProgression implements AnalysisObserver {
 

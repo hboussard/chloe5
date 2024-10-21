@@ -1,6 +1,6 @@
 package fr.inrae.act.bagap.chloe.window.metric.value;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inrae.act.bagap.apiland.raster.Raster;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 

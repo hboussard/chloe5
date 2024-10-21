@@ -1,8 +1,8 @@
 package fr.inrae.act.bagap.chloe.script;
 
 import fr.inrae.act.bagap.apiland.util.SpatialCsvManager;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 
 public class ScriptGenerateRasterFromCsv {
 

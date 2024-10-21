@@ -1,13 +1,12 @@
 package fr.inrae.act.bagap.chloe.concept.grainbocager.script;
 
-
-import fr.inra.sad.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
+import fr.inrae.act.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
 //import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.GrainBocager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.territory.GrainBocagerTerritoire;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.territory.GrainBocagerTerritoireBuilder;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 
 public class ScriptTerritoire {
 
@@ -78,7 +77,7 @@ public class ScriptTerritoire {
 		
 		builder.setOutputPath("H:/rse/grain_bocager_50m/");
 		builder.setBocage("H:/IGN/data/35_2020_5m/mean/");
-		builder.setTerritoire("H:/rse/data/DonnéesRHEU_Hugues/rse_lerheu.shp");
+		builder.setTerritoire("H:/rse/data/Donnï¿½esRHEU_Hugues/rse_lerheu.shp");
 		builder.setName("rse_lerheu_50m");
 		builder.setOutCellSize(50);
 		

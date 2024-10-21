@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import fr.inra.sad.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.apiland.analysis.Analysis;
 
 public abstract class TabChessClusteringAnalysis extends Analysis{
 

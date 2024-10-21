@@ -3,15 +3,12 @@ package fr.inrae.act.bagap.chloe.script;
 import java.awt.Rectangle;
 
 import org.locationtech.jts.geom.Envelope;
-
-import fr.inra.sad.bagap.apiland.analysis.combination.CombinationExpressionFactory;
-import fr.inra.sad.bagap.apiland.analysis.tab.CombinationExpressionPixel2PixelTabCalculation;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 
 public class ScriptMultipleSelected {
 
@@ -51,9 +48,9 @@ public class ScriptMultipleSelected {
 		builder.addMetric("LPI");
 		builder.addMetric("MPS");
 		
-		// analyse avec une seule taille de fenêtre
+		// analyse avec une seule taille de fenï¿½tre
 		//builder.setWindowSize(31);
-		// analyse avec plusieurs tailles de fenêtre
+		// analyse avec plusieurs tailles de fenï¿½tre
 		builder.setWindowSizes(new int[]{31,51});
 		
 		// 1

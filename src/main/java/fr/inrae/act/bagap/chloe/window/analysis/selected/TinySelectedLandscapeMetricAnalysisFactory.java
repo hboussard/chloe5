@@ -3,11 +3,11 @@ package fr.inrae.act.bagap.chloe.window.analysis.selected;
 import java.awt.Rectangle;
 import java.util.Set;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.kernel.selected.SelectedLandscapeMetricKernel;
-import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
 
 public class TinySelectedLandscapeMetricAnalysisFactory extends SelectedLandscapeMetricAnalysisFactory {
 

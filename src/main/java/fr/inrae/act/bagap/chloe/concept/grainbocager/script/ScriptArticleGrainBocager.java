@@ -2,16 +2,16 @@ package fr.inrae.act.bagap.chloe.concept.grainbocager.script;
 
 import java.util.Map;
 
-import fr.inra.sad.bagap.apiland.analysis.tab.SearchAndReplacePixel2PixelTabCalculation;
+import fr.inrae.act.bagap.apiland.analysis.tab.SearchAndReplacePixel2PixelTabCalculation;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.util.FileMap;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.window.output.CoverageOutput;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 
 public class ScriptArticleGrainBocager {
 

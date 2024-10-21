@@ -3,7 +3,7 @@ package fr.inrae.act.bagap.chloe.window.analysis.entity;
 import fr.inrae.act.bagap.chloe.window.analysis.SingleLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.kernel.entity.EntityLandscapeMetricKernel;
-import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
 
 public abstract class EntityLandscapeMetricAnalysis extends SingleLandscapeMetricAnalysis {
 

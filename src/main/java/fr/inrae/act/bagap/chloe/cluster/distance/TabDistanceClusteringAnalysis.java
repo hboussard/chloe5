@@ -2,8 +2,8 @@ package fr.inrae.act.bagap.chloe.cluster.distance;
 
 import java.util.HashSet;
 import java.util.Set;
-import fr.inra.sad.bagap.apiland.analysis.Analysis;
-import fr.inra.sad.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
+import fr.inrae.act.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
 import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenClusteringAnalysis;
 
 public class TabDistanceClusteringAnalysis extends Analysis {

@@ -10,8 +10,8 @@ import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
-import fr.inra.sad.bagap.apiland.domain.Domain;
+import fr.inrae.act.bagap.apiland.raster.Raster;
+import fr.inrae.act.bagap.apiland.domain.Domain;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysis;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.api.RasterTypeMime;

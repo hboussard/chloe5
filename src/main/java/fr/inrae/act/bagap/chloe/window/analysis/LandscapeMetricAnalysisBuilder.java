@@ -9,9 +9,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-//import fr.inra.sad.bagap.apiland.core.space.impl.raster.PixelWithID;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.RefPoint;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
+import fr.inrae.act.bagap.apiland.raster.RefPoint;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.api.RasterTypeMime;
@@ -28,9 +27,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.CoverageOutput;
 //import fr.inrae.act.bagap.chloe.window.output.DataOutput;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.Tile;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.Tile;
 
 public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*implements Cloneable*/ {
 	

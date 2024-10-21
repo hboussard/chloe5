@@ -7,18 +7,17 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
-import fr.inra.sad.bagap.apiland.core.element.manager.Tool;
+import fr.inrae.act.bagap.apiland.util.Tool;
 import fr.inrae.act.bagap.apiland.util.SpatialCsvManager;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.window.analysis.MultipleLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 
 public class MultipleGridLandscapeMetricAnalysis extends MultipleLandscapeMetricAnalysis {
 

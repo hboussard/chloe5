@@ -5,7 +5,7 @@ import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.EcoPaysage;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageManager;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageProcedure;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.clustering.EPPClustering;
-import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 
 public class EPPGradient extends EcoPaysageProcedure {
 

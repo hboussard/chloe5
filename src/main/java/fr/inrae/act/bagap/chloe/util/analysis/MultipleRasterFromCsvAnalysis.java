@@ -4,8 +4,8 @@ import java.util.Set;
 
 import fr.inrae.act.bagap.apiland.util.SpatialCsvManager;
 import fr.inrae.act.bagap.chloe.api.RasterTypeMime;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 
 public class MultipleRasterFromCsvAnalysis extends ChloeUtilAnalysis {
 	

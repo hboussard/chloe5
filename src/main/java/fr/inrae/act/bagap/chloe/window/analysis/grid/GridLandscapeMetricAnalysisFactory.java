@@ -27,7 +27,7 @@ import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.AsciiGridOutput;
 import fr.inrae.act.bagap.chloe.window.output.CsvOutput;
 import fr.inrae.act.bagap.chloe.window.output.GeoTiffOutput;
-import fr.inrae.act.bagap.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
 
 public abstract class GridLandscapeMetricAnalysisFactory {
 

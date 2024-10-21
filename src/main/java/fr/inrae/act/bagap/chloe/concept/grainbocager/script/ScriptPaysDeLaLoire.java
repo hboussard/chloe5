@@ -1,19 +1,15 @@
 package fr.inrae.act.bagap.chloe.concept.grainbocager.script;
 
-import java.io.File;
-import java.util.StringTokenizer;
-
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.Tile;
-import fr.inrae.act.bagap.raster.analysis.Pixel2PixelTileCoverageCalculation;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.Tile;
+import fr.inrae.act.bagap.apiland.raster.analysis.Pixel2PixelTileCoverageCalculation;
 
 public class ScriptPaysDeLaLoire {
 

@@ -5,9 +5,7 @@ import java.util.Set;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.RefPoint;
-import fr.inra.sad.bagap.apiland.domain.Domain;
+import fr.inrae.act.bagap.apiland.domain.Domain;
 import fr.inrae.act.bagap.chloe.api.RasterTypeMime;
 import fr.inrae.act.bagap.chloe.cluster.ClusterType;
 import fr.inrae.act.bagap.chloe.distance.analysis.DistanceType;
@@ -17,9 +15,11 @@ import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.output.CoverageOutput;
 import fr.inrae.act.bagap.chloe.window.output.DataInPixelOutput;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.Tile;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
+import fr.inrae.act.bagap.apiland.raster.RefPoint;
+import fr.inrae.act.bagap.apiland.raster.Tile;
 
 public abstract class ChloeAnalysisBuilder {
 

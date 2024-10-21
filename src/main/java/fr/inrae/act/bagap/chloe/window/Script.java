@@ -16,16 +16,15 @@ import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffReader;
 import org.geotools.image.util.ImageUtilities;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.matrix.MatrixManager;
+import fr.inrae.act.bagap.apiland.raster.Raster;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.Tile;
-import fr.inrae.act.bagap.raster.TileCoverage;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.Tile;
+import fr.inrae.act.bagap.apiland.raster.TileCoverage;
 
 public class Script {
 
@@ -977,12 +976,13 @@ public class Script {
 		
 		long end = System.currentTimeMillis();
 		System.out.println("time computing : "+(end - begin));
-		
+		/*
 		MatrixManager.visualize(path+"chloe5/data.asc");
 		MatrixManager.visualize(path+"chloe5/data1.asc");
 		MatrixManager.visualize(path+"chloe5/data2.asc");
 		MatrixManager.visualize(path+"chloe5/data3.asc");
 		MatrixManager.visualize(path+"chloe5/data4.asc");
+		*/
 	}
 
 	private static void test2(){
@@ -1158,7 +1158,7 @@ public class Script {
 		String fileCGTV = "F://data/sig/CGTV/cgtv.tif";
 		String fileBaie = "F://dreal/ophelie/cgtv_baie_lancieux.asc";
 		
-		CoverageManager.retile(fileCGTV, fileBaie, minx, maxx, miny, maxy);
+		CoverageManager.retile(fileCGTV, fileBaie, minx, maxx, miny, maxy, Raster.getNoDataValue());
 	}
 	
  	private static void scriptEcopaysageBretagneCGTV(){
@@ -1367,7 +1367,7 @@ public class Script {
 		long end = System.currentTimeMillis();
 		System.out.println("time computing : "+(end - begin));
 		
-		MatrixManager.visualize(path+"result_test_aparapi_2.asc");
+		//MatrixManager.visualize(path+"result_test_aparapi_2.asc");
 	}
 	
 	private static void scriptTestDistanceFunction(){
@@ -1393,10 +1393,12 @@ public class Script {
 		long end = System.currentTimeMillis();
 		System.out.println("time computing : "+(end - begin));
 	
+		/*
 		MatrixManager.visualize(path+"distance/pNV_1_dyn-1.asc");
 		MatrixManager.visualize(path+"distance/pNV_1_dyn-2.asc");
 		MatrixManager.visualize(path+"distance/pNV_1_dyn-3.asc");
 		MatrixManager.visualize(path+"distance/pNV_1_dyn-4.asc");
+		*/
 	}
 	
 	private static void scriptGrainBasLeon(){

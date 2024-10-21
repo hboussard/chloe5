@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import fr.inra.sad.bagap.apiland.analysis.combination.CombinationExpressionFactory;
-import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
-import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inrae.act.bagap.apiland.analysis.combination.CombinationExpressionFactory;
+import fr.inrae.act.bagap.apiland.analysis.distance.DistanceFunction;
+import fr.inrae.act.bagap.apiland.util.CoordinateManager;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
@@ -37,9 +37,9 @@ import fr.inrae.act.bagap.chloe.window.kernel.selected.grainbocager.GrainBocager
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.SelectedCsvOutput;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.TabCoverage;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.TabCoverage;
 
 public abstract class SelectedLandscapeMetricAnalysisFactory {
 

@@ -10,16 +10,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
 import fr.inrae.act.bagap.apiland.util.SpatialCsvManager;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisFactory;
 import fr.inrae.act.bagap.chloe.window.analysis.MultipleLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 
 public class MultipleSelectedLandscapeMetricAnalysis extends MultipleLandscapeMetricAnalysis {
 

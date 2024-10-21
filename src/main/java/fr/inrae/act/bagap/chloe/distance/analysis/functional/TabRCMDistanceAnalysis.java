@@ -2,7 +2,7 @@ package fr.inrae.act.bagap.chloe.distance.analysis.functional;
 
 import java.util.ArrayList;
 import java.util.List;
-import fr.inra.sad.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.apiland.analysis.Analysis;
 
 public class TabRCMDistanceAnalysis extends Analysis {
 

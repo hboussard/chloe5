@@ -1,6 +1,6 @@
 package fr.inrae.act.bagap.chloe.window.metric;
 
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inrae.act.bagap.apiland.raster.Raster;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 
 public abstract class Metric implements Comparable<Metric> {

@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import fr.inra.sad.bagap.apiland.core.element.manager.DynamicLayerFactory;
-import fr.inra.sad.bagap.apiland.core.element.manager.Tool;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.matrix.MatrixManager;
+import fr.inrae.act.bagap.apiland.core.element.manager.DynamicLayerFactory;
+import fr.inrae.act.bagap.apiland.util.Tool;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
@@ -181,7 +181,7 @@ public class InterpolateSplineLinearAsciiGridOutput implements CountingObserver{
 			e.printStackTrace();
 		} finally{
 			try {
-				Tool.copy(DynamicLayerFactory.class.getResourceAsStream(MatrixManager.epsg()), file.replace(".asc", "")+".prj");
+				Tool.copy(DynamicLayerFactory.class.getResourceAsStream(CoverageManager.epsg()), file.replace(".asc", "")+".prj");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

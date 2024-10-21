@@ -9,13 +9,13 @@ import java.util.TreeMap;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inrae.act.bagap.apiland.util.CoordinateManager;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
-import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 
 public class InterpolateSplineLinearCsvOutput implements CountingObserver{
 	

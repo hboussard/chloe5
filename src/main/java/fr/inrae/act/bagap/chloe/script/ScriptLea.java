@@ -20,10 +20,9 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.prep.PreparedPoint;
 
-import fr.inra.sad.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
-import fr.inra.sad.bagap.apiland.capfarm.CfmUtil;
-import fr.inra.sad.bagap.apiland.domain.Domain;
-import fr.inra.sad.bagap.apiland.domain.DomainFactory;
+import fr.inrae.act.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
+import fr.inrae.act.bagap.apiland.domain.Domain;
+import fr.inrae.act.bagap.apiland.domain.DomainFactory;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysis;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
@@ -32,10 +31,11 @@ import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.util.Tool;
 
 public class ScriptLea {
 	
@@ -519,7 +519,7 @@ public class ScriptLea {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}finally{
-			CfmUtil.copy(inputSequence+".prj", outputSequenceConnue+".prj");
+			Tool.copy(inputSequence+".prj", outputSequenceConnue+".prj");
 		}
 	}
 	
@@ -619,7 +619,7 @@ public class ScriptLea {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}finally{
-			CfmUtil.copy(inputSequence+".prj", outputSequenceBio+".prj");
+			Tool.copy(inputSequence+".prj", outputSequenceBio+".prj");
 		}
 	}
 	

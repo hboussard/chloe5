@@ -7,9 +7,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
-import fr.inra.sad.bagap.apiland.analysis.Analysis;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inrae.act.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.apiland.raster.Pixel;
+import fr.inrae.act.bagap.apiland.raster.Raster;
 
 public class TabInverseAltitudeRCMDistanceAnalysis2 extends Analysis {
 
@@ -200,7 +200,8 @@ public class TabInverseAltitudeRCMDistanceAnalysis2 extends Analysis {
 				double alt = altitudeDatas[p.x()+p.y()*width]; // altitude au point de diffusion
 				Pixel np;
 				float v, d;
-				Iterator<Pixel> ite = p.getCardinalMargins(); // pour chaque pixel cardinal (4)
+				Iterator<Pixel> ite = null;
+				//ite = p.getCardinalMargins(); // pour chaque pixel cardinal (4)
 				
 				while (ite.hasNext()) {
 					np = ite.next();
@@ -229,7 +230,7 @@ public class TabInverseAltitudeRCMDistanceAnalysis2 extends Analysis {
 				}
 				
 				
-				ite = p.getDiagonalMargins(); // pour chaque pixel diagonal (4)
+				//ite = p.getDiagonalMargins(); // pour chaque pixel diagonal (4)
 				while (ite.hasNext()) {
 					np = ite.next();
 						

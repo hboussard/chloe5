@@ -1,18 +1,17 @@
 package fr.inrae.act.bagap.chloe.concept.grainbocager.script;
 
-import fr.inra.sad.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
+import fr.inrae.act.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.HugeGrainBocager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.util.CompileMNHC;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.Tile;
-import fr.inrae.act.bagap.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.Tile;
+import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
 
 public class ScriptLeandre {
 

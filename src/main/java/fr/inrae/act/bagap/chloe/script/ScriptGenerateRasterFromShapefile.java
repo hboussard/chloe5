@@ -6,8 +6,8 @@ import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Envelope;
 
 import fr.inrae.act.bagap.chloe.util.Util;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
 
 public class ScriptGenerateRasterFromShapefile {
 

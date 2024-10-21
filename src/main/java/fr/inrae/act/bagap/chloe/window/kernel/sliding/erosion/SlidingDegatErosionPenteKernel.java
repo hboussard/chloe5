@@ -2,12 +2,11 @@ package fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion;
 
 import java.util.Arrays;
 
-import fr.inra.sad.bagap.apiland.core.space.CoordinateManager;
-import fr.inrae.act.bagap.chloe.distance.analysis.slope.TabDegatErosionAltitudeRCMDistanceAnalysis;
+import fr.inrae.act.bagap.apiland.util.CoordinateManager;
 import fr.inrae.act.bagap.chloe.distance.analysis.slope.TabDegatErosionPenteRCMDistanceAnalysis;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 
 public class SlidingDegatErosionPenteKernel extends SlidingLandscapeMetricKernel {
 

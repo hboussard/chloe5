@@ -2,7 +2,7 @@ package fr.inrae.act.bagap.chloe.window.kernel.sliding.functional;
 
 import java.util.Arrays;
 
-import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
+import fr.inrae.act.bagap.apiland.analysis.distance.DistanceFunction;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.distance.analysis.functional.TabRCMDistanceAnalysis;
 

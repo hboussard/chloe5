@@ -1,6 +1,6 @@
 package fr.inrae.act.bagap.chloe.cluster;
 
-import fr.inra.sad.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.apiland.analysis.Analysis;
 
 public class TabClusteringOutput extends Analysis {
 	

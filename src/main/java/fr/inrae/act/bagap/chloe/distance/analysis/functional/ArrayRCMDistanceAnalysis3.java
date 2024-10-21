@@ -6,9 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import fr.inra.sad.bagap.apiland.analysis.Analysis;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Raster;
+import fr.inrae.act.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.apiland.raster.Raster;
 
 public class ArrayRCMDistanceAnalysis3 extends Analysis {
 
@@ -77,11 +76,11 @@ public class ArrayRCMDistanceAnalysis3 extends Analysis {
 	private void diffusionPaquet(){
 		
 		Iterator<Entry<Float, List<Integer>>> iteEntry = waits.entrySet().iterator();
-		Entry<Float, List<Integer>> entry = iteEntry.next(); // récupération des pixels à diffuser
+		Entry<Float, List<Integer>> entry = iteEntry.next(); // rï¿½cupï¿½ration des pixels ï¿½ diffuser
 		iteEntry.remove();
 		
 		if(entry.getValue().size() != 0){
-			double dd = entry.getKey(); // récupération de la valeur de diffusion 
+			double dd = entry.getKey(); // rï¿½cupï¿½ration de la valeur de diffusion 
 			
 			Iterator<Integer> itePixel = entry.getValue().iterator();
 			int p;
@@ -106,7 +105,7 @@ public class ArrayRCMDistanceAnalysis3 extends Analysis {
 				float fd = frictionDatas[p]; // friction au point de diffusion
 				int np;
 				float v, fc, d;
-				// en haut à gauche
+				// en haut ï¿½ gauche
 				np = p - width - 1;
 				if(np >= 0 && everDatas[np] != 1){
 					v = outDatas[np]; // valeur au point cardinal
@@ -144,7 +143,7 @@ public class ArrayRCMDistanceAnalysis3 extends Analysis {
 						}
 					}
 				}
-				// en haut à droite
+				// en haut ï¿½ droite
 				np = p - width + 1;
 				if(np >= 0 && everDatas[np] != 1){
 					v = outDatas[np]; // valeur au point cardinal
@@ -163,7 +162,7 @@ public class ArrayRCMDistanceAnalysis3 extends Analysis {
 						}
 					}
 				}
-				// à gauche
+				// ï¿½ gauche
 				np = p - 1;
 				if(np >= 0 && everDatas[np] != 1){
 					v = outDatas[np]; // valeur au point cardinal
@@ -182,7 +181,7 @@ public class ArrayRCMDistanceAnalysis3 extends Analysis {
 						}
 					}
 				}
-				// à droite
+				// ï¿½ droite
 				np = p + 1;
 				if(np < width*height && everDatas[np] != 1){
 					v = outDatas[np]; // valeur au point cardinal
@@ -201,7 +200,7 @@ public class ArrayRCMDistanceAnalysis3 extends Analysis {
 						}
 					}
 				}
-				// en bas à gauche
+				// en bas ï¿½ gauche
 				np = p + width - 1;
 				if(np < width*height && everDatas[np] != 1){
 					v = outDatas[np]; // valeur au point cardinal
@@ -239,7 +238,7 @@ public class ArrayRCMDistanceAnalysis3 extends Analysis {
 						}
 					}
 				}
-				// en bas à droite
+				// en bas ï¿½ droite
 				np = p + width + 1;
 				if(np < width*height && everDatas[np] != 1){
 					v = outDatas[np]; // valeur au point cardinal

@@ -1,9 +1,5 @@
 package fr.inrae.act.bagap.chloe.script;
 
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-
 public class ScriptTest {
 
 	private static String path = "H:/temp/leo_boudric/";

@@ -7,7 +7,7 @@ import java.util.TreeMap;
 
 import org.jumpmind.symmetric.csv.CsvWriter;
 
-import fr.inra.sad.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.apiland.analysis.Analysis;
 
 public class CsvClusteringOutput extends Analysis {
 

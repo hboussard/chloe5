@@ -10,8 +10,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import fr.inra.sad.bagap.apiland.analysis.combination.CombinationExpressionFactory;
-import fr.inra.sad.bagap.apiland.analysis.matrix.window.shape.distance.DistanceFunction;
+import fr.inrae.act.bagap.apiland.analysis.combination.CombinationExpressionFactory;
+import fr.inrae.act.bagap.apiland.analysis.distance.DistanceFunction;
 import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
@@ -72,11 +72,11 @@ import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineLinearTabOutput;
 import fr.inrae.act.bagap.chloe.window.output.TabOutput;
 import fr.inrae.act.bagap.chloe.window.output.TileAsciiGridOutput;
 import fr.inrae.act.bagap.chloe.window.output.TileGeoTiffOutput;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.TabCoverage;
-import fr.inrae.act.bagap.raster.Tile;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.TabCoverage;
+import fr.inrae.act.bagap.apiland.raster.Tile;
 
 public abstract class SlidingLandscapeMetricAnalysisFactory {
 

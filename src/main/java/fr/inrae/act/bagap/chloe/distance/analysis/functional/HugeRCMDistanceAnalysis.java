@@ -12,15 +12,16 @@ import javax.media.jai.PlanarImage;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.image.util.ImageUtilities;
 
-import fr.inra.sad.bagap.apiland.analysis.Analysis;
-import fr.inra.sad.bagap.apiland.core.space.impl.raster.Pixel;
+import fr.inrae.act.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.apiland.core.space.impl.raster.Pixel;
 import fr.inrae.act.bagap.chloe.distance.output.TileGeoTiffDistanceOutput;
 import fr.inrae.act.bagap.chloe.distance.output.TileRasterDistanceOutput;
 import fr.inrae.act.bagap.chloe.util.Util;
-import fr.inrae.act.bagap.raster.Coverage;
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.Tile;
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.Raster;
+import fr.inrae.act.bagap.apiland.raster.Tile;
 
 public class HugeRCMDistanceAnalysis extends Analysis {
 
@@ -92,7 +93,7 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 		dHeight = 0;
 		bords = new HashMap<Pixel, Map<String, float[]>>();
 		
-		// tuilage à priori
+		// tuilage ï¿½ priori
 		int dx = 0, dy = 0;
 		Pixel p;
 		int roiWidth, roiHeight;
@@ -193,8 +194,8 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 							calculTab[dy*dWidth+dx] = 1;
 						}
 						
-						// stockage en mémoire fichier de l'état de la tuile
-						CoverageManager.writeGeotiff(new File(temp+"_"+dx+"-"+dy+".tif"), outDatas, roiWidth, roiHeight, roiPosMinX, roiPosMaxX, roiPosMinY, roiPosMaxY);
+						// stockage en mï¿½moire fichier de l'ï¿½tat de la tuile
+						CoverageManager.writeGeotiff(new File(temp+"_"+dx+"-"+dy+".tif"), outDatas, roiWidth, roiHeight, roiPosMinX, roiPosMaxX, roiPosMinY, roiPosMaxY, Raster.getNoDataValue());
 						
 					}	
 				}
@@ -213,7 +214,7 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 						
 						//System.out.println("traitement de la tuile "+dx+" "+dy+" / "+dWidth+" "+dHeight);
 						
-						if(majTab[dy*dWidth + dx] == 1){ // la tuile doit être mise à jour
+						if(majTab[dy*dWidth + dx] == 1){ // la tuile doit ï¿½tre mise ï¿½ jour
 							
 							//System.out.println("traitement de la tuile "+dx+" "+dy+" / "+dWidth+" "+dHeight);
 							
@@ -231,17 +232,17 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 							ImageUtilities.disposePlanarImageChain((PlanarImage) cov.getRenderedImage());
 							cov = null;
 							
-							// récupération des valeurs de friction
+							// rï¿½cupï¿½ration des valeurs de friction
 							frictionDatas = frictionCoverage.getData(new Rectangle(x, y, roiWidth, roiHeight));
 							
 							rcm = new TabRCMDistanceAnalysis(outDatas, null, frictionDatas, roiWidth, roiHeight, cellSize, noDataValue, codes);
 							
-							// vérification des mises à jour à faire
+							// vï¿½rification des mises ï¿½ jour ï¿½ faire
 							p = new Pixel(dx, dy);
-							if(calculTab[dy*dWidth+dx] == -1){ // la tuile n'a jamais été calculée
+							if(calculTab[dy*dWidth+dx] == -1){ // la tuile n'a jamais ï¿½tï¿½ calculï¿½e
 								
-								if(dx > 0){ // le bord gauche de la tuile est inclu et partagé
-									if(calculTab[dy*dWidth+(dx-1)] >= 0){ // si la tuile à gauche a été calculée
+								if(dx > 0){ // le bord gauche de la tuile est inclu et partagï¿½
+									if(calculTab[dy*dWidth+(dx-1)] >= 0){ // si la tuile ï¿½ gauche a ï¿½tï¿½ calculï¿½e
 										bord = bords.get(p).get("left");
 										for(int j=0; j<roiHeight; j++){
 											outDatas[j*roiWidth+0] = bord[j]; 
@@ -249,8 +250,8 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										}
 									}
 								}
-								if(dy > 0){ // le bord nord de la tuile est inclu et partagé
-									if(calculTab[(dy-1)*dWidth+dx] >= 0){ // si la tuile au nord a été calculée
+								if(dy > 0){ // le bord nord de la tuile est inclu et partagï¿½
+									if(calculTab[(dy-1)*dWidth+dx] >= 0){ // si la tuile au nord a ï¿½tï¿½ calculï¿½e
 										bord = bords.get(p).get("north");
 										for(int i=0; i<roiWidth; i++){
 											outDatas[i] = bord[i];
@@ -258,8 +259,8 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										}
 									}
 								}
-								if(dx < (dWidth-1)){ // le bord droite de la tuile est inclu et partagé
-									if(calculTab[dy*dWidth+(dx+1)] >= 0){ // si la tuile à droite a été calculée
+								if(dx < (dWidth-1)){ // le bord droite de la tuile est inclu et partagï¿½
+									if(calculTab[dy*dWidth+(dx+1)] >= 0){ // si la tuile ï¿½ droite a ï¿½tï¿½ calculï¿½e
 										bord = bords.get(p).get("right");
 										for(int j=0; j<roiHeight; j++){
 											outDatas[j*roiWidth + (roiWidth-1)] = bord[j];
@@ -267,8 +268,8 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										}
 									}
 								}
-								if(dy < (dHeight-1)){ // le bord sud de la tuile est inclu et partagé
-									if(calculTab[(dy+1)*dWidth+dx] >= 0){ // si la tuile au sud a été calculée
+								if(dy < (dHeight-1)){ // le bord sud de la tuile est inclu et partagï¿½
+									if(calculTab[(dy+1)*dWidth+dx] >= 0){ // si la tuile au sud a ï¿½tï¿½ calculï¿½e
 										bord = bords.get(p).get("south");
 										for(int i=0; i<roiWidth; i++){
 											outDatas[(roiHeight-1)*roiWidth + i] = bord[i];
@@ -276,9 +277,9 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										}
 									}
 								}
-							}else{ // tuile a déjà été calculé
+							}else{ // tuile a dï¿½jï¿½ ï¿½tï¿½ calculï¿½
 								
-								if(dx > 0){ // le bord gauche de la tuile est inclu et partagé
+								if(dx > 0){ // le bord gauche de la tuile est inclu et partagï¿½
 									bord = bords.get(p).get("left");
 									for(int j=0; j<roiHeight; j++){
 										if(bord[j] < outDatas[j*roiWidth+0]){
@@ -287,7 +288,7 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										}
 									}
 								}
-								if(dy > 0){ // le bord nord de la tuile est inclu et partagé
+								if(dy > 0){ // le bord nord de la tuile est inclu et partagï¿½
 									bord = bords.get(p).get("north");
 									for(int i=0; i<roiWidth; i++){
 										if(bord[i] < outDatas[i]){
@@ -296,7 +297,7 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										}
 									}
 								}
-								if(dx < (dWidth-1)){ // le bord droite de la tuile est inclu et partagé
+								if(dx < (dWidth-1)){ // le bord droite de la tuile est inclu et partagï¿½
 									bord = bords.get(p).get("right");
 									for(int j=0; j<roiHeight; j++){
 										if(bord[j] < outDatas[j*roiWidth + (roiWidth-1)]){
@@ -305,7 +306,7 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 										}
 									}
 								}
-								if(dy < (dHeight-1)){ // le bord sud de la tuile est inclu et partagé
+								if(dy < (dHeight-1)){ // le bord sud de la tuile est inclu et partagï¿½
 									bord = bords.get(p).get("south");
 									for(int i=0; i<roiWidth; i++){
 										if(bord[i] < outDatas[(roiHeight-1)*roiWidth + i]){
@@ -325,13 +326,13 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 								finish = false;
 							}
 								
-							// stockage en mémoire fichier de l'état de la tuile
-							CoverageManager.writeGeotiff(new File(temp+"_"+dx+"-"+dy+".tif"), outDatas, roiWidth, roiHeight, roiPosMinX, roiPosMaxX, roiPosMinY, roiPosMaxY);
+							// stockage en mï¿½moire fichier de l'ï¿½tat de la tuile
+							CoverageManager.writeGeotiff(new File(temp+"_"+dx+"-"+dy+".tif"), outDatas, roiWidth, roiHeight, roiPosMinX, roiPosMaxX, roiPosMinY, roiPosMaxY, Raster.getNoDataValue());
 								
 							majTab[dy*dWidth+dx] = 0;
 							calculTab[dy*dWidth+dx] = 1;
 							
-						}else{ // la tuile ne doit pas être mise à jour
+						}else{ // la tuile ne doit pas ï¿½tre mise ï¿½ jour
 							if(calculTab[dy*dWidth+dx] >= 0){
 								calculTab[dy*dWidth+dx] = 0;
 							}
@@ -349,9 +350,9 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 
 	/**
 	 * 3 cas
-	 * 1. la tuile n'a jamais été mise à jour, peut-être que les bords vont l'y obliger...
-	 * 2. la tuile n'a pas été mis à jour (cette fois), la mise à jour des bords se fera sous condition de l'état des tuiles voisines
-	 * 3. la tuile vient d'être mise à jour, attention au bords jamais mis à jour
+	 * 1. la tuile n'a jamais ï¿½tï¿½ mise ï¿½ jour, peut-ï¿½tre que les bords vont l'y obliger...
+	 * 2. la tuile n'a pas ï¿½tï¿½ mis ï¿½ jour (cette fois), la mise ï¿½ jour des bords se fera sous condition de l'ï¿½tat des tuiles voisines
+	 * 3. la tuile vient d'ï¿½tre mise ï¿½ jour, attention au bords jamais mis ï¿½ jour
 	 */
 	private boolean bordUpdateFromData(int dx, int dy, int roiWidth, int roiHeight, double roiPosMinX, double roiPosMaxX, double roiPosMinY, double roiPosMaxY, float[] outDatas){
 		
@@ -359,7 +360,7 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 		Pixel p = new Pixel(dx, dy);
 		
 		//System.out.println("traitement de la tuile "+x+" "+y);
-		if(dx > 0){ // le bord gauche de la tuile est inclu et partagé
+		if(dx > 0){ // le bord gauche de la tuile est inclu et partagï¿½
 			float[] bord = bords.get(p).get("left");
 			for(int j=0; j<roiHeight; j++){
 				if(bord[j] != outDatas[j * roiWidth + 0]){
@@ -370,7 +371,7 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 			}
 		}
 		
-		if(dy > 0){ // le bord nord de la tuile est inclu et partagé
+		if(dy > 0){ // le bord nord de la tuile est inclu et partagï¿½
 			float[] bord = bords.get(p).get("north");
 			for(int i=0; i<roiWidth; i++){
 				if(bord[i] != outDatas[i]){
@@ -381,7 +382,7 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 			}
 		}
 		
-		if(dx < (dWidth-1)){ // le bord droite de la tuile est inclu et partagé
+		if(dx < (dWidth-1)){ // le bord droite de la tuile est inclu et partagï¿½
 			float[] bord = bords.get(p).get("right");
 			for(int j=0; j<roiHeight; j++){
 				if(bord[j] != outDatas[j * roiWidth + (roiWidth-1)]){
@@ -392,7 +393,7 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 			}
 		}
 		
-		if(dy < (dHeight-1)){ // le bord sud de la tuile est inclu et partagé
+		if(dy < (dHeight-1)){ // le bord sud de la tuile est inclu et partagï¿½
 			float[] bord = bords.get(p).get("south");
 			for(int i=0; i<roiWidth; i++){
 				if(bord[i] != outDatas[(roiHeight-1)*roiWidth + i]){

@@ -1,8 +1,8 @@
 package fr.inrae.act.bagap.chloe.distance.output;
 
-import fr.inrae.act.bagap.raster.CoverageManager;
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.Tile;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.Tile;
 
 public class TileGeoTiffDistanceOutput extends TileRasterDistanceOutput {
 

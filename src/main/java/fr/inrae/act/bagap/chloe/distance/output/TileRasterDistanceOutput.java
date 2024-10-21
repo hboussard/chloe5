@@ -2,8 +2,8 @@ package fr.inrae.act.bagap.chloe.distance.output;
 
 import org.locationtech.jts.geom.Envelope;
 
-import fr.inrae.act.bagap.raster.EnteteRaster;
-import fr.inrae.act.bagap.raster.Tile;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.Tile;
 
 public abstract class TileRasterDistanceOutput {
 	

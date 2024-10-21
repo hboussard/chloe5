@@ -2,7 +2,7 @@ package fr.inrae.act.bagap.chloe.distance.analysis.euclidian;
 
 import java.util.Arrays;
 
-import fr.inra.sad.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.apiland.analysis.Analysis;
 
 public class TabChamferDistanceAnalysis extends Analysis {
 

@@ -3,7 +3,7 @@ package fr.inrae.act.bagap.chloe.distance.analysis.slope;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.inra.sad.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.apiland.analysis.Analysis;
 
 public class TabSourceErosionAltitudeRCMDistanceAnalysis extends Analysis {
 
