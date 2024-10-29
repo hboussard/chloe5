@@ -115,12 +115,15 @@ public class SlidingMassCumulKernel extends SlidingLandscapeMetricKernel {
 										
 										int lx = CoordinateManager.getLocalX(outEntete, CoordinateManager.getProjectedX(inEntete, x + dx));
 										int ly = CoordinateManager.getLocalY(outEntete, CoordinateManager.getProjectedY(inEntete, y + dy));
-										lind = (ly*outEntete.width() + lx);
-										if(outputDegatIntensity != null) {
-											synchronized(dataDegatIntensity) {
-												dataDegatIntensity[lind] += dm;
+										if(lx >= 0 && lx < outEntete.width() && ly >= 0 && ly < outEntete.height()) {
+											lind = (ly*outEntete.width() + lx);
+											if(outputDegatIntensity != null) {
+												synchronized(dataDegatIntensity) {
+													dataDegatIntensity[lind] += dm;
+												}
 											}
-										}/*
+										}
+										/*
 										if(outputDepotIntensity != null) {
 											inflocal = friction(dataInfiltration[ic])*localSurface;
 											synchronized(dataDepotIntensity) {

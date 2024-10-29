@@ -150,7 +150,7 @@ public class ScriptTest {
 		procedure.run();
 	}	
 	
-	private static void initialisation(String bvShape, String bvAttribute, String bvCode, String[] rge_altis, String[] bd_topos) {
+	private static void initialisation(String bvShape, String bvAttribute, String bvCode, String osSource, String[] rge_altis, String[] bd_topos) {
 		
 		ErosionManager manager = new ErosionManager("data_initialization");
 		

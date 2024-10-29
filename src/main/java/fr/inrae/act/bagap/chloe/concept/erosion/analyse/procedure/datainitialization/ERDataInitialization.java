@@ -24,7 +24,7 @@ public class ERDataInitialization extends ErosionProcedure {
 		
 		Erosion.bvRasterization(manager().territory(), manager().elevationFolders(), manager().territoryShape(), manager().territoryIDAttribute(), manager().territoryIDValues());
 		
-		System.out.println("recupération de l'altitude (RGE_alti, IGN)");
+		System.out.println("recuperation de l'altitude (RGE_alti, IGN)");
 		
 		Erosion.elevationConstruction(manager().elevation(), manager().territory(), manager().elevationFolders());
 		

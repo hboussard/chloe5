@@ -220,7 +220,6 @@ public class Erosion {
 	}
 	*/
 	
-	
 	public static void slopeDetection(String slopeIntensity, String altitude) {
 		
 		Coverage altCov = CoverageManager.getCoverage(altitude);
