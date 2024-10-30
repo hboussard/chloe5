@@ -36,7 +36,6 @@ import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingCountValueKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingPatchKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingQuantitativeKernel;
-import fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion.SlidingDegatErosionAltitudeKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion.SlidingMassCumulKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion.SlidingSourceErosionKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.slope.SlidingSlopeKernel;

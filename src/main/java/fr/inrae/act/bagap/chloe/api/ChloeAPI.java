@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.Set;
 
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
@@ -101,6 +103,7 @@ public class ChloeAPI {
 			importFilters(builder, properties);
 			importUnfilters(builder, properties);
 			importMaximumNoValueRate(builder, properties);
+			importValues(builder, properties);
 			
 			if(properties.containsKey("output_folder")){
 				importTypeMime(builder, properties);
@@ -460,7 +463,12 @@ public class ChloeAPI {
 				return;	
 			}
 		}
-		throw new NoParameterException("input_raster");
+		if(properties.containsKey("input_tile_raster")){
+			String prop = properties.getProperty("input_tile_raster");
+			builder.setRasterTile(prop);
+			return;
+		}
+		throw new NoParameterException("input_raster or input_tile_raster");
 	}
 	
 	// required 
@@ -593,6 +601,26 @@ public class ChloeAPI {
 			return;
 		}
 		throw new NoParameterException("variables");
+	}
+	
+	// not required
+	public static void importValues(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("values")){
+			String prop = properties.getProperty("values");
+			prop = prop.replace("{", "").replace("}", "").replace(" ", "");
+			String[] vs = prop.split(";");
+			Set<Integer> setValues = new TreeSet<Integer>();
+			for(String v : vs){
+				setValues.add(Integer.parseInt(v));
+			}
+			
+			StringBuilder sb = new StringBuilder();
+			for(int sv : setValues) {
+				sb.append(sv+",");
+			}
+			sb.deleteCharAt(sb.length()-1);
+			builder.setValues(sb.toString());
+		}
 	}
 	
 	// not required
