@@ -75,11 +75,11 @@ public class ErosionManager {
 	
 	private String normSlopeIntensity; // la carte des intensites de pentes normees
 	
-	private String infiltrationMap; // le fichier des codes d'infiltration des occupations des sols
+	private String infiltrationMapFile; // le fichier des codes d'infiltration des occupations des sols
 	
 	private String infiltration; 	// la carte d'infiltration
 	
-	private String erodibilityMap; // le fichier des codes d'erodibilite des occupations des sols
+	private String erodibilityMapFile; // le fichier des codes d'erodibilite des occupations des sols
 	
 	private String erodibility; 	// la carte d'erodibilité
 	
@@ -172,9 +172,9 @@ public class ErosionManager {
 		elevationFolders = new HashSet<String>();
 		slopeIntensity = null; 
 		normSlopeIntensity = null;
-		infiltrationMap = null; 
+		infiltrationMapFile = null; 
 		infiltration = null;
-		erodibilityMap = null;
+		erodibilityMapFile = null;
 		erodibility = null;
 		initialWaterMass = null;
 		cumulWaterMass = null; 
@@ -307,8 +307,8 @@ public class ErosionManager {
 		this.normSlopeIntensity = normSlopeIntensity;
 	}
 	
-	public void setInfiltrationMap(String infiltrationMap) {
-		this.infiltrationMap = infiltrationMap;
+	public void setInfiltrationMapFile(String infiltrationMapFile) {
+		this.infiltrationMapFile = infiltrationMapFile;
 	}
 
 	public void setInfiltration(String infiltration) {
@@ -316,8 +316,8 @@ public class ErosionManager {
 		this.infiltration = infiltration;
 	}
 
-	public void setErodibilityMap(String erodibilityMap) {
-		this.erodibilityMap = erodibilityMap;
+	public void setErodibilityMapFile(String erodibilityMapFile) {
+		this.erodibilityMapFile = erodibilityMapFile;
 	}
 
 	public void setErodibility(String erodibility) {
@@ -491,8 +491,8 @@ public class ErosionManager {
 		return normSlopeIntensity;
 	}
 
-	public String infiltrationMap() {
-		return infiltrationMap;
+	public String infiltrationMapFile() {
+		return infiltrationMapFile;
 	}
 
 	public String infiltration() {
@@ -502,8 +502,8 @@ public class ErosionManager {
 		return infiltration;
 	}
 
-	public String erodibilityMap() {
-		return erodibilityMap;
+	public String erodibilityMapFile() {
+		return erodibilityMapFile;
 	}
 
 	public String erodibility() {

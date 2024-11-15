@@ -27,7 +27,7 @@ public class ERErodibilityGeneration extends ErosionProcedure {
 	
 		System.out.println("generation de la carte d'erodibilite");
 		
-		Erosion.erodibilityGeneration(manager().erodibility(), manager().os(), manager().erodibilityMap());
+		Erosion.erodibilityGeneration(manager().erodibility(), manager().os(), manager().erodibilityMapFile());
 		
 	}
 

@@ -27,7 +27,7 @@ public class ERInfiltrationGeneration extends ErosionProcedure {
 	
 		System.out.println("generation de la carte d'infiltration");
 		
-		Erosion.infiltrationGeneration(manager().infiltration(), manager().os(), manager().infiltrationMap());
+		Erosion.infiltrationGeneration(manager().infiltration(), manager().os(), manager().infiltrationMapFile());
 		
 	}
 		

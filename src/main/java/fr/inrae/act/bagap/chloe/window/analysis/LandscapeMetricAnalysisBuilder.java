@@ -1,8 +1,8 @@
 package fr.inrae.act.bagap.chloe.window.analysis;
 
+import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -27,6 +27,7 @@ import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.CoverageOutput;
+import fr.inrae.act.bagap.chloe.window.output.MapDataOutput;
 //import fr.inrae.act.bagap.chloe.window.output.DataOutput;
 import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
@@ -97,6 +98,10 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	private RasterTypeMime typeMime;
 	
 	private String thematicDistanceFile;
+	
+	private Map<String, Double> mapData;
+	
+	private Map<Integer, Map<String, Double>> entityData;
 	
 	/*
 	@Override
@@ -171,6 +176,8 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		this.coverageOutputs = new HashSet<CoverageOutput>();
 		this.typeMime = RasterTypeMime.GEOTIFF;
 		this.thematicDistanceFile = null;
+		this.mapData = null;
+		this.entityData = null;
 	}
 	
 	@Override
@@ -462,6 +469,14 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		observers.add(dout);
 	}
 	*/
+	
+	public void addMapDataOutput(Map<String, Double> mapData) {
+		this.mapData = mapData;
+	}
+	
+	public void addEntityDataOutput(Map<Integer, Map<String, Double>> entityData) {
+		this.entityData = entityData;
+	}
 	
 	@Override
 	public void addTileAsciiGridOutput(String metric, String pathTile, Tile tile){
@@ -767,6 +782,14 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	
 	public Map<RefPoint, Float> getDatas(){
 		return datas;
+	}
+	
+	public Map<String, Double> getMapDataOutput() {
+		return mapData;
+	}
+	
+	public Map<Integer, Map<String, Double>> getEntityDataOutput() {
+		return entityData;
 	}
 	
 	/*

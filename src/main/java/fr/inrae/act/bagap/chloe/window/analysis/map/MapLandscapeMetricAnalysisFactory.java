@@ -25,6 +25,7 @@ import fr.inrae.act.bagap.chloe.window.kernel.map.MapQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.MapCsvOutput;
+import fr.inrae.act.bagap.chloe.window.output.MapDataOutput;
 import fr.inrae.act.bagap.apiland.raster.Coverage;
 
 public abstract class MapLandscapeMetricAnalysisFactory {
@@ -88,6 +89,11 @@ public abstract class MapLandscapeMetricAnalysisFactory {
 			observers.add(csvOutput);
 		}
 			
+		if(builder.getMapDataOutput() != null) {
+			MapDataOutput dataOutput = new MapDataOutput(builder.getMapDataOutput());
+			observers.add(dataOutput);
+		}
+		
 		// kernel et counting
 		MapLandscapeMetricKernel kernel = null;
 		Counting counting = null;

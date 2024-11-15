@@ -19,6 +19,7 @@ import org.jumpmind.symmetric.csv.CsvWriter;
 
 import fr.inrae.act.bagap.apiland.util.CoordinateManager;
 import fr.inrae.act.bagap.apiland.util.SpatialCsvManager;
+import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
@@ -28,9 +29,13 @@ import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Attribute;
+import weka.core.ChebyshevDistance;
 import weka.core.DenseInstance;
+import weka.core.EuclideanDistance;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.ManhattanDistance;
+import weka.core.NormalizableDistance;
 import weka.core.SelectedTag;
 import weka.core.converters.CSVLoader;
 
@@ -179,7 +184,7 @@ public class EcoPaysage {
 		}
 	}
 	
-	public static void normalize(String groupFile, List<String> groupMetrics) {
+	public static void standardize(String groupFile, List<String> groupMetrics) {
 		try {
 			CsvReader cr = new CsvReader(groupFile);
 			cr.setDelimiter(';');
@@ -217,6 +222,69 @@ public class EcoPaysage {
 				}
 				cwNormGroup.endRecord();
 			}
+			
+			cwNormGroup.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void standardize(String groupFile, List<String> groupMetrics, float[][] distances) {
+		try {
+			CsvReader cr = new CsvReader(groupFile);
+			cr.setDelimiter(';');
+			cr.readHeaders();
+			List<float[]> dGroup = new ArrayList<float[]>();
+			float[] group;
+			int index;
+			while(cr.readRecord()) {
+				group = new float[groupMetrics.size()];
+				index = 0;
+				for(String gm : groupMetrics) {
+					//float coeff = distances[Couple.getOneFromPNC(gm)][Couple.getOtherFromPNC(gm)];
+					//group[index++] = coeff*Float.parseFloat(cr.get(gm));
+					group[index++] = Float.parseFloat(cr.get(gm));
+				}
+				dGroup.add(group);
+			}
+			cr.close();
+			
+			float inertie = inertia(dGroup, groupMetrics.size());
+			System.out.println(inertie);
+			//float divisor = (float) (inertie * Math.sqrt(groupMetrics.size()));
+			
+			CsvWriter cwNormGroup = new CsvWriter(groupFile);
+			cwNormGroup.setDelimiter(';');
+			for(String gm : groupMetrics) {
+				cwNormGroup.write(gm);
+			}
+			cwNormGroup.endRecord();
+			
+			
+			for(float[] d : dGroup) {
+				index = 0;
+				for(String gm : groupMetrics) {
+					//float coeff = distances[Couple.getOneFromPNC(gm)][Couple.getOtherFromPNC(gm)];
+					float v = d[index++];
+					//float nv = coeff*v/inertie;
+					float nv = v/inertie;
+					cwNormGroup.write(nv+"");
+				}
+				cwNormGroup.endRecord();
+			}
+			
+			/*
+			for(float[] d : dGroup) {
+				for(float v : d) {
+					//float nv = v/divisor;
+					float nv = v/inertie;
+					cwNormGroup.write(nv+"");
+				}
+				cwNormGroup.endRecord();
+			}
+			*/
 			
 			cwNormGroup.close();
 		} catch (FileNotFoundException e) {
@@ -414,7 +482,7 @@ public class EcoPaysage {
 				x = CoordinateManager.getLocalX(entete, Double.parseDouble(dataXY[index][0]));
 				y = CoordinateManager.getLocalY(entete, Double.parseDouble(dataXY[index][1]));
 				if(x%factor == 0 && y%factor == 0) {
-					System.out.println(index+" / "+size);
+					//System.out.println(index+" / "+size);
 					stringValues = line.split(";");
 					values = new double[stringValues.length];
 					for(int i=0; i<stringValues.length; i++) {
@@ -453,6 +521,13 @@ public class EcoPaysage {
 			//kmeans.setInitializationMethod(new SelectedTag(SimpleKMeans.RANDOM, SimpleKMeans.TAGS_SELECTION));
 			kmeans.setInitializationMethod(new SelectedTag(SimpleKMeans.FARTHEST_FIRST, SimpleKMeans.TAGS_SELECTION));
 			//kmeans.setInitializationMethod(new SelectedTag(SimpleKMeans.CANOPY, SimpleKMeans.TAGS_SELECTION));
+			
+			EuclideanDistance distanceFunction = new EuclideanDistance();
+			//ManhattanDistance distanceFunction = new ManhattanDistance();
+			distanceFunction.setDontNormalize(true);
+			kmeans.setDistanceFunction(distanceFunction);
+			
+			//((NormalizableDistance) kmeans.getDistanceFunction()).setDontNormalize(true);
 			kmeans.buildClusterer(data);
 			
 			return kmeans;

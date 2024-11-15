@@ -23,10 +23,9 @@ import fr.inrae.act.bagap.chloe.window.kernel.entity.EntityLandscapeMetricKernel
 import fr.inrae.act.bagap.chloe.window.kernel.entity.EntityQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
-import fr.inrae.act.bagap.chloe.window.output.CsvOutput;
 import fr.inrae.act.bagap.chloe.window.output.EntityCsvOutput;
+import fr.inrae.act.bagap.chloe.window.output.EntityDataOutput;
 import fr.inrae.act.bagap.chloe.window.output.EntityRasterOutput;
-import fr.inrae.act.bagap.chloe.window.output.InterpolateSplineLinearCsvOutput;
 import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.TabCoverage;
@@ -35,8 +34,6 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 
 
 	public EntityLandscapeMetricAnalysis create(LandscapeMetricAnalysisBuilder builder, Coverage coverage) throws IOException {
-		
-		System.out.println("tiny entity");
 		
 		int inWidth = coverage.width();
 		int inHeight = coverage.height();
@@ -174,6 +171,11 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 				EntityRasterOutput rasterOutput = new EntityRasterOutput(tifFile, m, entityCoverage, coverage.getEntete().noDataValue());
 				observers.add(rasterOutput);
 			}
+		}
+		
+		if(builder.getEntityDataOutput() != null) {
+			EntityDataOutput dataOutput = new EntityDataOutput(builder.getEntityDataOutput());
+			observers.add(dataOutput);
 		}
 			
 		// kernel and counting

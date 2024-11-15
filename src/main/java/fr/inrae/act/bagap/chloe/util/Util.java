@@ -16,6 +16,7 @@ import org.jumpmind.symmetric.csv.CsvReader;
 
 import fr.inrae.act.bagap.apiland.util.CoordinateManager;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
+import fr.inrae.act.bagap.chloe.window.metric.ThematicDistanceMetric;
 import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import fr.inrae.act.bagap.apiland.raster.TabCoverage;
@@ -244,4 +245,47 @@ public class Util {
 		
 		return new TabCoverage(outData, outEntete);
 	}
+	
+	public static float[][] initThematicDistanceMap(String distanceFile) {
+		
+		if(new File(distanceFile).exists()) {
+			try {
+				CsvReader cr = new CsvReader(distanceFile);
+				cr.setDelimiter(';');
+				cr.readHeaders();
+				int max = -1;
+				Set<Integer> values = new TreeSet<Integer>();
+				int value;
+				for(int h=1; h<cr.getHeaderCount(); h++) {
+					value = Integer.parseInt(cr.getHeader(h));
+					values.add(value);
+					max = Math.max(max, value);
+				}
+				
+				float[][] distances = new float[max+1][max+1];
+				
+				while(cr.readRecord()){
+					int v1 = Integer.parseInt(cr.get("distance"));
+					for(int v2 : values){
+						if(v2 <= v1) {
+							float d = Float.parseFloat(cr.get(v2+""));
+							distances[v1][v2] = d;
+							distances[v2][v1] = d;
+						}
+					}
+				}
+				cr.close();
+			
+				return distances;
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}else {
+			System.err.println("WARNING: Thematic distance file "+distanceFile+" doesn't exists.");
+		}
+		
+		return null;
+	}
+	
 }

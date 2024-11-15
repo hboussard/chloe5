@@ -43,4 +43,12 @@ public class Couple {
 		return c == getCouple((short) min, (short) min);
 	}
 	
+	public static int getOneFromPNC(String metric) {
+		return Integer.parseInt(metric.replace("pNC_", "").split("-")[0]);
+	}
+	
+	public static int getOtherFromPNC(String metric) {
+		return Integer.parseInt(metric.replace("pNC_", "").split("-")[1]);
+	}
+	
 }

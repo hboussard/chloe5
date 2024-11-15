@@ -21,7 +21,7 @@ public class ScriptArticleGrainBocager {
 		//analyseDensiteBoisement();
 		
 		//sarClusterGrainBocager();
-		sarClusterDensiteBoisement();
+		//sarClusterDensiteBoisement();
 	}
 	
 	private static void sarClusterGrainBocager() {

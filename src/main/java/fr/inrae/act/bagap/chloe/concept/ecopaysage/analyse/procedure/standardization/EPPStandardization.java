@@ -6,6 +6,7 @@ import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.EcoPaysage;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageManager;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageProcedure;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.calculmetrics.EPPCalculMetrics;
+import fr.inrae.act.bagap.chloe.util.Util;
 
 public class EPPStandardization extends EcoPaysageProcedure {
 
@@ -49,11 +50,15 @@ public class EPPStandardization extends EcoPaysageProcedure {
 		
 		System.out.println("standardisation des donnees de composition");
 		
-		EcoPaysage.normalize(manager().compoFile(scale), manager().compoMetrics());
+		EcoPaysage.standardize(manager().compoFile(scale), manager().compoMetrics());
 		
 		System.out.println("standardisation des donnees de configuration");
 		
-		EcoPaysage.normalize(manager().configFile(scale), manager().configMetrics());
+		//EcoPaysage.standardize(manager().configFile(scale), manager().configMetrics());
+		
+		//float[][] distances = Util.initThematicDistanceMap("E:/rennes_metropole/ecopaysage/distance/distance_neutre.txt");
+		
+		EcoPaysage.standardize(manager().configFile(scale), manager().configMetrics(), null);
 		
 		System.out.println("compilation des donnees standardisees de composition et de configuration");
 		

@@ -1,12 +1,7 @@
 package fr.inrae.act.bagap.chloe.concept.ecopaysage.script;
 
-import java.io.File;
-import java.io.IOException;
-
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageManager;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageProcedure;
-import weka.core.Instances;
-import weka.core.converters.CSVLoader;
 
 public class ScriptRennesMetropole {
 
@@ -22,17 +17,18 @@ public class ScriptRennesMetropole {
 		//ecolandscape(scale);
 		ecolandscapeTest(scale);
 		
-		
 	}
 	
 	private static void ecolandscapeTest(int scale) {
 		
 		EcoPaysageManager epManager = new EcoPaysageManager("mapping");
 		epManager.setInputRaster("E:/rennes_metropole/data/rm_os_bre.tif");
+		epManager.setCodes(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}); // code d'occupation du sol
 		epManager.setScale(scale);
-		epManager.setFactor(3);
-		epManager.setOutputFolder("E:/rennes_metropole/ecopaysage/essaie10/scale_"+scale+"m/");
+		//epManager.setFactor(2);
+		epManager.setOutputFolder("E:/rennes_metropole/ecopaysage/essaie25/scale_"+scale+"m/");
 		epManager.setClasses(new int[]{5});
+		//epManager.setClasses(new int[]{5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
 		
 		EcoPaysageProcedure epProcedure = epManager.build();
 		

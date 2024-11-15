@@ -127,8 +127,8 @@ public class ScriptTest {
 		
 		manager.setOutputFolder("C:/Data/projet/coterra/essai_"+bvCode+"/");
 		manager.setOutputPrefix(bvCode);
-		manager.setInfiltrationMap("C:/Data/projet/coterra/essai_"+bvCode+"/infiltration_map.txt");
-		manager.setErodibilityMap("C:/Data/projet/coterra/essai_"+bvCode+"/erodibility_map.txt");
+		manager.setInfiltrationMapFile("C:/Data/projet/coterra/essai_"+bvCode+"/infiltration_map.txt");
+		manager.setErodibilityMapFile("C:/Data/projet/coterra/essai_"+bvCode+"/erodibility_map.txt");
 		
 		ErosionProcedure procedure = manager.build();
 		
@@ -142,8 +142,8 @@ public class ScriptTest {
 		
 		manager.setOutputFolder("C:/Data/projet/coterra/essai_"+bvCode+"/");
 		manager.setOutputPrefix(bvCode);
-		manager.setInfiltrationMap("C:/Data/projet/coterra/essai_"+bvCode+"/infiltration_map.txt");
-		manager.setErodibilityMap("C:/Data/projet/coterra/essai_"+bvCode+"/erodibility_map.txt");
+		manager.setInfiltrationMapFile("C:/Data/projet/coterra/essai_"+bvCode+"/infiltration_map.txt");
+		manager.setErodibilityMapFile("C:/Data/projet/coterra/essai_"+bvCode+"/erodibility_map.txt");
 		
 		ErosionProcedure procedure = manager.build();
 		

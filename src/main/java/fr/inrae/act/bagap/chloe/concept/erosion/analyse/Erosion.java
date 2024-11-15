@@ -299,15 +299,14 @@ public class Erosion {
 		CoverageManager.write(initialWaterMass, data, entete);
 	}
 	
-	public static void infiltrationGeneration(String infiltration, String os, String infiltrationMap) {
+	public static void infiltrationGeneration(String infiltration, String os, String infiltrationMapFile) {
 	
 		Coverage osCov = CoverageManager.getCoverage(os);
 		EnteteRaster osEntete = osCov.getEntete();
 		float[] osData = osCov.getData();
 		osCov.dispose();
 		
-		
-		FileMap fMap = new FileMap(infiltrationMap, "cover", "infiltration");
+		FileMap fMap = new FileMap(infiltrationMapFile, "cover", "infiltration");
 		/*
 		fMap.change(5, infiltration);
 		fMap.change(6, infiltration);
@@ -326,14 +325,28 @@ public class Erosion {
 		CoverageManager.write(infiltration, data, osEntete);
 	}
 	
-	public static void erodibilityGeneration(String erodibility, String os, String erodibilityMap) {
+	public static void infiltrationGeneration(String infiltration, String os, Map<Float, Float> infiltrationMap) {
 		
 		Coverage osCov = CoverageManager.getCoverage(os);
 		EnteteRaster osEntete = osCov.getEntete();
 		float[] osData = osCov.getData();
 		osCov.dispose();
 		
-		FileMap fMap = new FileMap(erodibilityMap, "cover", "erodibility") ;
+		float[] data = new float[osData.length];
+		SearchAndReplacePixel2PixelTabCalculation cal = new SearchAndReplacePixel2PixelTabCalculation(data, osData, infiltrationMap);
+		cal.run();
+		
+		CoverageManager.write(infiltration, data, osEntete);
+	}
+	
+	public static void erodibilityGeneration(String erodibility, String os, String erodibilityMapFile) {
+		
+		Coverage osCov = CoverageManager.getCoverage(os);
+		EnteteRaster osEntete = osCov.getEntete();
+		float[] osData = osCov.getData();
+		osCov.dispose();
+		
+		FileMap fMap = new FileMap(erodibilityMapFile, "cover", "erodibility") ;
 		/*
 		fMap.change(5, versement);
 		fMap.change(6, versement);
@@ -347,6 +360,20 @@ public class Erosion {
 		
 		float[] data = new float[osData.length];
 		SearchAndReplacePixel2PixelTabCalculation cal = new SearchAndReplacePixel2PixelTabCalculation(data, osData, fMap.getMap());
+		cal.run();
+		
+		CoverageManager.write(erodibility, data, osEntete);
+	}
+	
+	public static void erodibilityGeneration(String erodibility, String os, Map<Float, Float> erodibilityMap) {
+		
+		Coverage osCov = CoverageManager.getCoverage(os);
+		EnteteRaster osEntete = osCov.getEntete();
+		float[] osData = osCov.getData();
+		osCov.dispose();
+		
+		float[] data = new float[osData.length];
+		SearchAndReplacePixel2PixelTabCalculation cal = new SearchAndReplacePixel2PixelTabCalculation(data, osData, erodibilityMap);
 		cal.run();
 		
 		CoverageManager.write(erodibility, data, osEntete);
@@ -419,6 +446,7 @@ public class Erosion {
 				if(vi > 0 && vd != -1) {
 					//return (vv * vd * vi) / 10;
 					return (vv * vd * vi);
+					//return (vv * vd * vd * vi / 10000.0f);
 				}else {
 					return 0;
 				}
