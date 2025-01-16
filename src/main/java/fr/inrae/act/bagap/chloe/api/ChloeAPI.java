@@ -68,6 +68,7 @@ public class ChloeAPI {
 				case "combine" : launchCombine(properties); break;
 				case "search_and_replace" : launchSearchAndReplace(properties); break;
 				case "classification" : launchClassification(properties); break;
+				case "overlay" : launchOverlay(properties); break;
 				case "raster_from_csv" : launchRasterFromCsv(properties); break;
 				case "raster_from_shapefile" : launchRasterFromShapefile(properties); break;
 				case "distance" : launchDistance(properties); break;
@@ -304,6 +305,28 @@ public class ChloeAPI {
 				
 			importInputRaster(builder, properties);
 			importDomains(builder, properties);
+			importOutputRaster(builder, properties);
+			
+			ChloeAnalysis analysis = builder.build();
+			analysis.allRun();
+				
+			long end = System.currentTimeMillis();
+			System.out.println("time computing : "+(end - begin));
+			
+		} catch (NoParameterException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void launchOverlay(Properties properties) {
+		
+		try{
+			long begin = System.currentTimeMillis();
+			
+			ChloeAnalysisBuilder builder = new ChloeUtilAnalysisBuilder();
+			builder.setAnalysisType(ChloeAnalysisType.OVERLAY);
+				
+			importInputRaster(builder, properties);
 			importOutputRaster(builder, properties);
 			
 			ChloeAnalysis analysis = builder.build();

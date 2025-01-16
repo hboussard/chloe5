@@ -1,12 +1,11 @@
 package fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.standardization;
 
 import java.io.File;
-
+import fr.inrae.act.bagap.apiland.util.Tool;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.EcoPaysage;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageManager;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageProcedure;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.calculmetrics.EPPCalculMetrics;
-import fr.inrae.act.bagap.chloe.util.Util;
 
 public class EPPStandardization extends EcoPaysageProcedure {
 
@@ -46,24 +45,36 @@ public class EPPStandardization extends EcoPaysageProcedure {
 
 		System.out.println("split des donnees de composition et de configuration");
 		
-		EcoPaysage.splitCompoConfig(manager().metricsFile(scale), manager().xyFile(), manager().compoFile(scale), manager().configFile(scale), manager().compoMetrics(), manager().configMetrics());
+		//EcoPaysage.splitCompoConfig(manager().metricsFile(scale), manager().xyFile(), manager().compoFile(scale), manager().configFile(scale), manager().compoMetrics(), manager().configMetrics());
+		EcoPaysage.splitCompoConfig(manager().metricsFiles(scale), manager().xyFile(), manager().compoFile(scale), manager().configFile(scale), manager().compoMetrics(), manager().configMetrics());
 		
 		System.out.println("standardisation des donnees de composition");
 		
-		EcoPaysage.standardize(manager().compoFile(scale), manager().compoMetrics());
+		float inertia;
+		
+		inertia = EcoPaysage.standardize(manager().compoFile(scale), manager().compoMetrics(), manager().importances(), scale);
+		
+		manager().setInertia("composition_"+scale+"m", inertia);
 		
 		System.out.println("standardisation des donnees de configuration");
 		
 		//EcoPaysage.standardize(manager().configFile(scale), manager().configMetrics());
 		
+		float[][] distances = null;
 		//float[][] distances = Util.initThematicDistanceMap("E:/rennes_metropole/ecopaysage/distance/distance_neutre.txt");
 		
-		EcoPaysage.standardize(manager().configFile(scale), manager().configMetrics(), null);
+		inertia = EcoPaysage.standardize(manager().configFile(scale), manager().configMetrics(), manager().importances(), distances, scale);
+		
+		manager().setInertia("configuration_"+scale+"m", inertia);
 		
 		System.out.println("compilation des donnees standardisees de composition et de configuration");
 		
-		EcoPaysage.compileNormCompoConfig(manager().normFile(scale), manager().compoFile(scale), manager().configFile(scale), manager().compoMetrics(), manager().configMetrics());
+		EcoPaysage.compileStdCompoConfig(manager().standardizedFile(scale), manager().compoFile(scale), manager().configFile(scale), manager().compoMetrics(), manager().configMetrics(), scale);
 		
+		Tool.deleteFile(manager().compoFile(scale));
+		Tool.deleteFile(manager().configFile(scale));
+		
+		EcoPaysage.exportInertia(manager().inertiaFile(), manager().inerties());
 	}
 	
 	

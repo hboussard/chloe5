@@ -9,7 +9,9 @@ import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.jumpmind.symmetric.csv.CsvReader;
@@ -40,11 +42,13 @@ public class Util {
 	}
 	
 	public static void createAccess(String f){
-		if(f.contains(".")){ // file
-			new File(f).getParentFile().mkdirs();
-		}else{ // folder
+		
+		if(f.endsWith("/") || f.endsWith("\\")){ // folder
 			new File(f).mkdirs();
+		}else{ // file
+			new File(f).getParentFile().mkdirs();
 		}
+
 	}
 	
 	public static double distance(int x1, int y1, int x2, int y2){
@@ -287,5 +291,74 @@ public class Util {
 		
 		return null;
 	}
+	
+	/*
+	public static Map<String, Float> initThematicImportanceMap(String importanceFile) {
+		
+		if(new File(importanceFile).exists()) {
+			try {
+				CsvReader cr = new CsvReader(importanceFile);
+				cr.setDelimiter(';');
+				cr.readHeaders();
+				
+				Map<String, Float> mapImportances = new HashMap<String, Float>();
+				while(cr.readRecord()){
+					float importance = Float.parseFloat(cr.get("importance"));
+					mapImportances.put(cr.get("metric"), importance);
+					
+				}
+				cr.close();
+				
+				return mapImportances;
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}else {
+			System.err.println("WARNING: Thematic importance file "+importanceFile+" doesn't exists.");
+		}
+		
+		return null;
+	}*/
+	
+	/*
+	public static Map<String, Float> initThematicImportanceMap(String importanceFile) {
+		
+		if(new File(importanceFile).exists()) {
+			try {
+				CsvReader cr = new CsvReader(importanceFile);
+				cr.setDelimiter(';');
+				cr.readHeaders();
+				
+				Map<Integer, Float> codeImportances = new TreeMap<Integer, Float>();
+				while(cr.readRecord()){
+					int code = Integer.parseInt(cr.get("code"));
+					float importance = Float.parseFloat(cr.get("importance"));
+					codeImportances.put(code, importance);
+				}
+				cr.close();
+				
+				Map<String, Float> mapImportances = new HashMap<String, Float>();
+				for(int code1 : codeImportances.keySet()) {
+					mapImportances.put("pNV_"+code1, codeImportances.get(code1));
+					for(int code2 : codeImportances.keySet()) {
+						if(code1 < code2) {
+							//mapImportances.put("pNC_"+code1+"-"+code2, Math.max(codeImportances.get(code1), codeImportances.get(code2)));
+							mapImportances.put("pNC_"+code1+"-"+code2, codeImportances.get(code1) * codeImportances.get(code2));
+						}
+					}
+				}
+				
+				return mapImportances;
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}else {
+			System.err.println("WARNING: Thematic importance file "+importanceFile+" doesn't exists.");
+		}
+		
+		return null;
+	}*/
 	
 }

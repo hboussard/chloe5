@@ -1032,8 +1032,6 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 	
 	protected abstract int[] readValues(Coverage coverage, Rectangle roi, int noDataValue);
 	
-	
-	
 	protected abstract SlidingLandscapeMetricAnalysis createSingle(Coverage coverage, int roiX, int roiY, int roiWidth, int roiHeight, 
 			int bufferROIXMin, int bufferROIXMax, int bufferROIYMin, int bufferROIYMax, int nb, int displacement, SlidingLandscapeMetricKernel kernel, Counting counting);
 	

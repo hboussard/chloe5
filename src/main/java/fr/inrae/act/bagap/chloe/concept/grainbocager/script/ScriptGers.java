@@ -3,9 +3,11 @@ package fr.inrae.act.bagap.chloe.concept.grainbocager.script;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
-
+import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
+import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
@@ -17,7 +19,22 @@ public class ScriptGers {
 		//scriptCalculGrainInitial();
 		//scriptCalculGrainAmenagement();
 		//scriptCalculGrainAmenagementAlternatif();
-		cleanMNHC();
+		//cleanMNHC();
+		//moyenne();
+	}
+	
+	private static void moyenne() {
+
+		String path = "D:/grain_bocager/test_gers/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(ChloeAnalysisType.MAP);
+		builder.addRasterFile(path+"2019/32_2019_hauteur_boisement.tif");
+		builder.addRasterFile(path+"2022/32_2022_hauteur_boisement.tif");
+		builder.addMetric("average");		
+		builder.addCsvOutput(path+"test/analyse_moyenne.csv");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
 	}
 	
 	private static void cleanMNHC() {

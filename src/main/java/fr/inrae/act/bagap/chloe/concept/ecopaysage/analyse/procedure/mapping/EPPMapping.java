@@ -18,10 +18,13 @@ public class EPPMapping extends EcoPaysageProcedure {
 	public void doInit() {
 		
 		boolean force = manager().force();
-		for(int k : manager().classes()) {
-			if(!new File(manager().ecoFile(k)).exists()) {
-				force = true;
-				break;
+		for(String inputRaster : manager().inputRasters()) {
+			String carto = manager().carto(inputRaster);
+			for(int k : manager().classes()) {
+				if(!new File(manager().ecoFile(carto, k)).exists()) {
+					force = true;
+					break;
+				}
 			}
 		}
 		
@@ -37,11 +40,16 @@ public class EPPMapping extends EcoPaysageProcedure {
 		
 		EnteteRaster header = EcoPaysage.getHeader(manager().headerFile(), manager().noDataValue());
 		
-		for(int k : manager().classes()) {
+		for(String inputRaster : manager().inputRasters()) {
+
+			String carto = manager().carto(inputRaster);
 			
-			System.out.println("export cartographique vers "+manager().mapFile(k));
-			
-			EcoPaysage.exportMap(manager().mapFile(k), manager().ecoFile(k), k, header);
+			for(int k : manager().classes()) {
+				
+				System.out.println("export cartographique vers "+manager().mapFile(carto, k));
+				
+				EcoPaysage.exportMap(manager().mapFile(carto, k), manager().ecoFile(carto, k), k, header);
+			}	
 		}
 		
 	}

@@ -12,7 +12,7 @@ public class ScriptEcopaysageLTC {
 	private static void ecolandscape() {
 		
 		EcoPaysageManager epManager = new EcoPaysageManager("mapping");
-		epManager.setInputRaster("C:/Data/projet/motiver/data/LTC_2019_ebr_mer_22_clean.tif");
+		epManager.addInputRaster("C:/Data/projet/motiver/data/LTC_2019_ebr_mer_22_clean.tif");
 		epManager.setCodes(new int[]{1, 2, 3, 4, 5, 6, 7, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23}); // code d'occupation du sol
 		epManager.setXYFile("C:/Data/projet/motiver/data/xy.csv");
 		epManager.setScales(new int[]{1000});

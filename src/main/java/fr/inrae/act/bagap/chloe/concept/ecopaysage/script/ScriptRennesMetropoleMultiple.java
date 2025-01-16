@@ -15,7 +15,7 @@ public class ScriptRennesMetropoleMultiple {
 	private static void ecolandscape(int[] scales) {
 		
 		EcoPaysageManager epManager = new EcoPaysageManager("gradient");
-		epManager.setInputRaster("E:/rennes_metropole/data/rm_os_bre.tif");
+		epManager.addInputRaster("E:/rennes_metropole/data/rm_os_bre.tif");
 		epManager.setScales(scales);
 		epManager.setOutputFolder("E:/rennes_metropole/ecopaysage/essaie6/");
 		epManager.setClasses(new int[]{8});

@@ -26,7 +26,7 @@ public class ScriptDiagEABretagne {
 	public static void main(String[] args) {
 		//cleanMNHC();
 		//scriptExploitationsBretagne();
-		scriptExploitation("056047987", 5, null, true);
+		scriptExploitation("056046330", 5, null, true);
 	}
 	
 	private static void scriptExploitationsBretagne() {
@@ -59,19 +59,21 @@ public class ScriptDiagEABretagne {
 			builder.setCsvWriter(writer);
 		}
 		builder.setBocage("F:/FDCCA/diag_ea/data/mnhc/");
-		builder.setParcellaire("F:/data/sig/RPG/rpg-2020/surfaces_2020_toutes_parcelles_graphiques_constatees_exploitants_FRCB.shp");
+		//builder.setParcellaire("F:/data/sig/RPG/rpg-2020/surfaces_2020_toutes_parcelles_graphiques_constatees_exploitants_FRCB.shp");
+		builder.setParcellaire("F:/FDCCA/diag_ea/data/analyse_bretagne/056046330/056046330.shp");
 		builder.setAttributCodeEA("pacage");
 		//builder.setZoneBocageExploitation("F:/data/sig/RPG/rpg-2020/surfaces_2020_toutes_parcelles_graphiques_constatees_exploitants_FRCB.shp");
 		//builder.setBufferZoneBocageExploitation(10);
 		builder.setSeuil(0.33);
 		builder.setCodeEA(exploitation);
 		//builder.addScenario("initial");
-		builder.setAmenagement("F:/FDCCA/diag_ea/data/analyse_bretagne/056047987/amenagement_056047987.shp");
+		//builder.setAmenagement("F:/FDCCA/diag_ea/data/analyse_bretagne/056047987/amenagement_056047987.shp");
+		builder.setAmenagement("F:/FDCCA/diag_ea/data/analyse_bretagne/056046330/amenagement.shp");
 		//builder.addScenario("scenario0");
 		//builder.addScenario("scenario1");
 		//builder.addScenario("scenario2");
 		//builder.addScenario("scenario3");
-		builder.addScenario("scenario4");
+		builder.addScenario("hauteur");
 		builder.setOutCellSize(outCellSize);
 		builder.setExportMap(exportMap);
 		DiagnosticGrainBocagerExploitation diagEA = builder.build();

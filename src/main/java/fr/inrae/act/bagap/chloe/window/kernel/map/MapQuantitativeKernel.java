@@ -10,16 +10,16 @@ public class MapQuantitativeKernel extends MapLandscapeMetricKernel {
 	public void applyMapWindow(int theY) {
 			
 		float v;
-		float nb_nodata = 0;
-		float nb = 0;
-		float sum = 0;
+		double nb_nodata = 0;
+		double nb = 0;
+		double sum = 0;
 		double square_sum = 0;
 		float min = Float.MAX_VALUE;
 		float max = Float.MIN_VALUE;			
 		for(int y=0; y<height(); y++) {
 			for(int x=0; x<width(); x++) {
 					
-				v = inDatas()[(y*width()) + x];	
+				v = inDatas()[(y*width()) + x];
 				nb += 1;	
 				if(v == noDataValue()) {
 					nb_nodata += 1;

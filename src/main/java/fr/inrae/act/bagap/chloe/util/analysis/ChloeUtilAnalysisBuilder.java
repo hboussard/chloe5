@@ -3,6 +3,7 @@ package fr.inrae.act.bagap.chloe.util.analysis;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,6 +31,8 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	private String outputFolder;
 	
 	private String inputRaster, inputRaster2;
+	
+	private Set<String> rasterFiles;
 	
 	private String inputShapefile;
 	
@@ -73,6 +76,7 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 		this.outputFolder = null;
 		this.inputRaster = null;
 		this.inputRaster2 = null;
+		this.rasterFiles = new LinkedHashSet<String>();
 		this.inputShapefile = null;
 		this.attribute = null;
 		this.outputPrefix = "";
@@ -128,8 +132,9 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	}
 	
 	@Override
-	public void addRasterFile(String rasterFile){
-		this.inputRaster = rasterFile;
+	public void addRasterFile(String rasterFile) {
+		this.rasterFiles.add(rasterFile);
+		setRasterFile(rasterFile);
 	}
 	
 	@Override
@@ -321,6 +326,10 @@ public class ChloeUtilAnalysisBuilder extends ChloeAnalysisBuilder {
 	
 	public String getRasterFile2() {
 		return inputRaster2;
+	}
+	
+	public Set<String> getRasterFiles() {
+		return rasterFiles;
 	}
 	
 	public String getShapefile(){

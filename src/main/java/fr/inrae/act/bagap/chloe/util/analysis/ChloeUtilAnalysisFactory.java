@@ -26,6 +26,10 @@ public class ChloeUtilAnalysisFactory {
 			
 			analysis = new ClassificationAnalysis(builder.getOutputRaster(), builder.getRasterFile(), builder.getDomains());
 			
+		}else if(builder.getAnalysisType() == ChloeAnalysisType.OVERLAY){
+			
+			analysis = new OverlayAnalysis(builder.getOutputRaster(), builder.getRasterFiles());
+			
 		}else if(builder.getAnalysisType() == ChloeAnalysisType.RASTER_FROM_CSV){
 			
 			if(builder.getVariables().size() == 1){

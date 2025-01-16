@@ -13,6 +13,7 @@ import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import fr.inrae.act.bagap.apiland.raster.Tile;
 import fr.inrae.act.bagap.apiland.raster.TileCoverage;
 import fr.inrae.act.bagap.apiland.raster.analysis.Pixel2PixelTileCoverageCalculation;
+import fr.inrae.act.bagap.apiland.util.Tool;
 
 public class HugeGrainBocager {
 	
@@ -51,13 +52,16 @@ public class HugeGrainBocager {
 		covTypeBoisementPhase1.dispose();
 		covTypeBoisementDistanceBoisement.dispose();
 		
+		Tool.deleteFolder(rasterTypeBoisementPhase1);
+		Tool.deleteFolder(rasterDistanceBoisement);
+		
 		return covTypeBoisement;
 	}
 	
 	// detection des types de boisement phase 1
 	
 	public static Coverage detectionTypeBoisementPhase1(String rasterHauteurBoisement, String rasterTypeBoisementPhase1, Tile tile, boolean fastMode) {
-
+		
 		// recuperation du coverage
 		Coverage covHauteurBoisement = CoverageManager.getCoverage(rasterHauteurBoisement);
 		
@@ -69,6 +73,8 @@ public class HugeGrainBocager {
 	}
 	
 	public static Coverage detectionTypeBoisementPhase1(String rasterTypeBoisementPhase1, Coverage covHauteurBoisement, Tile tile, boolean fastMode) {
+		
+		//System.out.println("detection phase 1");
 		
 		Util.createAccess(rasterTypeBoisementPhase1);
 		
@@ -120,6 +126,8 @@ public class HugeGrainBocager {
 	
 	public static Coverage calculDistanceMassifsBoisesEuclidian_2(String rasterDistanceBoisement, Coverage covTypeBoisementPhase1, Tile tile){
 				
+		//System.out.println("detection phase 2");
+		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
 		builder.setCoverage(covTypeBoisementPhase1);
 		builder.addMetric("pNV_5");
@@ -180,6 +188,8 @@ public class HugeGrainBocager {
 	}
 	
 	public static Coverage detectionTypeBoisementPhase2_2(String rasterTypeBoisement, Coverage covTypeBoisementPhase1, Coverage covDistanceBoisement) {
+		
+		System.out.println("detection phase 3");
 		
 		Util.createAccess(rasterTypeBoisement);
 		

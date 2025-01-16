@@ -15,16 +15,18 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 	/**
 	 * partie specifique :
 	 * 4 : somme des valeurs
-	 * 5 : somme des carr�s des valeurs
+	 * 5 : somme des carres des valeurs
 	 * 6 : minimum des valeurs
 	 * 7 : maximum des valeurs
 	 */
 	@Override
 	public void doSetCounts(double[] counts){
+		
 		sum = counts[4];
 		squareSum = counts[5];
 		minimum = counts[6];
 		maximum = counts[7];
+		
 	}
 
 	@Override

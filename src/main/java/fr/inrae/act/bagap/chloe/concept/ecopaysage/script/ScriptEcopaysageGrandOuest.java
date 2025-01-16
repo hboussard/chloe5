@@ -119,7 +119,7 @@ public class ScriptEcopaysageGrandOuest {
 	private static void ecolandscapeRennesMetropole(int[] scales) {
 		
 		EcoPaysageManager epManager = new EcoPaysageManager("mapping");
-		epManager.setInputRaster("E:/rennes_metropole/data/rm_os_bre.tif");
+		epManager.addInputRaster("E:/rennes_metropole/data/rm_os_bre.tif");
 		epManager.setScales(scales);
 		//epManager.setFactor(3);
 		epManager.setOutputFolder("E:/rennes_metropole/ecopaysage/essaie7/");
@@ -133,7 +133,7 @@ public class ScriptEcopaysageGrandOuest {
 	private static void ecolandscapeBretagne(int[] scales) {
 		
 		EcoPaysageManager epManager = new EcoPaysageManager("mapping");
-		epManager.setInputRaster("D:/data/sig/bretagne/bretagne_2021_ebr_clean.tif");
+		epManager.addInputRaster("D:/data/sig/bretagne/bretagne_2021_ebr_clean.tif");
 		epManager.setScales(scales);
 		epManager.setFactor(2);
 		epManager.setOutputFolder("D:/data/sig/bretagne/ecopaysage_2021/");
@@ -147,7 +147,7 @@ public class ScriptEcopaysageGrandOuest {
 	private static void ecolandscapeGrandOuest(int[] scales) {
 		
 		EcoPaysageManager epManager = new EcoPaysageManager("rupture");
-		epManager.setInputRaster("D:/data/sig/grand_ouest/GO_2021_ebr_clean.tif");
+		epManager.addInputRaster("D:/data/sig/grand_ouest/GO_2021_ebr_clean.tif");
 		epManager.setScales(scales);
 		epManager.setFactor(100);
 		epManager.setOutputFolder("D:/data/sig/grand_ouest/ecopaysage/");

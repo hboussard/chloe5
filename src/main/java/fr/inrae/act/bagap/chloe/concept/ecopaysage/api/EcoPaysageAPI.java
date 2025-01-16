@@ -84,7 +84,7 @@ public class EcoPaysageAPI {
 			String[] rasters = prop.split(";");
 			for(String raster : rasters) {
 				if(new File(raster).isFile()){
-					builder.setInputRaster(raster);
+					builder.addInputRaster(raster);
 				}	
 			}
 			return;

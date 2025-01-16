@@ -18,10 +18,12 @@ public class EPPRupture extends EcoPaysageProcedure {
 	public void doInit() {
 		
 		boolean force = manager().force();
-		for(int k : manager().classes()) {
-			if(!new File(manager().mapFile(k)).exists()) {
-				force = true;
-				break;
+		for(String carto : manager().cartos().values()) {
+			for(int k : manager().classes()) {
+				if(!new File(manager().mapFile(carto, k)).exists()) {
+					force = true;
+					break;
+				}
 			}
 		}
 		
@@ -37,7 +39,7 @@ public class EPPRupture extends EcoPaysageProcedure {
 		
 		EnteteRaster header = EcoPaysage.getHeader(manager().headerFile(), manager().noDataValue());
 		
-		System.out.println("genereation des fichiers de distance thematique");
+		System.out.println("generation des fichiers de distance thematique");
 		
 		for(int k : manager().classes()) {
 			

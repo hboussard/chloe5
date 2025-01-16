@@ -4,7 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
+
+import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.EcoPaysage;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.calculmetrics.EPPCalculMetricsFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.clustering.EPPClusteringFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.gradient.EPPGradientFactory;
@@ -25,19 +29,24 @@ public class EcoPaysageManager {
 	
 	//private String metricsFile; // csv des metriques
 	
-	private Map<Integer, String> metricsFiles; // csv des metriques par echelle
+	//private Map<Integer, String> metricsFiles; // csv des metriques par echelle
+	
+	private Map<String, Map<Integer, String>> metricsFiles; // csv des metriques par carto d'entree et par echelle
 	
 	private String xyFile; // csv des XY
 	
 	private String carto; // nom de la carto
+	private Map<String, String> cartos; // nom de la carto
 	
-	private String inputRaster; // raster d'entree
+	//private String inputRaster; // raster d'entree
+	
+	private Set<String> inputRasters; // raster d'entree
 	
 	private String outputFolder; // dossier de sortie
 	
-	private Map<Integer, String> compoFiles, configFiles, normFiles;
+	private Map<Integer, String> compoFiles, configFiles, stdFiles;
 	
-	private String normFile, ruptureFile;
+	private String stdFile, ruptureFile, inertiaFile;
 	
 	//private int scale; // echelle d'analyse unique
 	
@@ -45,13 +54,17 @@ public class EcoPaysageManager {
 	
 	private List<String> compoMetrics, configMetrics; // les metriques de compo et de config
 	
+	private int[] codes;
+	
 	private boolean initMetrics;
 	
 	private int[] classes; // les nombres de classes à générer
 	
 	private int factor; // facteur de clusterisation
 	
-	private Map<Integer, String> ecoFiles, mapFiles, infoFiles, gradientFiles, thematicDistanceFiles;
+	private Map<String, Map<Integer, String>> ecoFiles, mapFiles;
+	
+	private Map<Integer, String> /*ecoFiles, mapFiles,*/ infoFiles, gradientFiles, thematicDistanceFiles;
 	
 	private Map<Integer, Map<Integer, String>> gradientMapFiles;
 	
@@ -66,6 +79,13 @@ public class EcoPaysageManager {
 	private int displacement;
 	
 	private WindowDistanceType distanceType;
+	
+	private String codeImportanceFile, metricImportanceFile;
+	
+	private Map<String, Float> importances;
+	
+	private Map<String, Float> inerties;
+	
 	
 	public EcoPaysageManager(String treatment){
 		setTreatment(treatment);
@@ -101,25 +121,31 @@ public class EcoPaysageManager {
 		
 		force = false;
 		//metricsFile = null;
-		metricsFiles = new TreeMap<Integer, String>();
+		//metricsFiles = new TreeMap<Integer, String>();
+		metricsFiles = new TreeMap<String, Map<Integer, String>>();
 		xyFile = null;
 		//compoFile = null;
 		//configFile = null;
-		normFile = null;
+		stdFile = null;
+		inertiaFile = null;
 		compoFiles = new TreeMap<Integer, String>();
 		configFiles = new TreeMap<Integer, String>();
-		normFiles = new TreeMap<Integer, String>();
+		stdFiles = new TreeMap<Integer, String>();
 		ruptureFile = null;
-		inputRaster = null;
+		//inputRaster = null;
+		inputRasters = new TreeSet<String>();
+		carto = "essai";
+		cartos = new TreeMap<String, String>();
 		//scale = -1;
 		scales = null;
 		unfilters = null;
+		codes = null;
 		compoMetrics = null;
 		configMetrics = null;
 		outputFolder = null;
 		classes = null;
-		ecoFiles = new TreeMap<Integer, String>();
-		mapFiles = new TreeMap<Integer, String>();
+		ecoFiles = new TreeMap<String, Map<Integer, String>>();
+		mapFiles = new TreeMap<String, Map<Integer, String>>();
 		infoFiles = new TreeMap<Integer, String>();
 		gradientFiles = new TreeMap<Integer, String>();
 		thematicDistanceFiles = new TreeMap<Integer, String>();
@@ -129,11 +155,25 @@ public class EcoPaysageManager {
 		noDataValue = -1;
 		displacement = 20;
 		distanceType = WindowDistanceType.FAST_GAUSSIAN;
+		importances = null;
+		codeImportanceFile = null;
+		metricImportanceFile = null;
+		inerties = new TreeMap<String, Float>();
 	}
 	
 	public EcoPaysageProcedure build(){
 		
 		if(factory.check(this)){
+			
+			// initialisation of importances if needed
+			if(codeImportanceFile != null) {
+				importances = EcoPaysage.initImportanceByCode(codeImportanceFile, true, true, scales);
+			}else if(metricImportanceFile != null){
+				importances = EcoPaysage.initImportanceByMetric(metricImportanceFile);
+			}else {
+				initImportances(codes, scales);
+			}
+			
 			EcoPaysageProcedure gbProcedure = factory.create(this);
 			return gbProcedure;
 		}
@@ -160,14 +200,29 @@ public class EcoPaysageManager {
 		this.metricsFiles.put(scale, metricsFile);
 	}*/
 	
+	/*
 	public void addMetricsFile(int scale, String metricsFile) {
 		Util.createAccess(metricsFile);
 		this.metricsFiles.put(scale, metricsFile);
+	}
+	*/
+	
+	public void addMetricsFile(String carto, int scale, String metricsFile) {
+		Util.createAccess(metricsFile);
+		if(!this.metricsFiles.containsKey(carto)) {
+			this.metricsFiles.put(carto, new TreeMap<Integer, String>());
+		}
+		this.metricsFiles.get(carto).put(scale, metricsFile);
 	}
 	
 	public void setXYFile(String xyFile) {
 		Util.createAccess(xyFile);
 		this.xyFile = xyFile;
+	}
+	
+	public void setInertiaFile(String inertiaFile) {
+		Util.createAccess(inertiaFile);
+		this.inertiaFile = inertiaFile;
 	}
 	
 	public void addCompoFile(int scale, String compoFile) {
@@ -180,9 +235,9 @@ public class EcoPaysageManager {
 		this.configFiles.put(scale, configFile);
 	}
 	
-	public void setNormFile(String normFile) {
-		Util.createAccess(normFile);
-		this.normFile = normFile;
+	public void setStandardizedFile(String stdFile) {
+		Util.createAccess(stdFile);
+		this.stdFile = stdFile;
 	}
 	
 	public void setRuptureFile(String ruptureFile) {
@@ -190,17 +245,28 @@ public class EcoPaysageManager {
 		this.ruptureFile = ruptureFile;
 	}
 	
-	public void addNormFile(int scale, String normFile) {
-		Util.createAccess(normFile);
-		this.normFiles.put(scale, normFile);
+	public void addStandardizedFile(int scale, String stdFile) {
+		Util.createAccess(stdFile);
+		this.stdFiles.put(scale, stdFile);
 	}
 	
+	/*
 	public void setInputRaster(String inputRaster) {
 		this.inputRaster = inputRaster;
 		Coverage cov = CoverageManager.getCoverage(inputRaster);
 		this.inEntete = cov.getEntete();
 		cov.dispose();
 		this.carto = new File(inputRaster).getName().replace(".tif", "").replace(".asc", "");
+	}*/
+	
+	public void addInputRaster(String inputRaster) {
+		this.inputRasters.add(inputRaster);
+		if(this.inEntete == null) {
+			Coverage cov = CoverageManager.getCoverage(inputRaster);
+			this.inEntete = cov.getEntete();
+			cov.dispose();
+		}
+		this.cartos.put(inputRaster, new File(inputRaster).getName().replace(".tif", "").replace(".asc", ""));
 	}
 	
 	public void setOutputFolder(String outputFolder) {
@@ -222,11 +288,27 @@ public class EcoPaysageManager {
 	}
 
 	public void setCodes(int[] codes){
+		this.codes = codes;
 		setCompositionMetrics(codes);
 		setConfigurationMetrics(codes);
 		setInitMetrics(true);
+		//initImportances(codes);
 	}
 	
+	private void initImportances(int[] codes, int[] scales) {
+		importances = new TreeMap<String, Float>();
+		for(int scale : scales) {
+			for(int code1 : codes) {
+				importances.put("pNV_"+code1+"_"+scale+"m", 1f);
+				for(int code2 : codes) {
+					if(code1 < code2) {
+						importances.put("pNC_"+code1+"-"+code2+"_"+scale+"m", 1f);
+					}
+				}
+			}
+		}
+	}
+
 	public void setNoDataValue(int noDataValue) {
 		this.noDataValue = noDataValue;
 	}
@@ -291,9 +373,28 @@ public class EcoPaysageManager {
 		}
 	}
 	
-	public void setEcoFile(int k, String ecoFile) {
+	public void setCodeImportanceFile(String codeImportanceFile) {
+		this.codeImportanceFile = codeImportanceFile;
+	}
+	
+	public void setMetricImportanceFile(String metricImportanceFile) {
+		this.metricImportanceFile = metricImportanceFile;
+	}
+	
+	public void addEcoFile(String carto, int k, String ecoFile) {
 		Util.createAccess(ecoFile);
-		ecoFiles.put(k, ecoFile);
+		if(!this.ecoFiles.containsKey(carto)) {
+			this.ecoFiles.put(carto, new TreeMap<Integer, String>());
+		}
+		ecoFiles.get(carto).put(k, ecoFile);
+	}
+	
+	public void addMapFile(String carto, int k, String mapFile) {
+		Util.createAccess(mapFile);
+		if(!this.mapFiles.containsKey(carto)) {
+			this.mapFiles.put(carto, new TreeMap<Integer, String>());
+		}
+		mapFiles.get(carto).put(k, mapFile);
 	}
 	
 	public void setInfoFile(int k, String infoFile) {
@@ -304,11 +405,6 @@ public class EcoPaysageManager {
 	public void setThematicDistanceFile(int k, String thematicDistanceFile) {
 		Util.createAccess(thematicDistanceFile);
 		thematicDistanceFiles.put(k, thematicDistanceFile);
-	}
-	
-	public void setMapFile(int k, String mapFile) {
-		Util.createAccess(mapFile);
-		mapFiles.put(k, mapFile);
 	}
 	
 	public void setGradientFile(int k, String gradientFile) {
@@ -336,6 +432,10 @@ public class EcoPaysageManager {
 		this.distanceType = distanceType;
 	}
 	
+	public void setInertia(String group, float inertia) {
+		this.inerties.put(group, inertia);
+	}
+	
 	// getters
 	
 	public boolean force() {
@@ -353,14 +453,64 @@ public class EcoPaysageManager {
 	}*/
 	
 	public String metricsFile() {
-		return metricsFile(scales[0]);
+		return metricsFile(cartos.get(inputRasters.iterator().next()), scales[0]);
 	}
 	
+	/*
 	public String metricsFile(int scale) {
 		if(!metricsFiles.containsKey(scale)) {
-			metricsFiles.put(scale, outputFolder()+"metrics_"+carto+"_scale_"+scale+"m.csv");
+			metricsFiles.put(scale, outputFolder()+"metrics_"+carto+"_"+scale+"m.csv");
 		}
 		return metricsFiles.get(scale);
+	}
+	*/
+	
+	public String metricsFile(int scale) {
+		String carto = cartos.get(inputRasters.iterator().next());
+		return metricsFile(carto, scale);
+	}
+	
+	public Set<String> metricsFiles(int scale) {
+		
+		Set<String> files = new TreeSet<String>();
+		for(String carto : cartos.values()) {
+			files.add(metricsFile(carto, scale));
+		}
+		
+		return files;
+	}
+	
+	public String metricsFile(String carto, int scale) {
+		if(!metricsFiles.containsKey(carto) || !metricsFiles.get(carto).containsKey(scale)) {
+			addMetricsFile(carto, scale, outputFolder()+"metrics_"+carto+"_"+scale+"m.csv");
+		}
+		return metricsFiles.get(carto).get(scale);
+	}
+	
+	public String ecoFile(String carto, int k) {
+		if(!ecoFiles.containsKey(carto) || !ecoFiles.get(carto).containsKey(k)) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(outputFolder()+"ecopaysages_"+carto+"_"+k+"classes");
+			for(int scale : scales) {
+				sb.append("_"+scale+"m");
+			}
+			sb.append(".csv");
+			addEcoFile(carto, k, sb.toString());
+		}
+		return ecoFiles.get(carto).get(k);
+	}
+	
+	public String mapFile(String carto, int k) {
+		if(!mapFiles.containsKey(carto) || !mapFiles.get(carto).containsKey(k)) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(outputFolder()+"ecopaysages_"+carto+"_"+k+"classes");
+			for(int scale : scales) {
+				sb.append("_"+scale+"m");
+			}
+			sb.append(".tif");
+			addMapFile(carto, k, sb.toString());
+		}
+		return mapFiles.get(carto).get(k);
 	}
 	
 	public String xyFile() {
@@ -376,8 +526,7 @@ public class EcoPaysageManager {
 	
 	public String compoFile(int scale) {
 		if(!compoFiles.containsKey(scale)) {
-			String name = new File(metricsFile(scale)).getName().replace(".txt", "").replace(".csv", "");
-			compoFiles.put(scale, outputFolder()+name+"_"+carto+"_compo.csv");
+			compoFiles.put(scale, outputFolder()+"composition_metrics_"+carto+"_"+scale+"m.csv");
 		}
 		return compoFiles.get(scale);
 	}
@@ -388,31 +537,39 @@ public class EcoPaysageManager {
 	
 	public String configFile(int scale) {
 		if(!configFiles.containsKey(scale)) {
-			String name = new File(metricsFile(scale)).getName().replace(".txt", "").replace(".csv", "");
-			configFiles.put(scale, outputFolder()+name+"_"+carto+"_config.csv");
+			configFiles.put(scale, outputFolder()+"configuration_metrics_"+carto+"_"+scale+"m.csv");
 		}
 		return configFiles.get(scale);
 	}
 	
-	public String normFile() {
-		if(normFile == null) {
+	public String standardizedFile() {
+		if(stdFile == null) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(outputFolder()+"norm_"+carto);
+			sb.append(outputFolder()+"standardized_metrics_"+carto);
 			for(int scale : scales) {
 				sb.append("_"+scale+"m");
 			}
 			sb.append(".csv");
-			setNormFile(sb.toString());
+			setStandardizedFile(sb.toString());
 		}
-		return normFile;
+		return stdFile;
 	}
 	
-	public String normFile(int scale) {
-		if(!normFiles.containsKey(scale)) {
-			String name = new File(metricsFile(scale)).getName().replace(".txt", "").replace(".csv", "");
-			normFiles.put(scale, outputFolder()+name+"_"+carto+"_norm.csv");
+	public String inertiaFile() {
+		if(inertiaFile == null) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(outputFolder()+"inertia_"+carto);
+			sb.append(".csv");
+			setInertiaFile(sb.toString());
 		}
-		return normFiles.get(scale);
+		return inertiaFile;
+	}
+	
+	public String standardizedFile(int scale) {
+		if(!stdFiles.containsKey(scale)) {
+			stdFiles.put(scale, outputFolder()+"standardized_metrics_"+carto+"_"+scale+"m.csv");
+		}
+		return stdFiles.get(scale);
 	}
 	
 	public String ruptureFile() {
@@ -428,12 +585,26 @@ public class EcoPaysageManager {
 		return ruptureFile;
 	}
 
+	/*
 	public String inputRaster() {
 		return inputRaster;
+	}
+	*/
+	
+	public Set<String> inputRasters() {
+		return inputRasters;
 	}
 	
 	public String carto() {
 		return carto;
+	}
+	
+	public Map<String, String> cartos() {
+		return cartos;
+	}
+	
+	public String carto(String inputRaster) {
+		return cartos.get(inputRaster);
 	}
 	
 	public String outputFolder() {
@@ -463,6 +634,10 @@ public class EcoPaysageManager {
 		return scales.length > 1;
 	}
 
+	public int[] codes() {
+		return codes;
+	}
+	
 	public List<String> compoMetrics() {
 		return compoMetrics;
 	}
@@ -491,19 +666,6 @@ public class EcoPaysageManager {
 		return distanceType;
 	}
 	
-	public String ecoFile(int k) {
-		if(!ecoFiles.containsKey(k)) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(outputFolder()+"ecopaysages_"+carto+"_"+k+"classes");
-			for(int scale : scales) {
-				sb.append("_"+scale+"m");
-			}
-			sb.append(".csv");
-			setEcoFile(k, sb.toString());
-		}
-		return ecoFiles.get(k);
-	}
-	
 	public String infoFile(int k) {
 		if(!infoFiles.containsKey(k)) {
 			StringBuilder sb = new StringBuilder();
@@ -528,19 +690,6 @@ public class EcoPaysageManager {
 			setThematicDistanceFile(k, sb.toString());
 		}
 		return thematicDistanceFiles.get(k);
-	}
-	
-	public String mapFile(int k) {
-		if(!mapFiles.containsKey(k)) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(outputFolder()+"ecopaysages_"+carto+"_"+k+"classes");
-			for(int scale : scales) {
-				sb.append("_"+scale+"m");
-			}
-			sb.append(".tif");
-			setMapFile(k, sb.toString());
-		}
-		return mapFiles.get(k);
 	}
 	
 	public String gradientFile(int k) {
@@ -580,8 +729,10 @@ public class EcoPaysageManager {
 	
 	public String[] mapFiles() {
 		if(mapFiles.size() == 0) {
-			for(int k : classes()) {
-				mapFile(k);
+			for(String carto : cartos.values()) {
+				for(int k : classes()) {
+					mapFile(carto, k);
+				}	
 			}
 		}
 		return mapFiles.values().toArray(new String[mapFiles.size()]);
@@ -596,8 +747,16 @@ public class EcoPaysageManager {
 		return headerFile;
 	}
 	
-	public Map<Integer, String> normFiles(){
-		return this.normFiles;
+	public Map<Integer, String> standardizedFiles(){
+		return this.stdFiles;
+	}
+	
+	public Map<String, Float> importances(){
+		return importances;
+	}
+	
+	public Map<String, Float> inerties(){
+		return inerties;
 	}
 	
 }

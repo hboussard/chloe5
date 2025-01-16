@@ -18,7 +18,8 @@ public class HugeGBPCalculGrainBocager extends GrainBocagerProcedure {
 	@Override
 	public void doInit() {
 		
-		if(manager().force() || !new File(manager().influenceDistance()).exists()){
+		if(manager().force() 
+				|| new File(manager().influenceDistance()).list().length == 0){
 			
 			factory().parentFactory().create(manager()).run();
 		}
@@ -26,6 +27,8 @@ public class HugeGBPCalculGrainBocager extends GrainBocagerProcedure {
 	
 	@Override
 	public void doRun() {
+		
+		System.out.println("recuperation des distances d'infuence");
 		
 		Coverage covDistanceInfluenceBoisement = CoverageManager.getCoverage(manager().influenceDistance());
 		

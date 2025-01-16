@@ -17,10 +17,12 @@ public class EPPGradient extends EcoPaysageProcedure {
 	public void doInit() {
 		
 		boolean force = manager().force();
-		for(int k : manager().classes()) {
-			if(!new File(manager().ecoFile(k)).exists()) {
-				force = true;
-				break;
+		for(String carto : manager().cartos().values()) {
+			for(int k : manager().classes()) {
+				if(!new File(manager().ecoFile(carto, k)).exists()) {
+					force = true;
+					break;
+				}
 			}
 		}
 		
@@ -36,15 +38,15 @@ public class EPPGradient extends EcoPaysageProcedure {
 		
 		String[][] dataXY = EcoPaysage.importXY(manager().xyFile());
 		
-		if(!new File(manager().normFile()).exists()) {
+		if(!new File(manager().standardizedFile()).exists()) {
 			
 			if(manager().hasMultipleScales()) {
 				
-				EcoPaysage.compileFiles(manager().normFile(), dataXY.length, manager().normFiles());
+				EcoPaysage.compileFiles(manager().standardizedFile(), dataXY.length, manager().standardizedFiles());
 				
 			}else {
 				
-				manager().setNormFile(manager().normFile(manager().scale()));
+				manager().setStandardizedFile(manager().standardizedFile(manager().scale()));
 			}
 		}
 		
@@ -52,7 +54,7 @@ public class EPPGradient extends EcoPaysageProcedure {
 			
 			System.out.println("analyse des distances aux clustering pour "+k+" classes");
 			
-			EcoPaysage.analyseGradient(manager().gradientFile(k), dataXY, manager().infoFile(k), manager().normFile());
+			EcoPaysage.analyseGradient(manager().gradientFile(k), dataXY, manager().infoFile(k), manager().standardizedFile());
 			
 		}
 		

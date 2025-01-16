@@ -19,7 +19,7 @@ public class EPPClustering extends EcoPaysageProcedure {
 	public void doInit() {
 		
 		for(int scale : manager().scales()) {
-			if(manager().force() || !new File(manager().normFile(scale)).exists()) {
+			if(manager().force() || !new File(manager().standardizedFile(scale)).exists()) {
 				
 				new EPPStandardization(manager(), scale).run();
 			}
@@ -33,15 +33,15 @@ public class EPPClustering extends EcoPaysageProcedure {
 		
 		String[][] dataXY = EcoPaysage.importXY(manager().xyFile());
 		
-		if(!new File(manager().normFile()).exists()) {
+		if(!new File(manager().standardizedFile()).exists()) {
 			
 			if(manager().hasMultipleScales()) {
 				
-				EcoPaysage.compileFiles(manager().normFile(), dataXY.length, manager().normFiles());
+				EcoPaysage.compileFiles(manager().standardizedFile(), dataXY.length, manager().standardizedFiles());
 				
 			}else {
 				
-				manager().setNormFile(manager().normFile(manager().scale()));
+				manager().setStandardizedFile(manager().standardizedFile(manager().scale()));
 			}
 		}
 		
@@ -49,10 +49,10 @@ public class EPPClustering extends EcoPaysageProcedure {
 		
 		Instances data = null;
 		if(manager().factor() == 1) {
-			data = EcoPaysage.readData(manager().normFile());
+			data = EcoPaysage.readData(manager().standardizedFile());
 		}else {
-			//data = EcoPaysage.readData(manager().normFile(), manager().factor(), dataXY.length);
-			data = EcoPaysage.readData(manager().normFile(), dataXY, manager().factor(), manager().entete());
+			//data = EcoPaysage.readData(manager().standardizedFile(), manager().factor(), dataXY.length);
+			data = EcoPaysage.readData(manager().standardizedFile(), dataXY, manager().factor(), manager().entete());
 		}
 		
 		SimpleKMeans kmeans;
@@ -62,17 +62,26 @@ public class EPPClustering extends EcoPaysageProcedure {
 			
 			kmeans = EcoPaysage.kmeans(data, k);
 			
-			System.out.println("export en csv vers "+manager().ecoFile(k));
+			int index = 1;
 			
-			if(manager().factor() == 1) {
-				EcoPaysage.exportCSV(manager().ecoFile(k), kmeans, k, dataXY, data);
-			}else {
-				EcoPaysage.exportCSV(manager().ecoFile(k), kmeans, k, dataXY, manager().normFile(), data);
+			for(String inputRaster : manager().inputRasters()) {
+				
+				String carto = manager().carto(inputRaster);
+				
+				System.out.println("export en csv vers "+manager().ecoFile(carto, k));
+				
+				if(manager().factor() == 1) {
+					EcoPaysage.exportCSV(manager().ecoFile(carto, k), kmeans, k, dataXY, data, index);
+				}else {
+					EcoPaysage.exportCSV(manager().ecoFile(carto, k), kmeans, k, dataXY, manager().standardizedFile(), data);
+				}
+				
+				index++;
 			}
 			
 			System.out.println("export des infos vers "+manager().infoFile(k));
 			
-			EcoPaysage.exportInfo(manager().infoFile(k), kmeans, k, data);
+			EcoPaysage.exportInfo(manager().infoFile(k), kmeans, k, data, manager().importances());
 		}
 	
 	}

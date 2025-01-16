@@ -30,7 +30,7 @@ public class ScriptEcopaysagesOSOFrance {
 		int[] unfilters = new int[] {0};
 		
 		EcoPaysageManager epManager = new EcoPaysageManager("rupture");
-		epManager.setInputRaster("D:/sig/oso_thiea/OCS_2021.tif");
+		epManager.addInputRaster("D:/sig/oso_thiea/OCS_2021.tif");
 		epManager.setCodes(codes);
 		epManager.setUnfilters(unfilters);
 		epManager.setNoDataValue(-1);

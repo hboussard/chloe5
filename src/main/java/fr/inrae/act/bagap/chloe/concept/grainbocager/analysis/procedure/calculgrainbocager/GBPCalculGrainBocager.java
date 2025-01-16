@@ -29,6 +29,8 @@ public class GBPCalculGrainBocager extends GrainBocagerProcedure {
 	@Override
 	public void doRun() {
 		
+		System.out.println("recuperation des distances d'infuence");
+		
 		Coverage covDistanceInfluenceBoisement = CoverageManager.getCoverage(manager().influenceDistance());
 		
 		System.out.println("calcul du grain bocager a "+manager().grainBocagerCellSize()+"m dans une fenetre de "+manager().grainBocagerWindowRadius()+"m");

@@ -1,10 +1,10 @@
 package fr.inrae.act.bagap.chloe.window.analysis;
 
-import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -27,7 +27,7 @@ import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.CoverageOutput;
-import fr.inrae.act.bagap.chloe.window.output.MapDataOutput;
+//import fr.inrae.act.bagap.chloe.window.output.MapDataOutput;
 //import fr.inrae.act.bagap.chloe.window.output.DataOutput;
 import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
@@ -140,7 +140,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		//this.bufferROIXMax = 0;
 		//this.bufferROIYMin = 0;
 		//this.bufferROIYMax = 0;
-		this.rasterFiles = new HashSet<String>();
+		this.rasterFiles = new LinkedHashSet<String>();
 		this.coverage = null;
 		this.coverage2 = null;
 		this.coverage3 = null;
@@ -278,6 +278,10 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		for(int i = 0; i<s.length; i++){
 			values[i] = Integer.parseInt(s[i].replace(" ", ""));
 		}
+	}
+
+	public void setValues(int[] values){
+		this.values = values;
 	}
 	
 	@Override

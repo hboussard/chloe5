@@ -18,8 +18,8 @@ public class HugeGBPCalculDistanceInfluenceBoisement extends GrainBocagerProcedu
 	public void doInit() {
 		
 		if(manager().force() 
-				|| new File(manager().woodType()).list().length > 0
-				|| new File(manager().woodHeight()).list().length > 0){
+				|| new File(manager().woodType()).list().length == 0
+				|| new File(manager().woodHeight()).list().length == 0){
 			
 			factory().parentFactory().create(manager()).run();
 		}

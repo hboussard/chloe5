@@ -52,8 +52,8 @@ public class ValueAndCoupleCounting extends Counting implements ValueCountingInt
 	 * 5 : nombre de couples pris en compte
 	 * 6 : nombre de couple noDataValue
 	 * 7 : nombre de couple "0"
-	 * � partir de 8 jusqu'au nombre de valeurs + 8 : les occurences de valeurs dans l'ordre num�rique
-	 * � partir de 8 + nombre de valeurs jusqu'au nombre de couples + 8 + nombre de valeurs : les occurences de couples de pixels dans l'ordre num�rique, couples homog�nes d'abords
+	 * a partir de 8 jusqu'au nombre de valeurs + 8 : les occurences de valeurs dans l'ordre numerique
+	 * a partir de 8 + nombre de valeurs jusqu'au nombre de couples + 8 + nombre de valeurs : les occurences de couples de pixels dans l'ordre num�rique, couples homog�nes d'abords
 	 */
 	@Override
 	public void doSetCounts(double[] counts) {
@@ -103,6 +103,8 @@ public class ValueAndCoupleCounting extends Counting implements ValueCountingInt
 	
 	@Override
 	public double countValue(int v){
+		//System.out.println(countValues);
+		//System.out.println(v);
 		return countValues.get(v);
 	}
 

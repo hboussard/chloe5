@@ -26,9 +26,9 @@ public class EPPCalculMetrics extends EcoPaysageProcedure {
 		
 		if(!manager().initMetrics()) {
 			
-			System.out.println("lecture des codes de la carte "+manager().inputRaster());
+			//System.out.println("lecture des codes de la carte "+manager().inputRaster());
 			
-			manager().setCodes(EcoPaysage.getCodes(manager().inputRaster()));
+			//manager().setCodes(EcoPaysage.getCodes(manager().inputRaster()));
 		}
 		
 	}
@@ -38,7 +38,12 @@ public class EPPCalculMetrics extends EcoPaysageProcedure {
 		
 		System.out.println("calcul des metriques à l'echelle "+scale+"m");
 		
-		EcoPaysage.calculMetrics(manager().metricsFile(scale), manager().inputRaster(), scale, manager().compoMetrics(), manager().configMetrics(), manager().windowDistanceType(), manager().displacement(), manager().unfilters());
+		for(String inputRaster : manager().inputRasters()) {
+			
+			System.out.println("analyse de la carto "+inputRaster);
+			
+			EcoPaysage.calculMetrics(manager().metricsFile(manager().carto(inputRaster), scale), inputRaster, scale, manager().codes(), manager().compoMetrics(), manager().configMetrics(), manager().windowDistanceType(), manager().displacement(), manager().unfilters());
+		}
 		
 	}
 
