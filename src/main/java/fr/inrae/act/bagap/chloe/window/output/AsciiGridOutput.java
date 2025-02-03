@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Set;
 
-import fr.inrae.act.bagap.apiland.core.element.manager.DynamicLayerFactory;
 import fr.inrae.act.bagap.apiland.util.Tool;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.Pixel;
@@ -104,7 +103,7 @@ public class AsciiGridOutput implements CountingObserver {
 			e.printStackTrace();
 		} finally{
 			try {
-				Tool.copy(DynamicLayerFactory.class.getResourceAsStream(CoverageManager.epsg()), file.replace(".asc", "")+".prj");
+				Tool.copy(CoverageManager.class.getResourceAsStream(CoverageManager.epsg()), file.replace(".asc", "")+".prj");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

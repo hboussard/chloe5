@@ -94,7 +94,7 @@ public class ChloeAPI {
 				
 			importInputRaster(builder, properties);
 			importWindowShape(builder, properties);
-			importWindowSizes(builder, properties);
+			importWindowSizes(builder, true, properties);
 			importDisplacement(builder, properties);
 			importInterpolation(builder, properties);
 			importMetrics(builder, properties);
@@ -106,6 +106,12 @@ public class ChloeAPI {
 			importMaximumNoValueRate(builder, properties);
 			importValues(builder, properties);
 			
+			// test d'output pour l'utilsateur qui voudrait un dossier ET des sorties spécifiques
+			importTypeMime(builder, properties);
+			importOutputFolderForWindow(builder, properties);
+			importOutputRaster(builder, properties);
+			importOutputCsv(builder, properties);
+			/*
 			if(properties.containsKey("output_folder")){
 				importTypeMime(builder, properties);
 				importOutputFolderForWindow(builder, properties);
@@ -113,6 +119,7 @@ public class ChloeAPI {
 				importOutputRaster(builder, properties);
 				importOutputCsv(builder, properties);
 			}
+			*/
 			
 			ChloeAnalysis analysis = builder.build();
 			analysis.allRun();
@@ -135,7 +142,7 @@ public class ChloeAPI {
 				
 			importInputRaster(builder, properties);
 			importWindowShape(builder, properties);
-			importWindowSizes(builder, properties);
+			importWindowSizes(builder, true, properties);
 			importMetrics(builder, properties);
 			importWindowDistanceType(builder, properties);
 			importWindowDistanceFunction(builder, properties);
@@ -143,6 +150,12 @@ public class ChloeAPI {
 			importPointsFilter(builder, properties);
 			importWindowsPath(builder, properties);
 			
+			// test d'output pour l'utilsateur qui voudrait un dossier ET des sorties spécifiques
+			importTypeMime(builder, properties);
+			importOutputFolderForWindow(builder, properties);
+			importOutputRaster(builder, properties);
+			importOutputCsv(builder, properties);
+			/*
 			if(properties.containsKey("output_folder")){
 				importTypeMime(builder, properties);
 				importOutputFolderForWindow(builder, properties);
@@ -150,6 +163,7 @@ public class ChloeAPI {
 				importOutputRaster(builder, properties);
 				importOutputCsv(builder, properties);
 			}
+			*/
 			
 			ChloeAnalysis analysis = builder.build();
 			analysis.allRun();
@@ -171,10 +185,16 @@ public class ChloeAPI {
 			builder.setAnalysisType(ChloeAnalysisType.GRID);
 				
 			importInputRaster(builder, properties);
-			importWindowSizes(builder, properties);
+			importWindowSizes(builder, false, properties);
 			importMetrics(builder, properties);
 			importMaximumNoValueRate(builder, properties);
 			
+			// test d'output pour l'utilsateur qui voudrait un dossier ET des sorties spécifiques
+			importTypeMime(builder, properties);
+			importOutputFolderForWindow(builder, properties);
+			importOutputRaster(builder, properties);
+			importOutputCsv(builder, properties);
+			/*
 			if(properties.containsKey("output_folder")){
 				importTypeMime(builder, properties);
 				importOutputFolderForWindow(builder, properties);
@@ -182,6 +202,7 @@ public class ChloeAPI {
 				importOutputRaster(builder, properties);
 				importOutputCsv(builder, properties);
 			}
+			*/
 			
 			ChloeAnalysis analysis = builder.build();
 			analysis.allRun();
@@ -229,6 +250,12 @@ public class ChloeAPI {
 			importEntityRaster(builder, properties);
 			importMetrics(builder, properties);
 			
+			// test d'output pour l'utilsateur qui voudrait un dossier ET des sorties spécifiques
+			importTypeMime(builder, properties);
+			importOutputFolderForWindow(builder, properties);
+			importOutputRaster(builder, properties);
+			importOutputCsv(builder, properties);
+			/*
 			if(properties.containsKey("output_folder")){
 				importTypeMime(builder, properties);
 				importOutputFolderForWindow(builder, properties);
@@ -236,6 +263,7 @@ public class ChloeAPI {
 				importOutputRaster(builder, properties);
 				importOutputCsv(builder, properties);
 			}
+			*/
 			
 			ChloeAnalysis analysis = builder.build();
 			analysis.allRun();
@@ -531,13 +559,17 @@ public class ChloeAPI {
 	}
 	
 	// required
-	public static void importWindowSizes(ChloeAnalysisBuilder builder, Properties properties) throws NoParameterException {
+	public static void importWindowSizes(ChloeAnalysisBuilder builder, boolean centered, Properties properties) throws NoParameterException {
 		if(properties.containsKey("sizes")){
 			String prop = properties.getProperty("sizes");
 			prop = prop.replace("{", "").replace("}", "").replace(" ", "");
 			String[] ws = prop.split(";");
 			for(String w : ws){
-				builder.addWindowSize(Integer.parseInt(w));
+				int s = Integer.parseInt(w);
+				if(centered && s%2==0) {
+					s++;
+				}
+				builder.addWindowSize(s);
 			}
 			return;
 		}

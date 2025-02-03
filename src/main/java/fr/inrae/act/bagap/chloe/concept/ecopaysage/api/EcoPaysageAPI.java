@@ -62,12 +62,27 @@ public class EcoPaysageAPI {
 			importXYFile(manager, properties);
 			importScales(manager, properties);
 			importClasses(manager, properties);
+			importCodes(manager, properties);
 			importOutputFolder(manager, properties);
 			importDisplacement(manager, properties);
 			importFactor(manager, properties);
 		
 		} catch (NoParameterException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private static void importCodes(EcoPaysageManager manager, Properties properties) {
+		if(properties.containsKey("codes")){
+			String prop = properties.getProperty("codes");
+			prop = prop.replace("{", "").replace("}", "").replace(" ", "");
+			String[] ms = prop.split(";");
+			int[] codes = new int[ms.length];
+			for(int i=0; i<ms.length; i++){
+				codes[i] = Integer.parseInt(ms[i]);
+			}
+			manager.setCodes(codes);
+			return;
 		}
 	}
 
