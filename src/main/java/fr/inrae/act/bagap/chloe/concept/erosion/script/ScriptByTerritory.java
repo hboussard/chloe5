@@ -3,15 +3,20 @@ package fr.inrae.act.bagap.chloe.concept.erosion.script;
 import fr.inrae.act.bagap.chloe.concept.erosion.analyse.procedure.ErosionManager;
 import fr.inrae.act.bagap.chloe.concept.erosion.analyse.procedure.ErosionProcedure;
 
-public class ScriptTest {
+public class ScriptByTerritory {
 
 	private static final String rge_alti_11 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D011_2021-05-12/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D011_2021-05-12/RGEALTI/1_DONNEES_LIVRAISON_2021-10-00009/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D011/";
 	private static final String rge_alti_31 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D031_2021-05-12/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D031_2021-05-12/RGEALTI/1_DONNEES_LIVRAISON_2021-10-00009/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D031/";
 	private static final String rge_alti_32 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D032_2019-11-21/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D032_2019-11-21/RGEALTI/1_DONNEES_LIVRAISON_2021-10-00009/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D032/";
+	private static final String rge_alti_29 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D029_2022-10-14/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D029_2022-10-14/RGEALTI/1_DONNEES_LIVRAISON_2022-12-00129/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D029/";
+	private static final String rge_alti_82 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D082_2019-10-30/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D082_2019-10-30/RGEALTI/1_DONNEES_LIVRAISON_2021-10-00009/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D082/";
+	
 	
 	private static final String bd_topo_11 = "D:/sig/bd_topo/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D011_2024-03-15/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D011_2024-03-15/BDTOPO/1_DONNEES_LIVRAISON_2024-04-00042/BDT_3-3_SHP_LAMB93_D011-ED2024-03-15/";
 	private static final String bd_topo_31 = "D:/sig/bd_topo/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D031_2023-03-15/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D031_2023-03-15/BDTOPO/1_DONNEES_LIVRAISON_2023-03-00212/BDT_3-3_SHP_LAMB93_D031-ED2023-03-15/";
-	private static final String bd_topo_32 = "D:/sig/bd_topo/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D032_2022-06-15/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D032_2022-06-15/BDTOPO/1_DONNEES_LIVRAISON_2022-06-00168/BDT_3-0_SHP_LAMB93_D032-ED2022-06-15/";
+	private static final String bd_topo_32 = "D:/sig/bd_topo/BDTOPO_3-4_TOUSTHEMES_SHP_LAMB93_D032_2024-06-15/BDTOPO_3-4_TOUSTHEMES_SHP_LAMB93_D032_2024-06-15/BDTOPO/1_DONNEES_LIVRAISON_2024-06-00178/BDT_3-4_SHP_LAMB93_D032-ED2024-06-15/";
+	private static final String bd_topo_29 = "D:/sig/bd_topo/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D029_2021-03-15/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D029_2021-03-15/BDTOPO/1_DONNEES_LIVRAISON_2021-03-00272/BDT_3-0_SHP_LAMB93_D029-ED2021-03-15/";
+	private static final String bd_topo_82 = "D:/sig/bd_topo/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D082_2024-03-15/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D082_2024-03-15/BDTOPO/1_DONNEES_LIVRAISON_2024-04-00042/BDT_3-3_SHP_LAMB93_D082-ED2024-03-15/";
 	
 	public static void main(String[] args) {
 		
@@ -47,13 +52,54 @@ public class ScriptTest {
 		rge_altis = new String[] {rge_alti_32};
 		bd_topos = new String[] {bd_topo_32};
 		*/
-	
+		/*
+		//test en Bas-Leon
+		bvShape = "C:/Data/temp/bas_leon/BV_AW_amont/BV_AW_amont.shp";
+		bvAttribute = "OBJECTID";
+		bvCode = "8";	
+		rge_altis = new String[] {rge_alti_29};
+		bd_topos = new String[] {bd_topo_29};
+		*/
+		/*
+		// O254
+		bvShape = "D:/sig/bd_carthage/ZoneHydro_FXX-shp/ZoneHydro_FXX.shp";
+		bvAttribute = "CdZoneHydr";
+		bvCode = "O254";	
+		rge_altis = new String[] {rge_alti_32, rge_alti_31};
+		bd_topos = new String[] {bd_topo_32, bd_topo_31};
+		*/
+		/*
+		// O255
+		bvShape = "D:/sig/bd_carthage/ZoneHydro_FXX-shp/ZoneHydro_FXX.shp";
+		bvAttribute = "CdZoneHydr";
+		bvCode = "O255";	
+		rge_altis = new String[] {rge_alti_32, rge_alti_31};
+		bd_topos = new String[] {bd_topo_32, bd_topo_31};
+		*/
+		/*
+		// Canton Cadours
+		bvShape = "C:/Data/projet/coterra/essai_canton_cadours/data/enveloppe_canton_cadours.shp";
+		bvAttribute = "nom";
+		bvCode = "canton_cadours2";	
+		rge_altis = new String[] {rge_alti_32, rge_alti_31, rge_alti_82};
+		bd_topos = new String[] {bd_topo_32, bd_topo_31, bd_topo_82};
+		*/
+		/*
+		// New_magdelaine
+		bvShape = "C:/Data/projet/coterra/essai_new_magdelaine/data/BV_Magdelaine.shp";
+		bvAttribute = "name";
+		bvCode = "new_magdelaine";	
+		rge_altis = new String[] {rge_alti_31};
+		bd_topos = new String[] {bd_topo_31};
+		*/
+		
 		//initialisation(bvShape, bvCode, rge_altis, bd_topos);
 		//procedure(bvCode);
 		
 		//wholeProcedure(bvShape, bvAttribute, bvCode, rge_altis, bd_topos, "SOFT");
 		//wholeProcedure(bvShape, bvAttribute, bvCode, rge_altis, bd_topos, "MEDIUM");
 		//wholeProcedure(bvShape, bvAttribute, bvCode, rge_altis, bd_topos, "HARD");
+		
 	}
 
 	private static void wholeProcedure(String bvShape, String bvAttribute, String bvCode, String[] rge_altis, String[] bd_topos, String eventType) {
@@ -124,6 +170,8 @@ public class ScriptTest {
 			manager.addLinearWaterShape(bd_topo+"HYDROGRAPHIE/TRONCON_HYDROGRAPHIQUE.shp");
 		}
 		manager.setLinearWaterCode(23);
+		
+		//manager.setDisplacement(10); // 50m
 		
 		manager.setOutputFolder("C:/Data/projet/coterra/essai_"+bvCode+"/");
 		manager.setOutputPrefix(bvCode);

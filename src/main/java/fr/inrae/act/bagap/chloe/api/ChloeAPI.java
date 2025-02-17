@@ -53,6 +53,7 @@ public class ChloeAPI {
 				String procedure = properties.getProperty("procedure");
 				switch(procedure){
 				case "grain_bocager" : GrainBocagerAPI.launchBatch(file); break;
+				//case "grain_bocager_exploitation" : GrainBocagerAPI.launchBatch(file); break;
 				case "ecolandscape" : EcoPaysageAPI.launchBatch(file); break;
 				default :
 					throw new IllegalArgumentException("procedure "+procedure+" is not implemented yet");

@@ -471,6 +471,9 @@ public class GrainBocager {
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
 		builder.setCoverage(covDistanceInfluence);
+		if(fastMode){
+			builder.setWindowDistanceType(WindowDistanceType.FAST_GAUSSIAN);
+		}
 		builder.setDisplacement(displacement); 
 		builder.addMetric("average");
 		if(fastMode){

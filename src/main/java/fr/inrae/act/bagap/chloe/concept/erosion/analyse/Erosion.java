@@ -445,8 +445,8 @@ public class Erosion {
 				float vi = v[2];
 				if(vi > 0 && vd != -1) {
 					//return (vv * vd * vi) / 10;
-					return (vv * vd * vi);
 					//return (vv * vd * vd * vi / 10000.0f);
+					return (vv * vd * vi);
 				}else {
 					return 0;
 				}

@@ -32,13 +32,13 @@ public class ERDataInitialization extends ErosionProcedure {
 		
 		Erosion.osRecovery(manager().os(), manager().territory(), manager().osSource(), 2);
 		
-		System.out.println("recuperation des boisement surfaciques (bd_topo, Zone de vegetation, IGN)");
+		System.out.println("recuperation des boisements surfaciques (bd_topo, Zone de vegetation, IGN)");
 		
 		for(String sws : manager().surfaceWoodShapes()) {
 			Erosion.surfaceWoodRasterization(manager().os(), sws, manager().surfaceWoodAttribute(), manager().surfaceWoodCodes());
 		}
 		
-		System.out.println("recuperation des boisement lineaires (bd_topo, Haie, IGN)");
+		System.out.println("recuperation des boisements lineaires (bd_topo, Haie, IGN)");
 		
 		for(String lws : manager().linearWoodShapes()) {
 			Erosion.linearWoodRasterization(manager().os(), lws, manager().linearWoodCode());

@@ -1079,7 +1079,7 @@ public class EcoPaysage {
 		
 	}
 	
-	public static void analyseGradient(String gradientCsv, String[][] dataXY, String infoFile, String normFile) {
+	public static void analyseGradient(String gradientCsv, String[][] dataXY, String kmeanFile, String normFile) {
 		
 		try {
 			
@@ -1089,7 +1089,7 @@ public class EcoPaysage {
 			cw.write("Y");
 			
 			Map<Integer, float[]> kmeans = new TreeMap<Integer, float[]>();
-			CsvReader crI = new CsvReader(infoFile);
+			CsvReader crI = new CsvReader(kmeanFile);
 			crI.setDelimiter(';');
 			crI.readHeaders();
 			int k;

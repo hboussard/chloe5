@@ -4,7 +4,7 @@ import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.value.ValueMetric;
 
-public class CentralValue extends Metric implements ValueMetric {
+public class CentralValue extends Metric implements BasicMetric {
 
 	public CentralValue() {
 		super("Central");

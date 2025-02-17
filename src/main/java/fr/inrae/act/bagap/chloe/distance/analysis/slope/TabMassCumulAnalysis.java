@@ -385,7 +385,32 @@ public class TabMassCumulAnalysis extends Analysis {
 		}
 	}
 	
-	private void doMassTransfer(int np, float alt, float masseLocale0, float sIntMax, float ld) {
+	private void doMassTransfer7(int np, float alt, float masseLocale0, float sIntMax, float ld) {
+		
+		float m = outDatas[np]; // valeur au point
+		if (m != noDataValue) {
+			float nalt = altitudeDatas[np]; 
+			
+			float masseLocale1 = 0;
+				
+			float sIntLocal = getSlopeIntensity(alt, nalt, ld * cellSize);
+				
+			if(sIntMax - sIntLocal < 0.05) {
+				
+				float coeffRepartition = (1 + sIntLocal) / (1 + sIntMax);
+				//System.out.println(coeffRepartition);
+				masseLocale1 = masseLocale0 * coeffRepartition;
+			}
+				
+			if (m == -2 || masseLocale1 > m) { // MAJ ?
+				outDatas[np] = masseLocale1;
+				setPixelAndValue(np, masseLocale1);
+			}
+		}
+	}
+	
+	// good
+	private void doMassTransferGood(int np, float alt, float masseLocale0, float sIntMax, float ld) {
 		
 		float m = outDatas[np]; // valeur au point
 		if (m != noDataValue) {
@@ -409,26 +434,28 @@ public class TabMassCumulAnalysis extends Analysis {
 		}
 	}
 	
-	private void doMassTransfer7(int np, float alt, float masseLocale0, float sIntMax, float ld) {
+	private void doMassTransfer(int np, float alt, float masseLocale0, float sIntMax, float ld) {
 		
 		float m = outDatas[np]; // valeur au point
 		if (m != noDataValue) {
 			float nalt = altitudeDatas[np]; 
 			
-			float masseLocale1 = 0;
+			if(nalt <= alt) {
+				float masseLocale1 = 0;
 				
-			float sIntLocal = getSlopeIntensity(alt, nalt, ld * cellSize);
-				
-			if(sIntMax - sIntLocal < 0.05) {
-				
-				float coeffRepartition = (1 + sIntLocal) / (1 + sIntMax);
-				//System.out.println(coeffRepartition);
-				masseLocale1 = masseLocale0 * coeffRepartition;
-			}
-				
-			if (m == -2 || masseLocale1 > m) { // MAJ ?
-				outDatas[np] = masseLocale1;
-				setPixelAndValue(np, masseLocale1);
+				float sIntLocal = getSlopeIntensity(alt, nalt, ld * cellSize);
+					
+				if(sIntMax - sIntLocal < 0.1) {
+					
+					float coeffRepartition = (1 + sIntLocal) / (1 + sIntMax);
+					//System.out.println(coeffRepartition);
+					masseLocale1 = masseLocale0 * coeffRepartition;
+				}
+					
+				if (m == -2 || masseLocale1 > m) { // MAJ ?
+					outDatas[np] = masseLocale1;
+					setPixelAndValue(np, masseLocale1);
+				}
 			}
 		}
 	}

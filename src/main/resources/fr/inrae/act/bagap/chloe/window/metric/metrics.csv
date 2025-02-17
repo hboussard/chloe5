@@ -39,7 +39,7 @@ NP;patch;other;fr.inrae.act.bagap.chloe.window.metric.patch.PatchNumberIndex;4
 NP-class;patch;value;fr.inrae.act.bagap.chloe.window.metric.patch.PatchNumberClassIndex;4
 AREA;patch;other;fr.inrae.act.bagap.chloe.window.metric.patch.SurfaceIndex;4
 Nclass;value;other;fr.inrae.act.bagap.chloe.window.metric.value.CountClassMetric;1
-Central;value;other;fr.inrae.act.bagap.chloe.window.metric.basic.CentralValue;1
+Central;value;other;fr.inrae.act.bagap.chloe.window.metric.basic.CentralValue;0
 pCentral;value;other;fr.inrae.act.bagap.chloe.window.metric.value.RateCentralValue;1
 vCentral;value;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.VCentralValue;3
 AI-class;couple;value;fr.inrae.act.bagap.chloe.window.metric.couple.AggregationClassIndex;1

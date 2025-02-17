@@ -17,7 +17,6 @@ import fr.inrae.act.bagap.apiland.util.Tool;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
 import fr.inrae.act.bagap.chloe.util.Util;
-import tec.uom.se.AbstractSystemOfUnits;
 
 public class ScriptCosia {
 

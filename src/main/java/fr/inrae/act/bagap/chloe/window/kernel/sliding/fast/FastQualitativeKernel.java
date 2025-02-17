@@ -32,7 +32,7 @@ public abstract class FastQualitativeKernel extends FastKernel {
 			
 			outDatas()[ind][0] = 1; // filtre ok
 			
-			outDatas()[ind][1] = (int) inDatas()[((theY() + line + bufferROIYMin()) * width()) + x*displacement() + bufferROIXMin()]; // valeur pixel central
+			outDatas()[ind][1] = (float) inDatas()[((theY() + line + bufferROIYMin()) * width()) + x*displacement() + bufferROIXMin()]; // valeur pixel central
 			
 			int x_buf = x * displacement() + bufferROIXMin();
 			float val;
