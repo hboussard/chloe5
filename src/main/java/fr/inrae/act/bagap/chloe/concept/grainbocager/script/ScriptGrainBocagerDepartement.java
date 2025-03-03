@@ -48,7 +48,21 @@ public class ScriptGrainBocagerDepartement {
 		//procedureGrainBocager("82", "2022");
 		//procedureGrainBocager("85", "2019");
 		//procedureGrainBocager("87", "2020");
+		/*
+		procedureGrainBocager("16", "2023");
+		procedureGrainBocager("17", "2021");
+		procedureGrainBocager("19", "2023");
+		procedureGrainBocager("23", "2023");
+		procedureGrainBocager("24", "2021");
+		procedureGrainBocager("33", "2021");
+		procedureGrainBocager("40", "2021");
+		procedureGrainBocager("47", "2021");
 		
+		procedureGrainBocager("64", "2021");
+		procedureGrainBocager("79", "2023");
+		procedureGrainBocager("86", "2023");
+		procedureGrainBocager("87", "2023");
+		*/
 	}
 	
 	private static void procedureGrainBocager(String numDep, String annee) {

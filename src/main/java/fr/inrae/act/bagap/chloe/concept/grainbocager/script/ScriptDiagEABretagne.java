@@ -16,7 +16,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.farm.DiagnosticGrainBocagerExploitation;
-import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.farm.DiagnosticGrainBocagerExploitationBuilder;
+import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.farm.DiagnosticGrainBocagerExploitationManager;
 import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
@@ -52,39 +52,38 @@ public class ScriptDiagEABretagne {
 	
 	private static boolean scriptExploitation(String exploitation, int outCellSize, CsvWriter writer, boolean exportMap) {
 		
-		DiagnosticGrainBocagerExploitationBuilder builder = new DiagnosticGrainBocagerExploitationBuilder();
+		DiagnosticGrainBocagerExploitationManager manager = new DiagnosticGrainBocagerExploitationManager();
 		
-		builder.setOutputPath("F:/FDCCA/diag_ea/data/analyse_bretagne/");
+		manager.setOutputFolder("F:/FDCCA/diag_ea/data/analyse_bretagne/");
 		if(writer != null) {
-			builder.setCsvWriter(writer);
+			manager.setWriter(writer);
 		}
 	
 		// definition du territoire d'exploiattion
-		//builder.setParcellaire("F:/data/sig/RPG/rpg-2020/surfaces_2020_toutes_parcelles_graphiques_constatees_exploitants_FRCB.shp");
-		builder.setParcellaire("F:/FDCCA/diag_ea/data/analyse_bretagne/056046330/056046330.shp"); // parcellaire="chemin/vers/shape.shp"
-		builder.setAttributCodeEA("pacage"); // attribut_code_ea="pacage"
-		builder.setCodeEA(exploitation); // code_ea="05376853"
+		//manager.setParcellaire("F:/data/sig/RPG/rpg-2020/surfaces_2020_toutes_parcelles_graphiques_constatees_exploitants_FRCB.shp");
+		manager.setParcellaire("F:/FDCCA/diag_ea/data/analyse_bretagne/056046330/056046330.shp"); // parcellaire="chemin/vers/shape.shp"
+		manager.setAttributCodeEA("pacage"); // attribut_code_ea="pacage"
+		manager.setCodeEA(exploitation); // code_ea="05376853"
 		
 		// definition du bocage
-		builder.setBocage("F:/FDCCA/diag_ea/data/mnhc/"); // bocage="chemin/vers/bocage.tif"
+		manager.setBocage("F:/FDCCA/diag_ea/data/mnhc/"); // bocage="chemin/vers/bocage.tif"
 		
-		//builder.setZoneBocageExploitation("F:/data/sig/RPG/rpg-2020/surfaces_2020_toutes_parcelles_graphiques_constatees_exploitants_FRCB.shp");
-		//builder.setBufferZoneBocageExploitation(10);
+		//manager.setZoneBocageExploitation("F:/data/sig/RPG/rpg-2020/surfaces_2020_toutes_parcelles_graphiques_constatees_exploitants_FRCB.shp");
+		//manager.setBufferZoneBocageExploitation(10);
 		
 		
-		//builder.addScenario("initial");
-		//builder.setAmenagement("F:/FDCCA/diag_ea/data/analyse_bretagne/056047987/amenagement_056047987.shp");
-		builder.setAmenagement("F:/FDCCA/diag_ea/data/analyse_bretagne/056046330/amenagement.shp"); // managment="chemin/vers/shape.shp"
-		//builder.addScenario("scenario0");
-		//builder.addScenario("scenario1");
-		//builder.addScenario("scenario2");
-		//builder.addScenario("scenario3");
-		builder.addScenario("hauteur"); // scenario_managment=""scenario1"
+		//manager.addScenario("initial");
+		//manager.setAmenagement("F:/FDCCA/diag_ea/data/analyse_bretagne/056047987/amenagement_056047987.shp");
+		manager.setAmenagement("F:/FDCCA/diag_ea/data/analyse_bretagne/056046330/amenagement.shp"); // managment="chemin/vers/shape.shp"
+		//manager.addScenario("scenario0");
+		//manager.addScenario("scenario1");
+		//manager.addScenario("scenario2");
+		//manager.addScenario("scenario3");
+		manager.setScenario("hauteur"); // scenario_managment=""scenario1"
 		
-		builder.setSeuil(0.33);
-		builder.setOutCellSize(outCellSize);
-		builder.setExportMap(exportMap);
-		DiagnosticGrainBocagerExploitation diagEA = builder.build();
+		manager.setGrainBocagerCellSize(outCellSize);
+		manager.setExportMap(exportMap);
+		DiagnosticGrainBocagerExploitation diagEA = manager.build();
 		
 		return diagEA.run();
 		

@@ -37,9 +37,9 @@ public class ScriptCosia {
 		//generateBoisement();
 		//generateTypeBoisement();
 		//generateDistanceInfluence();
-		//generateGrainBocager50m();
-		//calculGrainBocagerZoneEnjeux(1);
-		//calculGrainBocagerZoneEnjeux(5);
+		generateGrainBocager50m();
+		calculGrainBocagerZoneEnjeux(1);
+		calculGrainBocagerZoneEnjeux(5);
 		
 		//generateBoisement37();
 		//generateTypeBoisement37();
@@ -370,7 +370,7 @@ public class ScriptCosia {
 		
 		GrainBocagerManager gbManager = new GrainBocagerManager("global_issues_calculation");
 		gbManager.setGrainBocager(pathGrainBocager+"france_2020-2023_grain_bocager_50m.tif");
-		gbManager.setThreshold(0.45);
+		//gbManager.setThreshold(0.45);
 		gbManager.setFunctionalGrainBocager(pathGrainBocager+"france_2020-2023_grain_bocager_fonctionnel_50m.tif");
 		gbManager.setFunctionalGrainBocagerClustering(pathGrainBocager+"france_2020-2023_grain_bocager_cluster_50m.tif");
 		gbManager.setIssuesCellSize(200);

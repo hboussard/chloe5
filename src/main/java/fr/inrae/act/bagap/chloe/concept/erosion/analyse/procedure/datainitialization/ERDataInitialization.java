@@ -1,5 +1,8 @@
 package fr.inrae.act.bagap.chloe.concept.erosion.analyse.procedure.datainitialization;
 
+import fr.inrae.act.bagap.apiland.raster.Coverage;
+import fr.inrae.act.bagap.apiland.raster.CoverageManager;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import fr.inrae.act.bagap.chloe.concept.erosion.analyse.Erosion;
 import fr.inrae.act.bagap.chloe.concept.erosion.analyse.procedure.ErosionManager;
 import fr.inrae.act.bagap.chloe.concept.erosion.analyse.procedure.ErosionProcedure;
@@ -31,6 +34,43 @@ public class ERDataInitialization extends ErosionProcedure {
 		System.out.println("recuperation de l'occupation des sols (OSO, Theia)");
 		
 		Erosion.osRecovery(manager().os(), manager().territory(), manager().osSource(), 2);
+		
+		
+		// test prairies permanentes - bas leon
+		Coverage osCov = CoverageManager.getCoverage(manager().os());
+		EnteteRaster osEntete = osCov.getEntete();
+		float[] osData = osCov.getData();
+		osCov.dispose();
+		
+		System.out.println(osEntete);
+		
+		System.out.println(osEntete.getEnvelope());
+		
+		Coverage cgtvCov = CoverageManager.getCoverage("F:/data/sig/CGTV/cgtv.tif");
+		EnteteRaster entete = cgtvCov.getEntete();
+		
+		System.out.println(entete);
+		
+		System.out.println(EnteteRaster.getROI2(entete, osEntete.getEnvelope()));
+		
+		float[] cgtvData = cgtvCov.getData(EnteteRaster.getROI2(entete, osEntete.getEnvelope()));
+		cgtvCov.dispose();
+		
+		System.out.println(osData.length+" "+cgtvData.length);
+		
+		CoverageManager.write("C:/Data/projet/coterra/essai2_8/cgtv_bas_leon.tif", cgtvData, osEntete);
+		
+		for(int ind=0; ind<cgtvData.length; ind++){
+			if(osData[ind] != osEntete.noDataValue()) {
+				if(cgtvData[ind] == 5 || cgtvData[ind] == 6){
+					osData[ind] = 26; // prairie permanente
+				}
+			}
+		}
+		
+		CoverageManager.write(manager().os(), osData, osEntete);
+		// fin test prairies permanentes - bas leon
+		
 		
 		System.out.println("recuperation des boisements surfaciques (bd_topo, Zone de vegetation, IGN)");
 		

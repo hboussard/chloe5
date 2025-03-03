@@ -68,14 +68,14 @@ public class ScriptEcopaysagesBretagne {
 	
 	private static void ecolandscape(int[] scales) {
 		
-		int[] codes = new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 15, 16, 17, 18 ,19, 20, 22, 23};
+		int[] codes = new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18 ,19, 20, 22, 23};
 		
 		EcoPaysageManager epManager = new EcoPaysageManager("mapping");
 		//epManager.addInputRaster("F:/data/sig/bretagne/Bretagne_2019_dispositif_bocage_ebr.tif");
 		epManager.addInputRaster("F:/data/sig/bretagne/bretagne_2021_ebr_clean.tif");
 		epManager.setScales(scales);
 		epManager.setCodes(codes);
-		epManager.setOutputFolder("F:/data/sig/bretagne/ecopaysages2/");
+		epManager.setOutputFolder("F:/data/sig/bretagne/ecopaysages3/");
 		epManager.setClasses(new int[]{15});
 		
 		EcoPaysageProcedure epProcedure = epManager.build();

@@ -71,15 +71,15 @@ public class GrainBocagerManager {
 	
 	private boolean fastMode; 			// mode FAST (imprecis mais rapide)
 	
-	private boolean force; 				// forcage des recalculations
+	private boolean force; 				// forcage des calculs
 	
 	private double grainBocagerCellSize;			// taille du pixel du grain bocager
 	
-	private double grainBocagerWindowRadius;		// taille de la fen�tre d'analyse pour le grain bocager
+	private double grainBocagerWindowRadius;		// taille de la fenetre d'analyse pour le grain bocager
 	
 	private double issuesCellSize;		// taille du pixel des enjeux
 	
-	private double issuesWindowRadius;	// taille de la fen�tre d'analyse pour les enjeux bocagers
+	private double issuesWindowRadius;	// taille de la fenetre d'analyse pour les enjeux bocagers
 	
 	private double[] thresholds; 			// seuil d'observation du grain bocager, le seuil de fonctionnalite est le deuxi�me
 	

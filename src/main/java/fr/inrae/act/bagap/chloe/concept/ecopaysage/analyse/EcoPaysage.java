@@ -1187,7 +1187,7 @@ public class EcoPaysage {
 		}
 	}
 	
-	private static float distance(float[] v1, float[] v2) {
+	public static float distance(float[] v1, float[] v2) {
 		double distance = 0;
 		for(int i=0; i<v1.length; i++) {
 			distance += Math.pow(v1[i]-v2[i], 2);

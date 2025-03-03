@@ -52,14 +52,14 @@ public class ScriptByTerritory {
 		rge_altis = new String[] {rge_alti_32};
 		bd_topos = new String[] {bd_topo_32};
 		*/
-		/*
+		
 		//test en Bas-Leon
 		bvShape = "C:/Data/temp/bas_leon/BV_AW_amont/BV_AW_amont.shp";
 		bvAttribute = "OBJECTID";
 		bvCode = "8";	
 		rge_altis = new String[] {rge_alti_29};
 		bd_topos = new String[] {bd_topo_29};
-		*/
+		
 		/*
 		// O254
 		bvShape = "D:/sig/bd_carthage/ZoneHydro_FXX-shp/ZoneHydro_FXX.shp";
@@ -173,10 +173,10 @@ public class ScriptByTerritory {
 		
 		//manager.setDisplacement(10); // 50m
 		
-		manager.setOutputFolder("C:/Data/projet/coterra/essai_"+bvCode+"/");
+		manager.setOutputFolder("C:/Data/projet/coterra/essai2_"+bvCode+"/");
 		manager.setOutputPrefix(bvCode);
-		manager.setInfiltrationMapFile("C:/Data/projet/coterra/essai_"+bvCode+"/infiltration_map.txt");
-		manager.setErodibilityMapFile("C:/Data/projet/coterra/essai_"+bvCode+"/erodibility_map.txt");
+		manager.setInfiltrationMapFile("C:/Data/projet/coterra/essai2_"+bvCode+"/infiltration_map.txt");
+		manager.setErodibilityMapFile("C:/Data/projet/coterra/essai2_"+bvCode+"/erodibility_map.txt");
 		
 		ErosionProcedure procedure = manager.build();
 		
