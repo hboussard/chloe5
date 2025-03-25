@@ -63,6 +63,69 @@ public class ScriptGrainBocagerDepartement {
 		procedureGrainBocager("86", "2023");
 		procedureGrainBocager("87", "2023");
 		*/
+		/*
+		// aura
+		procedureGrainBocager("01", "2021");
+		procedureGrainBocager("03", "2022");
+		procedureGrainBocager("07", "2023");
+		procedureGrainBocager("15", "2022");
+		procedureGrainBocager("26", "2023");
+		procedureGrainBocager("38", "2021");
+		procedureGrainBocager("42", "2022");
+		procedureGrainBocager("43", "2022");
+		procedureGrainBocager("63", "2022");
+		procedureGrainBocager("69", "2023");
+		procedureGrainBocager("73", "2022");
+		procedureGrainBocager("74", "2023");
+		
+		// grand est
+		procedureGrainBocager("08", "2022");
+		procedureGrainBocager("10", "2022");
+		procedureGrainBocager("51", "2022");
+		procedureGrainBocager("52", "2022");
+		procedureGrainBocager("54", "2022");
+		procedureGrainBocager("55", "2022");
+		procedureGrainBocager("57", "2022");
+		procedureGrainBocager("67", "2021");
+		procedureGrainBocager("68", "2021");
+		procedureGrainBocager("88", "2023");
+		*/
+		
+		/*
+		// bourgogne franche comte
+		procedureGrainBocager("21", "2023");
+		procedureGrainBocager("25", "2023");
+		procedureGrainBocager("39", "2023");
+		procedureGrainBocager("58", "2023");
+		procedureGrainBocager("70", "2023");
+		procedureGrainBocager("71", "2023");
+		procedureGrainBocager("89", "2023");
+		procedureGrainBocager("90", "2023");
+		
+		// centre val de loire
+		procedureGrainBocager("18", "2023");
+		procedureGrainBocager("28", "2023");
+		procedureGrainBocager("36", "2023");
+		procedureGrainBocager("37", "2023");
+		procedureGrainBocager("41", "2023");
+		procedureGrainBocager("45", "2023");
+		*/
+		/*
+		// haut de france
+		procedureGrainBocager("02", "2021");
+		procedureGrainBocager("59", "2021");
+		procedureGrainBocager("60", "2021");
+		procedureGrainBocager("62", "2021");
+		procedureGrainBocager("80", "2021");
+		
+		// paca
+		procedureGrainBocager("04", "2021");
+		procedureGrainBocager("05", "2022");
+		procedureGrainBocager("06", "2023");
+		procedureGrainBocager("13", "2023");
+		procedureGrainBocager("83", "2023");
+		procedureGrainBocager("84", "2021");
+		*/
 	}
 	
 	private static void procedureGrainBocager(String numDep, String annee) {

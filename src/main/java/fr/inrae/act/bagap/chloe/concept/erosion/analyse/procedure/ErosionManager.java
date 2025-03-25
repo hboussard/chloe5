@@ -141,7 +141,7 @@ public class ErosionManager {
 		// attributs avec valeur par defaut
 		force = false;
 		//waterQuantity = 10;
-		eventType = ErosionEventType.MEDIUM;
+		eventType = ErosionEventType.HARD;
 		displacement = 1;
 		outputFolder = new File(System.getProperty("java.io.tmpdir")).toString().replace("\\", "/")+"/erosion/";
 		Util.createAccess(outputFolder);

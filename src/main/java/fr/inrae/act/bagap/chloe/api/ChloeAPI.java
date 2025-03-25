@@ -23,6 +23,7 @@ import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.cluster.ClusterType;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.api.EcoPaysageAPI;
+import fr.inrae.act.bagap.chloe.concept.erosion.api.ErosionAPI;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.api.GrainBocagerAPI;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.api.GrainBocagerExploitationAPI;
 import fr.inrae.act.bagap.chloe.distance.analysis.DistanceType;
@@ -56,6 +57,7 @@ public class ChloeAPI {
 				case "grain_bocager" : GrainBocagerAPI.launchBatch(file); break;
 				case "grain_bocager_exploitation" : GrainBocagerExploitationAPI.launchBatch(file); break;
 				case "ecolandscape" : EcoPaysageAPI.launchBatch(file); break;
+				case "erosion" : ErosionAPI.launchBatch(file); break;
 				default :
 					throw new IllegalArgumentException("procedure "+procedure+" is not implemented yet");
 				}

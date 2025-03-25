@@ -6,7 +6,7 @@ public class SlidingFunctionalContinuityKernel extends SlidingFunctionalKernel {
 	
 	private float localSurface; 
 	
-	public SlidingFunctionalContinuityKernel(int windowSize, int displacement, int noDataValue, int[] unfilters, double cellSize, DistanceFunction function, double radius){		
+	public SlidingFunctionalContinuityKernel(int windowSize, int displacement, int noDataValue, int[] unfilters, float cellSize, DistanceFunction function, double radius){		
 		super(windowSize, displacement, null, noDataValue, unfilters, cellSize, function, radius);
 		localSurface = (float) Math.pow(cellSize, 2);
 	}

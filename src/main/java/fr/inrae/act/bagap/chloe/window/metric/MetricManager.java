@@ -16,6 +16,7 @@ import org.jumpmind.symmetric.csv.CsvReader;
 import fr.inrae.act.bagap.chloe.window.metric.basic.BasicMetric;
 import fr.inrae.act.bagap.chloe.window.metric.continuity.ContinuityMetric;
 import fr.inrae.act.bagap.chloe.window.metric.couple.CoupleMetric;
+import fr.inrae.act.bagap.chloe.window.metric.dispersion.DispersalMetric;
 import fr.inrae.act.bagap.chloe.window.metric.erosion.DegatErosionMetric;
 import fr.inrae.act.bagap.chloe.window.metric.erosion.SourceErosionMetric;
 import fr.inrae.act.bagap.chloe.window.metric.patch.PatchMetric;
@@ -355,6 +356,15 @@ public class MetricManager {
 	public static boolean hasOnlyContinuityMetric(Set<Metric> metrics) {
 		for(Metric m : metrics){
 			if(!(m instanceof ContinuityMetric) && !(m instanceof BasicMetric)){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean hasOnlyDispersalMetric(Set<Metric> metrics) {
+		for(Metric m : metrics){
+			if(!(m instanceof DispersalMetric) && !(m instanceof BasicMetric)){
 				return false;
 			}
 		}

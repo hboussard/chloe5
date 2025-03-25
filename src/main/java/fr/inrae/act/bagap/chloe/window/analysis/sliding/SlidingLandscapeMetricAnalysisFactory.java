@@ -36,6 +36,7 @@ import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingCountValueKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingPatchKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingQuantitativeKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.biodiversite.SlidingDispersionKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion.SlidingMassCumulKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion.SlidingSourceErosionKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.slope.SlidingSlopeKernel;
@@ -593,6 +594,61 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 
 			return createMultiple(new Coverage[] {coverage, coverageFriction}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 			//return createDouble(coverage, coverageFriction, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
+			
+		}else if (MetricManager.hasOnlyDispersalMetric(metrics) && builder.getWindowShapeType() == WindowShapeType.FUNCTIONAL) { // continuity 
+		
+			nbValues = 6;
+			
+			String outputEffectifs = null;
+			if(builder.getGeoTiffOutputs(windowSize) != null) {
+				outputEffectifs = builder.getGeoTiffOutputs(windowSize).get("effectif");
+			}
+			
+			EnteteRaster outEntete = new EnteteRaster(outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, (float) outCellSize, coverage.getEntete().noDataValue());
+			
+			// int windowSize, int displacement, int noDataValue, int[] unfilters, EnteteRaster inEntete, EnteteRaster outEntete, String outputEffectifs, float dMax
+			kernel = new SlidingDispersionKernel(windowSize, displacement, coverage.getEntete().noDataValue(), unfilters, coverage.getEntete(), outEntete, outputEffectifs, (float) dMax);
+			
+			counting = new ContinuityCounting(inCellSize, theoreticalSize);
+
+			// add metrics to counting
+			for (Metric m : metrics) {
+				counting.addMetric(m);
+			}
+
+			// observers
+			for (CountingObserver co : observers) {
+				counting.addObserver(co);
+			}
+
+			Coverage coverageRugosite = null;
+			if (builder.getRasterFile2() != null) {
+				coverageRugosite = CoverageManager.getCoverage(builder.getRasterFile2());
+			} else if (builder.getRasterTab2() != null) {
+				coverageRugosite = new TabCoverage(builder.getRasterTab2(), coverage.getEntete());
+			} else if (builder.getCoverage2() != null) {
+				coverageRugosite = builder.getCoverage2();
+			} else if (builder.getRasterTabs() != null) {
+				coverageRugosite = new TabCoverage(builder.getRasterTabs()[1], coverage.getEntete());
+			} else {
+				throw new IllegalArgumentException("no raster2 declared");
+			}
+			
+			Coverage coverageQualiteHabitat = null;
+			if (builder.getRasterTabs() != null) {
+				coverageQualiteHabitat = new TabCoverage(builder.getRasterTabs()[2], coverage.getEntete());
+			} else {
+				throw new IllegalArgumentException("no raster3 declared");
+			}
+			
+			Coverage coverageCapaciteAccueil = null;
+			if (builder.getRasterTabs() != null) {
+				coverageCapaciteAccueil = new TabCoverage(builder.getRasterTabs()[3], coverage.getEntete());
+			} else {
+				throw new IllegalArgumentException("no raster4 declared");
+			}
+
+			return createMultiple(new Coverage[] {coverage, coverageRugosite, coverageQualiteHabitat, coverageCapaciteAccueil}, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 			
 		}else if (MetricManager.hasOnlySourceErosionMetric(metrics)) { // erosion
 		

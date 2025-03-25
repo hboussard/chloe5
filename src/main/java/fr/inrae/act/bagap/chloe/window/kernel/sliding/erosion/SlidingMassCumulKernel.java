@@ -28,7 +28,7 @@ public class SlidingMassCumulKernel extends SlidingLandscapeMetricKernel {
 		this.inEntete = inEntete;
 		this.outEntete = outEntete;
 		this.cellSize = inEntete.cellsize();
-		localSurface = (float) Math.pow(cellSize, 2);
+		this.localSurface = (float) Math.pow(cellSize, 2);
 		//this.massInit = dMax;
 		if(outputDegatIntensity != null) {
 			//System.out.println(entete.width()+" "+entete.height()+" "+entete.width()*entete.height());

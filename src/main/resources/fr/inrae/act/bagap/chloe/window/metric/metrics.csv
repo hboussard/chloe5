@@ -58,3 +58,4 @@ source-erosion-intensity;erosion;other;fr.inrae.act.bagap.chloe.window.metric.er
 degat-erosion-emprise;degaterosion;other;fr.inrae.act.bagap.chloe.window.metric.erosion.DegatErosionEmpriseMetric;9
 degat-erosion-intensity;degaterosion;other;fr.inrae.act.bagap.chloe.window.metric.erosion.DegatErosionIntensityMetric;9
 mass-cumul;degaterosion;other;fr.inrae.act.bagap.chloe.window.metric.erosion.MassCumulMetric;9
+dispersion;dispersal;other;fr.inrae.act.bagap.chloe.window.metric.dispersion.DispersionMetric;10

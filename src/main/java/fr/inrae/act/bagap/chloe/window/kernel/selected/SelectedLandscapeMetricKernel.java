@@ -60,10 +60,19 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel implements La
 		final int y = bufferROIYMin() + (getGlobalId(0) / (width() - bufferROIXMin() - bufferROIXMax()));
 		
 		Pixel p = new Pixel(getGlobalId(0) % width(), (localROIY+(getGlobalId(0) / width())));
+		
+		for(Pixel lp : pixels) {
+			if(lp.x() == p.x() && lp.y() == p.y()) {
+				processPixel(lp, x, y);
+				exportFilters(lp, x, y); // export des filtres si demande
+			}
+		}
+		/*
 		if(pixels().contains(p)){
 			processPixel(p, x, y);
 			exportFilters(p, x, y); // export des filtres si demande
 		}
+		*/
 	}
 	
 	protected void processPixel(Pixel p, int x, int y){
@@ -185,25 +194,35 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel implements La
 					}
 				}
 			}
+			
+			double minx = CoordinateManager.getProjectedX(entete, p.x()-mid)-(entete.cellsize()/2);
+			double maxx = CoordinateManager.getProjectedX(entete, p.x()+mid)+(entete.cellsize()/2);
+			double miny = CoordinateManager.getProjectedY(entete, p.y()-mid)+(entete.cellsize()/2);
+			double maxy = CoordinateManager.getProjectedY(entete, p.y()+mid)-(entete.cellsize()/2);
+			
+			//System.out.println(p.x()+" "+p.y()+" "+minx+" "+maxx+" "+miny+" "+maxy);
+			
+			EnteteRaster localEntete = new EnteteRaster(windowSize(), windowSize(), minx, maxx, miny, maxy, entete.cellsize(), entete.noDataValue());
 
 			double X, Y;
 			if(p instanceof PixelWithID){
+
+				System.out.println();
+				
 				X = ((PixelWithID) p).getX();
 				Y = ((PixelWithID) p).getY();
-				
 				//System.out.println(X+" "+CoordinateManager.getProjectedX(entete, x)+" "+Y+" "+CoordinateManager.getProjectedY(entete, y));
+				//System.out.println(((PixelWithID) p).getId()+" "+X+" "+Y);
+				
+				CoverageManager.write(windowsPath+"window_"+((PixelWithID) p).getId()+".tif", image, localEntete);
+				
 			}else{
-				X = CoordinateManager.getProjectedX(entete, x);
-				Y = CoordinateManager.getProjectedY(entete, y);
+				
+				X = CoordinateManager.getProjectedX(entete, p.x());
+				Y = CoordinateManager.getProjectedY(entete, p.y());
+				
+				CoverageManager.write(windowsPath+"window_"+X+"-"+Y+".tif", image, localEntete);
 			}
-			
-			double minx = CoordinateManager.getProjectedX(entete, x-mid)-(entete.cellsize()/2);
-			double maxx = CoordinateManager.getProjectedX(entete, x+mid)+(entete.cellsize()/2);
-			double miny = CoordinateManager.getProjectedY(entete, y-mid)+(entete.cellsize()/2);
-			double maxy = CoordinateManager.getProjectedY(entete, y+mid)-(entete.cellsize()/2);
-
-			EnteteRaster localEntete = new EnteteRaster(windowSize(), windowSize(), minx, maxx, miny, maxy, entete.cellsize(), entete.noDataValue());
-			CoverageManager.write(windowsPath+"window_"+X+"-"+Y+".tif", image, localEntete);
 		}
 	}
 	

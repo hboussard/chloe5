@@ -173,7 +173,7 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 		// gestion specifiques des analyses quantitatives ou qualitatives
 		if(MetricManager.hasOnlyBasicMetric(metrics)){
 			
-			nbValues = 4;
+			nbValues = 5;
 			
 			kernel = new SelectedBasicKernel(windowSize, pixels, coeffs, coverage.getEntete(), builder.getWindowsPath());
 			
