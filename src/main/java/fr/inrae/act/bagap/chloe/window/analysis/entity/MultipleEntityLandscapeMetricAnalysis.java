@@ -1,4 +1,4 @@
-package fr.inrae.act.bagap.chloe.window.analysis.map;
+package fr.inrae.act.bagap.chloe.window.analysis.entity;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import fr.inrae.act.bagap.chloe.window.analysis.MultipleLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 
-public class MultipleMapLandscapeMetricAnalysis extends MultipleLandscapeMetricAnalysis {
+public class MultipleEntityLandscapeMetricAnalysis extends MultipleLandscapeMetricAnalysis {
 
 	private Set<Metric> totalMetrics;
 	
@@ -24,15 +24,14 @@ public class MultipleMapLandscapeMetricAnalysis extends MultipleLandscapeMetricA
 	
 	private List<String> csvOutputs;
 	
-	public MultipleMapLandscapeMetricAnalysis(LandscapeMetricAnalysisBuilder builder) {
+	public MultipleEntityLandscapeMetricAnalysis(LandscapeMetricAnalysisBuilder builder) {
 		super(builder);
 	}
-	
+
 	@Override
 	protected void doInit() {
-		
 		try {
-		
+			
 			totalMetrics = builder.getMetrics();
 			totalCsvOutput = builder.getCsv();
 			csvFolder = builder.getCsvFolder();
@@ -48,63 +47,48 @@ public class MultipleMapLandscapeMetricAnalysis extends MultipleLandscapeMetricA
 			coherences = MetricManager.getCoherences(totalMetrics);
 			Set<Metric> metrics;
 			
-			if(builder.getRasterFiles().size() <= 1){
+			for(int coherence : coherences){
+				metrics = new HashSet<Metric>();
+				metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
 				
-				for(int coherence : coherences){
-					metrics = new HashSet<Metric>();
-					metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
-					
-					if(!MetricManager.hasOnlyBasicMetric(metrics) && coherence == 0){
-						continue;
-					}
-					builder.setMetrics(metrics);
-					
-					if(totalCsvOutput != null || csvFolder != null){
-						builder.addCsvOutput(path+"/map_"+coherence+".csv");
-						csvOutputs.add(path+"/map_"+coherence+".csv");
-					}
-					
-					add(LandscapeMetricAnalysisFactory.create(builder));
+				
+				for(Metric m : metrics) {
+					System.out.println(m);
 				}
-			}else{
-				for(String rasterFile : builder.getRasterFiles()){
-					String name = new File(rasterFile).getName().replace(".tif", "").replace(".asc", "");
-					builder.setRasterFile(rasterFile);
-					
-					for(int coherence : coherences){
-						metrics = new HashSet<Metric>();
-						metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
-						
-						if(!MetricManager.hasOnlyBasicMetric(metrics) && coherence == 0){
-							continue;
-						}
-						builder.setMetrics(metrics);
-						
-						if(totalCsvOutput != null || csvFolder != null){
-							builder.addCsvOutput(path+"/"+name+"_map_"+coherence+".csv");
-							csvOutputs.add(path+"/"+name+"_map_"+coherence+".csv");
-						}
-						
-						add(LandscapeMetricAnalysisFactory.create(builder));
-					}
+				
+				/*
+				if(MetricManager.hasOnlyPatchMetric(metrics)) {
+					continue;
 				}
+				*/
+				
+				if(!MetricManager.hasOnlyBasicMetric(metrics) && coherence == 0){
+					continue;
+				}
+				builder.setMetrics(metrics);
+					
+				if(totalCsvOutput != null || csvFolder != null){
+					builder.addCsvOutput(path+"/entity_"+coherence+".csv");
+					csvOutputs.add(path+"/entity_"+coherence+".csv");
+				}
+					
+				add(LandscapeMetricAnalysisFactory.create(builder));
 			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Override
 	protected void doClose() {
 		
 		String localCsvOutput;
 		if(totalCsvOutput != null) {
 			localCsvOutput = totalCsvOutput;
-		}else if(builder.getRasterFiles().size() == 1){
+		}else {
 			String name = new File(builder.getRasterFile()).getName().replace(".tif", "").replace(".asc", "");
 			localCsvOutput = csvFolder+name+".csv";
-		}else {
-			localCsvOutput = csvFolder+"map.csv";
 		}
 		
 		SpatialCsvManager.merge(localCsvOutput, csvOutputs.toArray(new String[csvOutputs.size()]));
@@ -117,5 +101,5 @@ public class MultipleMapLandscapeMetricAnalysis extends MultipleLandscapeMetricA
 		coherences = null; 
 		csvOutputs = null;
 	}
-
+	
 }

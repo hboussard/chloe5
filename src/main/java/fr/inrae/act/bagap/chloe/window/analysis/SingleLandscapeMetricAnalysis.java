@@ -9,7 +9,7 @@ public abstract class SingleLandscapeMetricAnalysis extends LandscapeMetricAnaly
 	private final Coverage[] coverages;
 	
 	/**
-	 * coordonnees en pixels (X, Y) du premier pixel en haut � gauche du ROI a analyser
+	 * coordonnees en pixels (X, Y) du premier pixel en haut a gauche du ROI a analyser
 	 * info relative par rapport au coverage
 	 */
 	private final int roiX, roiY; 

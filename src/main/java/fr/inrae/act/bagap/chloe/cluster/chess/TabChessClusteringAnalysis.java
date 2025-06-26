@@ -51,6 +51,7 @@ public abstract class TabChessClusteringAnalysis extends Analysis{
 	}
 	
 	protected float getSame(Map<Float, Float> sames, float v){
+		
 		float nv = sames.get(v);
 		if(nv == noDataValue){
 			return v;
@@ -74,6 +75,23 @@ public abstract class TabChessClusteringAnalysis extends Analysis{
 	}
 	
 	protected float[] lisseNumerotation(float[] data, int noDataValue){
+		
+		
+		Map<Float, Integer> values = new HashMap<Float, Integer>();
+		int index = 1;
+		float v;
+		for(int i=0; i<data.length; i++){
+			v = data[i];
+			if(v != noDataValue && v != 0){
+				if(!values.containsKey(v)){
+					values.put(v, index++);
+				}
+				data[i] = values.get(v);
+			}
+		}
+		return data;
+		
+		/*
 		float[] lisse = new float[data.length];
 		Map<Float, Integer> values = new HashMap<Float, Integer>();
 		int index = 1;
@@ -90,6 +108,7 @@ public abstract class TabChessClusteringAnalysis extends Analysis{
 			}
 		}
 		return lisse;
+		*/
 	}
 
 }

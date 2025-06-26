@@ -23,8 +23,8 @@ public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 		kernel().setWidth(roiWidth());
 		kernel().setHeight(roiHeight());
 		
-		// lecture de la carte area et d�tection des num�ros
-		// voir si on ne peut faire cette initialisation � la vol�e
+		// lecture de la carte area et detection des numeros
+		// voir si on ne peut faire cette initialisation a la volee
 				
 		// recuperation des donnees depuis le coverage
 		Rectangle roi = new Rectangle(roiX(), roiY(), roiWidth(), roiHeight());
@@ -40,7 +40,7 @@ public class TinyEntityLandscapeMetricAnalysis extends EntityLandscapeMetricAnal
 				entityIds.add((int) f);
 			}
 		}
-		//System.out.println("nombre de features "+areaNumbers.size());
+		//System.out.println("nombre de features "+entityIds.size());
 		
 		// gestion des sorties
 		kernel().setOutDatas(new HashMap<Integer, double[]>());

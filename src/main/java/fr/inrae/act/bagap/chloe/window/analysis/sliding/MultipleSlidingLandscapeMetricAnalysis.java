@@ -66,9 +66,11 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 					builder.setWindowSize(ws);
 					
 					for(int coherence : coherences){ // pour chaque groupe coherent de metriques
+						
 						metrics = new HashSet<Metric>();
 						metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
-						if(coherence == 0){
+						
+						if(!MetricManager.hasOnlyBasicMetric(metrics) && coherence == 0){
 							continue;
 						}
 						builder.setMetrics(metrics);
@@ -82,9 +84,11 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 						add(LandscapeMetricAnalysisFactory.create(builder));
 					}
 				}
+				
 			}else{ // plusieurs rasters --> autant de fichiers CSV
 				
 				for(String rasterFile : builder.getRasterFiles()){
+					
 					String name = new File(rasterFile).getName().replace(".tif", "").replace(".asc", "");
 					builder.setRasterFile(rasterFile);
 					
@@ -99,7 +103,8 @@ public class MultipleSlidingLandscapeMetricAnalysis extends MultipleLandscapeMet
 						for(int coherence : coherences){ // pour chaque groupe coherent de metriques
 							metrics = new HashSet<Metric>();
 							metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
-							if(coherence == 0){
+							
+							if(!MetricManager.hasOnlyBasicMetric(metrics) && coherence == 0){
 								continue;
 							}
 							builder.setMetrics(metrics);

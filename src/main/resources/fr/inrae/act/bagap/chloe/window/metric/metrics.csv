@@ -7,6 +7,7 @@ pNC-valid;couple;other;fr.inrae.act.bagap.chloe.window.metric.basic.RateValidCou
 N-values;value;other;fr.inrae.act.bagap.chloe.window.metric.value.CountValuesMetric;1
 pN-values;value;other;fr.inrae.act.bagap.chloe.window.metric.value.RateValuesMetric;1
 NV;value;value;fr.inrae.act.bagap.chloe.window.metric.value.CountValueMetric;1
+area;value;value;fr.inrae.act.bagap.chloe.window.metric.value.AreaMetric;1
 pNV;value;value;fr.inrae.act.bagap.chloe.window.metric.value.RateValueMetric;1
 pNVm;value;value;fr.inrae.act.bagap.chloe.window.metric.value.RateValueMultipleMetric;1
 SHDI;value;other;fr.inrae.act.bagap.chloe.window.metric.value.ShannonDiversityIndex;1

@@ -44,7 +44,8 @@ public class TabRCMDistanceAnalysis2 extends Analysis {
 		this.noDataValue = noDataValue;
 		this.codes = codes;
 		if(threshold == noDataValue){
-			this.threshold = Integer.MAX_VALUE;
+			//this.threshold = Integer.MAX_VALUE;
+			this.threshold = 1000000;
 		}else{
 			this.threshold = threshold;
 		}

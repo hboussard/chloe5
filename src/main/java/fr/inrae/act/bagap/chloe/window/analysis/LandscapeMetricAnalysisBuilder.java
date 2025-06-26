@@ -18,6 +18,7 @@ import fr.inrae.act.bagap.chloe.api.RasterTypeMime;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.WindowShapeType;
+import fr.inrae.act.bagap.chloe.window.analysis.entity.MultipleEntityLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.grid.MultipleGridLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.map.MultipleMapLandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.selected.MultipleSelectedLandscapeMetricAnalysis;
@@ -878,8 +879,8 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 				}else{
 					
 					analysis = new MultipleSlidingLandscapeMetricAnalysis(this);
-					
 				}
+				
 			}else if(getAnalysisType().equals(ChloeAnalysisType.SELECTED)){
 				
 				if((windowSizes.size() == 1 || windowRadius.size() == 1)
@@ -890,8 +891,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 					
 				}else{
 					
-					analysis = new MultipleSelectedLandscapeMetricAnalysis(this);
-					
+					analysis = new MultipleSelectedLandscapeMetricAnalysis(this);	
 				}
 				
 			}else if(getAnalysisType().equals(ChloeAnalysisType.MAP)){
@@ -903,7 +903,6 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 				}else{
 					
 					analysis = new MultipleMapLandscapeMetricAnalysis(this);
-					
 				}
 				
 			}else if(getAnalysisType().equals(ChloeAnalysisType.GRID)){
@@ -917,13 +916,24 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 				}else{
 					
 					analysis = new MultipleGridLandscapeMetricAnalysis(this);
-					
 				}
-			}else{
+				
+			}else if(getAnalysisType().equals(ChloeAnalysisType.ENTITY)){
+				
+				if(MetricManager.hasCoherence(metrics)){
+					
+					analysis = LandscapeMetricAnalysisFactory.create(this);
+					
+				}else {
+				
+					analysis = new MultipleEntityLandscapeMetricAnalysis(this);
+				}
+				
+			}else {
 				
 				analysis = LandscapeMetricAnalysisFactory.create(this);
 			}
-
+			
 		}catch(IOException ex){
 			ex.printStackTrace();
 		}finally{

@@ -44,6 +44,7 @@ public class RasterFromShapefileAnalysis extends ChloeUtilAnalysis {
 	protected void doInit() {
 		
 		CoordinateReferenceSystem crs = ShapeFile2CoverageConverter.getCoordinateReferenceSystem(inputShapefile);
+		
 		try {
 			if(!CRS.toSRS(crs).startsWith("EPSG")){
 				 crs = CRS.decode("EPSG:2154");
@@ -51,7 +52,7 @@ public class RasterFromShapefileAnalysis extends ChloeUtilAnalysis {
 		} catch (FactoryException e) {
 			e.printStackTrace();
 		}
-
+		
 		entete = EnteteRaster.getEntete(new Envelope(minx, maxx, miny, maxy), cellSize, noDataValue, crs);
 		
 		Util.createAccess(outputRaster);

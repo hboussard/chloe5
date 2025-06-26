@@ -1,8 +1,10 @@
 package fr.inrae.act.bagap.chloe.window.kernel.selected;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import com.aparapi.Kernel;
 
@@ -34,19 +36,34 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel implements La
 	
 	private int bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax; // in pixels
 	
-	private Set<Pixel> pixels;
+	//private Set<Pixel> pixels;
+	private Map<Integer, Map<Integer, Set<Pixel>>> mapPixels;
 	
 	private String windowsPath;
+	
+	private static int index = 0;
 	
 	@SuppressWarnings("deprecation")
 	protected SelectedLandscapeMetricKernel(int windowSize, Set<Pixel> pixels, float[] coeff, EnteteRaster entete, String windowsPath){
 		this.setExplicit(true);
 		this.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.JTP);
 		this.windowSize = windowSize;
-		this.pixels = pixels;
+		//this.pixels = pixels;
 		this.coeff = coeff;
 		this.entete = entete;
 		this.windowsPath = windowsPath;
+		
+		mapPixels = new TreeMap<Integer, Map<Integer, Set<Pixel>>>();
+		for(Pixel p : pixels) {
+			if(!mapPixels.containsKey(p.x())) {
+				mapPixels.put(p.x(), new TreeMap<Integer, Set<Pixel>>());
+			}
+			if(!mapPixels.get(p.x()).containsKey(p.y())) {
+				mapPixels.get(p.x()).put(p.y(), new HashSet<Pixel>());
+			}
+			mapPixels.get(p.x()).get(p.y()).add(p);
+		}
+		
 	}
 	
 	public void applySelectedWindow(int buffer, int localROIY) {
@@ -59,14 +76,36 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel implements La
 		final int x = bufferROIXMin() + (getGlobalId(0) % (width() - bufferROIXMin() - bufferROIXMax()));
 		final int y = bufferROIYMin() + (getGlobalId(0) / (width() - bufferROIXMin() - bufferROIXMax()));
 		
-		Pixel p = new Pixel(getGlobalId(0) % width(), (localROIY+(getGlobalId(0) / width())));
+		//Pixel p = new Pixel(getGlobalId(0) % width(), (localROIY+(getGlobalId(0) / width())));
+		int px = getGlobalId(0) % width();
+		int py = localROIY+(getGlobalId(0) / width());
 		
-		for(Pixel lp : pixels) {
-			if(lp.x() == p.x() && lp.y() == p.y()) {
+		if(mapPixels.containsKey(px) && mapPixels.get(px).containsKey(py)) {
+			
+			for(Pixel lp : mapPixels.get(px).get(py)) {
+				
+				//System.out.println((++index)+" "+lp.x()+" "+lp.y());
+				
 				processPixel(lp, x, y);
 				exportFilters(lp, x, y); // export des filtres si demande
 			}
 		}
+		
+		
+		/*
+		for(Pixel lp : pixels) {
+			//if(lp.x() == p.x() && lp.y() == p.y()) {
+			if(lp.x() == px && lp.y() == py) {
+				
+				//System.out.println((++index)+" "+lp.x()+" "+lp.y());
+				
+				processPixel(lp, x, y);
+				exportFilters(lp, x, y); // export des filtres si demande
+			}
+		}
+		*/
+		
+		
 		/*
 		if(pixels().contains(p)){
 			processPixel(p, x, y);
@@ -167,10 +206,11 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel implements La
 		return this.bufferROIYMax;
 	}
 
+	/*
 	public Set<Pixel> pixels(){
 		return pixels;
 	}
-	
+	*/
 	public String windowsPath(){
 		return windowsPath;
 	}
@@ -207,7 +247,7 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel implements La
 			double X, Y;
 			if(p instanceof PixelWithID){
 
-				System.out.println();
+				//System.out.println();
 				
 				X = ((PixelWithID) p).getX();
 				Y = ((PixelWithID) p).getY();
@@ -232,7 +272,9 @@ public abstract class SelectedLandscapeMetricKernel extends Kernel implements La
 		coeff = null;
 		inDatas = null;
 		outDatas = null;
-		pixels = null;
+		//pixels = null;
+		mapPixels.clear();
+		mapPixels = null;
 	}
 	
 }

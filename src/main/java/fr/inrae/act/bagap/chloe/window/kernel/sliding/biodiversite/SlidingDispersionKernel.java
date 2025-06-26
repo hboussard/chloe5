@@ -3,11 +3,13 @@ package fr.inrae.act.bagap.chloe.window.kernel.sliding.biodiversite;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
+import fr.inrae.act.bagap.apiland.analysis.distance.DistanceFunction;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import fr.inrae.act.bagap.apiland.util.CoordinateManager;
 import fr.inrae.act.bagap.chloe.distance.analysis.functional.TabRCMDistanceAnalysis;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
+import tec.uom.se.AbstractSystemOfUnits;
 /**
  * inDatas :
  * 1 : candidats
@@ -29,7 +31,9 @@ public class SlidingDispersionKernel extends SlidingLandscapeMetricKernel {
 	
 	private float dMax;
 	
-	public SlidingDispersionKernel(int windowSize, int displacement, int noDataValue, int[] unfilters, EnteteRaster inEntete, EnteteRaster outEntete, String outputEffectifs, float dMax) {
+	private DistanceFunction function;
+	
+	public SlidingDispersionKernel(int windowSize, int displacement, int noDataValue, int[] unfilters, EnteteRaster inEntete, EnteteRaster outEntete, String outputEffectifs, DistanceFunction function, float dMax) {
 		super(windowSize, displacement, null, noDataValue, unfilters);
 		
 		this.inEntete = inEntete;
@@ -37,6 +41,7 @@ public class SlidingDispersionKernel extends SlidingLandscapeMetricKernel {
 		this.cellSize = inEntete.cellsize();
 		this.localSurface = (float) Math.pow(cellSize, 2);
 		this.dMax = dMax;
+		this.function = function;
 		
 		if(outputEffectifs != null) {
 			
@@ -57,7 +62,9 @@ public class SlidingDispersionKernel extends SlidingLandscapeMetricKernel {
 			
 			float candidats = inDatas()[(y * width()) + x];
 			
-			if(!hasFilter() || filterValue((int) candidats)){ // gestion des filtres
+			if((!hasFilter() || filterValue((int) candidats)) && candidats > 0){ // gestion des filtres
+				
+				//System.out.println("pass "+candidats);
 				
 				outDatas()[ind][0] = 1; // filtre ok 
 				
@@ -77,10 +84,19 @@ public class SlidingDispersionKernel extends SlidingLandscapeMetricKernel {
 				
 				float[] dataDistance = calculateDistance(dataRugosite);
 				
-				float[] dataVolumeDeplacement = new float[windowSize()*windowSize()];
-				float volumeTotal = calculateVolumeDeplacement(dataVolumeDeplacement, dataDistance, dataQualiteHabitat, dataCapaciteAccueil);
-				//float volumeTotal = calculateSurfaceAccessibilite(dataVolumeDeplacement, dataDistance, dataQualiteHabitat, dataCapaciteAccueil);
+				float[] dataPonderation = calculatePonderation(x, y, dataDistance);
 				
+				float[] dataVolumeRepartition = new float[windowSize()*windowSize()];
+				float volumeTotal = calculateVolumeRepartition(dataVolumeRepartition/*, dataDistance*/, dataQualiteHabitat, dataCapaciteAccueil, dataPonderation);
+				
+				//if((x==500 || x==600 || x==610) && y==500) {
+					//exportTab("C:/Data/projet/bannwart/data/dispersion_locale/rugosite_locale_"+x+"_"+y+".tif", dataRugosite, x, y);	
+					//exportTab("C:/Data/projet/bannwart/data/dispersion_locale/qualite_locale_"+x+"_"+y+".tif", dataQualiteHabitat, x, y);	
+					//exportTab("C:/Data/projet/bannwart/data/dispersion_locale/capacite_locale_"+x+"_"+y+".tif", dataCapaciteAccueil, x, y);	
+					//exportTab("C:/Data/projet/bannwart/data/dispersion_locale/distance_locale_"+x+"_"+y+".tif", dataDistance, x, y);	
+					//exportTab("C:/Data/projet/bannwart/data/dispersion_locale/ponderation_locale_"+x+"_"+y+".tif", dataPonderation, x, y);	
+					//exportTab("C:/Data/projet/bannwart/data/dispersion_locale/disperion_locale_"+x+"_"+y+".tif", dataVolumeRepartition, x, y);	
+				//}
 				
 				int ic, lind;
 				float nb_total = 0;
@@ -88,12 +104,13 @@ public class SlidingDispersionKernel extends SlidingLandscapeMetricKernel {
 				float surface = 0;
 				float volume = 0;
 				float effectifLocal;
+				float[] effectifsLocaux = new float[windowSize()*windowSize()];
 				float vl;
 				int lx, ly; 
 				
 				if(volumeTotal > 0) {
 					
-					int mind = ((windowSize()*windowSize())-1)/2;
+					//int mind = ((windowSize()*windowSize())-1)/2;
 					
 					for (int dy = -mid; dy <= mid; dy += 1) {
 						if(((y + dy) >= 0) && ((y + dy) < height())){
@@ -101,7 +118,7 @@ public class SlidingDispersionKernel extends SlidingLandscapeMetricKernel {
 								if(((x + dx) >= 0) && ((x + dx) < width())){
 									
 									ic = ((dy+mid) * windowSize()) + (dx+mid);							
-									vl = dataVolumeDeplacement[ic];
+									vl = dataVolumeRepartition[ic];
 									if(vl != noDataValue()) {
 										
 										nb_total += 1;
@@ -110,11 +127,7 @@ public class SlidingDispersionKernel extends SlidingLandscapeMetricKernel {
 										
 										effectifLocal = candidats * vl / volumeTotal;
 										
-										/*
-										if(ic == mind && vl == 0) {
-											System.out.println(effectifLocal+" "+vl+" "+volumeTotal);
-										}
-										*/
+										effectifsLocaux[ic] = effectifLocal;
 										
 										lx = CoordinateManager.getLocalX(outEntete, CoordinateManager.getProjectedX(inEntete, x + dx));
 										ly = CoordinateManager.getLocalY(outEntete, CoordinateManager.getProjectedY(inEntete, y + dy));
@@ -133,6 +146,11 @@ public class SlidingDispersionKernel extends SlidingLandscapeMetricKernel {
 					}
 				}
 				
+				if((x==500 || x==570 || x==600 || x==610) && y==500) {
+					exportTab("C:/Data/projet/bannwart/data/dispersion_locale/disperion_locale_"+x+"_"+y+".tif", dataVolumeRepartition, x, y);
+					exportTab("C:/Data/projet/bannwart/data/dispersion_locale/repartition_effectifs_locaux_"+x+"_"+y+".tif", effectifsLocaux, x, y);	
+				}
+				
 				outDatas()[ind][2] = nb_total;
 				outDatas()[ind][3] = nb_nodata;
 				outDatas()[ind][4] = surface;
@@ -141,16 +159,6 @@ public class SlidingDispersionKernel extends SlidingLandscapeMetricKernel {
 			} else{
 					
 				outDatas()[ind][0] = 0; // filtre pas ok 
-				
-				/*
-				final int mid = windowSize() / 2;
-				int lx = CoordinateManager.getLocalX(outEntete, CoordinateManager.getProjectedX(inEntete, x + mid));
-				int ly = CoordinateManager.getLocalY(outEntete, CoordinateManager.getProjectedY(inEntete, y + mid));
-				if(lx >= 0 && lx < outEntete.width() && ly >= 0 && ly < outEntete.height()) {
-					int lind = (ly*outEntete.width() + lx);
-					dataEffectifs[lind] = noDataValue(); 
-				}
-				*/
 			}
 		}
 	}
@@ -200,77 +208,55 @@ public class SlidingDispersionKernel extends SlidingLandscapeMetricKernel {
 		
 		TabRCMDistanceAnalysis rcm = new TabRCMDistanceAnalysis(distance, rugosite, windowSize(), windowSize(), (float) cellSize, noDataValue(), dMax);
 		rcm.allRun();
-		/*
-		int ind = ((windowSize()*windowSize())-1)/2;
-		if(distance[ind] != 0) {
-			System.out.println(distance[ind]+" "+rugosite[ind]);	
-		}
-		*/
-		
+	
 		return distance;
 	}
 
-	protected float calculateVolumeDeplacement(float[] dataVolumeDeplacement, float[] dataDistance, float[] dataQualiteHabitat, float[] dataCapaciteAccueil) {
+	protected float[] calculatePonderation(int x, int y, float[] distance) {
+		
+		float[] ponderation = new float[windowSize()*windowSize()];
+		
+		for(int ind=0; ind<distance.length; ind++){
+			float dist = distance[ind];
+			if(dist >= 0 && dist <= dMax){
+				if(function == null){
+					ponderation[ind] = 1;
+				}else{
+					//ponderation[ind] = (float) function.interprete(dist);
+					ponderation[ind] = (float) Math.exp(-1*Math.pow(dist, 2)/Math.pow(dMax/2, 2));
+				}
+			}else{
+				ponderation[ind] = 0;
+			}
+		}
+		
+		return ponderation;
+	}
+	
+	protected float calculateVolumeRepartition(float[] dataVolumeRepartition/*, float[] dataDistance*/, float[] dataQualiteHabitat, float[] dataCapaciteAccueil, float[] dataPonderation) {
 		
 		float volumeTotal = 0;
 		
-		int ind = ((windowSize()*windowSize())-1)/2;
-		/*
-		
-		if(dataDistance[ind] == 0) {
-			System.out.println(dataDistance[ind]);	
-		}*/
-		
-		for(int i=0; i<dataVolumeDeplacement.length; i++) {
-			float vd = dataDistance[i];
-			if(vd >=0 && vd <= dMax) {
-				float vl = localSurface * (dMax-vd) * dataQualiteHabitat[i] * dataCapaciteAccueil[i];
+		for(int i=0; i<dataVolumeRepartition.length; i++) {
+			
+			//float d = dataDistance[i];
+			float ponderation = dataPonderation[i];
+			
+			if(ponderation > 0) {
+				
+				float vl = ponderation * dataQualiteHabitat[i] * dataCapaciteAccueil[i];
+				//float vl = (dMax-d) * dataQualiteHabitat[i] * dataCapaciteAccueil[i];
+				
+				//float vl = (dMax-d) * dataQualiteHabitat[i] * dataCapaciteAccueil[i];
 				//float vl = localSurface * (dMax-vd) * (float) Math.pow(dataQualiteHabitat[i], 2) * dataCapaciteAccueil[i];
 				//float vl = localSurface * (dMax-vd) * ((dataQualiteHabitat[i] + dataCapaciteAccueil[i])/2);
 				//float vl = localSurface * (dMax-vd) * ((9*dataQualiteHabitat[i] + dataCapaciteAccueil[i])/10);
+				
 				volumeTotal += vl;
-				dataVolumeDeplacement[i] = vl;
+				dataVolumeRepartition[i] = vl;
 			} else {
-				dataVolumeDeplacement[i] = noDataValue();
+				dataVolumeRepartition[i] = noDataValue();
 			}
-			/*
-			if(i == ind && dataVolumeDeplacement[i] == 0) {
-				System.out.println(dataVolumeDeplacement[ind]+" "+dataDistance[ind]+" "+dataQualiteHabitat[ind]+" "+dataCapaciteAccueil[ind]);
-			}
-			*/
-		}
-		
-		return volumeTotal;
-	}
-	
-	protected float calculateSurfaceAccessibilite(float[] dataVolumeDeplacement, float[] dataDistance, float[] dataQualiteHabitat, float[] dataCapaciteAccueil) {
-		
-		float volumeTotal = 0;
-		
-		int ind = ((windowSize()*windowSize())-1)/2;
-		/*
-		
-		if(dataDistance[ind] == 0) {
-			System.out.println(dataDistance[ind]);	
-		}*/
-		
-		for(int i=0; i<dataVolumeDeplacement.length; i++) {
-			float vd = dataDistance[i];
-			if(vd >=0 && vd <= dMax) {
-			//if(vd >=0 && vd >= dMax-5 && vd <= dMax) {
-				float vl = 1 * dataQualiteHabitat[i] * dataCapaciteAccueil[i];
-				//float vl = 1 * ((dataQualiteHabitat[i] + dataCapaciteAccueil[i])/2);
-				//float vl = 1 * ((9*dataQualiteHabitat[i] + dataCapaciteAccueil[i])/10);
-				volumeTotal += vl;
-				dataVolumeDeplacement[i] = vl;
-			} else {
-				dataVolumeDeplacement[i] = noDataValue();
-			}
-			/*
-			if(i == ind && dataVolumeDeplacement[i] == 0) {
-				System.out.println(dataVolumeDeplacement[ind]+" "+dataDistance[ind]+" "+dataQualiteHabitat[ind]+" "+dataCapaciteAccueil[ind]);
-			}
-			*/
 		}
 		
 		return volumeTotal;
@@ -293,4 +279,27 @@ public class SlidingDispersionKernel extends SlidingLandscapeMetricKernel {
 		
 		super.dispose();
 	}
+	
+	private void exportTab(String output, float[] tab, int x, int y){
+		
+		int mid = windowSize() / 2;
+
+		double X, Y;
+		X = CoordinateManager.getProjectedX(inEntete, x);
+		Y = CoordinateManager.getProjectedY(inEntete, y);
+			
+		double minx = CoordinateManager.getProjectedX(inEntete, x-mid)-(inEntete.cellsize()/2);
+		double maxx = CoordinateManager.getProjectedX(inEntete, x+mid)+(inEntete.cellsize()/2);
+		double miny = CoordinateManager.getProjectedY(inEntete, y-mid)+(inEntete.cellsize()/2);
+		double maxy = CoordinateManager.getProjectedY(inEntete, y+mid)-(inEntete.cellsize()/2);	
+
+		EnteteRaster localEntete = new EnteteRaster(windowSize(), windowSize(), minx, maxx, miny, maxy, inEntete.cellsize(), inEntete.noDataValue());
+		
+		//System.out.println(output);
+		//System.out.println(localEntete);
+		
+		CoverageManager.write(output, tab, localEntete);
+		
+	}
+	
 }

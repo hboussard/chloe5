@@ -13,6 +13,7 @@ import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
 import fr.inrae.act.bagap.chloe.window.counting.CoupleCounting;
+import fr.inrae.act.bagap.chloe.window.counting.PatchCounting;
 import fr.inrae.act.bagap.chloe.window.counting.QuantitativeCounting;
 import fr.inrae.act.bagap.chloe.window.counting.ValueAndCoupleCounting;
 import fr.inrae.act.bagap.chloe.window.counting.ValueCounting;
@@ -21,6 +22,7 @@ import fr.inrae.act.bagap.chloe.window.kernel.entity.EntityCountValueAndCoupleKe
 import fr.inrae.act.bagap.chloe.window.kernel.entity.EntityCountValueKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.entity.EntityLandscapeMetricKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.entity.EntityQuantitativeKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.map.MapPatchKernel;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.output.EntityCsvOutput;
@@ -179,9 +181,9 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 		}
 			
 		// kernel and counting
-		EntityLandscapeMetricKernel kernel;
-		Counting counting;
-		int nbValues;
+		EntityLandscapeMetricKernel kernel = null;
+		Counting counting = null;
+		int nbValues = 0;
 		
 		// gestion specifiques des analyses quantitatives ou qualitatives
 		if(MetricManager.hasOnlyQuantitativeMetric(metrics)){ // quantitative
@@ -199,55 +201,70 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 			if(values == null){
 				values = readValues(coverage, new Rectangle(roiX, roiY, roiWidth, roiHeight), coverage.getEntete().noDataValue());
 			}
-						
-			// recuperation des couples
-			float[] couples = null;
-			if(MetricManager.hasCoupleMetric(metrics)){
-				couples = new float[(((values.length*values.length)-values.length)/2) + values.length];
-				int index = 0;
-				for(int s1 : values){
-					couples[index++] = Couple.getCouple(s1, s1);
-				}
-				for(int s1 : values){
-					for(int s2 : values){
-						if(s1 < s2) {
-							couples[index++] = Couple.getCouple(s1, s2);
+					
+			if(MetricManager.hasOnlyQualitativeMetric(metrics)){ // qualitative
+				
+				// recuperation des couples
+				float[] couples = null;
+				if(MetricManager.hasCoupleMetric(metrics)){
+					couples = new float[(((values.length*values.length)-values.length)/2) + values.length];
+					int index = 0;
+					for(int s1 : values){
+						couples[index++] = Couple.getCouple(s1, s1);
+					}
+					for(int s1 : values){
+						for(int s2 : values){
+							if(s1 < s2) {
+								couples[index++] = Couple.getCouple(s1, s2);
+							}
 						}
 					}
 				}
-			}
+				
+				if(MetricManager.hasOnlyValueMetric(metrics)){
+					
+					System.out.println("comptage des valeurs");
+					
+					nbValues = 5 + values.length;
+					
+					kernel = new EntityCountValueKernel(Raster.getNoDataValue(), values);
+					
+					counting = new ValueCounting(inCellSize, values);
+					
+				}else if(MetricManager.hasOnlyCoupleMetric(metrics)){
+					
+					System.out.println("comptage des couples");
+					
+					nbValues = 7 + couples.length;
+					
+					kernel = new EntityCountCoupleKernel(Raster.getNoDataValue(), values);
+					
+					counting = new CoupleCounting(inCellSize, values.length, couples);
+				
+				}else{
+					
+					System.out.println("comptage des valeurs et des couples");
+					
+					nbValues = 5 + values.length + 3 + couples.length;
+					
+					kernel = new EntityCountValueAndCoupleKernel(Raster.getNoDataValue(), values);
+					
+					counting = new ValueAndCoupleCounting(inCellSize, values, couples);
+					
+				}
+
+			}/*else if(MetricManager.hasOnlyPatchMetric(metrics)){ // patch
 			
-			if(MetricManager.hasOnlyValueMetric(metrics)){
-				
-				System.out.println("comptage des valeurs");
-				
-				nbValues = 5 + values.length;
-				
-				kernel = new EntityCountValueKernel(Raster.getNoDataValue(), values);
-				
-				counting = new ValueCounting(inCellSize, values);
-				
-			}else if(MetricManager.hasOnlyCoupleMetric(metrics)){
-				
-				System.out.println("comptage des couples");
-				
-				nbValues = 7 + couples.length;
-				
-				kernel = new EntityCountCoupleKernel(Raster.getNoDataValue(), values);
-				
-				counting = new CoupleCounting(inCellSize, values.length, couples);
 			
-			}else{
+				System.out.println("comptage des patchs non pris en charge");
 				
-				System.out.println("comptage des valeurs et des couples");
+				nbValues = 8 + 4*values.length;
 				
-				nbValues = 5 + values.length + 3 + couples.length;
+				kernel = new EntityPatchKernel(Raster.getNoDataValue(), values, inCellSize);
 				
-				kernel = new EntityCountValueAndCoupleKernel(Raster.getNoDataValue(), values);
+				counting = new PatchCounting(inCellSize, values);
 				
-				counting = new ValueAndCoupleCounting(inCellSize, values, couples);
-				
-			}
+			}*/
 		}
 		
 		// add metrics to counting

@@ -25,6 +25,29 @@ public class ScriptSelected {
 		//split();
 		//analyseSelectedMultiple();
 		//analyseSelected();
+		
+		analyseSelectedSeb();
+	}
+	
+	private static void analyseSelectedSeb(){
+		
+		long begin = System.currentTimeMillis();
+		
+		String path = "C:/Data/temp/sebastien/data/";
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(ChloeAnalysisType.SELECTED);
+		builder.addRasterFile(path+"raster_lc_id_10m.tif");
+		builder.setPointsFilter(path+"COORD.csv");
+		builder.setWindowSizes(new int[]{51, 101});
+		builder.addMetric("pN-valid");
+		builder.addMetric("SHDI");
+		builder.addCsvOutput(path+"analyse5_10m.csv");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+		
+		long end = System.currentTimeMillis();
+		System.out.println("time computing : "+(end - begin));
 	}
 	
 	private static void analyseSelected(){

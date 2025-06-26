@@ -92,7 +92,6 @@
             </plugin>
         </plugins>
     </build>
-
   <dependencies>
    <dependency>
     	<groupId>com.aparapi</groupId>
@@ -177,7 +176,7 @@
     	<artifactId>weka-stable</artifactId>
     	<version>3.8.4</version>
 	</dependency>
-	<!-- 
+	<!--  
     <dependency>
     	<groupId>fr.inrae.act.bagap</groupId>
     	<artifactId>apiland2</artifactId>

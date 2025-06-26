@@ -74,7 +74,8 @@ public class MultipleGridLandscapeMetricAnalysis extends MultipleLandscapeMetric
 					for(int coherence : coherences){ // pour chaque groupe coherent de metriques
 						metrics = new HashSet<Metric>();
 						metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
-						if(coherence == 0){
+						
+						if(!MetricManager.hasOnlyBasicMetric(metrics) && coherence == 0){
 							continue;
 						}
 						builder.setMetrics(metrics);
@@ -110,7 +111,8 @@ public class MultipleGridLandscapeMetricAnalysis extends MultipleLandscapeMetric
 						for(int coherence : coherences){ // pour chaque groupe coherent de metriques
 							metrics = new HashSet<Metric>();
 							metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
-							if(coherence == 0){
+							
+							if(!MetricManager.hasOnlyBasicMetric(metrics) && coherence == 0){
 								continue;
 							}
 							builder.setMetrics(metrics);

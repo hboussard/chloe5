@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import fr.inrae.act.bagap.apiland.analysis.distance.DistanceFunction;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
+import tec.uom.se.AbstractSystemOfUnits;
 import fr.inrae.act.bagap.chloe.distance.analysis.functional.TabRCMDistanceAnalysis;
 
 public abstract class SlidingFunctionalKernel extends SlidingLandscapeMetricKernel {

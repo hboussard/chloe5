@@ -15,7 +15,8 @@ public class ScriptGenerateRasterFromShapefile {
 		
 		long begin = System.currentTimeMillis();
 		
-		scriptGenerateRasterFromShapefile();
+		//scriptGenerateRasterFromShapefile();
+		scriptGenerateRasterFromShapefileSebastien();
 		
 		long end = System.currentTimeMillis();
 		System.out.println("time computing : "+(end - begin));
@@ -44,6 +45,37 @@ public class ScriptGenerateRasterFromShapefile {
 		float cellSize = 10;
 		int noDataValue = -1;
 		EnteteRaster entete = EnteteRaster.getEntete(envelope, cellSize, noDataValue, crs);
+		
+		Util.createAccess(outputRaster);
+				
+		ShapeFile2CoverageConverter.rasterize(outputRaster, shapefile, attribute, fillValue, entete);
+	
+	}
+	
+	private static void scriptGenerateRasterFromShapefileSebastien(){
+		
+		String outputRaster = "C:/Data/temp/sebastien/data/raster_5m.tif";
+		String shapefile = "C:/Data/temp/sebastien/data/Land_cover_map_UKCEH_2023.shp";
+		String attribute = "LC_ID";
+		int fillValue = -1;
+		CoordinateReferenceSystem crs = ShapeFile2CoverageConverter.getCoordinateReferenceSystem(shapefile);
+		System.out.println(crs);
+		/*
+		try {
+			if(!CRS.toSRS(crs).startsWith("EPSG")){
+				 crs = CRS.decode("EPSG:2154");
+			}
+		} catch (FactoryException e) {
+			e.printStackTrace();
+		}*/
+		
+		Envelope envelope = ShapeFile2CoverageConverter.getEnvelope(shapefile);
+		
+		float cellSize = 5;
+		int noDataValue = -1;
+		EnteteRaster entete = EnteteRaster.getEntete(envelope, cellSize, noDataValue, crs);
+		
+		System.out.println(entete);
 		
 		Util.createAccess(outputRaster);
 				

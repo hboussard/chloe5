@@ -48,13 +48,15 @@ public class TabDistanceClusteringAnalysis extends Analysis {
 				if(vd == noDataValue){
 					return noDataValue;
 				}
-				if(vd <= (distance/2)){
+				if(vd >= 0 && vd <= (distance/2)){
 					return 1;
 				}
 				return 0;
 			}
 		};
 		classif.run();
+		
+		//CoverageManager.write("C:/Data/projet/gmb/data/temp_classif.tif", outDatas, entete);
 			
 		return outDatas;
 		
@@ -65,6 +67,8 @@ public class TabDistanceClusteringAnalysis extends Analysis {
 		
 		TabQueenClusteringAnalysis qa = new TabQueenClusteringAnalysis(classifDatas, width, height, new int[]{1}, noDataValue);
 		float[] tabCluster = (float[]) qa.allRun();
+		
+		//CoverageManager.write("C:/Data/projet/gmb/data/temp_cluster.tif", tabCluster, entete);
 		
 		return tabCluster;
 	}

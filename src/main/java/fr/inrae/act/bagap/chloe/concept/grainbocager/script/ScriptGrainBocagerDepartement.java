@@ -7,7 +7,7 @@ public class ScriptGrainBocagerDepartement {
 
 	public static void main(String[] args){
 		
-		
+		/*
 		//procedureGrainBocager("02", "2018");
 		//procedureGrainBocager("09", "2022");
 		//procedureGrainBocager("11", "2021");
@@ -48,7 +48,6 @@ public class ScriptGrainBocagerDepartement {
 		//procedureGrainBocager("82", "2022");
 		//procedureGrainBocager("85", "2019");
 		//procedureGrainBocager("87", "2020");
-		/*
 		procedureGrainBocager("16", "2023");
 		procedureGrainBocager("17", "2021");
 		procedureGrainBocager("19", "2023");
@@ -57,13 +56,10 @@ public class ScriptGrainBocagerDepartement {
 		procedureGrainBocager("33", "2021");
 		procedureGrainBocager("40", "2021");
 		procedureGrainBocager("47", "2021");
-		
 		procedureGrainBocager("64", "2021");
 		procedureGrainBocager("79", "2023");
 		procedureGrainBocager("86", "2023");
 		procedureGrainBocager("87", "2023");
-		*/
-		/*
 		// aura
 		procedureGrainBocager("01", "2021");
 		procedureGrainBocager("03", "2022");
@@ -77,7 +73,6 @@ public class ScriptGrainBocagerDepartement {
 		procedureGrainBocager("69", "2023");
 		procedureGrainBocager("73", "2022");
 		procedureGrainBocager("74", "2023");
-		
 		// grand est
 		procedureGrainBocager("08", "2022");
 		procedureGrainBocager("10", "2022");
@@ -89,9 +84,6 @@ public class ScriptGrainBocagerDepartement {
 		procedureGrainBocager("67", "2021");
 		procedureGrainBocager("68", "2021");
 		procedureGrainBocager("88", "2023");
-		*/
-		
-		/*
 		// bourgogne franche comte
 		procedureGrainBocager("21", "2023");
 		procedureGrainBocager("25", "2023");
@@ -101,7 +93,6 @@ public class ScriptGrainBocagerDepartement {
 		procedureGrainBocager("71", "2023");
 		procedureGrainBocager("89", "2023");
 		procedureGrainBocager("90", "2023");
-		
 		// centre val de loire
 		procedureGrainBocager("18", "2023");
 		procedureGrainBocager("28", "2023");
@@ -109,15 +100,12 @@ public class ScriptGrainBocagerDepartement {
 		procedureGrainBocager("37", "2023");
 		procedureGrainBocager("41", "2023");
 		procedureGrainBocager("45", "2023");
-		*/
-		/*
 		// haut de france
 		procedureGrainBocager("02", "2021");
 		procedureGrainBocager("59", "2021");
 		procedureGrainBocager("60", "2021");
 		procedureGrainBocager("62", "2021");
 		procedureGrainBocager("80", "2021");
-		
 		// paca
 		procedureGrainBocager("04", "2021");
 		procedureGrainBocager("05", "2022");
@@ -125,6 +113,40 @@ public class ScriptGrainBocagerDepartement {
 		procedureGrainBocager("13", "2023");
 		procedureGrainBocager("83", "2023");
 		procedureGrainBocager("84", "2021");
+		
+		// normandie
+		procedureGrainBocager("14", "2023");
+		procedureGrainBocager("27", "2022");
+		procedureGrainBocager("50", "2022");
+		procedureGrainBocager("61", "2023");
+		procedureGrainBocager("76", "2022");
+		
+		//pays de la loire
+		procedureGrainBocager("44", "2022");
+		procedureGrainBocager("49", "2022");
+		procedureGrainBocager("53", "2022");
+		procedureGrainBocager("72", "2022");
+		procedureGrainBocager("85", "2022");
+		
+		// corse
+		procedureGrainBocager("2A", "2021");
+		procedureGrainBocager("2B", "2021");
+		
+		// bretagne
+		procedureGrainBocager("22", "2021");
+		procedureGrainBocager("29", "2021");
+		procedureGrainBocager("35", "2023");
+		procedureGrainBocager("56", "2022");
+		
+		// ile-de-france
+		procedureGrainBocager("75", "2021");
+		procedureGrainBocager("77", "2021");
+		procedureGrainBocager("78", "2021");
+		procedureGrainBocager("91", "2021");
+		procedureGrainBocager("92", "2021");
+		procedureGrainBocager("93", "2021");
+		procedureGrainBocager("94", "2021");
+		procedureGrainBocager("95", "2021");
 		*/
 	}
 	

@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import fr.inrae.act.bagap.apiland.raster.Pixel;
+import fr.inrae.act.bagap.apiland.util.CoordinateManager;
 import fr.inrae.act.bagap.apiland.util.SpatialCsvManager;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisFactory;
@@ -39,6 +40,7 @@ public class MultipleSelectedLandscapeMetricAnalysis extends MultipleLandscapeMe
 	
 	@Override
 	protected void doInit() {
+		
 		try {
 			totalMetrics = builder.getMetrics();
 			totalCsvOutput = builder.getCsv();
@@ -69,10 +71,11 @@ public class MultipleSelectedLandscapeMetricAnalysis extends MultipleLandscapeMe
 					builder.setWindowSize(ws);
 					
 					for(int coherence : coherences){ // pour chaque groupe de metrique coherent
-						
+							
 						metrics = new HashSet<Metric>();
 						metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
-						if(coherence == 0){
+						
+						if(!MetricManager.hasOnlyBasicMetric(metrics) && coherence == 0){
 							continue;
 						}
 						builder.setMetrics(metrics);
@@ -106,7 +109,8 @@ public class MultipleSelectedLandscapeMetricAnalysis extends MultipleLandscapeMe
 						for(int coherence : coherences){
 							metrics = new HashSet<Metric>();
 							metrics.addAll(MetricManager.getMetricsByCoherence(totalMetrics, coherence));
-							if(coherence == 0){
+							
+							if(!MetricManager.hasOnlyBasicMetric(metrics) && coherence == 0){
 								continue;
 							}
 							builder.setMetrics(metrics);
@@ -116,6 +120,8 @@ public class MultipleSelectedLandscapeMetricAnalysis extends MultipleLandscapeMe
 								csvOutputs.get(rasterFile).add(path+"/"+name+"_selected_"+coherence+"_"+ws+".csv");
 								suffixMetrics.get(rasterFile).add("_"+ws);
 							}
+							
+							
 							
 							add(LandscapeMetricAnalysisFactory.create(builder));
 						}
@@ -145,8 +151,25 @@ public class MultipleSelectedLandscapeMetricAnalysis extends MultipleLandscapeMe
 					localCsvOutput = csvFolder+name+".csv";
 				}
 				
+				//Coverage cov = CoverageManager.getCoverage(rasterFile);
+				//EnteteRaster entete = cov.getEntete();
+				//cov.dispose();
 				EnteteRaster entete = builder.getEntete();
 				Set<Pixel> pixels = builder.getRefPixels();
+				/*
+				Set<Pixel> pixels = null;
+				if(builder.getRefPixels() != null){
+					pixels = builder.getRefPixels();
+				}else if(builder.getPixelsFilter() != null){
+					pixels = CoordinateManager.initWithPixels(builder.getPixelsFilter());
+					builder.setPixelsFilter(pixels);
+				}else if(builder.getRefPoints() != null){
+					throw new IllegalArgumentException();
+				}else{
+					pixels = CoordinateManager.initWithPoints(builder.getPointsFilter(), entete);
+					builder.setPixelsFilter(pixels);
+				}
+				*/
 				SpatialCsvManager.mergeFromPixels(localCsvOutput, csvOutputs.get(rasterFile).toArray(new String[csvOutputs.get(rasterFile).size()]), suffixMetrics.get(rasterFile).toArray(new String[suffixMetrics.get(rasterFile).size()]), entete, pixels);
 				
 				for(String csvOut : csvOutputs.get(rasterFile)){

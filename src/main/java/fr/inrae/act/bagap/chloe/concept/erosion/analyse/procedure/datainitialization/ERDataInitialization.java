@@ -46,27 +46,27 @@ public class ERDataInitialization extends ErosionProcedure {
 		
 		System.out.println(osEntete.getEnvelope());
 		
-		Coverage cgtvCov = CoverageManager.getCoverage("F:/data/sig/CGTV/cgtv.tif");
-		EnteteRaster entete = cgtvCov.getEntete();
+		//Coverage cgtvCov = CoverageManager.getCoverage("F:/data/sig/CGTV/cgtv.tif");
+		//EnteteRaster entete = cgtvCov.getEntete();
 		
-		System.out.println(entete);
+		//System.out.println(entete);
 		
-		System.out.println(EnteteRaster.getROI2(entete, osEntete.getEnvelope()));
+		//System.out.println(EnteteRaster.getROI2(entete, osEntete.getEnvelope()));
 		
-		float[] cgtvData = cgtvCov.getData(EnteteRaster.getROI2(entete, osEntete.getEnvelope()));
-		cgtvCov.dispose();
+		//float[] cgtvData = cgtvCov.getData(EnteteRaster.getROI2(entete, osEntete.getEnvelope()));
+		//cgtvCov.dispose();
 		
-		System.out.println(osData.length+" "+cgtvData.length);
+		//System.out.println(osData.length+" "+cgtvData.length);
 		
-		CoverageManager.write("C:/Data/projet/coterra/essai2_8/cgtv_bas_leon.tif", cgtvData, osEntete);
+		//CoverageManager.write("C:/Data/projet/coterra/essai2_8/cgtv_bas_leon.tif", cgtvData, osEntete);
 		
-		for(int ind=0; ind<cgtvData.length; ind++){
-			if(osData[ind] != osEntete.noDataValue()) {
-				if(cgtvData[ind] == 5 || cgtvData[ind] == 6){
-					osData[ind] = 26; // prairie permanente
-				}
-			}
-		}
+		//for(int ind=0; ind<cgtvData.length; ind++){
+		//	if(osData[ind] != osEntete.noDataValue()) {
+		//		if(cgtvData[ind] == 5 || cgtvData[ind] == 6){
+		//			osData[ind] = 26; // prairie permanente
+		//		}
+		//	}
+		//}
 		
 		CoverageManager.write(manager().os(), osData, osEntete);
 		// fin test prairies permanentes - bas leon
