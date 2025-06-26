@@ -3,6 +3,7 @@ package fr.inrae.act.bagap.chloe.script;
 import java.awt.Rectangle;
 
 import org.locationtech.jts.geom.Envelope;
+
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;

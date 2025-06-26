@@ -171,6 +171,9 @@ public class EcoPaysageManager {
 			}else if(metricImportanceFile != null){
 				importances = EcoPaysage.initImportanceByMetric(metricImportanceFile);
 			}else {
+				if(codes == null){
+					initCodes();
+				}
 				initImportances(codes, scales);
 			}
 			
@@ -293,6 +296,19 @@ public class EcoPaysageManager {
 		setConfigurationMetrics(codes);
 		setInitMetrics(true);
 		//initImportances(codes);
+	}
+	
+	private void initCodes() {
+		
+		Coverage cov = CoverageManager.getCoverage(inputRasters.iterator().next());
+		
+		int width = cov.getEntete().width();
+		int height = cov.getEntete().height();
+		int noDataValue = cov.getEntete().noDataValue();
+		
+		setCodes(Util.readValues(cov, width, height, noDataValue));
+		
+		cov.dispose();
 	}
 	
 	private void initImportances(int[] codes, int[] scales) {

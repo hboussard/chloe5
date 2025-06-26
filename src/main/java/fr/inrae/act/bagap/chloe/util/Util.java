@@ -95,6 +95,26 @@ public class Util {
 		return values;
 	}
 	
+	public static int[] readValues(Coverage coverage, int width, int height, int noDataValue) {
+		
+		float[] datas;
+		Set<Float> inValues = new TreeSet<Float>();
+		for(int j=0; j<height; j+=LandscapeMetricAnalysis.tileYSize()){
+			datas = coverage.getData(new Rectangle(0, j, width, Math.min(LandscapeMetricAnalysis.tileYSize(), height-j)));
+			for (float d : datas) {
+				if (d != 0 && d != noDataValue) {
+					inValues.add(d);
+				}
+			}
+		}
+		int index = 0;
+		int[] values = new int[inValues.size()];
+		for (float d : inValues) {
+			values[index++] = (int) d;
+		}
+		return values;
+	}
+	
 	public static Map<Float, Float> importData(String dataFile, String code, String value){
 		
 		try {
