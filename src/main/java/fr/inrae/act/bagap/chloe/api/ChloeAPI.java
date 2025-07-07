@@ -26,6 +26,7 @@ import fr.inrae.act.bagap.chloe.concept.ecopaysage.api.EcoPaysageAPI;
 import fr.inrae.act.bagap.chloe.concept.erosion.api.ErosionAPI;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.api.GrainBocagerAPI;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.api.GrainBocagerExploitationAPI;
+import fr.inrae.act.bagap.chloe.concept.regulation.toulouse.api.EphestiaToulouseAPI;
 import fr.inrae.act.bagap.chloe.distance.analysis.DistanceType;
 import fr.inrae.act.bagap.chloe.util.analysis.ChloeUtilAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
@@ -58,6 +59,7 @@ public class ChloeAPI {
 				case "grain_bocager_exploitation" : GrainBocagerExploitationAPI.launchBatch(file); break;
 				case "ecolandscape" : EcoPaysageAPI.launchBatch(file); break;
 				case "erosion" : ErosionAPI.launchBatch(file); break;
+				case "ephestia_toulouse" : EphestiaToulouseAPI.launchBatch(file); break;
 				default :
 					throw new IllegalArgumentException("procedure "+procedure+" is not implemented yet");
 				}
