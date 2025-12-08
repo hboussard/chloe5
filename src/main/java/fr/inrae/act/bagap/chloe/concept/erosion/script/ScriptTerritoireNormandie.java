@@ -10,6 +10,7 @@ import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.vector.ShapeFileTool;
 
 public class ScriptTerritoireNormandie {
 
@@ -154,7 +155,7 @@ public class ScriptTerritoireNormandie {
 	
 	public static EnteteRaster initEntete(String territoryShape, String territoryCode, String grain_bocager) {
 		
-		Envelope envelope = ShapeFile2CoverageConverter.getEnvelope(territoryShape, 2000, "code", territoryCode);
+		Envelope envelope = ShapeFileTool.getEnvelope(territoryShape, 2000, "code", territoryCode);
 		
 		Coverage cov = CoverageManager.getCoverage(grain_bocager);
 		EnteteRaster refEntete = cov.getEntete();

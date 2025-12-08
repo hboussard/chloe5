@@ -2,11 +2,16 @@ package fr.inrae.act.bagap.chloe.concept.grainbocager.script;
 
 import java.awt.Rectangle;
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.jumpmind.symmetric.csv.CsvWriter;
+
+import fr.inrae.act.bagap.apiland.analysis.Stats;
 import fr.inrae.act.bagap.apiland.analysis.tab.ClassificationPixel2PixelTabCalculation;
 import fr.inrae.act.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
 import fr.inrae.act.bagap.apiland.analysis.tab.SearchAndReplacePixel2PixelTabCalculation;
@@ -15,6 +20,8 @@ import fr.inrae.act.bagap.apiland.domain.DomainFactory;
 import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.util.SpatialCsvManager;
 import fr.inrae.act.bagap.chloe.cluster.distance.TabDistanceClusteringAnalysis;
 import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenClusteringAnalysis;
 import fr.inrae.act.bagap.chloe.distance.analysis.euclidian.TabChamferDistanceAnalysis;
@@ -50,11 +57,14 @@ public class ScriptGMB {
 		//classificationContinuite(path+"indice_continuite_boisee_0-10_150m.tif", 0.1, 0.5, 0.05);
 		//classificationContinuite(path+"indice_continuite_boisee_0-10_800m.tif");
 		//classificationContinuite(path+"indice_continuite_boisee_mars_0-10_150m.tif", 0.01, 0.02, 0.01);
+		//classificationContinuite(path+"indice_continuite_boisee_0-10_150m.tif");
 		
 		//clusteringContinuite(path+"classif_indice_continuite_boisee_0-10_150m.tif", path+"Couts_0-10_MusAve2025_SansSeuillage_modelANN_13var_clean.tif", 9, 800);
 		//clusteringContinuite(path+"classif_indice_continuite_boisee_mars_0-10_150m.tif", path+"Couts-0_10-MusAve2025_SansSeuil_ModelMARS12varSansFrag_clean.tif", 1, 800);
 		//clusteringContinuite(path+"classif_indice_continuite_boisee_0-10_150m.tif", path+"Couts_0-10_MusAve2025_SansSeuillage_modelANN_13var_clean.tif", 9, 3300);
 		//clusteringContinuite(path+"classif_indice_continuite_boisee_0-10_800m.tif", path+"Couts_0-10_MusAve2025_SansSeuillage_modelANN_13var_clean.tif", 9, 3300);
+		//clusteringContinuite(path+"classif_indice_continuite_boisee_0-10_150m_essaie1.tif", path+"Couts_0-10_MusAve2025_SansSeuillage_modelANN_13var_clean.tif", 2, 800);
+		//clusteringContinuite(path+"classif_indice_continuite_boisee_0-10_150m_essaie2.tif", path+"Couts_0-10_MusAve2025_SansSeuillage_modelANN_13var_clean.tif", 3, 800);
 		
 		//analyseClustersHabitat(path+"cluster_1_classif_indice_continuite_boisee_0-10_150m_800m.tif", 3300);
 		//analyseClustersHabitat(path+"cluster_2_classif_indice_continuite_boisee_0-10_150m_800m.tif", 3300);
@@ -67,15 +77,537 @@ public class ScriptGMB {
 		//analyseClustersHabitat(path+"cluster_9_classif_indice_continuite_boisee_0-10_150m_800m.tif", 3300);
 		
 		//meanDistance(path+"classif_indice_continuite_boisee_0-10_150m.tif", 9, 3300);
+		//meanDistance(path+"classif_indice_continuite_boisee_0-10_150m_essaie1.tif", 2, 800);
+		meanDistance(path+"classif_indice_continuite_boisee_0-10_150m_essaie2.tif", 3, 800);
 		
 		//distanceFromHabitat(800);
 		//clusterFromHabitat(800);
 		
+		// classification des distributions GMB de Muscardin
+		// sur quelle carte ? DistributionPotentielleMuscardin2025_ClassifBiotope-Raster10m_BzhHisto_L93
+		// quels seuils ? les 5 seuils de la couche
+		// combien de classes ? 5
+		// calcul de distances fonctionnelles à ces seuils
+		//calculDistanceSeuilsMuscardin();
+		// moyennage des seuils
+		//meanDistanceMuscardin();
+		// calcul des clusters pour visualisation
+		//clusterFromHabitatMuscardin(800);	
+
+		//rasterizeSampling();
+		//rasterizeSamplingMAJ();
+		//analyseSampling();
+		//analyseSamplingSdm();
+		//analyseSamplingInrae();
+		//analyseSamplingInraeEssaie1();
+		analyseSamplingInraeEssaie2();
 		
 		long end = System.currentTimeMillis();
 		System.out.println("time computing : "+(end - begin));
 	}
 	
+	private static void analyseSamplingInraeEssaie2() {
+		
+		Coverage covMuscardin = CoverageManager.getCoverage(path+"muscardin/data_muscardin_maj.tif");
+		float[] dataMuscardin = covMuscardin.getData();
+		EnteteRaster entete = covMuscardin.getEntete();
+		covMuscardin.dispose();
+		
+	
+		Coverage covDist1 = CoverageManager.getCoverage(path+"distance_1_classif_indice_continuite_boisee_0-10_150m_essaie2_800m.tif");
+		float[] dataDist1 = covDist1.getData();
+		covDist1.dispose();
+		
+		Coverage covDist2 = CoverageManager.getCoverage(path+"distance_2_classif_indice_continuite_boisee_0-10_150m_essaie2_800m.tif");
+		float[] dataDist2 = covDist2.getData();
+		covDist2.dispose();
+		
+		Coverage covDist3 = CoverageManager.getCoverage(path+"distance_3_classif_indice_continuite_boisee_0-10_150m_essaie2_800m.tif");
+		float[] dataDist3 = covDist3.getData();
+		covDist3.dispose();
+	
+		try {
+			CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_essaie2_presence_inrae.csv");
+			//CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_essaie2_presence_pseudoabs_inrae.csv");
+			cw.setDelimiter(';');
+			cw.write("observation");
+			cw.write("presence");
+			cw.write("dist_inrae_1");
+			cw.write("dist_inrae_2");
+			cw.write("dist_inrae_3");
+			
+			cw.endRecord();
+			
+			boolean ok;
+			
+			for(int ind=0; ind<entete.width()*entete.height(); ind++) {
+		
+				float vMuscardin = dataMuscardin[ind];
+				if(vMuscardin > 0) {
+				
+					ok = false;
+					
+					switch((int) vMuscardin) {
+					case 1 : 
+						cw.write("presence");
+						cw.write("1");
+						ok = true;
+						break;
+					case 2 : 
+						cw.write("abscence");
+						cw.write("0");
+						ok = true;
+						break;
+						/*
+					case 3 : 
+						cw.write("pseudo_abs");
+						cw.write("0");
+						ok = true;
+						break;*/
+					}
+						
+					if(ok) {
+						cw.write(dataDist1[ind]+"");
+						cw.write(dataDist2[ind]+"");
+						cw.write(dataDist3[ind]+"");
+						cw.endRecord();
+					}
+				}
+			}
+
+			cw.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void analyseSamplingInraeEssaie1() {
+		
+		Coverage covMuscardin = CoverageManager.getCoverage(path+"muscardin/data_muscardin_maj.tif");
+		float[] dataMuscardin = covMuscardin.getData();
+		EnteteRaster entete = covMuscardin.getEntete();
+		covMuscardin.dispose();
+		
+	
+		Coverage covDist1 = CoverageManager.getCoverage(path+"distance_1_classif_indice_continuite_boisee_0-10_150m_essaie1_800m.tif");
+		float[] dataDist1 = covDist1.getData();
+		covDist1.dispose();
+		
+		Coverage covDist2 = CoverageManager.getCoverage(path+"distance_2_classif_indice_continuite_boisee_0-10_150m_essaie1_800m.tif");
+		float[] dataDist2 = covDist2.getData();
+		covDist2.dispose();
+	
+		try {
+			//CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_maj_presence_inrae.csv");
+			//CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_maj_presence_pseudoabs_inrae.csv");
+			//CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_essaie1_presence_inrae.csv");
+			CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_essaie1_presence_pseudoabs_inrae.csv");
+			cw.setDelimiter(';');
+			cw.write("observation");
+			cw.write("presence");
+			cw.write("dist_inrae_1");
+			cw.write("dist_inrae_2");
+			
+			cw.endRecord();
+			
+			boolean ok;
+			
+			for(int ind=0; ind<entete.width()*entete.height(); ind++) {
+		
+				float vMuscardin = dataMuscardin[ind];
+				if(vMuscardin > 0) {
+				
+					ok = false;
+					
+					switch((int) vMuscardin) {
+					case 1 : 
+						cw.write("presence");
+						cw.write("1");
+						ok = true;
+						break;
+					/*case 2 : 
+						cw.write("abscence");
+						cw.write("0");
+						ok = true;
+						break;
+						*/
+					case 3 : 
+						cw.write("pseudo_abs");
+						cw.write("0");
+						ok = true;
+						break;
+					}
+						
+					if(ok) {
+						cw.write(dataDist1[ind]+"");
+						cw.write(dataDist2[ind]+"");
+						cw.endRecord();
+					}
+				}
+			}
+
+			cw.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void analyseSamplingInrae() {
+		
+		Coverage covMuscardin = CoverageManager.getCoverage(path+"muscardin/data_muscardin_maj.tif");
+		float[] dataMuscardin = covMuscardin.getData();
+		EnteteRaster entete = covMuscardin.getEntete();
+		covMuscardin.dispose();
+		
+	
+		Coverage covDist1 = CoverageManager.getCoverage(path+"distance_1_classif_indice_continuite_boisee_0-10_150m_3300m.tif");
+		float[] dataDist1 = covDist1.getData();
+		covDist1.dispose();
+		
+		Coverage covDist2 = CoverageManager.getCoverage(path+"distance_2_classif_indice_continuite_boisee_0-10_150m_3300m.tif");
+		float[] dataDist2 = covDist2.getData();
+		covDist2.dispose();
+		
+		Coverage covDist3 = CoverageManager.getCoverage(path+"distance_3_classif_indice_continuite_boisee_0-10_150m_3300m.tif");
+		float[] dataDist3 = covDist3.getData();
+		covDist3.dispose();
+		
+		Coverage covDist4 = CoverageManager.getCoverage(path+"distance_4_classif_indice_continuite_boisee_0-10_150m_3300m.tif");
+		float[] dataDist4 = covDist4.getData();
+		covDist4.dispose();
+		
+		Coverage covDist5 = CoverageManager.getCoverage(path+"distance_5_classif_indice_continuite_boisee_0-10_150m_3300m.tif");
+		float[] dataDist5 = covDist5.getData();
+		covDist5.dispose();
+		
+		Coverage covDist6 = CoverageManager.getCoverage(path+"distance_6_classif_indice_continuite_boisee_0-10_150m_3300m.tif");
+		float[] dataDist6 = covDist6.getData();
+		covDist6.dispose();
+		
+		Coverage covDist7 = CoverageManager.getCoverage(path+"distance_7_classif_indice_continuite_boisee_0-10_150m_3300m.tif");
+		float[] dataDist7 = covDist7.getData();
+		covDist7.dispose();
+		
+		Coverage covDist8 = CoverageManager.getCoverage(path+"distance_8_classif_indice_continuite_boisee_0-10_150m_3300m.tif");
+		float[] dataDist8 = covDist8.getData();
+		covDist8.dispose();
+		
+		Coverage covDist9 = CoverageManager.getCoverage(path+"distance_9_classif_indice_continuite_boisee_0-10_150m_3300m.tif");
+		float[] dataDist9 = covDist9.getData();
+		covDist9.dispose();
+	
+		try {
+			//CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_maj_presence_inrae.csv");
+			//CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_maj_presence_pseudoabs_inrae.csv");
+			//CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_essaie1_presence_inrae.csv");
+			CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_essaie1_presence_pseudoabs_inrae.csv");
+			cw.setDelimiter(';');
+			cw.write("observation");
+			cw.write("presence");
+			cw.write("dist_inrae_1");
+			cw.write("dist_inrae_2");
+			cw.write("dist_inrae_3");
+			cw.write("dist_inrae_4");
+			cw.write("dist_inrae_5");
+			cw.write("dist_inrae_6");
+			cw.write("dist_inrae_7");
+			cw.write("dist_inrae_8");
+			cw.write("dist_inrae_9");
+			
+			cw.endRecord();
+			
+			boolean ok;
+			
+			for(int ind=0; ind<entete.width()*entete.height(); ind++) {
+		
+				float vMuscardin = dataMuscardin[ind];
+				if(vMuscardin > 0) {
+				
+					ok = false;
+					
+					switch((int) vMuscardin) {
+					case 1 : 
+						cw.write("presence");
+						cw.write("1");
+						ok = true;
+						break;
+					/*case 2 : 
+						cw.write("abscence");
+						cw.write("0");
+						ok = true;
+						break;*/
+						
+					case 3 : 
+						cw.write("pseudo_abs");
+						cw.write("0");
+						ok = true;
+						break;
+					}
+						
+					if(ok) {
+						cw.write(dataDist1[ind]+"");
+						cw.write(dataDist2[ind]+"");
+						cw.write(dataDist3[ind]+"");
+						cw.write(dataDist4[ind]+"");
+						cw.write(dataDist5[ind]+"");
+						cw.write(dataDist6[ind]+"");
+						cw.write(dataDist7[ind]+"");
+						cw.write(dataDist8[ind]+"");
+						cw.write(dataDist9[ind]+"");
+						cw.endRecord();
+					}
+				}
+			}
+
+			cw.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void analyseSamplingSdm() {
+		
+		Coverage covMuscardin = CoverageManager.getCoverage(path+"muscardin/data_muscardin_maj.tif");
+		float[] dataMuscardin = covMuscardin.getData();
+		EnteteRaster entete = covMuscardin.getEntete();
+		covMuscardin.dispose();
+		
+	
+		Coverage covDist1 = CoverageManager.getCoverage(path+"distance_habitat_muscardin_1-2-3-4-5.tif");
+		float[] dataDist1 = covDist1.getData();
+		covDist1.dispose();
+		
+		Coverage covDist2 = CoverageManager.getCoverage(path+"distance_habitat_muscardin_2-3-4-5.tif");
+		float[] dataDist2 = covDist2.getData();
+		covDist2.dispose();
+		
+		Coverage covDist3 = CoverageManager.getCoverage(path+"distance_habitat_muscardin_3-4-5.tif");
+		float[] dataDist3 = covDist3.getData();
+		covDist3.dispose();
+		
+		Coverage covDist4 = CoverageManager.getCoverage(path+"distance_habitat_muscardin_4-5.tif");
+		float[] dataDist4 = covDist4.getData();
+		covDist4.dispose();
+		
+		Coverage covDist5 = CoverageManager.getCoverage(path+"distance_habitat_muscardin_5.tif");
+		float[] dataDist5 = covDist5.getData();
+		covDist5.dispose();
+	
+		try {
+			//CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_maj_presence_sdm.csv");
+			//CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_maj_presence_pseudoabs_sdm.csv");
+			//CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_essaie1_presence_sdm.csv");
+			CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_essaie1_presence_pseudoabs_sdm.csv");
+			cw.setDelimiter(';');
+			cw.write("observation");
+			cw.write("presence");
+			cw.write("dist_sdm_1");
+			cw.write("dist_sdm_2");
+			cw.write("dist_sdm_3");
+			cw.write("dist_sdm_4");
+			cw.write("dist_sdm_5");
+			
+			cw.endRecord();
+			
+			boolean ok;
+			
+			for(int ind=0; ind<entete.width()*entete.height(); ind++) {
+		
+				float vMuscardin = dataMuscardin[ind];
+				if(vMuscardin > 0) {
+				
+					ok = false;
+					
+					switch((int) vMuscardin) {
+					case 1 : 
+						cw.write("presence");
+						cw.write("1");
+						ok = true;
+						break;
+					/*case 2 : 
+						cw.write("abscence");
+						cw.write("0");
+						ok = true;
+						break;
+						*/
+					case 3 : 
+						cw.write("pseudo_abs");
+						cw.write("0");
+						ok = true;
+						break;
+					}
+						
+					if(ok) {
+						cw.write(dataDist1[ind]+"");
+						cw.write(dataDist2[ind]+"");
+						cw.write(dataDist3[ind]+"");
+						cw.write(dataDist4[ind]+"");
+						cw.write(dataDist5[ind]+"");
+						cw.endRecord();
+					}
+				}
+			}
+
+			cw.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void analyseSampling() {
+		
+		Coverage covMuscardin = CoverageManager.getCoverage(path+"muscardin/data_muscardin_maj.tif");
+		float[] dataMuscardin = covMuscardin.getData();
+		EnteteRaster entete = covMuscardin.getEntete();
+		covMuscardin.dispose();
+		
+		Coverage covDist = CoverageManager.getCoverage(path+"DistributionPotentielleMuscardin2025_Modelisation13var-Raster10m_BzhHisto_L93.tif");
+		float[] dataDist = covDist.getData();
+		covDist.dispose();
+		
+		Coverage covIndCont = CoverageManager.getCoverage(path+"indice_continuite_boisee_0-10_150m.tif");
+		float[] dataIndCont = covIndCont.getData();
+		covIndCont.dispose();
+		
+		Coverage covDistMean = CoverageManager.getCoverage(path+"distance_mean_classif_indice_continuite_boisee_0-10_150m_3300m.tif");
+		float[] dataDistMean = covDistMean.getData();
+		covDistMean.dispose();
+		
+		Coverage covDistHabitatMean = CoverageManager.getCoverage(path+"distance_mean_habitat_muscardin.tif");
+		float[] dataDistHabitatMean = covDistHabitatMean.getData();
+		covDistHabitatMean.dispose();
+		
+		try {
+			//CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_maj_presence.csv");
+			//CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_maj_presence_pseudoabs.csv");
+			//CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_essaie1_presence.csv");
+			CsvWriter cw = new CsvWriter(path+"muscardin/analyse_muscardin_essaie1_presence_pseudoabs.csv");
+			cw.setDelimiter(';');
+			cw.write("observation");
+			cw.write("presence");
+			cw.write("sdm");
+			cw.write("inrae");
+			cw.write("dist_sdm");
+			cw.write("dist_inrae");
+			
+			cw.endRecord();
+			
+			boolean ok;
+			
+			for(int ind=0; ind<entete.width()*entete.height(); ind++) {
+		
+				float vMuscardin = dataMuscardin[ind];
+				if(vMuscardin > 0) {
+				
+					ok = false;
+					
+					switch((int) vMuscardin) {
+					case 1 : 
+						cw.write("presence");
+						cw.write("1");
+						ok = true;
+						break;
+					/*case 2 : 
+						cw.write("abscence");
+						cw.write("0");
+						ok = true;
+						break;*/
+					
+					case 3 : 
+						cw.write("pseudo_abs");
+						cw.write("0");
+						ok = true;
+						break;
+					}
+						
+					if(ok) {
+						cw.write(dataDist[ind]+"");
+						cw.write(dataIndCont[ind]+"");
+						cw.write(dataDistHabitatMean[ind]+"");
+						cw.write(dataDistMean[ind]+"");
+						cw.endRecord();
+					}
+				}
+			}
+
+			cw.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void calculDistanceSeuilsMuscardin() {
+		
+		String permeabilite = "C:/Data/projet/gmb/data/Couts-0_10-MusAve2025_SansSeuil_ModelMARS12varSansFrag_clean.tif";
+		Coverage covPermeabilite = CoverageManager.getCoverage(permeabilite);
+		float[] dataPermeabilite = covPermeabilite.getData();
+		EnteteRaster entete = covPermeabilite.getEntete();
+		covPermeabilite.dispose();
+		
+		String habitat = "C:/Data/projet/gmb/data/DistributionPotentielleMuscardin2025_ClassifBiotope-Raster10m_BzhHisto_L93.tif";
+		Coverage covHabitat = CoverageManager.getCoverage(habitat);
+		float[] dataHabitat = covHabitat.getData();
+		covHabitat.dispose();
+		
+		float[] dataDistance;
+		TabRCMDistanceAnalysis da;
+		
+		dataDistance = new float[entete.width()*entete.height()];
+		da = new TabRCMDistanceAnalysis(dataDistance, dataHabitat, dataPermeabilite, entete.width(), entete.height(), entete.cellsize(), entete.noDataValue(), new int[] {5});
+		da.allRun();
+		CoverageManager.write(path+"distance_habitat_muscardin_5.tif", dataDistance, entete);
+		
+		dataDistance = new float[entete.width()*entete.height()];
+		da = new TabRCMDistanceAnalysis(dataDistance, dataHabitat, dataPermeabilite, entete.width(), entete.height(), entete.cellsize(), entete.noDataValue(), new int[] {4, 5});
+		da.allRun();
+		CoverageManager.write(path+"distance_habitat_muscardin_4-5.tif", dataDistance, entete);
+		
+		dataDistance = new float[entete.width()*entete.height()];
+		da = new TabRCMDistanceAnalysis(dataDistance, dataHabitat, dataPermeabilite, entete.width(), entete.height(), entete.cellsize(), entete.noDataValue(), new int[] {3, 4, 5});
+		da.allRun();
+		CoverageManager.write(path+"distance_habitat_muscardin_3-4-5.tif", dataDistance, entete);
+		
+		dataDistance = new float[entete.width()*entete.height()];
+		da = new TabRCMDistanceAnalysis(dataDistance, dataHabitat, dataPermeabilite, entete.width(), entete.height(), entete.cellsize(), entete.noDataValue(), new int[] {2, 3, 4, 5});
+		da.allRun();
+		CoverageManager.write(path+"distance_habitat_muscardin_2-3-4-5.tif", dataDistance, entete);
+		
+		dataDistance = new float[entete.width()*entete.height()];
+		da = new TabRCMDistanceAnalysis(dataDistance, dataHabitat, dataPermeabilite, entete.width(), entete.height(), entete.cellsize(), entete.noDataValue(), new int[] {1, 2, 3, 4, 5});
+		da.allRun();
+		CoverageManager.write(path+"distance_habitat_muscardin_1-2-3-4-5.tif", dataDistance, entete);
+		
+	}
+	
+	private static void rasterizeSamplingMAJ() {
+		
+		Coverage covRef = CoverageManager.getCoverage(path+"indice_continuite_boisee_0-10_150m.tif");
+		//float[] dataRef = covRef.getData();
+		EnteteRaster enteteRef = covRef.getEntete();
+		covRef.dispose();
+		
+		float[] outData = new float[enteteRef.width()*enteteRef.height()];
+		
+		SpatialCsvManager.exportTab(outData, path+"muscardin/Donnees_Pres_Abs_PseudoAbs-MusAve-2016_2025-MAJ-2.csv", "presence", enteteRef);
+		
+		CoverageManager.writeGeotiff(path+"muscardin/data_muscardin_maj.tif", outData, enteteRef);
+	}
+	
+	private static void rasterizeSampling() {
+		
+		Coverage covRef = CoverageManager.getCoverage(path+"indice_continuite_boisee_0-10_150m.tif");
+		//float[] dataRef = covRef.getData();
+		EnteteRaster enteteRef = covRef.getEntete();
+		covRef.dispose();
+	
+		ShapeFile2CoverageConverter.rasterize(path+"muscardin/data_muscardin.tif", path+"muscardin/DataMusAve-2010_2024-PresAbsPeudoAbs-L93.shp", "presence", 0, enteteRef);
+	}
+
 	private static void analyseClustersHabitat(String cluster_continuite, int echelle) {
 
 		File f = new File(cluster_continuite);
@@ -104,12 +636,12 @@ public class ScriptGMB {
 		File f = new File(classification_continuite);
 		String name = f.getName().replaceAll(".tif", "");
 		
-		Coverage covK = CoverageManager.getCoverage(path+"distance_1_"+name+"_"+dMax+"m.tif");
+		Coverage covK = CoverageManager.getCoverage(path+"distance_2_"+name+"_"+dMax+"m.tif");
 		float[] data = covK.getData();
 		EnteteRaster entete = covK.getEntete();
 		covK.dispose();
-		
-		for(int k=2; k<nbDomains; k++) {
+			
+		for(int k=3; k<=nbDomains; k++) {
 			
 			covK = CoverageManager.getCoverage(path+"distance_"+k+"_"+name+"_"+dMax+"m.tif");
 			float[] dataK = covK.getData();
@@ -118,7 +650,7 @@ public class ScriptGMB {
 			for(int i=0; i<data.length; i++) {
 				float v = data[i];
 				if(v != entete.noDataValue()) {
-					data[i] = (v*(k-1) + dataK[i]) / k;
+					data[i] = (v*(k-2) + dataK[i]) / (k-1);
 				}
 			}
 		}
@@ -219,7 +751,153 @@ public class ScriptGMB {
 		CoverageManager.write(path+"classif_"+name+".tif", dataClassif, entete);
 		
 	}
+	
+	private static void classificationContinuite(String indice_deplacement) {
+		
+		File f = new File(indice_deplacement);
+		String name = f.getName().replaceAll(".tif", "");
+		
+		Coverage cov = CoverageManager.getCoverage(indice_deplacement);
+		float[] inData = cov.getData();
+		EnteteRaster entete = cov.getEntete();
+		cov.dispose();
+		
+		entete.setNoDataValue(-1);
+		
+		float[] dataClassif = new float[entete.width()*entete.height()];
+		
+		int domain = 0;
+		Map<Domain<Float, Float>, Integer> domains = new LinkedHashMap<Domain<Float, Float>, Integer>();	
+		//domains.put(DomainFactory.getFloatDomain("[0, 0.0025]"), domain++);
+		//domains.put(DomainFactory.getFloatDomain("]0.0025, 0.065]"), domain++);
+		//domains.put(DomainFactory.getFloatDomain("]0.065, ]"), domain++);
+		
+		domains.put(DomainFactory.getFloatDomain("[0, 0.002]"), domain++);
+		domains.put(DomainFactory.getFloatDomain("]0.002, 0.04]"), domain++);
+		domains.put(DomainFactory.getFloatDomain("]0.04, 0.33]"), domain++);
+		domains.put(DomainFactory.getFloatDomain("]0.33, ]"), domain++);
+		
+		ClassificationPixel2PixelTabCalculation cal = new ClassificationPixel2PixelTabCalculation(dataClassif, inData, entete.noDataValue(), domains);
+		cal.run();
+		
+		CoverageManager.write(path+"classif_"+name+"_essaie2.tif", dataClassif, entete);
+		
+	}
+	
+	private static void meanDistanceMuscardin() {
+		
+		int k;
+		float[] dataK;
+		
+		Coverage covK = CoverageManager.getCoverage(path+"distance_habitat_muscardin_5.tif");
+		float[] data = covK.getData();
+		EnteteRaster entete = covK.getEntete();
+		covK.dispose();
+		
+		covK = CoverageManager.getCoverage(path+"distance_habitat_muscardin_4-5.tif");
+		dataK = covK.getData();
+		covK.dispose();
+		k = 2;
+		for(int i=0; i<data.length; i++) {
+			float v = data[i];
+			if(v != entete.noDataValue()) {
+				data[i] = (v*(k-1) + dataK[i]) / k;
+			}
+		}
+		
+		covK = CoverageManager.getCoverage(path+"distance_habitat_muscardin_3-4-5.tif");
+		dataK = covK.getData();
+		covK.dispose();
+		k = 3;
+		for(int i=0; i<data.length; i++) {
+			float v = data[i];
+			if(v != entete.noDataValue()) {
+				data[i] = (v*(k-1) + dataK[i]) / k;
+			}
+		}
+		
+		covK = CoverageManager.getCoverage(path+"distance_habitat_muscardin_2-3-4-5.tif");
+		dataK = covK.getData();
+		covK.dispose();
+		k = 4;
+		for(int i=0; i<data.length; i++) {
+			float v = data[i];
+			if(v != entete.noDataValue()) {
+				data[i] = (v*(k-1) + dataK[i]) / k;
+			}
+		}
+		
+		covK = CoverageManager.getCoverage(path+"distance_habitat_muscardin_1-2-3-4-5.tif");
+		dataK = covK.getData();
+		covK.dispose();
+		k = 5;
+		for(int i=0; i<data.length; i++) {
+			float v = data[i];
+			if(v != entete.noDataValue()) {
+				data[i] = (v*(k-1) + dataK[i]) / k;
+			}
+		}
+		
+		CoverageManager.writeGeotiff(path+"distance_mean_habitat_muscardin.tif", data, entete);
+	}
+	
+	
+	
+	private static void clusterFromHabitatMuscardin(int dMax) {
 
+		String habitat = "C:/Data/projet/gmb/data/DistributionPotentielleMuscardin2025_ClassifBiotope-Raster10m_BzhHisto_L93.tif";
+		Coverage covHabitat = CoverageManager.getCoverage(habitat);
+		float[] dataHabitat = covHabitat.getData();
+		EnteteRaster entete = covHabitat.getEntete();
+		covHabitat.dispose();
+		
+		Coverage covDistance;
+		float[] dataDistance;
+		float[] dataCluster;
+		TabDistanceClusteringAnalysis ca;
+		
+		covDistance = CoverageManager.getCoverage(path+"distance_habitat_muscardin_5.tif");
+		dataDistance = covDistance.getData();
+		covDistance.dispose();
+		dataCluster = new float[entete.width()*entete.height()];
+		ca = new TabDistanceClusteringAnalysis(dataHabitat, dataDistance, entete.width(), entete.height(), new int[] {5}, (double) dMax, entete.noDataValue());
+		dataCluster = (float[]) ca.allRun();
+		CoverageManager.write(path+"cluster_habitat_muscardin_5_"+dMax+"m.tif", dataCluster, entete);
+		
+		covDistance = CoverageManager.getCoverage(path+"distance_habitat_muscardin_4-5.tif");
+		dataDistance = covDistance.getData();
+		covDistance.dispose();
+		dataCluster = new float[entete.width()*entete.height()];
+		ca = new TabDistanceClusteringAnalysis(dataHabitat, dataDistance, entete.width(), entete.height(), new int[] {4, 5}, (double) dMax, entete.noDataValue());
+		dataCluster = (float[]) ca.allRun();
+		CoverageManager.write(path+"cluster_habitat_muscardin_4-5_"+dMax+"m.tif", dataCluster, entete);
+		
+		covDistance = CoverageManager.getCoverage(path+"distance_habitat_muscardin_3-4-5.tif");
+		dataDistance = covDistance.getData();
+		covDistance.dispose();
+		dataCluster = new float[entete.width()*entete.height()];
+		ca = new TabDistanceClusteringAnalysis(dataHabitat, dataDistance, entete.width(), entete.height(), new int[] {3, 4, 5}, (double) dMax, entete.noDataValue());
+		dataCluster = (float[]) ca.allRun();
+		CoverageManager.write(path+"cluster_habitat_muscardin_3-4-5_"+dMax+"m.tif", dataCluster, entete);
+		
+		covDistance = CoverageManager.getCoverage(path+"distance_habitat_muscardin_2-3-4-5.tif");
+		dataDistance = covDistance.getData();
+		covDistance.dispose();
+		dataCluster = new float[entete.width()*entete.height()];
+		ca = new TabDistanceClusteringAnalysis(dataHabitat, dataDistance, entete.width(), entete.height(), new int[] {2, 3, 4, 5}, (double) dMax, entete.noDataValue());
+		dataCluster = (float[]) ca.allRun();
+		CoverageManager.write(path+"cluster_habitat_muscardin_2-3-4-5_"+dMax+"m.tif", dataCluster, entete);
+		
+		covDistance = CoverageManager.getCoverage(path+"distance_habitat_muscardin_1-2-3-4-5.tif");
+		dataDistance = covDistance.getData();
+		covDistance.dispose();
+		dataCluster = new float[entete.width()*entete.height()];
+		ca = new TabDistanceClusteringAnalysis(dataHabitat, dataDistance, entete.width(), entete.height(), new int[] {1, 2, 3, 4, 5}, (double) dMax, entete.noDataValue());
+		dataCluster = (float[]) ca.allRun();
+		CoverageManager.write(path+"cluster_habitat_muscardin_1-2-3-4-5_"+dMax+"m.tif", dataCluster, entete);
+		
+	}
+	
 	private static void distanceFromHabitat(int dMax) {
 
 		Coverage covHabitat = CoverageManager.getCoverage(path+"habitats.tif");
@@ -237,6 +915,25 @@ public class ScriptGMB {
 		da.allRun();
 		
 		CoverageManager.write(path+"distance_habitat_"+dMax+"m.tif", dataDistance, entete);
+	}
+
+	private static void distanceFromHabitat(String distance, String habitat, String permeabilite, int dMax) {
+
+		Coverage covHabitat = CoverageManager.getCoverage(habitat);
+		float[] dataHabitat = covHabitat.getData();
+		EnteteRaster entete = covHabitat.getEntete();
+		covHabitat.dispose();
+		
+		Coverage covPermeabilite = CoverageManager.getCoverage(permeabilite);
+		float[] dataPermeabilite = covPermeabilite.getData();
+		covPermeabilite.dispose();
+		
+		float[] dataDistance = new float[entete.width()*entete.height()];
+		
+		TabRCMDistanceAnalysis da = new TabRCMDistanceAnalysis(dataDistance, dataHabitat, dataPermeabilite, entete.width(), entete.height(), entete.cellsize(), entete.noDataValue(), new int[] {1}, dMax);
+		da.allRun();
+		
+		CoverageManager.write(distance, dataDistance, entete);
 	}
 	
 	private static void clusterFromHabitat(int dMax) {

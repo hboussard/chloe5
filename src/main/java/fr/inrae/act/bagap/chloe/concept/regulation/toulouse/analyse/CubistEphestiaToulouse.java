@@ -14,6 +14,8 @@ import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.basic.CentralValue;
+import fr.inrae.act.bagap.chloe.window.metric.basic.RateValidCoupleMetric;
+import fr.inrae.act.bagap.chloe.window.metric.couple.CountCoupleMetric;
 import fr.inrae.act.bagap.chloe.window.metric.couple.RateCoupleMetric;
 import fr.inrae.act.bagap.chloe.window.metric.quantitative.AverageMetric;
 import fr.inrae.act.bagap.chloe.window.metric.quantitative.VCentralValue;
@@ -33,6 +35,9 @@ public class CubistEphestiaToulouse {
 		
 		int inWidth = enteteInput.width();
 		int inHeight = enteteInput.height();
+		float inCellSize = enteteInput.cellsize();
+		
+		int windowSize = ((int) ((1000 * 2) / inCellSize)) + 1;
 		
 		int outWidth = enteteOutput.width();
 		int outHeight = enteteOutput.height();
@@ -47,7 +52,7 @@ public class CubistEphestiaToulouse {
 		builder.setRasterTab(dataCover);
 		builder.setEntete(enteteInput);
 		builder.setDisplacement(delta);
-		builder.setWindowSize(401);
+		builder.setWindowSize(windowSize);
 		
 		for(String v : cultures){
 				
@@ -57,11 +62,23 @@ public class CubistEphestiaToulouse {
 				builder.addMetric(metric);
 				builder.addTabOutput(metric.getName(), tab);
 				tabs.put(metric.getName(), tab);
+				
+				tab = new float[outWidth*outHeight];
+				metric = new CountCoupleMetric(Short.parseShort(v), Short.parseShort(v2));
+				builder.addMetric(metric);
+				builder.addTabOutput(metric.getName(), tab);
+				tabs.put(metric.getName(), tab);
 			}
 				
 			for(String v2 : snh_lin){
 				tab = new float[outWidth*outHeight];
 				Metric metric = new RateCoupleMetric(Short.parseShort(v), Short.parseShort(v2));
+				builder.addMetric(metric);
+				builder.addTabOutput(metric.getName(), tab);
+				tabs.put(metric.getName(), tab);
+				
+				tab = new float[outWidth*outHeight];
+				metric = new CountCoupleMetric(Short.parseShort(v), Short.parseShort(v2));
 				builder.addMetric(metric);
 				builder.addTabOutput(metric.getName(), tab);
 				tabs.put(metric.getName(), tab);
@@ -96,6 +113,12 @@ public class CubistEphestiaToulouse {
 		builder.addMetric(new CentralValue());
 		builder.addTabOutput("Central", tab);
 		tabs.put("Central", tab);
+		
+		// nombre de couples valides
+		tab = new float[outWidth*outHeight];
+		builder.addMetric(new RateValidCoupleMetric());
+		builder.addTabOutput("pNC-valid", tab);
+		tabs.put("couples_valides", tab);
 			
 		analysis = builder.build();
 		analysis.allRun();
@@ -143,6 +166,7 @@ public class CubistEphestiaToulouse {
 		tabs.put("ossnh_lin_1000m", tab);
 			
 		// calcul des proportions d'interface cultures elements semi_naturels
+		/*
 		ind = 0;
 		tab = new float[outWidth*outHeight];
 		tab_multiple = new float[(cultures.size()*snh_surf.size())+(cultures.size()*snh_lin.size())][];
@@ -172,14 +196,50 @@ public class CubistEphestiaToulouse {
 				}
 				
 				// calcul en metre / hectare
-				// nombre de couples dans une fen�tre 401*401 --> 250456
+				// nombre de couples dans une fenetre 401*401 --> 250456
 				// conversion de la proportion de couples en nombre equivalent dans une fenetre "pleine"
 				//value *= 250456.0; 
 				//return (value*5)/314.159f;
-				
+				//errrueur
 				// calcul en nb de pixels
 				value *= 250456.0;
 				return value;
+			}
+		};
+		pptc.run();
+		tabs.put("int_cult_snh_1000m", tab);
+		*/ 
+		ind = 0;
+		tab = new float[outWidth*outHeight];
+		tab_multiple = new float[(cultures.size()*snh_surf.size())+(cultures.size()*snh_lin.size())+1][];
+		tab_multiple[ind++] = tabs.get("couples_valides");
+		for(String v : cultures){
+			for(String v2 : snh_surf){
+				if(Short.parseShort(v) < Short.parseShort(v2)) {
+					tab_multiple[ind++] = tabs.get("NC_"+v+"-"+v2);
+				}else{
+					tab_multiple[ind++] = tabs.get("NC_"+v2+"-"+v);
+				}
+					
+			}
+			for(String v2 : snh_lin){
+				if(Short.parseShort(v) < Short.parseShort(v2)) {
+					tab_multiple[ind++] = tabs.get("NC_"+v+"-"+v2);
+				}else{
+					tab_multiple[ind++] = tabs.get("NC_"+v2+"-"+v);
+				}	
+			}
+		}
+		pptc = new Pixel2PixelTabCalculation(tab, tab_multiple){
+			@Override
+			protected float doTreat(float[] v) {
+				float value = 0;
+				float valides = v[0];
+				for(int i=1; i<=(cultures.size()*snh_surf.size())+(cultures.size()*snh_lin.size()); i++){
+					value += v[i];
+				}
+				
+				return value / valides;
 			}
 		};
 		pptc.run();
@@ -202,7 +262,7 @@ public class CubistEphestiaToulouse {
 		builder.setRasterTab(tabCulture);
 		builder.setEntete(enteteInput);
 		builder.setDisplacement(delta);
-		builder.setWindowSize(401);
+		builder.setWindowSize(windowSize);
 		
 		tab = new float[outWidth*outHeight];
 		builder.addMetric(new ShannonDiversityIndex());
@@ -240,7 +300,7 @@ public class CubistEphestiaToulouse {
 		builder.setRasterTab(tabIFTTotaux);
 		builder.setEntete(enteteInput);
 		builder.setDisplacement(delta);
-		builder.setWindowSize(401);
+		builder.setWindowSize(windowSize);
 		
 		tab = new float[outWidth*outHeight];
 		builder.addMetric(new AverageMetric());
@@ -276,7 +336,7 @@ public class CubistEphestiaToulouse {
 		builder.setRasterTab(tabIFTCultures);
 		builder.setEntete(enteteInput);
 		builder.setDisplacement(delta);
-		builder.setWindowSize(401);
+		builder.setWindowSize(windowSize);
 		
 		tab = new float[outWidth*outHeight];
 		builder.addMetric(new AverageMetric());
@@ -292,7 +352,7 @@ public class CubistEphestiaToulouse {
 		builder.setEntete(enteteInput);
 		builder.setValues("1, 2, 3");
 		builder.setDisplacement(delta);
-		builder.setWindowSize(401);
+		builder.setWindowSize(windowSize);
 		
 		tab = new float[outWidth*outHeight];
 		builder.addMetric(new RateValueMetric(Short.parseShort("3")));
@@ -346,10 +406,11 @@ public class CubistEphestiaToulouse {
 					
 					tabModel[j*outWidth + i] = (float) prediction;
 					
-				/*}else{
-					tabModel[j*outWidth + i] = enteteInput.noDataValue();
-				}*/
+				//}else{
+				//	tabModel[j*outWidth + i] = enteteInput.noDataValue();
+				//}
 			}	
+			
 		}
 		
 		return tabModel;

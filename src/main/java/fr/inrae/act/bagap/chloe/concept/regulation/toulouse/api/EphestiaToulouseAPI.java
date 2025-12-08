@@ -20,20 +20,18 @@ public class EphestiaToulouseAPI {
 			properties.load(in);
 			in.close();
 			
-			if(properties.containsKey("treatment")){
+			long begin = System.currentTimeMillis();
 				
-				long begin = System.currentTimeMillis();
+			CubistEphestiaToulouseManager manager = new CubistEphestiaToulouseManager(); 
 				
-				CubistEphestiaToulouseManager manager = new CubistEphestiaToulouseManager(); 
+			importParameters(manager, properties);
 				
-				importParameters(manager, properties);
+			CubistEphestiaToulouseAnalyse analyse = manager.build();
+			analyse.run();
 				
-				CubistEphestiaToulouseAnalyse analyse = manager.build();
-				analyse.run();
-				
-				long end = System.currentTimeMillis();
-				System.out.println("time computing : "+(end - begin));
-			}
+			long end = System.currentTimeMillis();
+			System.out.println("time computing : "+(end - begin));
+			
 		}catch(FileNotFoundException ex){
 			ex.printStackTrace();
 		}catch(IOException ex){
@@ -52,6 +50,7 @@ public class EphestiaToulouseAPI {
 			importIFTFile(manager, properties);
 			importMeteoFile(manager, properties);
 			importModelOutput(manager, properties);
+			importDisplacement(manager, properties);
 			
 		} catch (NoParameterException e) {
 			e.printStackTrace();
@@ -91,11 +90,11 @@ public class EphestiaToulouseAPI {
 	}
 
 	private static void importIFTFile(CubistEphestiaToulouseManager manager, Properties properties) throws NoParameterException {
-		if(properties.containsKey("IFT_file")){
-			manager.setIFTFile(properties.getProperty("IFT_file"));
+		if(properties.containsKey("ift_file")){
+			manager.setIFTFile(properties.getProperty("ift_file"));
 			return;
 		}
-		throw new NoParameterException("IFT_file missing");
+		throw new NoParameterException("ift_file missing");
 	}
 
 	private static void importMeteoFile(CubistEphestiaToulouseManager manager, Properties properties) throws NoParameterException {
@@ -112,5 +111,12 @@ public class EphestiaToulouseAPI {
 			return;
 		}
 		throw new NoParameterException("model_output missing");
+	}
+	
+	private static void importDisplacement(CubistEphestiaToulouseManager manager, Properties properties) {
+		if(properties.containsKey("displacement")){
+			manager.setDisplacement(Integer.parseInt(properties.getProperty("displacement")));
+			return;
+		}
 	}
 }

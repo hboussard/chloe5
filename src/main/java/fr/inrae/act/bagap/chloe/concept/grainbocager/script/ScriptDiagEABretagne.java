@@ -30,7 +30,7 @@ public class ScriptDiagEABretagne {
 		//cleanMNHC();
 		//scriptExploitationsBretagne();
 		//scriptExploitation("056046330", 5, null, true);
-		recuperationEnveloppesExploitations();
+		//recuperationEnveloppesExploitations();
 	}
 	
 	private static void scriptExploitationsBretagne() {

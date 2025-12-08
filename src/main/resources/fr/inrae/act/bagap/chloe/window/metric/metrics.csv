@@ -22,9 +22,10 @@ pNC-hete;couple;other;fr.inrae.act.bagap.chloe.window.metric.couple.RateHeteroge
 HET;couple;other;fr.inrae.act.bagap.chloe.window.metric.couple.HeterogeneityIndex;1
 HET-frag;couple;other;fr.inrae.act.bagap.chloe.window.metric.couple.HeterogeneityFragmentationIndex;1
 HET-config;couple;other;fr.inrae.act.bagap.chloe.window.metric.couple.HeterogeneityConfigurationIndex;1
+minCover;value;other;fr.inrae.act.bagap.chloe.window.metric.value.MinCoverMetric;1
 average;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.AverageMetric;3
 sum;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.SumMetric;3
-standard_deviation;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.StandardDeviationMetric;3
+standard-deviation;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.StandardDeviationMetric;3
 minimum;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.MinimumMetric;3
 maximum;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.MaximumMetric;3
 MD;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.grainbocager.GrainBocagerMeanDistanceMetric;3

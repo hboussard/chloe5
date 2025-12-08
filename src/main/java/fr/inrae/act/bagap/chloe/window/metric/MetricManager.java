@@ -393,6 +393,7 @@ public class MetricManager {
 		int ic = 0;
 		int c;
 		for(Metric m : metrics){
+			//System.out.println(m);
 			c = coherences.get(m.getName().split("_")[0]);
 			if(ic != c && ic != 0 && c != 0){
 				return false;

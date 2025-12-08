@@ -26,6 +26,7 @@ import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
+import fr.inrae.act.bagap.apiland.analysis.Stats;
 import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
@@ -40,6 +41,8 @@ import weka.core.converters.CSVLoader;
 
 public class EcoPaysage {
 
+	private static Stats stats = new Stats();
+	
 	public static int[] getCodes(String raster) {
 		
 		Coverage cov = CoverageManager.getCoverage(raster);
@@ -56,7 +59,7 @@ public class EcoPaysage {
 	}
 	*/
 	
-	public static void calculMetrics(String metricsFile, String inputRaster, int radius, int[] values, List<String> compoMetrics, List<String> configMetrics, WindowDistanceType distanceType, int displacement, int[] unfilters) {
+	public static void calculateCompoConfigMetrics(String metricsFile, String inputRaster, int radius, int[] values, List<String> compoMetrics, List<String> configMetrics, WindowDistanceType distanceType, int displacement, int[] unfilters) {
 		
 		Coverage cov = CoverageManager.getCoverage(inputRaster);
 		EnteteRaster entete = cov.getEntete();
@@ -260,54 +263,7 @@ public class EcoPaysage {
 		}
 	}
 	
-	public static void standardize(String groupFile, List<String> groupMetrics) {
-		try {
-			CsvReader cr = new CsvReader(groupFile);
-			cr.setDelimiter(';');
-			cr.readHeaders();
-			List<float[]> dGroup = new ArrayList<float[]>();
-			float[] group;
-			int index;
-			while(cr.readRecord()) {
-				group = new float[groupMetrics.size()];
-				index = 0;
-				for(String gm : groupMetrics) {
-					group[index++] = Float.parseFloat(cr.get(gm));
-				}
-				dGroup.add(group);
-			}
-			cr.close();
-			
-			float inertie = inertia(dGroup, groupMetrics.size());
-			System.out.println(inertie);
-			
-			//float divisor = (float) (inertie * Math.sqrt(groupMetrics.size()));
-			
-			CsvWriter cwNormGroup = new CsvWriter(groupFile);
-			cwNormGroup.setDelimiter(';');
-			for(String gm : groupMetrics) {
-				cwNormGroup.write(gm);
-			}
-			cwNormGroup.endRecord();
-			
-			for(float[] d : dGroup) {
-				for(float v : d) {
-					//float nv = v/divisor;
-					float nv = v/inertie;
-					cwNormGroup.write(nv+"");
-				}
-				cwNormGroup.endRecord();
-			}
-			
-			cwNormGroup.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public static void standardize(String groupFile, List<String> groupMetrics, float[][] distances) {
+	private static void standardize(String groupFile, List<String> groupMetrics, float[][] distances) {
 		try {
 			CsvReader cr = new CsvReader(groupFile);
 			cr.setDelimiter(';');
@@ -327,8 +283,8 @@ public class EcoPaysage {
 			}
 			cr.close();
 			
-			float inertie = inertia(dGroup, groupMetrics.size());
-			System.out.println(inertie);
+			float divisor = divisor(dGroup, groupMetrics.size());
+			System.out.println("divisor "+divisor);
 			//float divisor = (float) (inertie * Math.sqrt(groupMetrics.size()));
 			
 			CsvWriter cwNormGroup = new CsvWriter(groupFile);
@@ -345,7 +301,7 @@ public class EcoPaysage {
 					//float coeff = distances[Couple.getOneFromPNC(gm)][Couple.getOtherFromPNC(gm)];
 					float v = d[index++];
 					//float nv = coeff*v/inertie;
-					float nv = v/inertie;
+					float nv = v/divisor;
 					cwNormGroup.write(nv+"");
 				}
 				cwNormGroup.endRecord();
@@ -370,7 +326,66 @@ public class EcoPaysage {
 		}
 	}
 	
-	public static float standardize(String groupFile, List<String> groupMetrics, Map<String, Float> importances, int scale) {
+	public static void standardizeExternal(String stdGroupFile, String groupFile, Map<String, String> groupMetrics, int times) {
+		try {
+			CsvReader cr = new CsvReader(groupFile);
+			cr.setDelimiter(';');
+			cr.readHeaders();
+			List<float[]> dGroup = new ArrayList<float[]>();
+			float[] group;
+			int index;
+			while(cr.readRecord()) {
+				group = new float[groupMetrics.size()];
+				index = 0;
+				for(String gm : groupMetrics.keySet()) {
+					group[index++] = Float.parseFloat(cr.get(gm));
+				}
+				dGroup.add(group);
+			}
+			cr.close();
+			
+			float divisor = divisor(dGroup, groupMetrics.size());
+			System.out.println("divisor "+divisor);
+			
+			//float divisor = (float) (inertie * Math.sqrt(groupMetrics.size()));
+			
+			CsvWriter cwNormGroup = new CsvWriter(stdGroupFile);
+			cwNormGroup.setDelimiter(';');
+			for(String gm : groupMetrics.values()) {
+				cwNormGroup.write(gm);
+			}
+			cwNormGroup.endRecord();
+			
+			for(int t=0; t<times; t++) {
+				for(float[] d : dGroup) {
+					for(index = 0; index<d.length; index++) {
+						
+						float v = d[index];
+						//float nv = v;
+						float nv = v/divisor;
+						
+						//test
+						//d[index] = nv;
+						
+						cwNormGroup.write(nv+"");
+					}
+					cwNormGroup.endRecord();
+				}
+			}
+			
+			// test
+			//System.out.println(inertia1(dGroup, groupMetrics.size())+" "+ecarttype(dGroup, groupMetrics.size()));
+			
+			cwNormGroup.close();
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static float standardizeCompo(String groupFile, List<String> groupMetrics, Map<String, Float> importances, int scale) {
 		try {
 			CsvReader cr = new CsvReader(groupFile);
 			cr.setDelimiter(';');
@@ -388,8 +403,8 @@ public class EcoPaysage {
 			}
 			cr.close();
 			
-			float inertia = inertia(dGroup, groupMetrics.size());
-			System.out.println(inertia);
+			float divisor = divisor(dGroup, groupMetrics.size());
+			System.out.println("divisor "+divisor);
 			
 			CsvWriter cwNormGroup = new CsvWriter(groupFile);
 			cwNormGroup.setDelimiter(';');
@@ -399,17 +414,28 @@ public class EcoPaysage {
 			cwNormGroup.endRecord();
 			
 			for(float[] d : dGroup) {
-				for(float v : d) {
-					//float nv = v/divisor;
-					float nv = v/inertia;
+				for(index = 0; index<d.length; index++) {
+					
+					float v = d[index];
+					//float nv = v;
+					float nv = v/divisor;
+					//float nv = v/(inertia*(12/78.0f));
+					//float nv = (v/inertia) + 10;
+					
+					//test
+					//d[index] = nv;
+					
 					cwNormGroup.write(nv+"");
 				}
 				cwNormGroup.endRecord();
 			}
 			
+			// test
+			//System.out.println(inertia1(dGroup, groupMetrics.size())+" "+ecarttype(dGroup, groupMetrics.size()));
+			
 			cwNormGroup.close();
 			
-			return inertia;
+			return divisor;
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -420,7 +446,7 @@ public class EcoPaysage {
 		return -1;
 	}
 	
-	public static float standardize(String groupFile, List<String> groupMetrics, Map<String, Float> importances, float[][] distances, int scale) {
+	public static float standardizeConfig(String groupFile, List<String> groupMetrics, Map<String, Float> importances, float[][] distances, int scale) {
 		try {
 			CsvReader cr = new CsvReader(groupFile);
 			cr.setDelimiter(';');
@@ -440,8 +466,8 @@ public class EcoPaysage {
 			}
 			cr.close();
 			
-			float inertia = inertia(dGroup, groupMetrics.size());
-			System.out.println(inertia);
+			float divisor = divisor(dGroup, groupMetrics.size());
+			System.out.println("divisor "+divisor);
 			//float divisor = (float) (inertie * Math.sqrt(groupMetrics.size()));
 			
 			CsvWriter cwNormGroup = new CsvWriter(groupFile);
@@ -451,33 +477,31 @@ public class EcoPaysage {
 			}
 			cwNormGroup.endRecord();
 			
-			
 			for(float[] d : dGroup) {
-				index = 0;
-				for(String gm : groupMetrics) {
+				for(index = 0; index<d.length; index++) {
+					
 					//float coeff = distances[Couple.getOneFromPNC(gm)][Couple.getOtherFromPNC(gm)];
-					float v = d[index++];
+					float v = d[index];
 					//float nv = coeff*v/inertie;
-					float nv = v/inertia;
+					//float nv = v;
+					float nv = v/divisor;
+					//float nv = v/(inertia*(66/78.0f));
+					
+					//test
+					//d[index] = nv;
+					
+					//float nv = (v/inertia) + 2;
 					cwNormGroup.write(nv+"");
 				}
 				cwNormGroup.endRecord();
 			}
 			
-			/*
-			for(float[] d : dGroup) {
-				for(float v : d) {
-					//float nv = v/divisor;
-					float nv = v/inertie;
-					cwNormGroup.write(nv+"");
-				}
-				cwNormGroup.endRecord();
-			}
-			*/
+			// test
+			//System.out.println(inertia1(dGroup, groupMetrics.size())+" "+ecarttype(dGroup, groupMetrics.size()));
 			
 			cwNormGroup.close();
 			
-			return inertia;
+			return divisor;
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -488,9 +512,40 @@ public class EcoPaysage {
 		return -1;
 	}
 	
-	private static float inertia(List<float[]> data, int nbMetrics) {
+	public static float divisor(List<float[]> data, int nbMetrics) {
 		
-		float[] means = new float[nbMetrics];
+		//analyseStats(data, nbMetrics);
+		
+		return inertia(data, nbMetrics);
+		//return 1.0f/inertia(data, nbMetrics);
+		//return moyenne(data, nbMetrics);
+		//return moyenne(data, nbMetrics)/inertia(data, nbMetrics);
+	}
+	
+	private static void analyseStats(List<float[]> data, int nbMetrics) {
+		stats.reset();
+		
+		for(float[] d : data) {
+			for(int i=0; i<nbMetrics; i++) {
+				stats.add((float) d[i]);
+			}
+		}
+		
+		stats.calculate();
+		
+		System.out.println("stats");
+		System.out.println("size "+stats.size());
+		System.out.println("moyenne "+stats.getAverage());
+		System.out.println("somme carre"+stats.getSquareSum());
+		System.out.println("variance "+stats.getVariance());
+		System.out.println("ecart-type "+stats.getStandardDeviation());
+		System.out.println("coeff var "+stats.getVariationCoefficient());
+		System.out.println("erreur std "+stats.getStandardError());
+	}
+	
+	public static float inertia(List<float[]> data, int nbMetrics) {
+		
+		double[] means = new double[nbMetrics];
 		for(float[] d : data) {
 			for(int i=0; i<nbMetrics; i++) {
 				means[i] += d[i];
@@ -512,10 +567,22 @@ public class EcoPaysage {
 			rowSum += sumdistcarre;
 		}
 		
-		return (float) Math.sqrt(rowSum/data.size());	
+		return (float) Math.sqrt(rowSum/data.size());
 	}
 	
-	public static void compileStdCompoConfig(String stdFile, String compoStdFile, String configStdFile, List<String> compoMetrics, List<String> configMetrics, int scale) {
+	public static float moyenne(List<float[]> data, int nbMetrics) {
+		
+		double sum = 0;
+		for(float[] d : data) {
+			for(int i=0; i<nbMetrics; i++) {
+				sum += d[i];
+			}
+		}
+		
+		return (float) (sum / (data.size()*nbMetrics));
+	}
+	
+	private static void compileStdCompoConfig(String stdFile, String compoStdFile, String configStdFile, List<String> compoMetrics, List<String> configMetrics, int scale) {
 		
 		try {
 			CsvReader crCompo = new CsvReader(compoStdFile);
@@ -557,7 +624,67 @@ public class EcoPaysage {
 		}
 	}
 	
-	public static void compileStandardizedGroup(String stdFile, String compoStdFile, String configStdFile, List<String> compoMetrics, List<String> configMetrics, int scale) {
+	public static void compileStdFiles(String stdFile, int scale, String... stdFiles) {
+		
+		try {
+			
+			CsvWriter cwStd = new CsvWriter(stdFile);
+			cwStd.setDelimiter(';');
+			
+			CsvReader[] readers = new CsvReader[stdFiles.length];
+			int index = 0;
+			for(String stdf : stdFiles) {
+			
+				CsvReader crStdf = new CsvReader(stdf);
+				crStdf.setDelimiter(';');
+				crStdf.readHeaders();
+				
+				for(int h=0; h<crStdf.getHeaderCount(); h++) {
+					
+					cwStd.write(crStdf.getHeader(h)+"_"+scale+"m");
+				}
+				
+				readers[index++] = crStdf;
+			}
+			cwStd.endRecord();
+			
+			boolean ok = true;
+			while(ok) {
+				
+				for(CsvReader crStdf : readers) {
+					
+					if(crStdf.readRecord()) {
+						
+						for(int c=0; c<crStdf.getColumnCount(); c++) {
+							
+							cwStd.write(crStdf.get(c));
+						}
+						
+					}else {
+						ok = false;
+						break;
+					}
+				}
+				
+				if(ok) {
+					cwStd.endRecord();
+				}
+			}
+			
+			for(CsvReader crStdf : readers) {
+				
+				crStdf.close();
+			}
+			cwStd.close();
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void compileStandardizedGroup(String stdFile, String compoStdFile, String configStdFile, List<String> compoMetrics, List<String> configMetrics, int scale) {
 		
 		try {
 			CsvReader crCompo = new CsvReader(compoStdFile);
@@ -747,15 +874,16 @@ public class EcoPaysage {
 		
 		try {
 			SimpleKMeans kmeans = new SimpleKMeans();
-			//kmeans.setSeed(1);
+			kmeans.setSeed(1);
 			//kmeans.setMaxIterations(100);
 			kmeans.setMaxIterations(1000);
+			//kmeans.setMaxIterations(10000);
 			kmeans.setNumClusters(k);
 			kmeans.setNumExecutionSlots(32);
 			//kmeans.setPreserveInstancesOrder(false);
 			//kmeans.setFastDistanceCalc(true);
-			//kmeans.setInitializationMethod(new SelectedTag(SimpleKMeans.KMEANS_PLUS_PLUS, SimpleKMeans.TAGS_SELECTION));
 			//kmeans.setInitializationMethod(new SelectedTag(SimpleKMeans.RANDOM, SimpleKMeans.TAGS_SELECTION));
+			//kmeans.setInitializationMethod(new SelectedTag(SimpleKMeans.KMEANS_PLUS_PLUS, SimpleKMeans.TAGS_SELECTION));
 			kmeans.setInitializationMethod(new SelectedTag(SimpleKMeans.FARTHEST_FIRST, SimpleKMeans.TAGS_SELECTION));
 			//kmeans.setInitializationMethod(new SelectedTag(SimpleKMeans.CANOPY, SimpleKMeans.TAGS_SELECTION));
 			
@@ -989,7 +1117,6 @@ public class EcoPaysage {
 		}
 	}
 	
-	
 	public static EnteteRaster getHeader(String headerFile, int noDataValue) {
 	
 		EnteteRaster entete = EnteteRaster.read(headerFile);
@@ -1133,6 +1260,60 @@ public class EcoPaysage {
 		}
 	}
 	
+	public static void analyseMembership(String membershipFile, String gradientFile, int classe) {
+		
+		try {
+			
+			CsvWriter cw = new CsvWriter(membershipFile);
+			cw.setDelimiter(';');
+			cw.write("X");
+			cw.write("Y");
+			for(int ik=1; ik<=classe; ik++) {
+				cw.write("ecop_"+ik);
+			}
+			cw.endRecord();
+			
+			CsvReader cr = new CsvReader(gradientFile);
+			cr.setDelimiter(';');
+			cr.readHeaders();
+			
+			float[] gradients = new float[classe+1];
+			while(cr.readRecord()) {
+				
+				cw.write(cr.get("X"));
+				cw.write(cr.get("Y"));
+				
+				for(int ik=1; ik<=classe; ik++) {
+					gradients[ik] = Float.parseFloat(cr.get("ecop_"+ik));
+				}
+				
+				for(int ik=1; ik<=classe; ik++) {
+					cw.write(generateMembership(gradients, ik)+"");
+				}
+				
+				cw.endRecord();
+			}
+			
+			cr.close();
+			cw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static float generateMembership(float[] gradients, int ik) {
+				
+		float sum = 0;
+		for(int iik=1; iik<gradients.length; iik++) {
+		
+			sum += Math.pow(gradients[ik]/gradients[iik], 2);
+		}
+		
+		return 1f / sum;
+	}
+
 	public static void generateThematicDistanceFile(String infoFile, String thematicDistanceFile) {
 		
 		try {	

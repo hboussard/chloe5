@@ -17,12 +17,13 @@ import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.vector.ShapeFileTool;
 
 public class Erosion {
 
 	public static void bvRasterization(String bvRaster, Set<String> elevationFolders, String bvShape, String attributeID, String... values) {
 		
-		Envelope envelope = ShapeFile2CoverageConverter.getEnvelope(bvShape, 0, attributeID, values);
+		Envelope envelope = ShapeFileTool.getEnvelope(bvShape, 0, attributeID, values);
 		
 		EnteteRaster refEntete = null;
 		Coverage refCov;
@@ -65,6 +66,8 @@ public class Erosion {
 		EnteteRaster altEntete;
 		float[] altData;
 		for(String ef : elevationFolders) {
+			
+			System.out.println("dossier "+ef);
 			
 			altCov = CoverageManager.getCoverage(ef);
 			altEntete = altCov.getEntete();

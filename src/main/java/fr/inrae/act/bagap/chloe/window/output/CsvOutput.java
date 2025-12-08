@@ -64,6 +64,9 @@ public class CsvOutput implements CountingObserver{
 	}
 	
 	private void writeHeader(){
+		
+		//System.out.println(width+" "+height+" "+minX+" "+maxX+" "+minY+" "+maxY+" "+cellSize+" "+noDataValue);
+		
 		EnteteRaster entete = new EnteteRaster(width, height, minX, maxX, minY, maxY, (float) cellSize, noDataValue, crs);
 		EnteteRaster.export(entete, csv.replace(".csv", "_header.txt"));
 		/*

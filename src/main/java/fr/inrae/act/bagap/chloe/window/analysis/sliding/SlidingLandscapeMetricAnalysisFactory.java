@@ -115,6 +115,9 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 		double outMaxY = inMaxY - roiY * inCellSize - inCellSize / 2.0 + outCellSize / 2.0;
 		double outMinY = outMaxY - outHeight * outCellSize;
 
+		//System.out.println(inWidth+" "+inHeight+" "+inMinX+" "+inMaxX+" "+inMinY+" "+inMaxY+" "+inCellSize);
+		//System.out.println(outWidth+" "+outHeight+" "+outMinX+" "+outMaxX+" "+outMinY+" "+outMaxY+" "+outCellSize);
+		
 		// windowSize
 		int windowSize = -1;
 		if (builder.getWindowSize() > 0) {

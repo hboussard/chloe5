@@ -29,8 +29,7 @@ public class EPPClustering extends EcoPaysageProcedure {
 	@Override
 	public void doRun() {
 		
-		System.out.println("recuperation du masque");
-		
+		System.out.println("recuperation du masque "+manager().xyFile());
 		String[][] dataXY = EcoPaysage.importXY(manager().xyFile());
 		
 		if(!new File(manager().standardizedFile()).exists()) {
@@ -83,7 +82,6 @@ public class EPPClustering extends EcoPaysageProcedure {
 			
 			EcoPaysage.exportInfo(manager().infoFile(k), kmeans, k, data, manager().importances());
 		}
-	
 	}
 	
 }

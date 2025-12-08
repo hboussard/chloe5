@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Properties;
 
+import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.api.NoParameterException;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageManager;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageProcedure;
@@ -63,12 +64,27 @@ public class EcoPaysageAPI {
 			importScales(manager, properties);
 			importClasses(manager, properties);
 			importCodes(manager, properties);
+			importUnfilters(manager, properties);
 			importOutputFolder(manager, properties);
 			importDisplacement(manager, properties);
 			importFactor(manager, properties);
 		
 		} catch (NoParameterException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private static void importUnfilters(EcoPaysageManager builder, Properties properties) throws NoParameterException {
+		if(properties.containsKey("unfilters")){
+			String prop = properties.getProperty("unfilters");
+			prop = prop.replace("{", "").replace("}", "").replace(" ", "");
+			String[] fs = prop.split(";");
+			int[] unfilters = new int[fs.length];
+			int index=0;
+			for(String f : fs){
+				unfilters[index++] = Integer.parseInt(f);
+			}
+			builder.setUnfilters(unfilters);
 		}
 	}
 

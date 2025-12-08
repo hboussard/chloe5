@@ -42,7 +42,7 @@ public class EPPCalculMetrics extends EcoPaysageProcedure {
 			
 			System.out.println("analyse de la carto "+inputRaster);
 			
-			EcoPaysage.calculMetrics(manager().metricsFile(manager().carto(inputRaster), scale), inputRaster, scale, manager().codes(), manager().compoMetrics(), manager().configMetrics(), manager().windowDistanceType(), manager().displacement(), manager().unfilters());
+			EcoPaysage.calculateCompoConfigMetrics(manager().metricsFile(manager().carto(inputRaster), scale), inputRaster, scale, manager().codes(), manager().compoMetrics(), manager().configMetrics(), manager().windowDistanceType(), manager().displacement(), manager().unfilters());
 		}
 		
 	}

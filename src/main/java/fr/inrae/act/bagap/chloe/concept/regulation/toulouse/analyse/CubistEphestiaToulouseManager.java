@@ -90,6 +90,11 @@ public class CubistEphestiaToulouseManager {
 		this.modelOutput = modelOutput;
 	}
 	
+	public void setDisplacement(int delta) {
+		
+		this.delta = delta;
+	}
+	
 	public CubistModel cubistModel() {
 		
 		return model;
@@ -234,6 +239,8 @@ public class CubistEphestiaToulouseManager {
 	
 	private void initEnteteOutput() {
 		
+		int inWidth = enteteInput.width();
+		int inHeight = enteteInput.height();
 		double minx = enteteInput.minx();
 		double maxx = enteteInput.maxx();
 		double miny = enteteInput.miny();
@@ -241,14 +248,14 @@ public class CubistEphestiaToulouseManager {
 		float inCellSize = enteteInput.cellsize();
 		int noDataValue = enteteInput.noDataValue();
 		
-		int outWidth = new Double(Math.floor((maxx - minx) / (inCellSize*delta))).intValue();
-		int outHeight = new Double(Math.floor((maxy - miny) / (inCellSize*delta))).intValue();
-		enteteOutput = new EnteteRaster(outWidth, outHeight, 
-				minx+(inCellSize/2.0)-(inCellSize*delta)/2.0, 
-				maxx-(inCellSize/2.0)+(inCellSize*delta)/2.0, 
-				miny+(inCellSize/2.0)-(inCellSize*delta)/2.0 + (inCellSize*delta), 
-				maxy-(inCellSize/2.0)+(inCellSize*delta)/2.0 + (inCellSize*delta), 
-				(float) (inCellSize*delta), noDataValue);
+		int outWidth = (int) (((inWidth - 1) / delta) + 1);
+		int outHeight = (int) (((inHeight - 1) / delta) + 1);
+		double outCellSize = inCellSize * delta;
+		double outMinX = minx + inCellSize / 2.0 - outCellSize / 2.0;
+		double outMaxX = outMinX + outWidth * outCellSize;
+		double outMaxY = maxy - inCellSize / 2.0 + outCellSize / 2.0;
+		double outMinY = outMaxY - outHeight * outCellSize;
+		enteteOutput = new EnteteRaster(outWidth, outHeight, outMinX, outMaxX, outMinY, outMaxY, (float) outCellSize, noDataValue);
 	}
 	
 	private void initDataSystem() {

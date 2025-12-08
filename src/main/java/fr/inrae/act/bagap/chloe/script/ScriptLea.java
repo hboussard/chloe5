@@ -87,11 +87,53 @@ public class ScriptLea {
 		
 		//analyseDiversite();
 		
-		decision(0.14f);
+		//decision(0.14f);
 		
-		analyseParcelle();
+		//analyseParcelle();
 		
 		//appelConnu();
+		
+		recuperationHaie2023();
+	}
+	
+	private static void recuperationHaie2023(){
+		
+		Coverage cov = CoverageManager.getCoverage("C:/Data/temp/lea/occsol.tif");
+		float[] refData = cov.getData();
+		EnteteRaster refEntete = cov.getEntete();
+		cov.dispose();
+		
+		Coverage haieCov = CoverageManager.getCoverage("D:/grain_bocager/data/35/2023/35_2023_type_boisement.tif");
+		EnteteRaster entete = haieCov.getEntete();
+		float[] data = haieCov.getData(EnteteRaster.getROI(entete, refEntete.getEnvelope()));
+		haieCov.dispose();
+		
+		for(int i=0; i<refData.length; i++) {
+			
+			
+			if(refData[i] == refEntete.noDataValue()) {
+				
+				data[i] = refEntete.noDataValue();
+				
+			}else {
+				
+				if(data[i] == 10) {
+					
+					data[i] = 1000;
+					
+				} else if(data[i] == 1) {
+					
+					data[i] = 1001;
+				
+				} else {
+					
+					data[i] = refData[i];
+				}
+				
+			}
+		}
+		
+		CoverageManager.write("C:/Data/temp/lea/occsol_haie_arbre_isole.tif", data, refEntete);
 	}
 
 	private static void decision(float prop) {
