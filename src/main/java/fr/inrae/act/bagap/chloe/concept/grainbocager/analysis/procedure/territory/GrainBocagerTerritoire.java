@@ -8,6 +8,7 @@ import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.vector.ShapeFileTool;
 
 public class GrainBocagerTerritoire {
 
@@ -59,7 +60,7 @@ public class GrainBocagerTerritoire {
 		covBocage.dispose();
 		
 		// r�cup�ration de l'enveloppe totale de travail
-		Envelope envelope = ShapeFile2CoverageConverter.getEnvelope(territoire, bufferArea);
+		Envelope envelope = ShapeFileTool.getEnvelope(territoire, bufferArea);
 		
 		// r�cup�ration de l'entete
 		entete = EnteteRaster.getEntete(entete, envelope);

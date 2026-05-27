@@ -4,6 +4,7 @@ import java.util.Set;
 
 import fr.inrae.act.bagap.apiland.raster.Pixel;
 import fr.inrae.act.bagap.chloe.cluster.TabClusteringOutput;
+import fr.inrae.act.bagap.chloe.cluster.TabFocalClusteringOutput;
 import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenDiscreteClusteringAnalysis;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 
@@ -54,7 +55,8 @@ public class SelectedPatchKernel extends SelectedLandscapeMetricKernel {
 		TabQueenDiscreteClusteringAnalysis ca = new TabQueenDiscreteClusteringAnalysis(tabCover, windowSize(), windowSize(), values, noDataValue());
 		float[] tabCluster = (float[]) ca.allRun();
 			
-		TabClusteringOutput cto = new TabClusteringOutput(tabCluster, tabCover, values, cellSize(), noDataValue());
+		//TabClusteringOutput cto = new TabClusteringOutput(tabCluster, tabCover, values, cellSize(), noDataValue());
+		TabFocalClusteringOutput cto = new TabFocalClusteringOutput(tabCluster, tabCover, coeff(), values, cellSize(), noDataValue());
 		cto.allRun();
 			
 		outDatas().get(p)[4] = cto.getNbPatch();

@@ -139,21 +139,24 @@ public class TabClusteringOutput extends Analysis {
 		}
 		
 		maxSurface = 0;
+		double surface;
 		double surfaceCarre;
 		ind = 0;
-		for(int s : sizes){
+		for(double s : sizes){
 			if(s > 0){
-				cover = values[ind];
-				maxSurface = Math.max(maxSurface, s);
-				maxSurfaces[cover] = Math.max(maxSurfaces[cover], s);
 				
-				surfaceCarre = Math.pow(s*Math.pow(cellSize, 2)/10000.0, 2);
+				surface = s*Math.pow(cellSize, 2)/10000.0;
+				
+				cover = values[ind];
+				maxSurface = Math.max(maxSurface, surface);
+				maxSurfaces[cover] = Math.max(maxSurfaces[cover], surface);
+				
+				surfaceCarre = Math.pow(surface, 2);
 				totalSurfaceCarre += surfaceCarre;
 				totalSurfacesCarres[cover] += surfaceCarre;
 			}
 			ind++;
 		}
-		maxSurface *= Math.pow(cellSize, 2)/10000.0;
 		
 		setResult(true);
 	}

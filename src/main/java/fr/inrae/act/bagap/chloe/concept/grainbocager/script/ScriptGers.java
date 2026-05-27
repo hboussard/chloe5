@@ -1,11 +1,13 @@
 package fr.inrae.act.bagap.chloe.concept.grainbocager.script;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
+import fr.inrae.act.bagap.chloe.concept.grainbocager.util.CompileMNHC;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.apiland.raster.Coverage;
@@ -21,6 +23,23 @@ public class ScriptGers {
 		//scriptCalculGrainAmenagementAlternatif();
 		//cleanMNHC();
 		//moyenne();
+		//compilationMNHC();
+	}
+	
+	private static void compilationMNHC(){
+		String outputPath = "C:/Data/projet/grain_bocager/data_mnhc/mnhc_gers_2021-2023/";
+		String outputName = "mnhc";
+		String[] inputPath = new String[]{
+				"D:/grain_bocager/mnhc/data/tuile/departements_2021_2023/31_2022_5m/",
+				"D:/grain_bocager/mnhc/data/tuile/departements_2021_2023/32_2022_5m/",
+				"D:/grain_bocager/mnhc/data/tuile/departements_2021_2023/40_2021_5m/",
+				"D:/grain_bocager/mnhc/data/tuile/departements_2021_2023/47_2021_5m/",
+				"D:/grain_bocager/mnhc/data/tuile/departements_2021_2023/64_2021_5m/",
+				"D:/grain_bocager/mnhc/data/tuile/departements_2021_2023/65_2022_5m/",
+				"D:/grain_bocager/mnhc/data/tuile/departements_2021_2023/82_2022_5m/"
+		};
+		
+		CompileMNHC.compile(outputPath, outputName, inputPath);
 	}
 	
 	private static void moyenne() {
@@ -142,6 +161,7 @@ public class ScriptGers {
 	
 	// tous les noms de fonctions ont changées (english)
 	private static void scriptCalculGrainAmenagementNew() {
+		
 		String dataPath = "C:/Users/gladys/Desktop/grain PETR True/";
 		GrainBocagerManager gbManager = new GrainBocagerManager("calcul_grain_bocager");
 		gbManager.setFastMode(true);

@@ -32,10 +32,10 @@ public class ScriptEcopaysagesNDVITemporal {
 		epManager.setCodes(codes);
 		epManager.setScales(scales);
 		epManager.setFactor(1);
-		epManager.setDisplacement(10);
-		epManager.setOutputFolder("C:/Data/temp/jacques/CARTES_CLASS_ndvi/ecopaysages_temporels/");
-		epManager.setClasses(new int[]{5, 6, 7, 8, 9, 10});
-		//epManager.setClasses(new int[]{5});
+		epManager.setDisplacement(1);
+		epManager.setOutputFolder("C:/Data/temp/jacques/CARTES_CLASS_ndvi/ecopaysages_temporels2/");
+		//epManager.setClasses(new int[]{5, 6, 7, 8, 9, 10});
+		epManager.setClasses(new int[]{5});
 		
 		EcoPaysageProcedure epProcedure = epManager.build();
 		

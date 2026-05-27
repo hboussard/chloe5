@@ -47,14 +47,14 @@ public class GridCountValueAndCoupleKernel extends GridLandscapeMetricKernel {
 			outDatas()[x][i] = 0f;
 		}
 			
-		short v, v_H, v_V;
+		int v, v_H, v_V;
 		int mv;				
 		for(int y=0; y<gridSize(); y++) {
 			if((theY+y) < height()){
 				for(int lx=0; lx<gridSize(); lx++) {
 					if((x*gridSize() + lx) < width()){
 						
-						v = (short) inDatas()[((theY+y)*width()) + (x*gridSize() + lx)];	
+						v = (int) inDatas()[((theY+y)*width()) + (x*gridSize() + lx)];	
 						outDatas()[x][2] += 1;
 						
 						if(v == noDataValue()){
@@ -67,7 +67,7 @@ public class GridCountValueAndCoupleKernel extends GridLandscapeMetricKernel {
 						}
 						
 						if(y > 0) {
-							v_V = (short) inDatas()[((theY+y-1)*width()) + (x*gridSize() + lx)];
+							v_V = (int) inDatas()[((theY+y-1)*width()) + (x*gridSize() + lx)];
 							outDatas()[x][nbValues+5] += 1;
 							
 							if(v == noDataValue() || v_V == noDataValue()){
@@ -81,7 +81,7 @@ public class GridCountValueAndCoupleKernel extends GridLandscapeMetricKernel {
 						}
 						
 						if(lx > 0) {
-							v_H = (short) inDatas()[((theY+y)*width()) + (x*gridSize() + lx - 1)];
+							v_H = (int) inDatas()[((theY+y)*width()) + (x*gridSize() + lx - 1)];
 							outDatas()[x][nbValues+5] += 1;
 							
 							if(v == noDataValue() || v_H == noDataValue()){

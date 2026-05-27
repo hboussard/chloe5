@@ -21,7 +21,6 @@ import org.jumpmind.symmetric.csv.CsvWriter;
 
 import fr.inrae.act.bagap.apiland.util.CoordinateManager;
 import fr.inrae.act.bagap.apiland.util.SpatialCsvManager;
-import fr.inrae.act.bagap.chloe.util.FileMap;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.WindowDistanceType;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
@@ -58,6 +57,58 @@ public class EcoPaysage {
 		calculMetrics(metricsFile, inputRaster, radius, compoMetrics, configMetrics, new int[]{-1});
 	}
 	*/
+	
+	public static void calculateCompoMetrics(String metricsFile, String inputRaster, int radius, int[] values, List<String> compoMetrics, WindowDistanceType distanceType, int displacement, int[] unfilters) {
+		
+		Coverage cov = CoverageManager.getCoverage(inputRaster);
+		EnteteRaster entete = cov.getEntete();
+		
+		int ws = ((int) ((radius*2)/entete.cellsize()))+1;
+		//System.out.println(ws);
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setWindowDistanceType(distanceType);
+		builder.setCoverage(cov);
+		builder.setValues(values);
+		for(String cpm : compoMetrics) {
+			builder.addMetric(cpm);
+		}
+		builder.addWindowSize(ws);
+		builder.setDisplacement(displacement);
+		builder.setUnfilters(unfilters);
+		builder.addCsvOutput(metricsFile);
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		analysis.allRun();
+		
+		cov.dispose();
+	}
+	
+	public static void calculateConfigMetrics(String metricsFile, String inputRaster, int radius, int[] values, List<String> configMetrics, WindowDistanceType distanceType, int displacement, int[] unfilters) {
+		
+		Coverage cov = CoverageManager.getCoverage(inputRaster);
+		EnteteRaster entete = cov.getEntete();
+		
+		int ws = ((int) ((radius*2)/entete.cellsize()))+1;
+		//System.out.println(ws);
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setWindowDistanceType(distanceType);
+		builder.setCoverage(cov);
+		builder.setValues(values);
+		for(String cfm : configMetrics) {
+			builder.addMetric(cfm);
+		}
+		builder.addWindowSize(ws);
+		builder.setDisplacement(displacement);
+		builder.setUnfilters(unfilters);
+		builder.addCsvOutput(metricsFile);
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		analysis.allRun();
+		
+		cov.dispose();
+	}
 	
 	public static void calculateCompoConfigMetrics(String metricsFile, String inputRaster, int radius, int[] values, List<String> compoMetrics, List<String> configMetrics, WindowDistanceType distanceType, int displacement, int[] unfilters) {
 		
@@ -187,7 +238,7 @@ public class EcoPaysage {
 		}
 	}
 	
-	public static void splitCompoConfig(Set<String> dataFiles, String xyFile, String compoFile, String configFile, List<String> compoMetrics, List<String> configMetrics) {
+	public static int splitCompoConfig(Set<String> dataFiles, String xyFile, String compoFile, String configFile, List<String> compoMetrics, List<String> configMetrics) {
 		
 		try {
 			
@@ -198,12 +249,15 @@ public class EcoPaysage {
 			}
 			cwCompo.endRecord();
 			
+			/*
 			CsvWriter cwConfig = new CsvWriter(configFile);
 			cwConfig.setDelimiter(';');
 			for(String cfm : configMetrics) {
 				cwConfig.write(cfm);
 			}
 			cwConfig.endRecord();
+			*/
+			int count = 0;
 			
 			for(String dataFile : dataFiles) {
 				
@@ -226,20 +280,29 @@ public class EcoPaysage {
 					//System.out.println(X+" "+mX);
 					
 					if(Math.abs(X-mX) < tolerance && Math.abs(Y-mY) < tolerance) {
+						
 						for(String cpm : compoMetrics) {
-							if(cr.get(cpm).equalsIgnoreCase("")) {
-								System.out.println(cpm+" vide");
-							}
+							
+							//if(cr.get(cpm).equalsIgnoreCase("")) {
+							//	System.out.println(cpm+" vide");
+							//}
+							
 							cwCompo.write(cr.get(cpm));
 						}
 						cwCompo.endRecord();
+						
+						/*
 						for(String cfm : configMetrics) {
-							if(cr.get(cfm).equalsIgnoreCase("")) {
-								System.out.println(cfm+" vide");
-							}
+							
+							//if(cr.get(cfm).equalsIgnoreCase("")) {
+							//	System.out.println(cfm+" vide");
+							//}
+							
 							cwConfig.write(cr.get(cfm));
 						}
 						cwConfig.endRecord();
+						*/
+						count++;
 						
 						if(crm.readRecord()) {
 							mX = Double.parseDouble(crm.get("X"));
@@ -254,13 +317,17 @@ public class EcoPaysage {
 			}
 			
 			cwCompo.close();
-			cwConfig.close();
+			//cwConfig.close();
+			
+			return count;
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		return -1;
 	}
 	
 	private static void standardize(String groupFile, List<String> groupMetrics, float[][] distances) {
@@ -385,21 +452,27 @@ public class EcoPaysage {
 		}
 	}
 	
-	public static float standardizeCompo(String groupFile, List<String> groupMetrics, Map<String, Float> importances, int scale) {
+	public static float standardizeCompo(String groupFile, int count, List<String> groupMetrics, Map<String, Float> importances, int scale) {
 		try {
 			CsvReader cr = new CsvReader(groupFile);
 			cr.setDelimiter(';');
 			cr.readHeaders();
-			List<float[]> dGroup = new ArrayList<float[]>();
+			
+			//List<float[]> dGroup = new ArrayList<float[]>();
+			float[][] dGroup = new float[count][];
+			
 			float[] group;
 			int index;
+			int indexCount = 0;
 			while(cr.readRecord()) {
 				group = new float[groupMetrics.size()];
 				index = 0;
 				for(String gm : groupMetrics) {
 					group[index++] = importances.get(gm+"_"+scale+"m") * Float.parseFloat(cr.get(gm));
 				}
-				dGroup.add(group);
+				
+				dGroup[indexCount++] = group;
+				//dGroup.add(group);
 			}
 			cr.close();
 			
@@ -446,23 +519,29 @@ public class EcoPaysage {
 		return -1;
 	}
 	
-	public static float standardizeConfig(String groupFile, List<String> groupMetrics, Map<String, Float> importances, float[][] distances, int scale) {
+	public static float standardizeConfig(String groupFile, int count, List<String> groupMetrics, Map<String, Float> importances, float[][] distances, int scale) {
 		try {
 			CsvReader cr = new CsvReader(groupFile);
 			cr.setDelimiter(';');
 			cr.readHeaders();
-			List<float[]> dGroup = new ArrayList<float[]>();
+			
+			//List<float[]> dGroup = new ArrayList<float[]>();
+			float[][] dGroup = new float[count][groupMetrics.size()];
+			
 			float[] group;
 			int index;
+			int indexCount = 0;
 			while(cr.readRecord()) {
 				group = new float[groupMetrics.size()];
 				index = 0;
+				System.out.println(indexCount+" / "+count);
 				for(String gm : groupMetrics) {
 					//float coeff = distances[Couple.getOneFromPNC(gm)][Couple.getOtherFromPNC(gm)];
 					//group[index++] = coeff*Float.parseFloat(cr.get(gm));
 					group[index++] = importances.get(gm+"_"+scale+"m") * Float.parseFloat(cr.get(gm));
 				}
-				dGroup.add(group);
+				//dGroup.add(group);
+				dGroup[indexCount++] = group;
 			}
 			cr.close();
 			
@@ -512,6 +591,16 @@ public class EcoPaysage {
 		return -1;
 	}
 	
+	public static float divisor(float[][] data, int nbMetrics) {
+		
+		//analyseStats(data, nbMetrics);
+		
+		return inertia(data, nbMetrics);
+		//return 1.0f/inertia(data, nbMetrics);
+		//return moyenne(data, nbMetrics);
+		//return moyenne(data, nbMetrics)/inertia(data, nbMetrics);
+	}
+	
 	public static float divisor(List<float[]> data, int nbMetrics) {
 		
 		//analyseStats(data, nbMetrics);
@@ -541,6 +630,33 @@ public class EcoPaysage {
 		System.out.println("ecart-type "+stats.getStandardDeviation());
 		System.out.println("coeff var "+stats.getVariationCoefficient());
 		System.out.println("erreur std "+stats.getStandardError());
+	}
+	
+	public static float inertia(float[][] data, int nbMetrics) {
+		
+		double[] means = new double[nbMetrics];
+		for(float[] d : data) {
+			for(int i=0; i<nbMetrics; i++) {
+				means[i] += d[i];
+			}
+		}
+		for(int i=0; i<nbMetrics; i++) {
+			means[i] /= data.length;
+		}
+		
+		double sumdistcarre;
+		float v ;
+		double rowSum = 0;
+		for(float[] d : data) {
+			sumdistcarre = 0;
+			for(int i=0; i<nbMetrics; i++) {
+				v = d[i];
+				sumdistcarre += Math.pow(means[i]-v, 2);
+			}
+			rowSum += sumdistcarre;
+		}
+		
+		return (float) Math.sqrt(rowSum/data.length);
 	}
 	
 	public static float inertia(List<float[]> data, int nbMetrics) {
@@ -1206,7 +1322,7 @@ public class EcoPaysage {
 		
 	}
 	
-	public static void analyseGradient(String gradientCsv, String[][] dataXY, String kmeanFile, String normFile) {
+	public static void analyseGradient(String gradientCsv, String[][] dataXY, String kmeanFile, String normFile, int indexYear) {
 		
 		try {
 			
@@ -1235,9 +1351,25 @@ public class EcoPaysage {
 			CsvReader crN = new CsvReader(normFile);
 			crN.setDelimiter(';');
 			crN.readHeaders();
-			int index = 0;
+			int index = -1;
+			int indexY = 1;
 			while(crN.readRecord()) {
-				String[] xy = dataXY[index++];
+				
+				index++;
+
+				if(index == dataXY.length) {
+					index = 0;
+					indexY++;
+				}
+				
+				if(indexY < indexYear) {
+					continue;
+				}
+				if(indexY > indexYear) {
+					break;
+				}
+				
+				String[] xy = dataXY[index];
 				cw.write(xy[0]);
 				cw.write(xy[1]);
 				float[] data = new float[crN.getColumnCount()];
@@ -1313,6 +1445,143 @@ public class EcoPaysage {
 		
 		return 1f / sum;
 	}
+	
+	public static void analyseMembershipStrict(String membershipFile, String gradientFile, String kmeanFile, int classe) {
+		
+		try {
+			
+			Map<Integer, float[]> kmeans = new TreeMap<Integer, float[]>();
+			CsvReader crI = new CsvReader(kmeanFile);
+			crI.setDelimiter(';');
+			crI.readHeaders();
+			int k;
+			while(crI.readRecord()) {
+				k = Integer.parseInt(crI.get("classe"));
+				float[] infos = new float[crI.getColumnCount()-1];
+				for(int i=1; i<crI.getColumnCount(); i++) {
+					infos[i-1] = Float.parseFloat(crI.get(i));
+				}
+				kmeans.put(k, infos);
+			}
+			crI.close();
+			
+			Map<Integer, Map<Integer, Float>> kmeansDistances = new TreeMap<Integer, Map<Integer, Float>>();
+			for(Entry<Integer, float[]> kmean1 : kmeans.entrySet()){
+				kmeansDistances.put(kmean1.getKey(), new TreeMap<Integer, Float>());
+			}
+			for(Entry<Integer, float[]> kmean1 : kmeans.entrySet()){
+				for(Entry<Integer, float[]> kmean2 : kmeans.entrySet()){
+					
+					//System.out.println(kmean1.getKey()+" "+kmean2.getKey());
+					
+					if(kmean1.getKey() > kmean2.getKey()) {
+						// do nothing
+					}else if(kmean1.getKey() == kmean2.getKey()) {
+						kmeansDistances.get(kmean1.getKey()).put(kmean2.getKey(), 0f);
+					}else {
+						float distance = distance(kmean1.getValue(), kmean2.getValue());
+						//System.out.println(distance);
+						kmeansDistances.get(kmean1.getKey()).put(kmean2.getKey(), distance);
+						kmeansDistances.get(kmean2.getKey()).put(kmean1.getKey(), distance);
+					}
+				}
+			}
+			
+			/*
+			for(Entry<Integer, Map<Integer, Float>> e1 : kmeansDistances.entrySet()) {
+				
+				for(Entry<Integer, Float> e2 : e1.getValue().entrySet()) {
+					
+					System.out.println(e1.getKey()+" "+e2.getKey()+" "+e2.getValue());
+				}
+			}
+			*/
+			
+			CsvWriter cw = new CsvWriter(membershipFile);
+			cw.setDelimiter(';');
+			cw.write("X");
+			cw.write("Y");
+			for(int ik=1; ik<=classe; ik++) {
+				cw.write("ecop_"+ik);
+			}
+			cw.endRecord();
+			
+			CsvReader cr = new CsvReader(gradientFile);
+			cr.setDelimiter(';');
+			cr.readHeaders();
+			
+			float[] gradients = new float[classe+1];
+			while(cr.readRecord()) {
+				
+				cw.write(cr.get("X"));
+				cw.write(cr.get("Y"));
+				
+				for(int ik=1; ik<=classe; ik++) {
+					gradients[ik] = Float.parseFloat(cr.get("ecop_"+ik));
+				}
+				
+				for(int ik=1; ik<=classe; ik++) {
+					cw.write(generateMembershipStrict(gradients, ik, kmeansDistances)+"");
+				}
+				
+				cw.endRecord();
+			}
+			
+			cr.close();
+			cw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static float generateMembershipStrict(float[] gradients, int ik, Map<Integer, Map<Integer, Float>> kmeansDistances) {
+		
+		int closestK = -1;
+		float closestDistance = -1;
+
+		for(int iik=1; iik<gradients.length; iik++) {
+			
+			if(iik == 1 || gradients[iik] < closestDistance) {
+				
+				closestK = iik;
+				closestDistance = gradients[iik];
+			}
+		}
+		
+		boolean outside = true;
+		for(int iik=1; iik<gradients.length; iik++) {
+			
+			//System.out.println(iik+" "+closestK);
+			
+			if(gradients[iik] < kmeansDistances.get(iik).get(closestK)) {
+				
+				outside = false;
+				break;
+			}
+		}
+		
+		if(outside) {
+			
+			if(closestK == ik) {
+				
+				return 1;
+				
+			}else {
+				
+				return 0;
+			}
+		}
+		
+		float sum = 0;
+		for(int iik=1; iik<gradients.length; iik++) {
+		
+			sum += Math.pow(gradients[ik]/gradients[iik], 2);
+		}
+		
+		return 1f / sum;
+	}
 
 	public static void generateThematicDistanceFile(String infoFile, String thematicDistanceFile) {
 		
@@ -1373,7 +1642,7 @@ public class EcoPaysage {
 		for(int i=0; i<v1.length; i++) {
 			distance += Math.pow(v1[i]-v2[i], 2);
 		}
-		return (float) Math.sqrt(distance);		
+		return (float) Math.sqrt(distance);
 	}
 	
 	private static float distance(float[] v1, double[] v2) {
@@ -1381,7 +1650,7 @@ public class EcoPaysage {
 		for(int i=0; i<v1.length; i++) {
 			distance += Math.pow(v1[i]-v2[i], 2);
 		}
-		return (float) Math.sqrt(distance);		
+		return (float) Math.sqrt(distance);
 	}
 	
 	public static Map<String, Float> initImportanceByMetric(String importanceFile){
@@ -1484,7 +1753,119 @@ public class EcoPaysage {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void analyseEvoMembership(String evoMembershipFile, int classe, String[] membershipFiles) {
 		
+		try {
+			
+			int nbYear = membershipFiles.length;
+			CsvReader[] crs = new CsvReader[nbYear];
+			
+			int index = 0;
+			for(String membershipFile : membershipFiles) {
+				
+				CsvReader cr =  new CsvReader(membershipFile);
+				cr.setDelimiter(';');
+				cr.readHeaders();
+				crs[index++] = cr;
+			}
+			
+			CsvWriter cw = new CsvWriter(evoMembershipFile);
+			cw.setDelimiter(';');
+			cw.write("X");
+			cw.write("Y");
+			cw.write("global_evo");
+			cw.write("global_intensity");
+			for(int k=1; k<=classe; k++) {
+				cw.write("evo_"+k);
+			}
+			for(int k=1; k<=classe; k++) {
+				cw.write("intensity_"+k);
+			}
+			for(int k=1; k<=classe; k++) {
+				cw.write("mean_"+k);
+			}
+			for(int k=1; k<=classe; k++) {
+				cw.write("std_dev_"+k);
+			}
+			cw.endRecord();
+			
+			Stats stats = new Stats();
+			
+			while(crs[0].readRecord()) {
+				
+				for(int c=1; c<crs.length; c++) {
+					
+					crs[c].readRecord();
+				}
+				
+				cw.write(crs[0].get("X"));
+				cw.write(crs[0].get("Y"));
+				
+				float[][] datas = new float[nbYear][classe];
+				for(int year=0; year<nbYear; year++) {
+					for(int k=1; k<=classe; k++) {
+					
+						datas[year][k-1] = Float.parseFloat(crs[year].get("ecop_"+k));
+					}
+				}
+				
+				float evo = distance(datas[nbYear-1], datas[0]);
+				cw.write(evo+"");
+				
+				float intensity = 0;
+				for(int year=1; year<nbYear; year++) {
+					
+					intensity += distance(datas[year], datas[year-1]);
+				}
+				cw.write(intensity+"");
+				
+				for(int k=1; k<=classe; k++) {
+					evo = datas[nbYear-1][k-1] - datas[0][k-1];
+					cw.write(evo+"");
+				}
+				
+				for(int k=1; k<=classe; k++) {
+					intensity = 0;
+					for(int year=1; year<nbYear; year++) {
+						
+						intensity += Math.abs(datas[year][k-1] - datas[year-1][k-1]);
+					}
+					cw.write(intensity+"");
+				}
+				
+				for(int k=1; k<=classe; k++) {
+					stats.reset();
+					for(int year=0; year<nbYear; year++) {
+						stats.add(datas[year][k-1]);
+					}
+					stats.calculate();
+					cw.write(stats.getAverage()+"");
+				}
+				
+				for(int k=1; k<=classe; k++) {
+					stats.reset();
+					for(int year=0; year<nbYear; year++) {
+						stats.add(datas[year][k-1]);
+					}
+					stats.calculate();
+					cw.write(stats.getStandardDeviation()+"");
+				}
+				
+				cw.endRecord();
+			}
+			
+			for(CsvReader cr : crs) {
+				cr.close();
+			}
+			cw.close();
+			
+		}catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

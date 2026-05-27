@@ -309,6 +309,11 @@ public abstract class Counting implements
 	public double countCouple(short v1, short v2) {
 		return countCouple(Couple.getCouple(v1, v2));
 	}
+	
+	@Override 
+	public double countInterface(short v) {
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
 	public short countCoupleClass() {
@@ -346,7 +351,7 @@ public abstract class Counting implements
 	}
 
 	@Override
-	public int nbPatches(){
+	public double nbPatches(){
 		throw new UnsupportedOperationException();
 	}
 	
@@ -366,7 +371,7 @@ public abstract class Counting implements
 	}
 
 	@Override
-	public int nbPatches(int v){
+	public double nbPatches(int v){
 		throw new UnsupportedOperationException();
 	}
 

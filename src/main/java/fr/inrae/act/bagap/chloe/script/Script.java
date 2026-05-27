@@ -1149,6 +1149,7 @@ public class Script {
 		System.out.println("time computing : "+(end - begin));
 	}
 
+	/*
 	private static void retileBaieLancieux(){
 		// selection site
 	
@@ -1162,6 +1163,7 @@ public class Script {
 		
 		CoverageManager.retile(fileCGTV, fileBaie, minx, maxx, miny, maxy, Raster.getNoDataValue());
 	}
+	*/
 	
  	private static void scriptEcopaysageBretagneCGTV(){
 		

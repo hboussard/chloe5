@@ -11,7 +11,7 @@ public class CountClassMetric extends Metric implements ValueMetric {
 
 	@Override
 	protected void doCalculate(Counting co) {
-		if(co.countValues() > 0){
+		if(co.validValues() > 0){
 			value = co.countClass();
 		}
 	}

@@ -1,6 +1,7 @@
 package fr.inrae.act.bagap.chloe.window.kernel.sliding;
 
 import fr.inrae.act.bagap.chloe.cluster.TabClusteringOutput;
+import fr.inrae.act.bagap.chloe.cluster.TabFocalClusteringOutput;
 import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenDiscreteClusteringAnalysis;
 
 public class SlidingPatchKernel extends SlidingLandscapeMetricKernel {
@@ -64,30 +65,31 @@ public class SlidingPatchKernel extends SlidingLandscapeMetricKernel {
 				TabQueenDiscreteClusteringAnalysis ca = new TabQueenDiscreteClusteringAnalysis(tabCover, windowSize(), windowSize(), values, noDataValue());
 				float[] tabCluster = (float[]) ca.allRun();
 				
-				TabClusteringOutput cto = new TabClusteringOutput(tabCluster, tabCover, values, cellSize, noDataValue());
+				//TabClusteringOutput cto = new TabClusteringOutput(tabCluster, tabCover, values, cellSize, noDataValue());
+				TabFocalClusteringOutput cto = new TabFocalClusteringOutput(tabCluster, tabCover, coeff(), values, cellSize, noDataValue());
 				cto.allRun();
 				
 				outDatas()[ind][2] = nb;
 				outDatas()[ind][3] = nb_nodata;
 				outDatas()[ind][4] = cto.getNbPatch();
-				outDatas()[ind][5] = (float) cto.getTotalSurface();
-				outDatas()[ind][6] = (float) cto.getMaxSurface();
-				outDatas()[ind][7] = (float) cto.getTotalSurfaceCarre();
+				outDatas()[ind][5] = cto.getTotalSurface();
+				outDatas()[ind][6] = cto.getMaxSurface();
+				outDatas()[ind][7] = cto.getTotalSurfaceCarre();
 				
 				for(int i=0; i<values.length; i++){
 					outDatas()[ind][i+8] = cto.getNbPatch(values[i]);
 				}
 				
 				for(int i=0; i<values.length; i++){
-					outDatas()[ind][i+8+values.length] = (float) cto.getTotalSurface(values[i]);
+					outDatas()[ind][i+8+values.length] = cto.getTotalSurface(values[i]);
 				}
 				
 				for(int i=0; i<values.length; i++){
-					outDatas()[ind][i+8+2*values.length] = (float) cto.getMaxSurface(values[i]);
+					outDatas()[ind][i+8+2*values.length] = cto.getMaxSurface(values[i]);
 				}
 				
 				for(int i=0; i<values.length; i++){
-					outDatas()[ind][i+8+3*values.length] = (float) cto.getTotalSurfaceCarre(values[i]);
+					outDatas()[ind][i+8+3*values.length] = cto.getTotalSurfaceCarre(values[i]);
 				}
 				
 			}else{

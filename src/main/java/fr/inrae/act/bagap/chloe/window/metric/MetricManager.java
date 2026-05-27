@@ -111,9 +111,8 @@ public class MetricManager {
 					case "couple" : 
 						processCoupleMetrics.add(cr.get("name"));
 						break;
-						default : // do nothing
+					default : // do nothing
 					}
-					
 				}
 			}
 			cr.close();

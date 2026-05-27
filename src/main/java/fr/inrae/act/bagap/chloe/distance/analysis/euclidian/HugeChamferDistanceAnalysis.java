@@ -180,7 +180,7 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 							calculTab[dy*dWidth+dx] = 1;
 						}
 						
-						// stockage en m�moire fichier de l'�tat de la tuile
+						// stockage en memoire fichier de l'etat de la tuile
 						CoverageManager.writeGeotiff(new File(temp+"_"+dx+"-"+dy+".tif"), outDatas, roiWidth, roiHeight, roiPosMinX, roiPosMaxX, roiPosMinY, roiPosMaxY, Raster.getNoDataValue());
 						
 					}	
@@ -291,6 +291,7 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 							}
 								
 							ccd = new TabChamferDistanceAnalysis(outDatas, null, roiWidth, roiHeight, cellSize, noDataValue, null, threshold);
+							ccd.setHasValue(true);
 							ccd.run();
 							outDatas = (float[]) ccd.getResult();
 								
@@ -300,7 +301,7 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 								finish = false;
 							}
 								
-							// stockage en m�moire fichier de l'�tat de la tuile
+							// stockage en memoire fichier de l'etat de la tuile
 							CoverageManager.writeGeotiff(new File(temp+"_"+dx+"-"+dy+".tif"), outDatas, roiWidth, roiHeight, roiPosMinX, roiPosMaxX, roiPosMinY, roiPosMaxY, Raster.getNoDataValue());
 								
 							majTab[dy*dWidth+dx] = 0;
@@ -327,9 +328,9 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 
 	/**
 	 * 3 cas
-	 * 1. la tuile n'a jamais �t� mise � jour, peut-�tre que les bords vont l'y obliger...
-	 * 2. la tuile n'a pas �t� mis � jour (cette fois), la mise � jour des bords se fera sous condition de l'�tat des tuiles voisines
-	 * 3. la tuile vient d'�tre mise � jour, attention au bords jamais mis � jour
+	 * 1. la tuile n'a jamais ete mise a jour, peut-etre que les bords vont l'y obliger...
+	 * 2. la tuile n'a pas ete mise a jour (cette fois), la mise a jour des bords se fera sous condition de l'etat des tuiles voisines
+	 * 3. la tuile vient d'etre mise a jour, attention au bords jamais mis a jour
 	 */
 	private boolean bordUpdateFromData(int dx, int dy, int roiWidth, int roiHeight, double roiPosMinX, double roiPosMaxX, double roiPosMinY, double roiPosMaxY, float[] outDatas){
 		
@@ -337,10 +338,11 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 		Pixel p = new Pixel(dx, dy);
 		
 		//System.out.println("traitement de la tuile "+x+" "+y);
-		if(dx > 0){ // le bord gauche de la tuile est inclu et partag�
+		if(dx > 0){ // le bord gauche de la tuile est inclu et partage
 			float[] bord = bords.get(p).get("left");
 			for(int j=0; j<roiHeight; j++){
-				if(bord[j] != outDatas[j * roiWidth + 0]){
+				if((bord[j] == -1 && outDatas[j * roiWidth + 0] >= 0) || (bord[j] > outDatas[j * roiWidth + 0])) {
+				//if(bord[j] != outDatas[j * roiWidth + 0]){
 					bord[j] = outDatas[j * roiWidth + 0];
 					majTab[dy*dWidth+(dx-1)] = 1;
 					finish = false;
@@ -348,10 +350,11 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 			}
 		}
 		
-		if(dy > 0){ // le bord nord de la tuile est inclu et partag�
+		if(dy > 0){ // le bord nord de la tuile est inclu et partage
 			float[] bord = bords.get(p).get("north");
 			for(int i=0; i<roiWidth; i++){
-				if(bord[i] != outDatas[i]){
+				if((bord[i] == -1 && outDatas[i] >= 0) || bord[i] > outDatas[i]) {
+					//if(bord[i] != outDatas[i]){
 					bord[i] = outDatas[i];
 					majTab[(dy-1)*dWidth+dx] = 1;
 					finish = false;
@@ -359,10 +362,11 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 			}
 		}
 		
-		if(dx < (dWidth-1)){ // le bord droite de la tuile est inclu et partag�
+		if(dx < (dWidth-1)){ // le bord droite de la tuile est inclu et partage
 			float[] bord = bords.get(p).get("right");
 			for(int j=0; j<roiHeight; j++){
-				if(bord[j] != outDatas[j * roiWidth + (roiWidth-1)]){
+				if((bord[j] == -1 && outDatas[j * roiWidth + (roiWidth-1)] >= 0) || (bord[j] > outDatas[j * roiWidth + (roiWidth-1)])) {
+					//if(bord[j] != outDatas[j * roiWidth + (roiWidth-1)]){
 					bord[j] = outDatas[j * roiWidth + (roiWidth-1)];
 					majTab[dy*dWidth+(dx+1)] = 1;
 					finish = false;
@@ -370,10 +374,11 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 			}
 		}
 		
-		if(dy < (dHeight-1)){ // le bord sud de la tuile est inclu et partag�
+		if(dy < (dHeight-1)){ // le bord sud de la tuile est inclu et partage
 			float[] bord = bords.get(p).get("south");
 			for(int i=0; i<roiWidth; i++){
-				if(bord[i] != outDatas[(roiHeight-1)*roiWidth + i]){
+				if((bord[i] == -1 && outDatas[(roiHeight-1)*roiWidth + i] >= 0) || (bord[i] > outDatas[(roiHeight-1)*roiWidth + i])) {
+					//if(bord[i] != outDatas[(roiHeight-1)*roiWidth + i]){
 					bord[i] = outDatas[(roiHeight-1)*roiWidth + i];
 					majTab[(dy+1)*dWidth+dx] = 1;
 					finish = false;
@@ -411,9 +416,10 @@ public class HugeChamferDistanceAnalysis extends Analysis {
 				cov = null;
 						
 				TabChamferDistanceAnalysis ccd = new TabChamferDistanceAnalysis(outDatas, null, roiWidth, roiHeight, cellSize, noDataValue, null, threshold);
+				ccd.setHasValue(true);
 				outDatas = ccd.normalize();
 						
-				// stockage en m�moire fichier de l'�tat de la tuile
+				// stockage en memoire fichier de l'etat de la tuile
 				CoverageManager.writeGeotiff(new File(temp+"_"+dx+"-"+dy+".tif"), outDatas, roiWidth, roiHeight, roiPosX, roiPosMaxX, roiPosY, roiPosMaxY, Raster.getNoDataValue());
 			}
 		}

@@ -1,10 +1,14 @@
 package fr.inrae.act.bagap.chloe.cluster;
 
+import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.cluster.chess.TabQueenClusteringAnalysis;
 import fr.inrae.act.bagap.chloe.cluster.chess.TabRookClusteringAnalysis;
 import fr.inrae.act.bagap.chloe.cluster.distance.TabDistanceClusteringAnalysis;
 import fr.inrae.act.bagap.chloe.distance.analysis.euclidian.TabChamferDistanceAnalysis;
 import fr.inrae.act.bagap.chloe.distance.analysis.functional.TabRCMDistanceAnalysis;
+import fr.inrae.act.bagap.chloe.window.WindowShapeType;
+import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
+import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
@@ -13,7 +17,6 @@ public class ScriptDistanceAndCluster {
 
 	public static void main(String[] args) {
 		
-		script2();
 	}
 	
 	private static void script3(){

@@ -26,14 +26,14 @@ public class GridCountValueKernel extends GridLandscapeMetricKernel {
 			outDatas()[x][i] = 0f;
 		}
 			
-		short v;
+		int v;
 		int mv;				
 		for(int y=0; y<gridSize(); y++) {
 			if((theY+y) < height()){
 				for(int lx=0; lx<gridSize(); lx++) {
 					if((x*gridSize() + lx) < width()){
 						
-						v = (short) inDatas()[((theY+y)*width()) + (x*gridSize() + lx)];		
+						v = (int) inDatas()[((theY+y)*width()) + (x*gridSize() + lx)];		
 						outDatas()[x][2] += 1;
 						
 						if(v == noDataValue()){

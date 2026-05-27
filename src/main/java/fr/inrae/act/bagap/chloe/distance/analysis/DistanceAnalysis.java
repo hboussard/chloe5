@@ -58,6 +58,11 @@ public class DistanceAnalysis extends ChloeUtilAnalysis {
 		}
 		
 		outData = new float[entete.width()*entete.height()];
+		
+		if(threshold == -1 && threshold != entete.noDataValue()) {
+			
+			threshold = entete.noDataValue();
+		}
 	}
 
 	@Override

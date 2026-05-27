@@ -53,25 +53,16 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 	
 	private Tile tile;
 	
-	public HugeRCMDistanceAnalysis(Coverage inCoverage, Coverage frictionCoverage, Tile tile, String output, String name, Collection<Integer> codes, float threshold) {
+	public HugeRCMDistanceAnalysis(Coverage inCoverage, Coverage frictionCoverage, Tile tile, String output, String name, int[] codes, float threshold) {
 		this.inCoverage = inCoverage;
 		this.frictionCoverage = frictionCoverage;
 		this.folder = output;
 		this.name = name;
-		
 		this.tile = tile;
-		
-		this.temp = output+"euclidian/";
+		this.temp = output+"rcm/";
 		Util.createAccess(temp);
 		this.temp += "name";
-		
-		
-		
-		this.codes = new int[codes.size()];
-		int index = 0;
-		for(int i : codes) {
-			this.codes[index++] = i;
-		}
+		this.codes = codes;
 		this.threshold = threshold;
 	}
 
@@ -93,7 +84,7 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 		dHeight = 0;
 		bords = new HashMap<Pixel, Map<String, float[]>>();
 		
-		// tuilage � priori
+		// tuilage a priori
 		int dx = 0, dy = 0;
 		Pixel p;
 		int roiWidth, roiHeight;
@@ -175,7 +166,7 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 						frictionDatas = frictionCoverage.getData(new Rectangle(x, y, roiWidth, roiHeight));
 						
 						// analyse de distance
-						rcm = new TabRCMDistanceAnalysis(outDatas, inDatas, frictionDatas, roiWidth, roiHeight, cellSize, noDataValue, codes);
+						rcm = new TabRCMDistanceAnalysis(outDatas, inDatas, frictionDatas, roiWidth, roiHeight, cellSize, noDataValue, codes, threshold);
 						
 						rcm.init();
 						inDatas = null;
@@ -194,12 +185,14 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 							calculTab[dy*dWidth+dx] = 1;
 						}
 						
-						// stockage en m�moire fichier de l'�tat de la tuile
+						// stockage en memoire fichier de l'etat de la tuile
 						CoverageManager.writeGeotiff(new File(temp+"_"+dx+"-"+dy+".tif"), outDatas, roiWidth, roiHeight, roiPosMinX, roiPosMaxX, roiPosMinY, roiPosMaxY, Raster.getNoDataValue());
 						
 					}	
 				}
-				// finish = true;
+				
+				//finish = true;
+				
 			}else{
 				
 				if(inCoverage != null){
@@ -214,7 +207,7 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 						
 						//System.out.println("traitement de la tuile "+dx+" "+dy+" / "+dWidth+" "+dHeight);
 						
-						if(majTab[dy*dWidth + dx] == 1){ // la tuile doit �tre mise � jour
+						if(majTab[dy*dWidth + dx] == 1){ // la tuile doit etre mise a jour
 							
 							//System.out.println("traitement de la tuile "+dx+" "+dy+" / "+dWidth+" "+dHeight);
 							
@@ -232,91 +225,124 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 							ImageUtilities.disposePlanarImageChain((PlanarImage) cov.getRenderedImage());
 							cov = null;
 							
-							// r�cup�ration des valeurs de friction
+							// recuperation des valeurs de friction
 							frictionDatas = frictionCoverage.getData(new Rectangle(x, y, roiWidth, roiHeight));
 							
-							rcm = new TabRCMDistanceAnalysis(outDatas, null, frictionDatas, roiWidth, roiHeight, cellSize, noDataValue, codes);
+							rcm = new TabRCMDistanceAnalysis(outDatas, null, frictionDatas, roiWidth, roiHeight, cellSize, noDataValue, codes, threshold);
 							
-							// v�rification des mises � jour � faire
+							// verification des mises a jour a faire
 							p = new Pixel(dx, dy);
-							if(calculTab[dy*dWidth+dx] == -1){ // la tuile n'a jamais �t� calcul�e
+							if(calculTab[dy*dWidth+dx] == -1){ // la tuile n'a jamais ete calculee
 								
-								if(dx > 0){ // le bord gauche de la tuile est inclu et partag�
-									if(calculTab[dy*dWidth+(dx-1)] >= 0){ // si la tuile � gauche a �t� calcul�e
+								if(dx > 0){ // le bord gauche de la tuile est inclu et partage
+									if(calculTab[dy*dWidth+(dx-1)] >= 0){ // si la tuile a gauche a ete calculee
 										bord = bords.get(p).get("left");
 										for(int j=0; j<roiHeight; j++){
-											outDatas[j*roiWidth+0] = bord[j]; 
-											rcm.setPixelAndValue(j*roiWidth+0, bord[j]);
+											if(bord[j] >= 0) {
+												
+												outDatas[j*roiWidth+0] = bord[j]; 
+												rcm.setPixelAndValue(j*roiWidth+0, bord[j]/cellSize);
+												//rcm.setPixelAndValue(j*roiWidth+0, bord[j]);
+											}
 										}
 									}
 								}
-								if(dy > 0){ // le bord nord de la tuile est inclu et partag�
-									if(calculTab[(dy-1)*dWidth+dx] >= 0){ // si la tuile au nord a �t� calcul�e
+								if(dy > 0){ // le bord nord de la tuile est inclu et partage
+									if(calculTab[(dy-1)*dWidth+dx] >= 0){ // si la tuile au nord a ete calculee
 										bord = bords.get(p).get("north");
 										for(int i=0; i<roiWidth; i++){
-											outDatas[i] = bord[i];
-											rcm.setPixelAndValue(i, bord[i]);
+											if(bord[i] >= 0) {
+											
+												outDatas[i] = bord[i];
+												rcm.setPixelAndValue(i, bord[i]/cellSize);
+												//rcm.setPixelAndValue(i, bord[i]);
+											}
 										}
 									}
 								}
-								if(dx < (dWidth-1)){ // le bord droite de la tuile est inclu et partag�
-									if(calculTab[dy*dWidth+(dx+1)] >= 0){ // si la tuile � droite a �t� calcul�e
+								if(dx < (dWidth-1)){ // le bord droite de la tuile est inclu et partage
+									if(calculTab[dy*dWidth+(dx+1)] >= 0){ // si la tuile a droite a ete calculee
 										bord = bords.get(p).get("right");
 										for(int j=0; j<roiHeight; j++){
-											outDatas[j*roiWidth + (roiWidth-1)] = bord[j];
-											rcm.setPixelAndValue(j*roiWidth + (roiWidth-1), bord[j]);
+											if(bord[j] >= 0) {
+												
+												outDatas[j*roiWidth + (roiWidth-1)] = bord[j];
+												rcm.setPixelAndValue(j*roiWidth + (roiWidth-1), bord[j]/cellSize);
+												//rcm.setPixelAndValue(j*roiWidth + (roiWidth-1), bord[j]);
+											}
 										}
 									}
 								}
-								if(dy < (dHeight-1)){ // le bord sud de la tuile est inclu et partag�
-									if(calculTab[(dy+1)*dWidth+dx] >= 0){ // si la tuile au sud a �t� calcul�e
+								if(dy < (dHeight-1)){ // le bord sud de la tuile est inclu et partage
+									if(calculTab[(dy+1)*dWidth+dx] >= 0){ // si la tuile au sud a ete calculee
 										bord = bords.get(p).get("south");
 										for(int i=0; i<roiWidth; i++){
-											outDatas[(roiHeight-1)*roiWidth + i] = bord[i];
-											rcm.setPixelAndValue((roiHeight-1)*roiWidth + i, bord[i]);
+											if(bord[i] >= 0) {
+											
+												outDatas[(roiHeight-1)*roiWidth + i] = bord[i];
+												rcm.setPixelAndValue((roiHeight-1)*roiWidth + i, bord[i]/cellSize);
+												//rcm.setPixelAndValue((roiHeight-1)*roiWidth + i, bord[i]);
+											}
 										}
 									}
 								}
-							}else{ // tuile a d�j� �t� calcul�
+							}else{ // la tuile a deja ete calculee
 								
-								if(dx > 0){ // le bord gauche de la tuile est inclu et partag�
+								if(dx > 0){ // le bord gauche de la tuile est inclu et partage
 									bord = bords.get(p).get("left");
 									for(int j=0; j<roiHeight; j++){
 										if(bord[j] < outDatas[j*roiWidth+0]){
-											outDatas[j*roiWidth+0] = bord[j]; 
-											rcm.setPixelAndValue(j*roiWidth+0, bord[j]);
+											//if(bord[j] >= 0) {
+										//	System.out.println("bord "+bord[j]+" "+outDatas[j*roiWidth+0]);
+												outDatas[j*roiWidth+0] = bord[j]; 
+												rcm.setPixelAndValue(j*roiWidth+0, bord[j]/cellSize);
+												//rcm.setPixelAndValue(j*roiWidth+0, bord[j]);
+											//}
 										}
 									}
 								}
-								if(dy > 0){ // le bord nord de la tuile est inclu et partag�
+								if(dy > 0){ // le bord nord de la tuile est inclu et partage
 									bord = bords.get(p).get("north");
 									for(int i=0; i<roiWidth; i++){
 										if(bord[i] < outDatas[i]){
-											outDatas[i] = bord[i];
-											rcm.setPixelAndValue(i, bord[i]);
+											//if(bord[i] >= 0) {
+										//	System.out.println("bord "+bord[i]+" "+outDatas[i]);
+												outDatas[i] = bord[i];
+												rcm.setPixelAndValue(i, bord[i]/cellSize);
+												//rcm.setPixelAndValue(i, bord[i]);
+											//}
 										}
 									}
 								}
-								if(dx < (dWidth-1)){ // le bord droite de la tuile est inclu et partag�
+								if(dx < (dWidth-1)){ // le bord droite de la tuile est inclu et partage
 									bord = bords.get(p).get("right");
 									for(int j=0; j<roiHeight; j++){
 										if(bord[j] < outDatas[j*roiWidth + (roiWidth-1)]){
-											outDatas[j*roiWidth + (roiWidth-1)] = bord[j];
-											rcm.setPixelAndValue(j*roiWidth + (roiWidth-1), bord[j]);
+											//if(bord[j] >= 0) {
+										//	System.out.println("bord "+bord[j]+" "+outDatas[j*roiWidth + (roiWidth-1)]);
+												outDatas[j*roiWidth + (roiWidth-1)] = bord[j];
+												rcm.setPixelAndValue(j*roiWidth + (roiWidth-1), bord[j]/cellSize);
+												//rcm.setPixelAndValue(j*roiWidth + (roiWidth-1), bord[j]);
+											//}
 										}
 									}
 								}
-								if(dy < (dHeight-1)){ // le bord sud de la tuile est inclu et partag�
+								if(dy < (dHeight-1)){ // le bord sud de la tuile est inclu et partage
 									bord = bords.get(p).get("south");
 									for(int i=0; i<roiWidth; i++){
 										if(bord[i] < outDatas[(roiHeight-1)*roiWidth + i]){
-											outDatas[(roiHeight-1)*roiWidth + i] = bord[i];
-											rcm.setPixelAndValue((roiHeight-1)*roiWidth + i, bord[i]);
+											//if(bord[i] >= 0) {
+										//	System.out.println("bord "+bord[i]+" "+outDatas[(roiHeight-1)*roiWidth + i]);
+												outDatas[(roiHeight-1)*roiWidth + i] = bord[i];
+												rcm.setPixelAndValue((roiHeight-1)*roiWidth + i, bord[i]/cellSize);
+												//rcm.setPixelAndValue((roiHeight-1)*roiWidth + i, bord[i]);
+											//}
 										}
 									}
 								}
 							}
-								
+							
+							rcm.setHasValue(true);
 							rcm.run();
 							outDatas = (float[]) rcm.getResult();
 								
@@ -326,13 +352,13 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 								finish = false;
 							}
 								
-							// stockage en m�moire fichier de l'�tat de la tuile
+							// stockage en memoire fichier de l'etat de la tuile
 							CoverageManager.writeGeotiff(new File(temp+"_"+dx+"-"+dy+".tif"), outDatas, roiWidth, roiHeight, roiPosMinX, roiPosMaxX, roiPosMinY, roiPosMaxY, Raster.getNoDataValue());
 								
 							majTab[dy*dWidth+dx] = 0;
 							calculTab[dy*dWidth+dx] = 1;
 							
-						}else{ // la tuile ne doit pas �tre mise � jour
+						}else{ // la tuile ne doit pas etre mise a jour
 							if(calculTab[dy*dWidth+dx] >= 0){
 								calculTab[dy*dWidth+dx] = 0;
 							}
@@ -350,60 +376,87 @@ public class HugeRCMDistanceAnalysis extends Analysis {
 
 	/**
 	 * 3 cas
-	 * 1. la tuile n'a jamais �t� mise � jour, peut-�tre que les bords vont l'y obliger...
-	 * 2. la tuile n'a pas �t� mis � jour (cette fois), la mise � jour des bords se fera sous condition de l'�tat des tuiles voisines
-	 * 3. la tuile vient d'�tre mise � jour, attention au bords jamais mis � jour
+	 * 1. la tuile n'a jamais ete mise a jour, peut-etre que les bords vont l'y obliger...
+	 * 2. la tuile n'a pas ete mise a jour (cette fois), la mise a jour des bords se fera sous condition de l'etat des tuiles voisines
+	 * 3. la tuile vient d'etre mise a jour, attention au bords jamais mise a jour
 	 */
 	private boolean bordUpdateFromData(int dx, int dy, int roiWidth, int roiHeight, double roiPosMinX, double roiPosMaxX, double roiPosMinY, double roiPosMaxY, float[] outDatas){
 		
 		boolean finish = true;
 		Pixel p = new Pixel(dx, dy);
 		
-		//System.out.println("traitement de la tuile "+x+" "+y);
-		if(dx > 0){ // le bord gauche de la tuile est inclu et partag�
+		int index=0;
+				
+		//System.out.println("mise a jour des bords de la tuile "+x+" "+y);
+		if(dx > 0){ // le bord gauche de la tuile est inclu et partage
 			float[] bord = bords.get(p).get("left");
 			for(int j=0; j<roiHeight; j++){
-				if(bord[j] != outDatas[j * roiWidth + 0]){
+				//if(bord[j] > outDatas[j * roiWidth + 0]) {
+				if((bord[j] == -1 && outDatas[j * roiWidth + 0] >= 0) || (bord[j] > outDatas[j * roiWidth + 0])) {
+				//if(bord[j] != outDatas[j * roiWidth + 0]){
+					/*
+					if(dx == 1 && dy == 0 && j==0) {
+						System.out.println("mise à jour à gauche "+outDatas[j * roiWidth + 0]+" contre "+bord[j]);
+					}*/
+					
 					bord[j] = outDatas[j * roiWidth + 0];
 					majTab[dy*dWidth+(dx-1)] = 1;
 					finish = false;
+					index++;
 				}
 			}
 		}
 		
-		if(dy > 0){ // le bord nord de la tuile est inclu et partag�
+		if(dy > 0){ // le bord nord de la tuile est inclu et partage
 			float[] bord = bords.get(p).get("north");
 			for(int i=0; i<roiWidth; i++){
-				if(bord[i] != outDatas[i]){
+				//if(bord[i] > outDatas[i]) {
+				if((bord[i] == -1 && outDatas[i] >= 0) || bord[i] > outDatas[i]) {
+				//if(bord[i] != outDatas[i]){
+					//System.out.println("mise à jour en haut "+outDatas[i]+" contre "+bord[i]);
 					bord[i] = outDatas[i];
 					majTab[(dy-1)*dWidth+dx] = 1;
 					finish = false;
+					index++;
 				}
 			}
 		}
 		
-		if(dx < (dWidth-1)){ // le bord droite de la tuile est inclu et partag�
+		if(dx < (dWidth-1)){ // le bord droite de la tuile est inclu et partage
 			float[] bord = bords.get(p).get("right");
 			for(int j=0; j<roiHeight; j++){
-				if(bord[j] != outDatas[j * roiWidth + (roiWidth-1)]){
+				//if(bord[j] > outDatas[j * roiWidth + (roiWidth-1)]) {
+				if((bord[j] == -1 && outDatas[j * roiWidth + (roiWidth-1)] >= 0) || (bord[j] > outDatas[j * roiWidth + (roiWidth-1)])) {
+				//if(bord[j] != outDatas[j * roiWidth + (roiWidth-1)]){
+				/*
+					if(dx == 0 && dy == 0 && j==0) {
+						System.out.println("mise à jour à droite "+outDatas[j * roiWidth + (roiWidth-1)]+" contre "+bord[j]);
+					}*/
+						
 					bord[j] = outDatas[j * roiWidth + (roiWidth-1)];
 					majTab[dy*dWidth+(dx+1)] = 1;
 					finish = false;
+					index++;
 				}
 			}
 		}
 		
-		if(dy < (dHeight-1)){ // le bord sud de la tuile est inclu et partag�
+		if(dy < (dHeight-1)){ // le bord sud de la tuile est inclu et partage
 			float[] bord = bords.get(p).get("south");
 			for(int i=0; i<roiWidth; i++){
-				if(bord[i] != outDatas[(roiHeight-1)*roiWidth + i]){
+				//if(bord[i] > outDatas[(roiHeight-1)*roiWidth + i]) {
+				if((bord[i] == -1 && outDatas[(roiHeight-1)*roiWidth + i] >= 0) || (bord[i] > outDatas[(roiHeight-1)*roiWidth + i])) {
+				//if(bord[i] != outDatas[(roiHeight-1)*roiWidth + i]){
+					//System.out.println("mise à jour en bas "+outDatas[(roiHeight-1)*roiWidth + i]+" contre "+bord[i]);
 					bord[i] = outDatas[(roiHeight-1)*roiWidth + i];
 					majTab[(dy+1)*dWidth+dx] = 1;
 					finish = false;
+					index++;
 				}
 			}
 		}
-			
+		//System.out.println("nombre de changements : "+index);
+		
 		return finish;
 	}
 	

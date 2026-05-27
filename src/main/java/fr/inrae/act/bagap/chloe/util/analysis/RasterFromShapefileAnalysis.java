@@ -7,6 +7,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.SpacePreference;
 import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
 
 public class RasterFromShapefileAnalysis extends ChloeUtilAnalysis {
@@ -43,8 +44,8 @@ public class RasterFromShapefileAnalysis extends ChloeUtilAnalysis {
 	@Override
 	protected void doInit() {
 		
+		/*
 		CoordinateReferenceSystem crs = ShapeFile2CoverageConverter.getCoordinateReferenceSystem(inputShapefile);
-		
 		try {
 			if(!CRS.toSRS(crs).startsWith("EPSG")){
 				 crs = CRS.decode("EPSG:2154");
@@ -52,6 +53,9 @@ public class RasterFromShapefileAnalysis extends ChloeUtilAnalysis {
 		} catch (FactoryException e) {
 			e.printStackTrace();
 		}
+		*/
+		
+		CoordinateReferenceSystem crs = SpacePreference.getCRS();
 		
 		entete = EnteteRaster.getEntete(new Envelope(minx, maxx, miny, maxy), cellSize, noDataValue, crs);
 		

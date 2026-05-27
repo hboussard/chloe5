@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.EcoPaysage;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.calculmetrics.EPPCalculMetricsFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.clustering.EPPClusteringFactory;
+import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.evolution.membership.EPPMembershipEvolutionFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.gradient.EPPGradientFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.mapping.EPPMappingFactory;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.membership.EPPMembershipFactory;
@@ -63,11 +64,11 @@ public class EcoPaysageManager {
 	
 	private int factor; // facteur de clusterisation
 	
-	private Map<String, Map<Integer, String>> ecoFiles, mapFiles;
+	private Map<String, Map<Integer, String>> ecoFiles, mapFiles, gradientFiles, membershipFiles;
 	
-	private Map<Integer, String> /*ecoFiles, mapFiles,*/ infoFiles, gradientFiles, membershipFiles, thematicDistanceFiles;
+	private Map<Integer, String> /*ecoFiles, mapFiles,*/ infoFiles, thematicDistanceFiles, evoMembershipFiles;
 	
-	private Map<Integer, Map<Integer, String>> gradientMapFiles, membershipMapFiles;
+	private Map<String, Map<Integer, Map<Integer, String>>> gradientMapFiles, membershipMapFiles;
 	
 	private String headerFile; // le fichier d'entete raster
 	
@@ -114,6 +115,9 @@ public class EcoPaysageManager {
 		case "membership" :
 			factory = new EPPMembershipFactory();
 			break;
+		case "membership-evolution" :
+			factory = new EPPMembershipEvolutionFactory();
+			break;
 		case "rupture" :
 			factory = new EPPRuptureFactory();
 			break;
@@ -151,11 +155,12 @@ public class EcoPaysageManager {
 		ecoFiles = new TreeMap<String, Map<Integer, String>>();
 		mapFiles = new TreeMap<String, Map<Integer, String>>();
 		infoFiles = new TreeMap<Integer, String>();
-		gradientFiles = new TreeMap<Integer, String>();
-		membershipFiles = new TreeMap<Integer, String>();
+		gradientFiles = new TreeMap<String, Map<Integer, String>>();
+		membershipFiles = new TreeMap<String, Map<Integer, String>>();
 		thematicDistanceFiles = new TreeMap<Integer, String>();
-		gradientMapFiles = new TreeMap<Integer, Map<Integer, String>>();
-		membershipMapFiles = new TreeMap<Integer, Map<Integer, String>>();
+		gradientMapFiles = new TreeMap<String, Map<Integer, Map<Integer, String>>>();
+		membershipMapFiles = new TreeMap<String, Map<Integer, Map<Integer, String>>>();
+		evoMembershipFiles = new TreeMap<Integer, String>();
 		headerFile = null;
 		factor = 1;
 		noDataValue = -1;
@@ -429,30 +434,47 @@ public class EcoPaysageManager {
 		thematicDistanceFiles.put(k, thematicDistanceFile);
 	}
 	
-	public void setGradientFile(int k, String gradientFile) {
+	public void setGradientFile(String carto, int k, String gradientFile) {
 		Util.createAccess(gradientFile);
-		gradientFiles.put(k, gradientFile);
+		if(!this.gradientFiles.containsKey(carto)) {
+			this.gradientFiles.put(carto, new TreeMap<Integer, String>());
+		}
+		gradientFiles.get(carto).put(k, gradientFile);
 	}
 	
-	public void setMembershipFile(int k, String membershipFile) {
+	public void setMembershipFile(String carto, int k, String membershipFile) {
 		Util.createAccess(membershipFile);
-		membershipFiles.put(k, membershipFile);
+		if(!this.membershipFiles.containsKey(carto)) {
+			this.membershipFiles.put(carto, new TreeMap<Integer, String>());
+		}
+		membershipFiles.get(carto).put(k, membershipFile);
 	}
 	
-	public void setGradientMapFile(int k, int ik, String gradientMapFile) {
-		Util.createAccess(gradientMapFile);
-		if(!gradientMapFiles.containsKey(k)) {
-			gradientMapFiles.put(k, new TreeMap<Integer, String>());
-		}
-		gradientMapFiles.get(k).put(ik, gradientMapFile);
+	public void setEvoMembershipFile(int k, String evoMembershipFile) {
+		Util.createAccess(evoMembershipFile);
+		evoMembershipFiles.put(k, evoMembershipFile);
 	}
 	
-	public void setMembershipMapFile(int k, int ik, String gradientMapFile) {
+	public void setGradientMapFile(String carto, int k, int ik, String gradientMapFile) {
 		Util.createAccess(gradientMapFile);
-		if(!membershipMapFiles.containsKey(k)) {
-			membershipMapFiles.put(k, new TreeMap<Integer, String>());
+		if(!gradientMapFiles.containsKey(carto)) {
+			gradientMapFiles.put(carto, new TreeMap<Integer, Map<Integer, String>>());
 		}
-		membershipMapFiles.get(k).put(ik, gradientMapFile);
+		if(!gradientMapFiles.get(carto).containsKey(k)) {
+			gradientMapFiles.get(carto).put(k, new TreeMap<Integer, String>());
+		}
+		gradientMapFiles.get(carto).get(k).put(ik, gradientMapFile);
+	}
+	
+	public void setMembershipMapFile(String carto, int k, int ik, String gradientMapFile) {
+		Util.createAccess(gradientMapFile);
+		if(!membershipMapFiles.containsKey(carto)) {
+			membershipMapFiles.put(carto, new TreeMap<Integer, Map<Integer, String>>());	
+		}
+		if(!membershipMapFiles.get(carto).containsKey(k)) {
+			membershipMapFiles.get(carto).put(k, new TreeMap<Integer, String>());
+		}
+		membershipMapFiles.get(carto).get(k).put(ik, gradientMapFile);
 	}
 	
 	public void setHeaderFile(String headerFile) {
@@ -727,6 +749,7 @@ public class EcoPaysageManager {
 		return thematicDistanceFiles.get(k);
 	}
 	
+	/*
 	public String gradientFile(int k) {
 		if(!gradientFiles.containsKey(k)) {
 			StringBuilder sb = new StringBuilder();
@@ -739,20 +762,48 @@ public class EcoPaysageManager {
 		}
 		return gradientFiles.get(k);
 	}
+	*/
 	
-	public String membershipFile(int k) {
-		if(!membershipFiles.containsKey(k)) {
+	public String gradientFile(String carto, int k) {
+		if(!gradientFiles.containsKey(carto) || !gradientFiles.get(carto).containsKey(k)) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(outputFolder()+"gradient_ecopaysages_"+carto+"_"+k+"classes");
+			for(int scale : scales) {
+				sb.append("_"+scale+"m");
+			}
+			sb.append(".csv");
+			setGradientFile(carto, k, sb.toString());
+		}
+		return gradientFiles.get(carto).get(k);
+	}
+	
+	public String membershipFile(String carto, int k) {
+		if(!membershipFiles.containsKey(carto) || !membershipFiles.get(carto).containsKey(k)) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(outputFolder()+"membership_ecopaysages_"+carto+"_"+k+"classes");
 			for(int scale : scales) {
 				sb.append("_"+scale+"m");
 			}
 			sb.append(".csv");
-			setMembershipFile(k, sb.toString());
+			setMembershipFile(carto, k, sb.toString());
 		}
-		return membershipFiles.get(k);
+		return membershipFiles.get(carto).get(k);
 	}
 	
+	public String evoMembershipFile(int k) {
+		if(!evoMembershipFiles.containsKey(k)) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(outputFolder()+"evo_membership_ecopaysages_"+k+"classes");
+			for(int scale : scales) {
+				sb.append("_"+scale+"m");
+			}
+			sb.append(".csv");
+			setEvoMembershipFile(k, sb.toString());
+		}
+		return evoMembershipFiles.get(k);
+	}
+	
+	/*
 	public String gradientMapFile(int k, int ik) {
 		if(!gradientMapFiles.containsKey(k) || !gradientMapFiles.get(k).containsKey(ik)) {
 			StringBuilder sb = new StringBuilder();
@@ -765,18 +816,32 @@ public class EcoPaysageManager {
 		}
 		return gradientMapFiles.get(k).get(ik);
 	}
+	*/
 	
-	public String membershipMapFile(int k, int ik) {
-		if(!membershipMapFiles.containsKey(k) || !membershipMapFiles.get(k).containsKey(ik)) {
+	public String gradientMapFile(String carto, int k, int ik) {
+		if(!gradientMapFiles.containsKey(carto) || !gradientMapFiles.get(carto).containsKey(k) || !gradientMapFiles.get(carto).get(k).containsKey(ik)) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(outputFolder()+"gradient_ecopaysages_"+carto+"_"+k+"classes_ecop"+ik);
+			for(int scale : scales) {
+				sb.append("_"+scale+"m");
+			}
+			sb.append(".tif");
+			setGradientMapFile(carto, k, ik, sb.toString());
+		}
+		return gradientMapFiles.get(carto).get(k).get(ik);
+	}
+	
+	public String membershipMapFile(String carto, int k, int ik) {
+		if(!membershipMapFiles.containsKey(carto) || !membershipMapFiles.get(carto).containsKey(k) || !membershipMapFiles.get(carto).get(k).containsKey(ik)) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(outputFolder()+"membership_ecopaysages_"+carto+"_"+k+"classes_ecop"+ik);
 			for(int scale : scales) {
 				sb.append("_"+scale+"m");
 			}
 			sb.append(".tif");
-			setMembershipMapFile(k, ik, sb.toString());
+			setMembershipMapFile(carto, k, ik, sb.toString());
 		}
-		return membershipMapFiles.get(k).get(ik);
+		return membershipMapFiles.get(carto).get(k).get(ik);
 	}
 	
 	public String[] thematicDistanceFiles() {

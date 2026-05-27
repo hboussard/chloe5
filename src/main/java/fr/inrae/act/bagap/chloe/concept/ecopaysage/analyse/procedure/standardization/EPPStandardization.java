@@ -53,27 +53,26 @@ public class EPPStandardization extends EcoPaysageProcedure {
 
 		System.out.println("split des donnees de composition et de configuration");
 		
-		//EcoPaysage.splitCompoConfig(manager().metricsFile(scale), manager().xyFile(), manager().compoFile(scale), manager().configFile(scale), manager().compoMetrics(), manager().configMetrics());
-		EcoPaysage.splitCompoConfig(manager().metricsFiles(scale), manager().xyFile(), manager().compoFile(scale), manager().configFile(scale), manager().compoMetrics(), manager().configMetrics());
+		int count = EcoPaysage.splitCompoConfig(manager().metricsFiles(scale), manager().xyFile(), manager().compoFile(scale), manager().configFile(scale), manager().compoMetrics(), manager().configMetrics());
 		
 		System.out.println("standardisation des donnees de composition");
 		
 		float inertia;
 		
-		inertia = EcoPaysage.standardizeCompo(manager().compoFile(scale), manager().compoMetrics(), manager().importances(), scale);
+		inertia = EcoPaysage.standardizeCompo(manager().compoFile(scale), count, manager().compoMetrics(), manager().importances(), scale);
 		
 		manager().setInertia("composition_"+scale+"m", inertia);
 		
-		System.out.println("standardisation des donnees de configuration");
+		//System.out.println("standardisation des donnees de configuration");
 		
 		//EcoPaysage.standardize(manager().configFile(scale), manager().configMetrics());
 		
-		float[][] distances = null;
+		//float[][] distances = null;
 		//float[][] distances = Util.initThematicDistanceMap("E:/rennes_metropole/ecopaysage/distance/distance_neutre.txt");
 		
-		inertia = EcoPaysage.standardizeConfig(manager().configFile(scale), manager().configMetrics(), manager().importances(), distances, scale);
+		//inertia = EcoPaysage.standardizeConfig(manager().configFile(scale), count, manager().configMetrics(), manager().importances(), distances, scale);
 		
-		manager().setInertia("configuration_"+scale+"m", inertia);
+		//manager().setInertia("configuration_"+scale+"m", inertia);
 		/*
 		System.out.println("standardisation test");
 		Map<String, String> complementaryMetrics;
@@ -99,7 +98,7 @@ public class EPPStandardization extends EcoPaysageProcedure {
 		
 		Set<String> setSdtFiles = new LinkedHashSet<String>();
 		setSdtFiles.add(manager().compoFile(scale));
-		setSdtFiles.add(manager().configFile(scale));
+		//setSdtFiles.add(manager().configFile(scale));
 		//setSdtFiles.add("F:/coterra/data/Coterra_2019_DNSB_erb/std_slope_1000m.csv"); // pente
 		//setSdtFiles.add("D:/data/sig/data_ZA/PF_OS_L93/raster_5m/std_slope_average_1000m.csv"); // pente
 		//setSdtFiles.add("D:/data/sig/data_ZA/PF_OS_L93/raster_5m/std_elevation_average_1000m.csv"); // altitude
@@ -109,8 +108,8 @@ public class EPPStandardization extends EcoPaysageProcedure {
 		//EcoPaysage.compileStdCompoConfig(manager().standardizedFile(scale), manager().compoFile(scale), manager().configFile(scale), manager().compoMetrics(), manager().configMetrics(), scale);
 		EcoPaysage.compileStdFiles(manager().standardizedFile(scale), scale, sdtFiles);
 		
-		Tool.deleteFile(manager().compoFile(scale));
-		Tool.deleteFile(manager().configFile(scale));
+		//Tool.deleteFile(manager().compoFile(scale));
+		//Tool.deleteFile(manager().configFile(scale));
 		
 		EcoPaysage.exportInertia(manager().inertiaFile(), manager().inerties());
 	}

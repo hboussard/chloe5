@@ -9,13 +9,13 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
 	
 	private double totalSurface;
 	
-	private int nbPatch;
+	private double nbPatch;
 	
 	private double maxSurface; 
 	
 	private double totalSurfaceCarre;
 	
-	private Map<Integer, Integer> nbPatches;
+	private Map<Integer, Double> nbPatches;
 	
 	private Map<Integer, Double> totalSurfaces;
 	
@@ -26,7 +26,7 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
  	public PatchCounting(double resolution, int[] values, double theoreticalSize){
 		super(resolution, theoreticalSize);
 		this.values = values;
-		nbPatches = new HashMap<Integer, Integer>();
+		nbPatches = new HashMap<Integer, Double>();
 		totalSurfaces = new HashMap<Integer, Double>();
 		maxSurfaces = new HashMap<Integer, Double>();
 		totalSurfacesCarres = new HashMap<Integer, Double>();
@@ -50,13 +50,13 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
  	@Override
 	public void doSetCounts(double[] counts) {
 		
- 		nbPatch = (int) counts[4];
+ 		nbPatch = counts[4];
  		totalSurface = counts[5];
  		maxSurface = counts[6];
 		totalSurfaceCarre = counts[7];	
  		
  		for(int i=0; i<values.length; i++){
- 			nbPatches.put(values[i], (int) counts[i+8]);
+ 			nbPatches.put(values[i], counts[i+8]);
  		}
 			
  		for(int i=0; i<values.length; i++){
@@ -79,7 +79,7 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
 	}
 
 	@Override
-	public int nbPatches() {
+	public double nbPatches() {
 		return nbPatch;
 	}
 	
@@ -94,7 +94,7 @@ public class PatchCounting extends Counting implements PatchCountingInterface {
 	}
 	
 	@Override
-	public int nbPatches(int v){
+	public double nbPatches(int v){
 		return nbPatches.get(v);
 	}
 

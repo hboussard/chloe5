@@ -35,6 +35,7 @@ import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.raster.SpacePreference;
 
 public class ChloeAPI {
 
@@ -52,6 +53,10 @@ public class ChloeAPI {
 	        Reader in = new InputStreamReader(new FileInputStream(file), "UTF8");
 			properties.load(in);
 			in.close();
+			if(properties.containsKey("local")) {
+				String local = properties.getProperty("local");
+				setLocal(local);
+			}
 			if(properties.containsKey("procedure")){
 				String procedure = properties.getProperty("procedure");
 				switch(procedure){
@@ -88,6 +93,11 @@ public class ChloeAPI {
 		}catch(IOException ex){
 			ex.printStackTrace();
 		}
+	}
+
+	private static void setLocal(String local) {
+		
+		SpacePreference.setLocal(local);
 	}
 
 	private static void launchSliding(Properties properties) {
@@ -155,6 +165,7 @@ public class ChloeAPI {
 			importFrictionRaster(builder, properties);
 			importPointsFilter(builder, properties);
 			importWindowsPath(builder, properties);
+			importValues(builder, properties);
 			
 			// test d'output pour l'utilsateur qui voudrait un dossier ET des sorties spécifiques
 			importTypeMime(builder, properties);

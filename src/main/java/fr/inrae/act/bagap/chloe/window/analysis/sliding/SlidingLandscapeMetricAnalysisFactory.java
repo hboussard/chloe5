@@ -41,6 +41,7 @@ import fr.inrae.act.bagap.chloe.window.kernel.sliding.biodiversite.SlidingRepart
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion.SlidingMassCumulKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.erosion.SlidingSourceErosionKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.slope.SlidingSlopeKernel;
+import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.gaussian.BasicFastGaussianWeightedKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.gaussian.FastGaussianWeightedCountCoupleKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.gaussian.FastGaussianWeightedCountValueAndCoupleKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.gaussian.FastGaussianWeightedCountValueKernel;
@@ -448,8 +449,20 @@ public abstract class SlidingLandscapeMetricAnalysisFactory {
 
 			} else {
 				
-				kernel = new SlidingBasicKernel(windowSize, displacement, coeffs, coverage.getEntete().noDataValue(), unfilters);
+				if (builder.getWindowDistanceType() == WindowDistanceType.FAST_GAUSSIAN){
+					
+					//int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters
+					//kernel = new BasicFastGaussianWeightedKernel(windowSize, displacement, coverage.getEntete().noDataValue(), values, unfilters);
+					// TODO
+					
+				} else if (builder.getWindowDistanceType() == WindowDistanceType.FAST_SQUARE){
+					
+					// TODO
 				
+				} //else {
+				
+				kernel = new SlidingBasicKernel(windowSize, displacement, coeffs, coverage.getEntete().noDataValue(), unfilters);
+				//}
 				// analysis
 				return createSingle(coverage, roiX, roiY, roiWidth, roiHeight, bufferROIXMin, bufferROIXMax, bufferROIYMin, bufferROIYMax, nbValues, displacement, kernel, counting);
 			}

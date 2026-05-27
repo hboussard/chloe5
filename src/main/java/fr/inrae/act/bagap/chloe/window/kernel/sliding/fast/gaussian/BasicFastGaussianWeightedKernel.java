@@ -2,11 +2,11 @@ package fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.gaussian;
 
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.fast.FastQualitativeKernel;
 
-public class BasicFastGaussianWeightedKernel2 extends FastQualitativeKernel {
+public class BasicFastGaussianWeightedKernel extends FastQualitativeKernel {
 
 	private float[] gauss;
 	
-	protected BasicFastGaussianWeightedKernel2(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters) {
+	protected BasicFastGaussianWeightedKernel(int windowSize, int displacement, int noDataValue, int[] values, int[] unfilters) {
 		super(windowSize, displacement, noDataValue, values, unfilters);
 
 		this.gauss = new float[rayon()];

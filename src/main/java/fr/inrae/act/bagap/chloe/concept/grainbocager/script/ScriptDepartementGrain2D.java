@@ -12,6 +12,7 @@ import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.vector.ShapeFileTool;
 
 public class ScriptDepartementGrain2D{
 
@@ -88,7 +89,7 @@ public class ScriptDepartementGrain2D{
 		String localPath = path+dpt+"/";
 		Util.createAccess(localPath+"data/");
 		
-		Envelope env = ShapeFile2CoverageConverter.getEnvelope(localPath+"data/dpt_"+dpt+".shp", 2500);
+		Envelope env = ShapeFileTool.getEnvelope(localPath+"data/dpt_"+dpt+".shp", 2500);
 		EnteteRaster entete = EnteteRaster.getEntete(env, 5, -1);
 		
 		/*

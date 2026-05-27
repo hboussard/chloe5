@@ -4,7 +4,7 @@ import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.value.ValueMetric;
 
-public class EffectiveMeshSizeClassMetric extends Metric implements ValueMetric {
+public class EffectiveMeshSizeClassMetric extends Metric implements PatchMetric {
 	
 	private int classMetric;
 	
@@ -23,7 +23,7 @@ public class EffectiveMeshSizeClassMetric extends Metric implements ValueMetric 
 		}
 		*/
 		if(co.validValues() > 0){
-			value = (double) co.totalSurfaceCarre(classMetric)/(co.validValues()*Math.pow(co.resolution(), 2)/10000.0);
+			value = co.totalSurfaceCarre(classMetric)/(co.validValues()*Math.pow(co.resolution(), 2)/10000.0);
 		}else{
 			value = 0;
 		}

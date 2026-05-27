@@ -20,6 +20,7 @@ import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import fr.inrae.act.bagap.apiland.raster.Tile;
 import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.vector.ShapeFileTool;
 
 public class ScriptErosionRuissellement {
 
@@ -660,7 +661,7 @@ public class ScriptErosionRuissellement {
 	}
 	
 	private static void recuperationBV(){
-		Envelope envelope = ShapeFile2CoverageConverter.getEnvelope("H:/temp/slope/test/data/bv.shp", 0);
+		Envelope envelope = ShapeFileTool.getEnvelope("H:/temp/slope/test/data/bv.shp", 0);
 		Coverage refCov = CoverageManager.getCoverage("G:/data/sig/bd_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D035_2020-01-27/RGEALTI/1_DONNEES_LIVRAISON_2020-04-00197/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D035_geotiff/");
 		EnteteRaster refEntete = refCov.getEntete();
 		refCov.dispose();

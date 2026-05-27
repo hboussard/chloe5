@@ -21,9 +21,9 @@ public class ScriptEcopaysagesZA {
 	public static void main(String[] args) {
 		//cleanOccsol();
 		
-		ecolandscape("2016", "inv_inertia", "", 25);
+		//ecolandscape("2016", "inv_inertia", "", 25);
 		//ecolandscape("2016", "inv_inertia", "", 50);
-		ecolandscape("2016", "inv_inertia", "", 100);
+		//ecolandscape("2016", "inv_inertia", "", 100);
 		//ecolandscapeDynamics();
 		
 		//prepaRgeAlti();

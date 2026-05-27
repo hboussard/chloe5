@@ -8,6 +8,7 @@ import java.util.Set;
 import fr.inrae.act.bagap.apiland.util.Tool;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.Pixel;
+import fr.inrae.act.bagap.apiland.raster.SpacePreference;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.counting.CountingObserver;
@@ -103,7 +104,7 @@ public class AsciiGridOutput implements CountingObserver {
 			e.printStackTrace();
 		} finally{
 			try {
-				Tool.copy(CoverageManager.class.getResourceAsStream(CoverageManager.epsg()), file.replace(".asc", "")+".prj");
+				Tool.copy(CoverageManager.class.getResourceAsStream(SpacePreference.getEPSG()), file.replace(".asc", "")+".prj");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

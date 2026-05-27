@@ -6,6 +6,7 @@ import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.vector.ShapeFileTool;
 
 public class ScriptEcopaysagePaysDeLaLoire {
 
@@ -23,7 +24,7 @@ public class ScriptEcopaysagePaysDeLaLoire {
 		
 		System.out.println(refEntete.width()+" "+refEntete.height()+" "+(refEntete.width()*refEntete.height()));
 		
-		Envelope envelope = ShapeFile2CoverageConverter.getEnvelope("G:/FRC_Pays_de_la_Loire/data/departements/departements_pdl.shp", 5000);
+		Envelope envelope = ShapeFileTool.getEnvelope("G:/FRC_Pays_de_la_Loire/data/departements/departements_pdl.shp", 5000);
 		
 		EnteteRaster entete = EnteteRaster.getEntete(refEntete, envelope);
 		

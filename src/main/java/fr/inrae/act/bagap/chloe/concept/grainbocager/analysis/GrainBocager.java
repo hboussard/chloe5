@@ -379,7 +379,8 @@ public class GrainBocager {
 				if(vtb == entete.noDataValue()){
 					return entete.noDataValue();
 				}
-				if(vdm <= 20){
+				if(vdm <= 20){ // version 2025
+				//if(vdm <= 30){ // version 2026
 					if(vtb == 10){
 						return 5;
 					}

@@ -131,7 +131,8 @@ public class HugeGrainBocager {
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
 		builder.setCoverage(covTypeBoisementPhase1);
 		builder.addMetric("pNV_5");
-		builder.setWindowSize(9);
+		builder.setWindowSize(9); // version 2025
+		//builder.setWindowSize(13); // version 2026
 		builder.addTileGeoTiffOutput("pNV_5", rasterDistanceBoisement, tile);
 		
 		LandscapeMetricAnalysis analysis = builder.build();
@@ -172,7 +173,8 @@ public class HugeGrainBocager {
 				if(vtb == Raster.getNoDataValue()){
 					return Raster.getNoDataValue();
 				}
-				if(v[1] <= 20){
+				//if(v[1] <= 20){	// version 2025
+				if(v[1] <= 30){ // version 2026
 					if(v[0] == 10){
 						return 5;
 					}

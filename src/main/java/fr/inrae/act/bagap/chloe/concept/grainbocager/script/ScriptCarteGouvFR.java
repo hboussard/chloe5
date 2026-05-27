@@ -17,7 +17,16 @@ public class ScriptCarteGouvFR {
 		//maxNbCluster();
 		//copyAndRenameData();
 		
-		//copyAndRenameData("C:/Data/projet/grain_bocager/data/GRAIN-BOCAGER_1-0__TIFF_LAMB93_D001_2021-01-01/", "D:/grain_bocager/data/01/2021/", "01", 2021);
+		//copyAndRenameData("C:/Data/projet/grain_bocager/data/GRAIN-BOCAGER_1-0__TIFF_LAMB93_D030_2021-01-01/", "D:/grain_bocager/data/30/2021/", "30", 2021);
+		try {
+			
+			MultiVolume7z.create("C:/Data/projet/grain_bocager/data/GRAIN-BOCAGER_1-0__TIFF_LAMB93_D030_2021-01-01/", "C:/Data/projet/grain_bocager/archive/GRAIN-BOCAGER_1-0__TIFF_LAMB93_D030_2021-01-01", "4g");
+		
+			//Tool.deleteFolder("C:/Data/projet/grain_bocager/data/GRAIN-BOCAGER_1-0__TIFF_LAMB93_D030_2021-01-01/");
+			
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+		}
 		//ZipUtil.zip("C:/Data/projet/grain_bocager/archive/GRAIN-BOCAGER_1-0__TIFF_LAMB93_D001_2021-01-01.zip", "C:/Data/projet/grain_bocager/data/GRAIN-BOCAGER_1-0__TIFF_LAMB93_D001_2021-01-01/");
 		//Tool.deleteFolder("C:/Data/projet/grain_bocager/data/GRAIN-BOCAGER_1-0__TIFF_LAMB93_D001_2021-01-01/");
 			

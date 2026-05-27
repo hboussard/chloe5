@@ -3,6 +3,8 @@ package fr.inrae.act.bagap.chloe.window.counting;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.inrae.act.bagap.chloe.util.Couple;
+
 public class CoupleCounting extends Counting implements CoupleCountingInterface {
 
 	/** the count of couples */
@@ -117,6 +119,17 @@ public class CoupleCounting extends Counting implements CoupleCountingInterface 
 			return countCouples.get(c);
 		}
 		return 0;
+	}
+	
+	@Override 
+	public double countInterface(short v) {
+		double inter = 0.0;
+		for(Float c : countCouples.keySet()) {
+			if(Couple.hasOne(c, v)) {
+				inter += countCouples.get(c);
+			}
+		}
+		return inter; 
 	}
 
 	@Override

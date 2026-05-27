@@ -5,21 +5,27 @@ import fr.inrae.act.bagap.chloe.concept.erosion.analyse.procedure.ErosionProcedu
 
 public class ScriptByTerritory {
 	
-	//private static final String rge_alti_11 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D011_2021-05-12/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D011_2021-05-12/RGEALTI/1_DONNEES_LIVRAISON_2021-10-00009/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D011/";
+	private static final String rge_alti_11 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D011_2021-05-12/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D011_2021-05-12/RGEALTI/1_DONNEES_LIVRAISON_2021-10-00009/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D011/";
+	private static final String rge_alti_24 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D024_2019-10-17/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D024_2019-10-17/RGEALTI/1_DONNEES_LIVRAISON_2023-01-00223/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D024/";
 	private static final String rge_alti_31 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D031_2021-05-12/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D031_2021-05-12/RGEALTI/1_DONNEES_LIVRAISON_2021-10-00009/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D031/";
 	private static final String rge_alti_32 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D032_2019-11-21/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D032_2019-11-21/RGEALTI/1_DONNEES_LIVRAISON_2021-10-00009/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D032/";
 	private static final String rge_alti_29 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D029_2022-10-14/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D029_2022-10-14/RGEALTI/1_DONNEES_LIVRAISON_2022-12-00129/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D029/";
 	private static final String rge_alti_40 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D040_2021-04-19/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D040_2021-04-19/RGEALTI/1_DONNEES_LIVRAISON_2021-10-00009/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D040/";
 	private static final String rge_alti_47 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D047_2019-11-21/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D047_2019-11-21/RGEALTI/1_DONNEES_LIVRAISON_2021-10-00009/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D047/";
+	private static final String rge_alti_53 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D053_2020-01-22/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D053_2020-01-22/RGEALTI/1_DONNEES_LIVRAISON_2020-04-00197/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D053/";
+	private static final String rge_alti_61 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D061_2023-01-12/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D061_2023-01-12/RGEALTI/1_DONNEES_LIVRAISON_2023-08-00160/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D061/";
 	private static final String rge_alti_82 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D082_2019-10-30/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D082_2019-10-30/RGEALTI/1_DONNEES_LIVRAISON_2021-10-00009/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D082/";
 	
 	
-	//private static final String bd_topo_11 = "D:/sig/bd_topo/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D011_2024-03-15/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D011_2024-03-15/BDTOPO/1_DONNEES_LIVRAISON_2024-04-00042/BDT_3-3_SHP_LAMB93_D011-ED2024-03-15/";
+	private static final String bd_topo_11 = "D:/sig/bd_topo/BDTOPO_3-4_TOUSTHEMES_SHP_LAMB93_D011_2024-09-15/BDTOPO_3-4_TOUSTHEMES_SHP_LAMB93_D011_2024-09-15/BDTOPO/1_DONNEES_LIVRAISON_2024-09-00147/BDT_3-4_SHP_LAMB93_D011-ED2024-09-15/";
+	private static final String bd_topo_24 = "D:/sig/bd_topo/BDTOPO_3-4_TOUSTHEMES_SHP_LAMB93_D024_2024-09-15/BDTOPO_3-4_TOUSTHEMES_SHP_LAMB93_D024_2024-09-15/BDTOPO/1_DONNEES_LIVRAISON_2024-09-00147/BDT_3-4_SHP_LAMB93_D024-ED2024-09-15/";
 	private static final String bd_topo_31 = "D:/sig/bd_topo/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D031_2023-03-15/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D031_2023-03-15/BDTOPO/1_DONNEES_LIVRAISON_2023-03-00212/BDT_3-3_SHP_LAMB93_D031-ED2023-03-15/";
 	private static final String bd_topo_32 = "D:/sig/bd_topo/BDTOPO_3-4_TOUSTHEMES_SHP_LAMB93_D032_2024-06-15/BDTOPO_3-4_TOUSTHEMES_SHP_LAMB93_D032_2024-06-15/BDTOPO/1_DONNEES_LIVRAISON_2024-06-00178/BDT_3-4_SHP_LAMB93_D032-ED2024-06-15/";
 	private static final String bd_topo_29 = "D:/sig/bd_topo/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D029_2021-03-15/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D029_2021-03-15/BDTOPO/1_DONNEES_LIVRAISON_2021-03-00272/BDT_3-0_SHP_LAMB93_D029-ED2021-03-15/";
 	private static final String bd_topo_40 = "D:/sig/bd_topo/BDTOPO_3-4_TOUSTHEMES_SHP_LAMB93_D040_2024-09-15/BDTOPO/1_DONNEES_LIVRAISON_2024-09-00147/BDT_3-4_SHP_LAMB93_D040-ED2024-09-15/";
 	private static final String bd_topo_47 = "D:/sig/bd_topo/BDTOPO_3-4_TOUSTHEMES_SHP_LAMB93_D047_2024-09-15/BDTOPO/1_DONNEES_LIVRAISON_2024-09-00147/BDT_3-4_SHP_LAMB93_D047-ED2024-09-15/";
+	private static final String bd_topo_53 = "D:/sig/bd_topo/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D053_2022-06-15/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D053_2022-06-15/BDTOPO/1_DONNEES_LIVRAISON_2022-06-00168/BDT_3-0_SHP_LAMB93_D053-ED2022-06-15/";
+	private static final String bd_topo_61 = "D:/sig/bd_topo/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D061_2022-06-15/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D061_2022-06-15/BDTOPO/1_DONNEES_LIVRAISON_2022-06-00168/BDT_3-0_SHP_LAMB93_D061-ED2022-06-15/";
 	private static final String bd_topo_82 = "D:/sig/bd_topo/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D082_2024-03-15/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D082_2024-03-15/BDTOPO/1_DONNEES_LIVRAISON_2024-04-00042/BDT_3-3_SHP_LAMB93_D082-ED2024-03-15/";
 	
 	public static void main(String[] args) {
@@ -34,6 +40,7 @@ public class ScriptByTerritory {
 		
 		/*
 		// 0222 - Gardijol
+		outputFolder = "C:/Data/projet/coterra/gardijol/erosion/";
 		bvShape = "C:/Data/projet/coterra/data/BV tests/Zone hydro Gardijol.shp";
 		bvAttribute = "code_zone";
 		bvCode = "O222";	
@@ -42,7 +49,8 @@ public class ScriptByTerritory {
 		*/
 		/*
 		// O253 - Cédat
-		bvShape = "C:/Data/projet/coterra/data/BV tests/Zone hydro Cédat.shp";
+		bvShape = "C:/Data/projet/coterra/cedat/data/Zone hydro Cédat.shp";
+		outputFolder = "C:/Data/projet/coterra/cedat/erosion/";
 		bvAttribute = "code_zone";
 		bvCode = "O253";	
 		rge_altis = new String[] {rge_alti_32, rge_alti_31};
@@ -65,6 +73,7 @@ public class ScriptByTerritory {
 		rge_altis = new String[] {rge_alti_32, rge_alti_40, rge_alti_47};
 		bd_topos = new String[] {bd_topo_32, bd_topo_40, bd_topo_47};
 			*/
+		/*
 		// Gers - Astarac
 		outputFolder = "C:/Data/projet/gers/data/erosion/";
 		bvShape = "C:/Data/projet/gers/data/astarac/PNR_ASTARAC_PERIMETRE.shp";
@@ -72,6 +81,7 @@ public class ScriptByTerritory {
 		bvCode = "astarac";	
 		rge_altis = new String[] {rge_alti_32};
 		bd_topos = new String[] {bd_topo_32};
+		*/
 		/*
 		//test en Bas-Leon
 		bvShape = "C:/Data/temp/bas_leon/BV_AW_amont/BV_AW_amont.shp";
@@ -112,13 +122,59 @@ public class ScriptByTerritory {
 		rge_altis = new String[] {rge_alti_31};
 		bd_topos = new String[] {bd_topo_31};
 		*/
-		
+		/*
+		// test Orne-Mayenne SDE61
+		outputFolder = "C:/Data/temp/orne/erosion/";
+		bvShape = "C:/Data/temp/orne/data/AAC Couterne.shp";
+		bvAttribute = "code";
+		bvCode = "SDE61";	
+		rge_altis = new String[] {rge_alti_53, rge_alti_61};
+		bd_topos = new String[] {bd_topo_53, bd_topo_61};
+		*/
+		/*
+		// test Gemapi
+		outputFolder = "C:/Data/temp/gemapi/erosion/";
+		bvShape = "C:/Data/temp/gemapi/data/BV_fleche_frout_diagterritoire.shp";
+		bvAttribute = "code";
+		//bvCode = "fleche";	
+		bvCode = "lpk";	
+		rge_altis = new String[] {rge_alti_29};
+		bd_topos = new String[] {bd_topo_29};
+		*/
+		/*
+		// test Dordogne
+		outputFolder = "C:/Data/temp/yannick/BV_VERN/erosion/";
+		bvShape = "C:/Data/temp/yannick/BV_VERN/data/BV_niveau_3.shp";
+		bvAttribute = "Niveau_1";	
+		bvCode = "GiroChar_3132";	
+		rge_altis = new String[] {rge_alti_24};
+		bd_topos = new String[] {bd_topo_24};
+		*/
+		/*
+		// test Hecate
+		outputFolder = "C:/Data/temp/hecate/erosion/";
+		bvShape = "C:/Data/temp/hecate/data/Zones démonstrateurs fusionnées/Zones fusionnees.shp";
+		bvAttribute = "CdZoneHydr";	
+		//bvCode = "O274";
+		bvCode = "O625";
+		rge_altis = new String[] {rge_alti_32};
+		bd_topos = new String[] {bd_topo_32};
+		*/	
+		/*
+		// aber benouic
+		outputFolder = "C:/Data/temp/benouic/erosion/";
+		bvShape = "C:/Data/temp/benouic/data/BVs_AberBenouic/BVs_AberBenouic.shp";
+		bvAttribute = "CCPA";
+		bvCode = "1";	
+		rge_altis = new String[] {rge_alti_29};
+		bd_topos = new String[] {bd_topo_29};
+		*/
 		//initialisation(bvShape, bvCode, rge_altis, bd_topos);
 		//procedure(bvCode);
 		
 		//wholeProcedure(outputFolder, bvShape, bvAttribute, bvCode, rge_altis, bd_topos, "SOFT");
 		//wholeProcedure(outputFolder, bvShape, bvAttribute, bvCode, rge_altis, bd_topos, "MEDIUM");
-		wholeProcedure(outputFolder, bvShape, bvAttribute, bvCode, rge_altis, bd_topos, "HARD");
+		//wholeProcedure(outputFolder, bvShape, bvAttribute, bvCode, rge_altis, bd_topos, "HARD");
 		
 	}
 

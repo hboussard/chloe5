@@ -66,6 +66,13 @@ public interface CoupleCountingInterface {
 	double countCouple(short v1, short v2);
 	
 	/**
+	 * to count interface with v
+	 * @param v : type of value to interface
+	 * @return the count of interface with v
+	 */
+	double countInterface(short v);
+	
+	/**
 	 * to count the classes
 	 * @return the count of classes
 	 */

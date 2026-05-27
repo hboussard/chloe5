@@ -6,7 +6,7 @@ public class MapCountCoupleKernel extends MapLandscapeMetricKernel {
 	
 	private int[] mapValues;
 	
-	private short[] lastValueLine;
+	private int[] lastValueLine;
 	
 	public MapCountCoupleKernel(int noDataValue, int[] values){		
 		super(noDataValue);
@@ -39,25 +39,25 @@ public class MapCountCoupleKernel extends MapLandscapeMetricKernel {
 	
 	@Override
 	public void init(){
-		lastValueLine = new short[width()];
+		lastValueLine = new int[width()];
 	}
 	
 	@Override
 	public void applyMapWindow(int theY) {
 		
-		short v, v_H, v_V;
+		int v, v_H, v_V;
 		int mc;				
 		for(int y=0; y<height(); y++) {
 			for(int x=0; x<width(); x++) {
 					
-				v = (short) inDatas()[(y*width()) + x];			
+				v = (int) inDatas()[(y*width()) + x];			
 				outDatas()[2] += 1;
 				if(v == noDataValue()){
 					outDatas()[3] += 1;
 				}
 				
 				if(y > 0) {
-					v_V = (short) inDatas()[((y-1)*width()) + x];
+					v_V = (int) inDatas()[((y-1)*width()) + x];
 					outDatas()[4] += 1;
 					if(v == noDataValue() || v_V == noDataValue()){
 						outDatas()[5] += 1;
@@ -82,7 +82,7 @@ public class MapCountCoupleKernel extends MapLandscapeMetricKernel {
 				}
 						
 				if(x > 0) {
-					v_H = (short) inDatas()[(y*width()) + (x - 1)];
+					v_H = (int) inDatas()[(y*width()) + (x - 1)];
 					outDatas()[4] += 1;
 					if(v == noDataValue() || v_H == noDataValue()){
 						outDatas()[5] += 1;

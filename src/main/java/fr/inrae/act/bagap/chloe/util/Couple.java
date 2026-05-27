@@ -30,12 +30,20 @@ public class Couple {
 		}
 	}
 	
+	public static boolean hasOne(float c, short v) {
+		return (v == (short) Math.floor(c) && v != (short) Math.round((c - Math.floor(c)) * 10000)) || (v != (short) Math.floor(c) && v == (short) Math.round((c - Math.floor(c)) * 10000));
+	}
+	
 	public static short getOne(float c) {
-		return new Double(Math.floor(c)).shortValue();
+		
+		return (short) Math.floor(c);
+		//return new Double(Math.floor(c)).shortValue();
 	}
 	
 	public static short getOther(float c) {
-		return new Double(Math.round((c - Couple.getOne(c)) * 10000)).shortValue();
+		
+		return (short) Math.round((c - Math.floor(c)) * 10000);
+		//return new Double(Math.round((c - Couple.getOne(c)) * 10000)).shortValue();
 	}
 
 	public static boolean isHomogeneous(float c) {

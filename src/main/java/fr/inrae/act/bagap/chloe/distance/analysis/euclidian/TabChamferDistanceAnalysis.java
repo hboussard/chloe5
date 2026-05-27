@@ -38,6 +38,7 @@ public class TabChamferDistanceAnalysis extends Analysis {
 	public TabChamferDistanceAnalysis(float[] outDatas, float[] inDatas, int width, int height, float cellSize, int noDataValue, int[] codes, double threshold) {
 		this.chamfer = TabChamferDistanceAnalysis.chamfer13;
 		this.normalizer = this.chamfer[0][2];
+		//System.out.println("noramlizer "+this.normalizer);
 		this.outDatas = outDatas;
 		this.inDatas = inDatas;
 		this.width = width;
@@ -45,11 +46,20 @@ public class TabChamferDistanceAnalysis extends Analysis {
 		this.cellSize = cellSize;
 		this.noDataValue = noDataValue;
 		this.codes = codes;
-		this.threshold = threshold;
+		if(threshold == noDataValue){
+			//this.threshold = Integer.MAX_VALUE;
+			this.threshold = 1000000;
+		}else{
+			this.threshold = (threshold/this.cellSize) * this.normalizer;
+		}
 	}
 	
 	public boolean hasValue(){
 		return hasValue;
+	}
+	
+	public void setHasValue(boolean ok){
+		this.hasValue = ok;
 	}
 
 	@Override
@@ -181,7 +191,7 @@ public class TabChamferDistanceAnalysis extends Analysis {
 					if (ok) {
 						outDatas[yt * width + xt] = 0; // inside the object -> distance=0
 					} else {
-						outDatas[yt * width + xt] = -2; // outside the object -> to be computed
+						outDatas[yt * width + xt] = (float) threshold; // outside the object -> to be computed
 					}
 				}else{
 					outDatas[yt * width + xt] = noDataValue; // nodata_value -> to be not computed

@@ -8,7 +8,7 @@ public class EntityCountCoupleKernel extends EntityLandscapeMetricKernel{
 	
 	private int[] lastEntityLine;
 	
-	private short[] lastValueLine;
+	private int[] lastValueLine;
 
 	public EntityCountCoupleKernel(int noDataValue, int[] values){
 		super(noDataValue);
@@ -42,20 +42,20 @@ public class EntityCountCoupleKernel extends EntityLandscapeMetricKernel{
 	@Override
 	public void init(){
 		lastEntityLine = new int[width()];
-		lastValueLine = new short[width()];
+		lastValueLine = new int[width()];
 	}
 	
 	@Override
 	public void applyEntityWindow(){
 		
 		int mc;
-		short v = 0, v_H, v_V;
+		int v = 0, v_H, v_V;
 		for(int y=0; y<height(); y++){
 			for(int x=0; x<width(); x++){
 				int va = (int) entityDatas()[y*width() + x];
 				if(va != 0 && va != noDataValue()){
 					
-					v = (short) inDatas()[y*width() + x];
+					v = (int) inDatas()[y*width() + x];
 					outDatas().get(va)[2] += 1;
 					if(v == noDataValue()){
 						outDatas().get(va)[3] += 1;
@@ -64,7 +64,7 @@ public class EntityCountCoupleKernel extends EntityLandscapeMetricKernel{
 					// couple vertical
 					if((y > 0) && entityDatas()[(y-1)*width() + x] == va){
 					
-						v_V = (short) inDatas()[(y-1)*width() + x];
+						v_V = (int) inDatas()[(y-1)*width() + x];
 						outDatas().get(va)[4] += 1;
 						if(v == noDataValue() || v_V == noDataValue()){
 							outDatas().get(va)[5] += 1;
@@ -91,7 +91,7 @@ public class EntityCountCoupleKernel extends EntityLandscapeMetricKernel{
 					// couple horizontal
 					if((x > 0) && entityDatas()[y*width() + (x-1)] == va){
 					
-						v_H = (short) inDatas()[y*width() + (x-1)];
+						v_H = (int) inDatas()[y*width() + (x-1)];
 						outDatas().get(va)[4] += 1;
 						if(v == noDataValue() || v_H == noDataValue()){
 							outDatas().get(va)[5] += 1;

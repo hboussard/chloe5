@@ -1,4 +1,4 @@
-package fr.inrae.act.bagap.chloe.script;
+package fr.inrae.act.bagap.chloe.concept.grainbocager.script;
 
 import java.util.Set;
 import java.util.TreeMap;

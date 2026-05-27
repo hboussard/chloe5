@@ -12,6 +12,7 @@ import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import fr.inrae.act.bagap.apiland.raster.TileCoverage;
+import fr.inrae.act.bagap.chloe.util.Util;
 
 public class TileQueenClusteringAnalysis extends Analysis {
 
@@ -25,6 +26,7 @@ public class TileQueenClusteringAnalysis extends Analysis {
 	
 	public TileQueenClusteringAnalysis(String outputFolder, TileCoverage inCoverage, int[] interest, int noDataValue){
 		this.outputFolder = outputFolder;
+		Util.createAccess(this.outputFolder);
 		this.inCoverage = inCoverage;
 		this.interest = interest;
 		this.noDataValue = noDataValue;
@@ -68,7 +70,6 @@ public class TileQueenClusteringAnalysis extends Analysis {
 			}
 		}
 		
-		
 		TileCoverage covInitCluster = (TileCoverage) CoverageManager.getCoverage(outputFolder);
 		
 		System.out.println("calcul des correspondances");
@@ -82,15 +83,11 @@ public class TileQueenClusteringAnalysis extends Analysis {
 			for(int i=0; i<ncols; i++){
 				localClusterCoverage = covInitCluster.getCoverage(i, j);
 				if(localClusterCoverage != null){
-					//localClusterCoverage = localCoverage.getEntete();
-					//localCoverage.dispose();
 					
 					numTile = j*ncols + i;
 					
-					//localClusterCoverage = CoverageManager.getCoverage(outputFolder+"cluster_"+((int) localEntete.minx()/1000)+"_"+((int) localEntete.maxy()/1000)+".tif");
 					localClusterData = localClusterCoverage.getData();
 					//localClusterCoverage.dispose();
-					
 					
 					correspondances.put(numTile, new HashMap<Integer, Map<Integer, Set<Integer>>>());
 					for(float vc : localClusterData){
@@ -374,12 +371,10 @@ public class TileQueenClusteringAnalysis extends Analysis {
 				localClusterCoverage = covInitCluster.getCoverage(i, j);
 				if(localClusterCoverage != null){
 					localEntete = localClusterCoverage.getEntete();
-					//localCoverage.dispose();
-					
-					numTile = j*ncols + i;
-					
 					localClusterData = localClusterCoverage.getData();
 					//localClusterCoverage.dispose();
+					
+					numTile = j*ncols + i;
 					
 					localData = new float[width*width];
 					
@@ -391,6 +386,7 @@ public class TileQueenClusteringAnalysis extends Analysis {
 			}
 		}
 		
+		covInitCluster.dispose();
 	}
 
 	@Override

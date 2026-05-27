@@ -3,6 +3,8 @@ package fr.inrae.act.bagap.chloe.distance.analysis.functional;
 import java.util.ArrayList;
 import java.util.List;
 import fr.inrae.act.bagap.apiland.analysis.Analysis;
+import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
+import fr.inrae.act.bagap.apiland.util.CoordinateManager;
 
 public class TabRCMDistanceAnalysis extends Analysis {
 
@@ -10,7 +12,9 @@ public class TabRCMDistanceAnalysis extends Analysis {
 	
 	private static final float sqrt2 = (float) Math.sqrt(2);
 	
-	private static final float coeffReg = 314.0f;
+	//private static final float coeffReg = 314.0f;
+	//private static final float coeffReg = 1f;
+	private static final float coeffReg = 200f;
 	
 	private float[] outDatas, inDatas, frictionDatas, everDatas;
 	
@@ -27,6 +31,10 @@ public class TabRCMDistanceAnalysis extends Analysis {
 	private List<Integer>[] waits;
 	
 	private boolean hasValue;
+	
+	//private EnteteRaster inEntete, frictionEntete;
+	
+	//private float minThresholdSource;
 	
 	public TabRCMDistanceAnalysis(float[] outDatas, float[] frictionDatas, int width, int height, float cellSize, int noDataValue, double threshold) {
 		this(outDatas, null, frictionDatas, width, height, cellSize, noDataValue, null, threshold);
@@ -51,10 +59,43 @@ public class TabRCMDistanceAnalysis extends Analysis {
 		}else{
 			this.threshold = threshold;
 		}
+		
+		tinyInit();
 	}
+	
+	/*
+	public TabRCMDistanceAnalysis(float[] outDatas, float[] inDatas, EnteteRaster inEntete, float[] frictionDatas, EnteteRaster frictionEntete, float minThresholdSource, double threshold) {
+		this.outDatas = outDatas;
+		this.inDatas = inDatas;
+		this.inEntete = inEntete;
+		this.frictionDatas = frictionDatas;
+		this.frictionEntete = frictionEntete;
+		this.width = frictionEntete.width();
+		this.height = frictionEntete.height();
+		this.cellSize = frictionEntete.cellsize();
+		this.noDataValue = frictionEntete.noDataValue();
+		this.minThresholdSource = minThresholdSource;
+		if(threshold == noDataValue){
+			//this.threshold = Integer.MAX_VALUE;
+			this.threshold = 1000000;
+		}else{
+			this.threshold = threshold;
+		}
+	}*/
 	
 	public boolean hasValue(){
 		return hasValue;
+	}
+	
+	public void setHasValue(boolean ok){
+		this.hasValue = ok;
+	}
+	
+	public void tinyInit() {
+		
+		everDatas = new float[outDatas.length];
+		
+		waits = new ArrayList[(int) ((this.threshold * coeffReg)/this.cellSize)];
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -80,10 +121,74 @@ public class TabRCMDistanceAnalysis extends Analysis {
 					outDatas[ind] = 0;
 					waits[0].add(ind);
 				}else{
-					outDatas[ind] = -2; // to be computed
+					//outDatas[ind] = -2; // to be computed
+					outDatas[ind] = (float) threshold; // to be computed
 				}
 			}
-		}else{
+		}/*else if(inEntete != null && frictionEntete != null && inEntete.equals(frictionEntete)) {
+			
+			boolean ok;
+			float v, f;
+			for (int yt = 0; yt < height; yt++) {
+				for (int xt = 0; xt < width; xt++) {
+					
+					v = inDatas[CoordinateManager.getLocalY(inEntete, CoordinateManager.getProjectedY(frictionEntete, yt))*width+CoordinateManager.getLocalX(inEntete, CoordinateManager.getProjectedX(frictionEntete, xt))];
+					f = frictionDatas[yt*width+xt];
+					ok = false;
+					if (v != noDataValue && f != noDataValue) {
+						if(v >= minThresholdSource) {	
+							ok = true;
+							hasValue = true;
+						}
+						if (ok) {
+							outDatas[yt * width + xt] = 0; // inside the object -> distance=0
+						} else {
+							outDatas[yt * width + xt] = -2; // outside the object -> to be computed
+						}
+					}else{
+						outDatas[yt * width + xt] = noDataValue; // nodata_value -> to be not computed
+					}
+					
+				}
+			}
+			inDatas = null;
+			
+			if(hasValue){
+				// afin de limiter le nombre de calculs de diffusion, ne diffuser que a partir des bords d'habitats
+				boolean maj;
+				for (int yt = 0; yt < height; yt++) {
+					for (int xt = 0; xt < width; xt++) {
+						if (outDatas[yt * width + xt] == 0) {
+							maj = true;
+							if(xt == 0 || outDatas[(xt-1)+yt*width] == 0){
+								if(xt == 0 || yt == 0 || outDatas[(xt-1)+(yt-1)*width] == 0){
+									if(yt == 0 || outDatas[xt+(yt-1)*width] == 0){
+										if(xt == (width-1) || yt == 0 || outDatas[(xt+1)+(yt-1)*width] == 0){
+											if(xt == (width-1) || outDatas[(xt+1)+yt*width] == 0){
+												if(xt == (width-1) || yt == (height-1) || outDatas[(xt+1)+(yt+1)*width] == 0){
+													if(yt == (height-1) || outDatas[xt+(yt+1)*width] == 0){
+														if(xt == 0 || yt == (height-1) || outDatas[(xt-1)+(yt+1)*width] == 0){
+															// do nothing
+															maj = false;
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+							if(maj){
+								setPixelAndValue(yt * width + xt, 0.0f);
+							}
+						}
+						
+					}
+				}
+			}
+			
+			
+		}*/else{
 			boolean ok;
 			float v, f;
 			for (int yt = 0; yt < height; yt++) {
@@ -102,7 +207,8 @@ public class TabRCMDistanceAnalysis extends Analysis {
 						if (ok) {
 							outDatas[yt * width + xt] = 0; // inside the object -> distance=0
 						} else {
-							outDatas[yt * width + xt] = -2; // outside the object -> to be computed
+							//outDatas[yt * width + xt] = -2; // outside the object -> to be computed
+							outDatas[yt * width + xt] = (float) threshold; // to be computed
 						}
 					}else{
 						outDatas[yt * width + xt] = noDataValue; // nodata_value -> to be not computed
@@ -170,13 +276,14 @@ public class TabRCMDistanceAnalysis extends Analysis {
 	}
 	
 	private void diffusionPaquet(int dd, List<Integer> wait){
+		//System.out.println("diffusion paquet "+dd);
 		for(int p : wait){
 			diffusion(p, dd/coeffReg);
 		}
 	}
 
 	public void setPixelAndValue(int pixel, float dist) {
-		//System.out.println(dist+" "+(threshold/cellSize)+" "+threshold+" "+cellSize);
+		
 		if(dist < threshold/cellSize){
 			if (waits[(int) (dist*coeffReg)] == null) {
 				waits[(int) (dist*coeffReg)] = new ArrayList<Integer>();
@@ -185,10 +292,32 @@ public class TabRCMDistanceAnalysis extends Analysis {
 		}
 	}
 	
+	/*
+	public void setPixelAndValueTest(int pixel, float dist) {
+		//System.out.println(dist+" "+(threshold/cellSize)+" "+threshold+" "+cellSize);
+		if(dist < threshold/cellSize){
+			//System.out.println("pass");
+			if (waits[(int) (dist*coeffReg)] == null) {
+				waits[(int) (dist*coeffReg)] = new ArrayList<Integer>();
+			}
+			waits[(int) (dist*coeffReg)].add(pixel);
+		}
+	}*/
+	
 	private void diffusion(int p, double dd) {
 		//++indexG;
 		
+		
+		
 		if (everDatas[p] != 1 && threshold/cellSize > dd) {
+			/*
+			if(p == 0) {
+				System.out.println("diffusion depuis pixel (0,0) : "+dd);	
+			}
+			if(p == 4999) {
+				System.out.println("diffusion depuis pixel (4999,0) : "+dd);	
+			}*/
+			
 			
 			everDatas[p] = 1; // marquage de diffusion du pixel
 			
@@ -207,7 +336,8 @@ public class TabRCMDistanceAnalysis extends Analysis {
 					if (v != noDataValue) {
 						fc = frictionDatas[np];
 						d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
-						if (v == -2 || d * cellSize < v) { // MAJ ?
+						if (d * cellSize < v) { // MAJ ?
+							//if (v == -2 || d * cellSize < v) { // MAJ ?
 							outDatas[np] = d * cellSize;
 							setPixelAndValue(np, d);
 						}
@@ -220,7 +350,8 @@ public class TabRCMDistanceAnalysis extends Analysis {
 					if (v != noDataValue) {
 						fc = frictionDatas[np];
 						d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
-						if (v == -2 || d * cellSize < v) { // MAJ ?
+						if (d * cellSize < v) { // MAJ ?
+							//if (v == -2 || d * cellSize < v) { // MAJ ?
 							outDatas[np] = d * cellSize;
 							setPixelAndValue(np, d);
 						}
@@ -233,7 +364,8 @@ public class TabRCMDistanceAnalysis extends Analysis {
 					if (v != noDataValue) {
 						fc = frictionDatas[np];
 						d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
-						if (v == -2 || d * cellSize < v) { // MAJ ?
+						if (d * cellSize < v) { // MAJ ?
+							//if (v == -2 || d * cellSize < v) { // MAJ ?
 							outDatas[np] = d * cellSize;
 							setPixelAndValue(np, d);
 						}
@@ -246,7 +378,8 @@ public class TabRCMDistanceAnalysis extends Analysis {
 					if (v != noDataValue) {
 						fc = frictionDatas[np];
 						d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
-						if (v == -2 || d * cellSize < v) { // MAJ ?
+						if (d * cellSize < v) { // MAJ ?
+							//if (v == -2 || d * cellSize < v) { // MAJ ?
 							outDatas[np] = d * cellSize;
 							setPixelAndValue(np, d);
 						}
@@ -259,7 +392,8 @@ public class TabRCMDistanceAnalysis extends Analysis {
 					if (v != noDataValue) {
 						fc = frictionDatas[np];
 						d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
-						if (v == -2 || d * cellSize < v) { // MAJ ?
+						if (d * cellSize < v) { // MAJ ?
+							//if (v == -2 || d * cellSize < v) { // MAJ ?
 							outDatas[np] = d * cellSize;
 							setPixelAndValue(np, d);
 						}
@@ -272,7 +406,8 @@ public class TabRCMDistanceAnalysis extends Analysis {
 					if (v != noDataValue) {
 						fc = frictionDatas[np];
 						d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
-						if (v == -2 || d * cellSize < v) { // MAJ ?
+						if (d * cellSize < v) { // MAJ ?
+							//if (v == -2 || d * cellSize < v) { // MAJ ?
 							outDatas[np] = d * cellSize;
 							setPixelAndValue(np, d);
 						}
@@ -285,7 +420,8 @@ public class TabRCMDistanceAnalysis extends Analysis {
 					if (v != noDataValue) {
 						fc = frictionDatas[np];
 						d = (float) (dd + (1.0 / 2) * fd + (1.0 / 2) * fc); // distance au point cardinal
-						if (v == -2 || d * cellSize < v) { // MAJ ?
+						if (d * cellSize < v) { // MAJ ?
+							//if (v == -2 || d * cellSize < v) { // MAJ ?
 							outDatas[np] = d * cellSize;
 							setPixelAndValue(np, d);
 						}
@@ -298,10 +434,8 @@ public class TabRCMDistanceAnalysis extends Analysis {
 					if (v != noDataValue) {
 						fc = frictionDatas[np];
 						d = (float) (dd + (sqrt2 / 2) * fd + (sqrt2 / 2) * fc); // distance au point diagonal
-						if(d < 0) {
-							System.out.println(d+" "+dd+" "+fd+" "+fc+" "+noDataValue);
-						}
-						if (v == -2 || d * cellSize < v) { // MAJ ?
+						if (d * cellSize < v) { // MAJ ?
+							//if (v == -2 || d * cellSize < v) { // MAJ ?
 							outDatas[np] = d * cellSize;
 							setPixelAndValue(np, d);
 						}

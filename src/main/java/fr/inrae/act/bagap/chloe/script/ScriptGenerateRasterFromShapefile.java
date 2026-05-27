@@ -8,6 +8,7 @@ import org.locationtech.jts.geom.Envelope;
 import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.vector.ShapeFileTool;
 
 public class ScriptGenerateRasterFromShapefile {
 
@@ -69,7 +70,7 @@ public class ScriptGenerateRasterFromShapefile {
 			e.printStackTrace();
 		}*/
 		
-		Envelope envelope = ShapeFile2CoverageConverter.getEnvelope(shapefile);
+		Envelope envelope = ShapeFileTool.getEnvelope(shapefile);
 		
 		float cellSize = 5;
 		int noDataValue = -1;

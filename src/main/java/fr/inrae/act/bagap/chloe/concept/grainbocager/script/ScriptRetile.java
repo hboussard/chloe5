@@ -10,6 +10,7 @@ import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.vector.ShapeFileTool;
 
 public class ScriptRetile {
 	
@@ -76,9 +77,9 @@ public class ScriptRetile {
 		
 		String path = "E:/FRC_AURA/data/grain2d/CVB/";
 		
-		Envelope envIsere = ShapeFile2CoverageConverter.getEnvelope(path+"CVB_Isere.shp", 1000);
-		Envelope envLoire = ShapeFile2CoverageConverter.getEnvelope(path+"CVB_Loire.shp", 1000);
-		Envelope envRhone = ShapeFile2CoverageConverter.getEnvelope(path+"CVB_Rhone.shp", 1000);
+		Envelope envIsere = ShapeFileTool.getEnvelope(path+"CVB_Isere.shp", 1000);
+		Envelope envLoire = ShapeFileTool.getEnvelope(path+"CVB_Loire.shp", 1000);
+		Envelope envRhone = ShapeFileTool.getEnvelope(path+"CVB_Rhone.shp", 1000);
 		
 		double minx = Math.min(Math.min(envIsere.getMinX(), envLoire.getMinX()), envRhone.getMinX());
 		double maxx = Math.max(Math.max(envIsere.getMaxX(), envLoire.getMaxX()), envRhone.getMaxX());

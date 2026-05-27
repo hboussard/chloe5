@@ -6,7 +6,7 @@ public interface PatchCountingInterface {
 	 * the number of distinct patches according to 8 neigbourhood
 	 * @return the number distinct of patches
 	 */
-	int nbPatches();
+	double nbPatches();
 	
 	/**
 	 * the total surface of patches in hectares
@@ -20,7 +20,6 @@ public interface PatchCountingInterface {
 	 */
 	double maxSurface();
 	
-	
 	/**
 	 * the square sum of surfaces
 	 * @return the square sum of surfaces
@@ -31,7 +30,7 @@ public interface PatchCountingInterface {
 	 * the number of distinct patches according to 8 neigbourhood
 	 * @return the number distinct of patches of type v
 	 */
-	int nbPatches(int v);
+	double nbPatches(int v);
 	
 	/**
 	 * the total surface of patches in hectares

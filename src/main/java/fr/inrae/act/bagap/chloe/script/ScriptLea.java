@@ -98,7 +98,8 @@ public class ScriptLea {
 	
 	private static void recuperationHaie2023(){
 		
-		Coverage cov = CoverageManager.getCoverage("C:/Data/temp/lea/occsol.tif");
+		//Coverage cov = CoverageManager.getCoverage("C:/Data/temp/lea/occsol.tif");
+		Coverage cov = CoverageManager.getCoverage("C:/Data/temp/lea/occsol_PP_2.tif");
 		float[] refData = cov.getData();
 		EnteteRaster refEntete = cov.getEntete();
 		cov.dispose();
@@ -121,11 +122,11 @@ public class ScriptLea {
 					
 					data[i] = 1000;
 					
-				} else if(data[i] == 1) {
+				} /*else if(data[i] == 1) {
 					
 					data[i] = 1001;
 				
-				} else {
+				} */else {
 					
 					data[i] = refData[i];
 				}
@@ -133,7 +134,7 @@ public class ScriptLea {
 			}
 		}
 		
-		CoverageManager.write("C:/Data/temp/lea/occsol_haie_arbre_isole.tif", data, refEntete);
+		CoverageManager.write("C:/Data/temp/lea/occsol_PP_2_haie.tif", data, refEntete);
 	}
 
 	private static void decision(float prop) {

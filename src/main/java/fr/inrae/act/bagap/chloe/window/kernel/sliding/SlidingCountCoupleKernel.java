@@ -56,7 +56,7 @@ public class SlidingCountCoupleKernel extends SlidingLandscapeMetricKernel {
 				
 				final int mid = windowSize() / 2;
 				int ic, ic_V, ic_H;
-				short v, v_H, v_V;
+				int v, v_H, v_V;
 				int mc;
 				float coeff;
 				float nb = 0;
@@ -71,7 +71,7 @@ public class SlidingCountCoupleKernel extends SlidingLandscapeMetricKernel {
 								ic = ((dy+mid) * windowSize()) + (dx+mid);
 								coeff = coeff()[ic];
 								if(coeff > 0){
-									v = (short) inDatas()[((y + dy) * width()) + (x + dx)];
+									v = (int) inDatas()[((y + dy) * width()) + (x + dx)];
 									nb += coeff;
 									if(v == noDataValue()){
 										nb_nodata += coeff;
@@ -80,7 +80,7 @@ public class SlidingCountCoupleKernel extends SlidingLandscapeMetricKernel {
 									if((dy > -mid) && ((y + dy) > 0)) {
 										ic_V = ((dy+mid-1) * windowSize()) + (dx+mid);
 										if(coeff()[ic_V] > 0){
-											v_V = (short) inDatas()[((y + dy - 1) * width()) + (x + dx)];
+											v_V = (int) inDatas()[((y + dy - 1) * width()) + (x + dx)];
 											nbC += coeff;
 											if(v == noDataValue() || v_V == noDataValue()){
 												nbC_nodata += coeff;
@@ -96,7 +96,7 @@ public class SlidingCountCoupleKernel extends SlidingLandscapeMetricKernel {
 									if((dx > -mid) && ((x + dx) > 0)) {
 										ic_H = ((dy+mid) * windowSize()) + (dx+mid-1);
 										if(coeff()[ic_H] > 0){
-											v_H = (short) inDatas()[((y + dy) * width()) + (x + dx - 1)];
+											v_H = (int) inDatas()[((y + dy) * width()) + (x + dx - 1)];
 											nbC += coeff;
 											if(v == noDataValue() || v_H == noDataValue()){
 												nbC_nodata += coeff;

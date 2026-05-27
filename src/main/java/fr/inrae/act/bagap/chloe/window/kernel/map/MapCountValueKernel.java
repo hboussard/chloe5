@@ -20,13 +20,13 @@ public class MapCountValueKernel extends MapLandscapeMetricKernel {
 	@Override
 	public void applyMapWindow(int theY) {
 			
-		short v;
+		int v;
 		int mv;				
 		for(int y=0; y<height(); y++) {
 			
 			for(int x=0; x<width(); x++) {
 					
-				v = (short) inDatas()[(y*width()) + x];		
+				v = (int) inDatas()[(y*width()) + x];		
 				
 				outDatas()[2] += 1;
 				if(v == noDataValue()){

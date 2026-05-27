@@ -20,14 +20,14 @@ public class EntityCountValueKernel extends EntityLandscapeMetricKernel{
 	@Override
 	public void applyEntityWindow(){
 		int mv, va;
-		short v;
+		int v;
 		
 		for(int y=0; y<height(); y++){
 			for(int x=0; x<width(); x++){
 				va = (int) entityDatas()[y*width() + x];
 				if(va != 0 && va != noDataValue()){
 					
-					v = (short) inDatas()[y*width() + x];
+					v = (int) inDatas()[y*width() + x];
 					outDatas().get(va)[2] += 1;
 					
 					if(v == noDataValue()){

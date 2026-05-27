@@ -1,6 +1,7 @@
 package fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.gradient;
 
 import java.io.File;
+
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.EcoPaysage;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageManager;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageProcedure;
@@ -50,26 +51,36 @@ public class EPPGradient extends EcoPaysageProcedure {
 			}
 		}
 		
-		for(int k : manager().classes()) {
-			
-			System.out.println("analyse des distances aux clustering pour "+k+" classes");
-			
-			EcoPaysage.analyseGradient(manager().gradientFile(k), dataXY, manager().infoFile(k), manager().standardizedFile());
-			
-		}
+		int indexYear = 1;
+		for(String inputRaster : manager().inputRasters()) {
+
+			String carto = manager().carto(inputRaster);
 		
-		System.out.println("recuperation de l'entete raster");
-		
-		EnteteRaster header = EcoPaysage.getHeader(manager().headerFile(), manager().noDataValue());
-		
-		for(int k : manager().classes()) {
-			
-			for(int ik=1; ik<=k; ik++) {
-				System.out.println("export cartographique vers "+manager().gradientMapFile(k, ik));
+			for(int k : manager().classes()) {
 				
-				EcoPaysage.exportMap(manager().gradientMapFile(k, ik), manager().gradientFile(k), ik, header);
+				System.out.println("analyse des distances aux clustering pour "+k+" classes");
+				
+				EcoPaysage.analyseGradient(manager().gradientFile(carto, k), dataXY, manager().infoFile(k), manager().standardizedFile(), indexYear);
+				
 			}
+			
+			System.out.println("recuperation de l'entete raster");
+			
+			EnteteRaster header = EcoPaysage.getHeader(manager().headerFile(), manager().noDataValue());
+			
+			for(int k : manager().classes()) {
+				
+				for(int ik=1; ik<=k; ik++) {
+					System.out.println("export cartographique vers "+manager().gradientMapFile(carto, k, ik));
+					
+					EcoPaysage.exportMap(manager().gradientMapFile(carto, k, ik), manager().gradientFile(carto, k), ik, header);
+				}
+			}
+			
+			indexYear++;
 		}
+		
+		
 	}
 	
 }

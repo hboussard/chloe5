@@ -873,7 +873,7 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 				if((windowSizes.size() == 1 || windowRadius.size() == 1)
 						&& MetricManager.hasCoherence(metrics)
 						&& rasterFiles.size() <= 1){
-					
+				
 					analysis = LandscapeMetricAnalysisFactory.create(this);
 					
 				}else{

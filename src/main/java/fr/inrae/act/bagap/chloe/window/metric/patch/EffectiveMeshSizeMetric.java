@@ -23,7 +23,7 @@ public class EffectiveMeshSizeMetric extends Metric implements PatchMetric {
 		}
 		*/
 		if(co.validValues() > 0){
-			value = (double) co.totalSurfaceCarre()/(co.validValues()*Math.pow(co.resolution(), 2)/10000.0);
+			value = co.totalSurfaceCarre()/(co.validValues()*Math.pow(co.resolution(), 2)/10000.0);
 		}else{
 			value = 0;
 		}

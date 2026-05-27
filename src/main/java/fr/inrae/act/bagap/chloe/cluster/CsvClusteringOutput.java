@@ -84,7 +84,7 @@ public class CsvClusteringOutput extends Analysis {
 				//bf.setLength(0);
 				index = 0;
 				for(int iv : initValues){
-					v = e.getValue()[iv]*Math.pow(cellSize, 2)/1000.0;
+					v = e.getValue()[iv]*Math.pow(cellSize, 2)/10000.0;
 					sum += v;
 					lv[index++] = v;
 					//bf.append(";"+v);

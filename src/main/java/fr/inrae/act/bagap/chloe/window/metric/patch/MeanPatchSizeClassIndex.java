@@ -15,9 +15,9 @@ public class MeanPatchSizeClassIndex extends Metric implements PatchMetric {
 	@Override
 	protected void doCalculate(Counting co) {
 		if(co.validValues() > 0){
-			int nbPatch = co.nbPatches(classMetric);
+			double nbPatch = co.nbPatches(classMetric);
 			if(nbPatch > 0){
-				value = (double) co.totalSurface(classMetric)/nbPatch;
+				value = co.totalSurface(classMetric)/nbPatch;
 			}else{
 				value = 0;
 			}

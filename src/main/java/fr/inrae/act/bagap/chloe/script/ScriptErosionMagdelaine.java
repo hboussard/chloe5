@@ -16,6 +16,7 @@ import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.vector.ShapeFileTool;
 
 public class ScriptErosionMagdelaine {
 
@@ -724,7 +725,7 @@ public class ScriptErosionMagdelaine {
 
 	private static void rasterizeBV() {
 		
-		Envelope envelope = ShapeFile2CoverageConverter.getEnvelope(path+"Couche SIG BV Magdelaine/BV_Magdelaine.shp", 0);
+		Envelope envelope = ShapeFileTool.getEnvelope(path+"Couche SIG BV Magdelaine/BV_Magdelaine.shp", 0);
 		Coverage refCov = CoverageManager.getCoverage(bv_os_bre);
 		EnteteRaster refEntete = refCov.getEntete();
 		refCov.dispose();
