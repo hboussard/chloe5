@@ -9,6 +9,7 @@ import fr.inrae.act.bagap.chloe.util.Util;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import fr.inrae.act.bagap.apiland.raster.SpacePreference;
 import fr.inrae.act.bagap.apiland.raster.converter.ShapeFile2CoverageConverter;
+import fr.inrae.act.bagap.apiland.vector.ShapeFileTool;
 
 public class RasterFromShapefileAnalysis extends ChloeUtilAnalysis {
 	
@@ -44,6 +45,16 @@ public class RasterFromShapefileAnalysis extends ChloeUtilAnalysis {
 	@Override
 	protected void doInit() {
 		
+		Envelope env = null;
+		if(minx == 0 && maxx == 0 && miny == 0 && maxy == 0) {
+
+			env = ShapeFileTool.getEnvelope(inputShapefile);
+			
+		}else {
+		
+			env = new Envelope(minx, maxx, miny, maxy);
+		}
+		
 		/*
 		CoordinateReferenceSystem crs = ShapeFile2CoverageConverter.getCoordinateReferenceSystem(inputShapefile);
 		try {
@@ -54,10 +65,10 @@ public class RasterFromShapefileAnalysis extends ChloeUtilAnalysis {
 			e.printStackTrace();
 		}
 		*/
-		
+
 		CoordinateReferenceSystem crs = SpacePreference.getCRS();
 		
-		entete = EnteteRaster.getEntete(new Envelope(minx, maxx, miny, maxy), cellSize, noDataValue, crs);
+		entete = EnteteRaster.getEntete(env, cellSize, noDataValue, crs);
 		
 		Util.createAccess(outputRaster);
 	}
