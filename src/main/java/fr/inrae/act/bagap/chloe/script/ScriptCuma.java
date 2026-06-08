@@ -96,7 +96,7 @@ public class ScriptCuma {
 		//rasterizeRPG();
 		//rasterizeRA();
 		//analyseRA();
-		//rasterizeRAFromCsv();
+		rasterizeRAFromCsv();
 	}
 	
 	private static void rasterizeRAFromCsv() {
@@ -105,13 +105,16 @@ public class ScriptCuma {
 		EnteteRaster entete = cov.getEntete();
 		cov.dispose();
 		
+		System.out.println(entete);
+		
 		float[] data = new float[entete.width()*entete.height()];
 		
-		String csv = "C:/Data/temp/cuma/ra/RA_SAU-par-commune_centro.csv";
+		//String csv = "C:/Data/temp/cuma/ra/RA_SAU-par-commune_centro.csv";
+		String csv = "C:/Data/temp/cuma/ra/RA_SAUxNB-EA_centro.csv";
 		
-		SpatialCsvManager.exportTab(data, csv, "SAU-2020_i", entete);
+		//SpatialCsvManager.exportTab(data, csv, "nb_ea_int", entete);
 		
-		CoverageManager.write("C:/Data/temp/cuma/ra/test.tif", data, entete);
+		//CoverageManager.write("C:/Data/temp/cuma/ra/ra_nb_ea_100m.tif", data, entete);
 	}
 	
 	private static void analyseRA() {

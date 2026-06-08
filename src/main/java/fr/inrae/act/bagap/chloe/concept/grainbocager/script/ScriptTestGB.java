@@ -1,5 +1,8 @@
 package fr.inrae.act.bagap.chloe.concept.grainbocager.script;
 
+import org.locationtech.jts.geom.Envelope;
+
+import fr.inrae.act.bagap.apiland.vector.ShapeFileTool;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerManager;
 import fr.inrae.act.bagap.chloe.concept.grainbocager.analysis.procedure.GrainBocagerProcedure;
 
@@ -7,13 +10,17 @@ public class ScriptTestGB {
 
 	public static void main(String[] args) {
 		
+		String path = "D:/chloe/chloe5/data/";
+		
+		Envelope env = ShapeFileTool.getEnvelope(path+"rpg.shp");
+		
 		GrainBocagerManager gbManager = new GrainBocagerManager("grain_bocager_calculation");
 		
-		gbManager.setBocage("D:/grain_bocager/data/31/2022/31_2022_hauteur_boisement.tif");
-		gbManager.setOutputFolder("D:/grain_bocager/formation/31/sortie2/");
-		gbManager.setEnvelope("{580249.4521;580590.7311;6251992.1032;6252236.7309}");
-		gbManager.setBufferArea(1000.0);
-		gbManager.setOuputPrefix("test2");
+		gbManager.setBocage(path+"35_2023_hauteur_boisement.tif");
+		gbManager.setOutputFolder(path+"test_territoire/");
+		gbManager.setEnvelope("{"+env.getMinX()+";"+env.getMaxX()+";"+env.getMinY()+";"+env.getMaxY()+"}");
+		gbManager.setOuputPrefix("essai1_");
+		gbManager.setForce(false);
 	
 		GrainBocagerProcedure gbProcedure = gbManager.build();
 		

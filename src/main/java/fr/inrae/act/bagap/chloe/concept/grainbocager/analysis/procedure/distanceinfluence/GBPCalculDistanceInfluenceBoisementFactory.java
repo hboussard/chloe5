@@ -16,6 +16,38 @@ public class GBPCalculDistanceInfluenceBoisementFactory extends GrainBocagerProc
 		File fWoodHeight = new File(manager.woodHeight());
 		File fWoodType = new File(manager.woodType());
 		
+		if(manager.force()) {
+			
+			System.out.println("WARNING : input file for 'wood_type' is missing");
+			
+			setParentFactory(new GBPDetectionTypeBoisementFactory());
+			
+			return checkParent(manager);
+			
+		} else {
+			
+			if(! (((fWoodType.isFile() && fWoodType.exists()) || (fWoodType.isDirectory() && fWoodType.list().length > 0)))) {
+				
+				System.out.println("WARNING : input file for 'wood_type' is missing");
+				
+				setParentFactory(new GBPDetectionTypeBoisementFactory());
+				
+				return checkParent(manager);
+			}
+			
+			if(! (((fWoodHeight.isFile() && fWoodHeight.exists()) || (fWoodHeight.isDirectory() && fWoodHeight.list().length > 0)))) {
+				
+				System.out.println("WARNING : input file for 'wood_height' is missing");
+				
+				setParentFactory(new GBPRecuperationHauteurBoisementFactory());
+				
+				return checkParent(manager);
+			}
+			
+			return true;
+		}
+		
+		/*
 		if(!manager.force() 
 				&& ((fWoodHeight.isFile() && fWoodHeight.exists()) || (fWoodHeight.isDirectory() && fWoodHeight.list().length > 0))
 				&& ((fWoodType.isFile() && fWoodType.exists()) || (fWoodType.isDirectory() && fWoodType.list().length > 0))){
@@ -23,7 +55,7 @@ public class GBPCalculDistanceInfluenceBoisementFactory extends GrainBocagerProc
 			return true;
 			
 		}else{
-			
+		
 			if(((fWoodType.isFile() && fWoodType.exists()) || (fWoodType.isDirectory() && fWoodType.list().length > 0))) {
 				
 				System.out.println("WARNING : input file for 'wood_height' is missing");
@@ -41,6 +73,7 @@ public class GBPCalculDistanceInfluenceBoisementFactory extends GrainBocagerProc
 				return checkParent(manager);
 			}
 		}
+		*/
 	}
 
 	@Override

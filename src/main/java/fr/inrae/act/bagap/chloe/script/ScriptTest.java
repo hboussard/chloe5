@@ -13,9 +13,7 @@ public class ScriptTest {
 
 	public static void main(String[] args){
 		
-		int v = 4/4;
-		
-		System.out.println(v);
+		importAsciiWithoutCRS();
 		
 		/*
 		for(float v = 0; v<=1; v+=0.1) {
@@ -39,6 +37,15 @@ public class ScriptTest {
 		//readLZW();
 		//read();
 		
+	}
+	
+	private static void importAsciiWithoutCRS() {
+		
+		Coverage cov = CoverageManager.getCoverage("D:/chloe/chloe5/data/ascii/raster2007.asc");
+		EnteteRaster entete = cov.getEntete();
+		cov.dispose();
+		
+		System.out.println(entete.crs());
 	}
 	
 	private static void convert(){

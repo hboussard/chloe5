@@ -8,7 +8,7 @@ import fr.inrae.act.bagap.apiland.util.CoordinateManager;
 import fr.inrae.act.bagap.chloe.distance.analysis.functional.TabRCMDistanceAnalysis;
 import fr.inrae.act.bagap.chloe.window.kernel.sliding.SlidingLandscapeMetricKernel;
 
-public class SlidingRepartitionDispersionKernel extends SlidingLandscapeMetricKernel {
+public class SlidingRepartitionDispersionPterostichusMelanariusKernel extends SlidingLandscapeMetricKernel {
 
 	private float cellSize;
 	
@@ -37,7 +37,7 @@ public class SlidingRepartitionDispersionKernel extends SlidingLandscapeMetricKe
 	
 	private DistanceFunction function;
 	
-	public SlidingRepartitionDispersionKernel(int windowSize, int displacement, int noDataValue, int[] unfilters, EnteteRaster inEntete, EnteteRaster outEntete, float[] outDataJeunes, float[] outDataVieilles, float[] outDataMeres, DistanceFunction function, float dMax) {
+	public SlidingRepartitionDispersionPterostichusMelanariusKernel(int windowSize, int displacement, int noDataValue, int[] unfilters, EnteteRaster inEntete, EnteteRaster outEntete, float[] outDataJeunes, float[] outDataVieilles, float[] outDataMeres, DistanceFunction function, float dMax) {
 			
 		super(windowSize, displacement, null, noDataValue, unfilters);
 		

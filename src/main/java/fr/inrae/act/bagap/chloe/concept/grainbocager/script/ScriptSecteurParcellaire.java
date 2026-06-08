@@ -83,7 +83,39 @@ public class ScriptSecteurParcellaire {
 		//rasterize("d_s_gb");
 		//rasterize("tx_d_s_gb");
 		
+		// test plugin
+		String outputFolder = "D:/chloe/chloe5/data/test_scenario3/";
+		String parcellaire = "D:/chloe/chloe5/data/rpg.shp";
+		String attributeCodeEA = "pacage";
+		//String codeEA = "035004140";
+		String codeEA = "035017595";
+		String bocage = "D:/chloe/chloe5/data/35_2023_hauteur_boisement.tif";
+		String amenagement = "D:/chloe/chloe5/data/amenagement/amenagement_035004140.shp";
 		
+		scriptExploitation(outputFolder, parcellaire, attributeCodeEA, codeEA, bocage, amenagement);
+	}
+	
+	private static boolean scriptExploitation(String outputFolder, String parcellaire, String attributeCodeEA, String codeEA, String bocage, String amenagement) {
+		
+		DiagnosticGrainBocagerExploitationManager manager = new DiagnosticGrainBocagerExploitationManager();
+		
+		manager.setOutputFolder(outputFolder);
+		manager.setParcellaire(parcellaire); // definition du territoire d'exploiattion
+		manager.setAttributCodeEA(attributeCodeEA); 
+		manager.setCodeEA(codeEA);
+		manager.setBocage(bocage); // definition du bocage
+		manager.setScenario("initial");
+		//manager.setAmenagement(amenagement);
+		//manager.setScenario("scenario_0");
+		//manager.setScenario("scenario_1");
+		//manager.setScenario("scenario_2");
+		
+		//manager.setGrainBocagerCellSize(5.0);
+		manager.setExportMap(true);
+		
+		DiagnosticGrainBocagerExploitation diagEA = manager.build();
+		
+		return diagEA.run();
 	}
 
 	private static void jointure() {
