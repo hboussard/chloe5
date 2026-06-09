@@ -54,7 +54,7 @@ public class ChloeAPI {
 			properties.load(in);
 			in.close();
 			if(properties.containsKey("local")) {
-				String local = properties.getProperty("local").toLowerCase();
+				String local = properties.getProperty("local").toLowerCase().replaceAll("-", "_");
 				setLocal(local);
 			}
 			if(properties.containsKey("procedure")){
