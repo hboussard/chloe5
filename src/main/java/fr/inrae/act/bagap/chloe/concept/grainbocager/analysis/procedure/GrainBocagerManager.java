@@ -191,6 +191,8 @@ public class GrainBocagerManager {
 				// recuperation de l'entete
 				entete = EnteteRaster.getEntete(entete, envelope);
 				
+				//System.out.println("reference "+entete);
+				
 			} else if(territory != null){
 				
 				// recuperation de l'enveloppe totale de travail

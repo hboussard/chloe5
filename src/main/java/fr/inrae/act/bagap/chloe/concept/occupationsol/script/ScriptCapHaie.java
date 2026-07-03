@@ -7,11 +7,13 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import fr.inrae.act.bagap.apiland.analysis.tab.Pixel2PixelTabCalculation;
+import fr.inrae.act.bagap.apiland.analysis.tab.SearchAndReplacePixel2PixelTabCalculation;
 import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
 import fr.inrae.act.bagap.apiland.raster.EnteteRaster;
 import fr.inrae.act.bagap.apiland.raster.converter.GeoPackage2CoverageConverter;
 import fr.inrae.act.bagap.apiland.util.Tool;
+import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisType;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageManager;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.EcoPaysageProcedure;
 import fr.inrae.act.bagap.chloe.util.Util;
@@ -39,7 +41,9 @@ public class ScriptCapHaie {
 		//scriptDepartements();
 		
 		//compileOccsolFrance();
-		compileOccsolBretagne();
+		//compileOccsolBretagne();
+		
+		//translateOccsolFrance2();
 		
 		//ecolandscapeFrance(10, 1000);
 		//ecolandscapeFrance(15, 1000);
@@ -49,8 +53,78 @@ public class ScriptCapHaie {
 		//ecolandscapeFrance(20, 5000);
 		
 		//ecolandscapeFrance(25, 1000, 5000);
+		
+		//ecolandscapeFrance2(20, 5000);
+		
+		analyseEntite();
+		//analyseGrille();
 	}
 	
+	private static void analyseEntite(){
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(ChloeAnalysisType.ENTITY);
+		builder.addRasterFile("E:/data/caphaie/ecolandscape/ecolandscape_france_1000m/metric/france_1000m_pNV_18.tif");
+		//builder.addRasterFile("E:/data/caphaie/ecolandscape/ecolandscape_france_1000m/metric/france_1000m_pNV_19.tif");
+		//builder.setEntityRasterFile("C:/Data/temp/echelle/communes_100m.tif");
+		builder.setEntityRasterFile("C:/Data/temp/echelle/departements_100m.tif");
+		builder.addMetric("average");
+		builder.addGeoTiffOutput("average", "C:/Data/temp/echelle/departements_prop_prairie_permanente.tif");
+		//builder.addGeoTiffOutput("average", "C:/Data/temp/echelle/communes_prop_prairie_temporaire.tif");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+	}
+	
+	private static void analyseGrille(){
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setAnalysisType(ChloeAnalysisType.GRID);
+		builder.addRasterFile("E:/data/caphaie/ecolandscape/ecolandscape_france_1000m/metric/france_1000m_pNV_18.tif");
+		//builder.addRasterFile("E:/data/caphaie/ecolandscape/ecolandscape_france_1000m/metric/france_1000m_pNV_19.tif");
+		//builder.setEntityRasterFile("C:/Data/temp/echelle/communes_100m.tif");
+		builder.setWindowSize(100);
+		builder.addMetric("average");
+		builder.addGeoTiffOutput("average", "C:/Data/temp/echelle/grille_5000m_prop_prairie_permanente.tif");
+		//builder.addGeoTiffOutput("average", "C:/Data/temp/echelle/grille_1000m_prop_prairie_temporaire.tif");
+		LandscapeMetricAnalysis analysis = builder.build();
+		
+		analysis.allRun();
+	}
+	
+	private static void translateOccsolFrance2() {
+		
+		String francePath = "E:/data/caphaie/occsol/raster/france/";
+		File franceFolder = new File(francePath);
+		
+		String france2Path = "E:/data/caphaie/occsol/raster/france2/";
+		Util.createAccess(france2Path);
+		
+		String translateFile = "C:/Data/projet/caphaie/doc/from_nomenclature_to_nomenclature2.txt";
+		Map<Float, Float> sarMap = Util.importData(translateFile, "code", "code2");
+		
+		Coverage cov;
+		float[] data, data2;
+		EnteteRaster entete;
+		int ind = 0;
+		for(String f : franceFolder.list()) {
+			if(f.endsWith(".tif")) {
+				System.out.println((++ind)+" "+f);
+				
+				cov = CoverageManager.getCoverage(francePath+f);
+				data = cov.getData();
+				entete = cov.getEntete();
+				cov.dispose();
+				
+				data2 = new float[entete.width()*entete.height()];
+				SearchAndReplacePixel2PixelTabCalculation cal = new SearchAndReplacePixel2PixelTabCalculation(data2, data, sarMap);
+				cal.run();
+				
+				CoverageManager.write(france2Path+f, data2, entete);
+			}
+		}
+	}
+
 	private static void scriptDepartements() {
 
 		Map<String, String[]> departements = new TreeMap<String, String[]>();
@@ -477,6 +551,79 @@ public class ScriptCapHaie {
 		epManager.setClasses(new int[]{k});
 		epManager.setUnfilters(new int[] {-1});
 		epManager.setCodes(new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38});
+		EcoPaysageProcedure epProcedure = epManager.build();
+		
+		epProcedure.run();
+	}
+	
+	private static void ecolandscapeFrance2(int k, int... sizes) {
+		
+		String france2Path = "E:/data/caphaie/occsol/raster/france2/";
+		
+		String completeName = "";
+		for(int s : sizes) {
+			completeName += "_"+s+"m";
+		}
+		
+		EcoPaysageManager epManager = new EcoPaysageManager("mapping");
+		//EcoPaysageManager epManager = new EcoPaysageManager("standardization");
+		epManager.addInputRaster(france2Path);
+		epManager.setScales(sizes);
+		epManager.setOutputFolder(pathEcolandscape+"ecolandscape_france2"+completeName+"/");
+		epManager.setClasses(new int[]{k});
+		epManager.setUnfilters(new int[] {-1});
+		epManager.setCodes(new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19});
+		
+		epManager.addCompositionMetric("pNV_1");
+		epManager.addCompositionMetric("pNV_2");
+		epManager.addCompositionMetric("pNV_3");
+		epManager.addCompositionMetric("pNV_4");
+		epManager.addCompositionMetric("pNV_5");
+		epManager.addCompositionMetric("pNV_6");
+		epManager.addCompositionMetric("pNV_7");
+		epManager.addCompositionMetric("pNV_8");
+		epManager.addCompositionMetric("pNV_9");
+		epManager.addCompositionMetric("pNV_10");
+		epManager.addCompositionMetric("pNV_11");
+		epManager.addCompositionMetric("pNV_12");
+		epManager.addCompositionMetric("pNV_13");
+		epManager.addCompositionMetric("pNV_14");
+		epManager.addCompositionMetric("pNV_15");
+		epManager.addCompositionMetric("pNV_16");
+		epManager.addCompositionMetric("pNV_17");
+		epManager.addCompositionMetric("pNV_18");
+		epManager.addCompositionMetric("pNV_19");
+		
+		epManager.addConfigurationMetric("pNC_1-11");
+		epManager.addConfigurationMetric("pNC_2-11");
+		epManager.addConfigurationMetric("pNC_3-11");
+		epManager.addConfigurationMetric("pNC_5-11");
+		epManager.addConfigurationMetric("pNC_6-11");
+		epManager.addConfigurationMetric("pNC_7-11");
+		epManager.addConfigurationMetric("pNC_8-11");
+		epManager.addConfigurationMetric("pNC_9-11");
+		epManager.addConfigurationMetric("pNC_10-11");
+		
+		epManager.addConfigurationMetric("pNC_1-12");
+		epManager.addConfigurationMetric("pNC_2-12");
+		epManager.addConfigurationMetric("pNC_3-12");
+		epManager.addConfigurationMetric("pNC_5-12");
+		epManager.addConfigurationMetric("pNC_6-12");
+		epManager.addConfigurationMetric("pNC_7-12");
+		epManager.addConfigurationMetric("pNC_8-12");
+		epManager.addConfigurationMetric("pNC_9-12");
+		epManager.addConfigurationMetric("pNC_10-12");
+		
+		epManager.addConfigurationMetric("pNC_1-14");
+		epManager.addConfigurationMetric("pNC_2-14");
+		epManager.addConfigurationMetric("pNC_3-14");
+		epManager.addConfigurationMetric("pNC_5-14");
+		epManager.addConfigurationMetric("pNC_6-14");
+		epManager.addConfigurationMetric("pNC_7-14");
+		epManager.addConfigurationMetric("pNC_8-14");
+		epManager.addConfigurationMetric("pNC_9-14");
+		epManager.addConfigurationMetric("pNC_10-14");
+		
 		EcoPaysageProcedure epProcedure = epManager.build();
 		
 		epProcedure.run();

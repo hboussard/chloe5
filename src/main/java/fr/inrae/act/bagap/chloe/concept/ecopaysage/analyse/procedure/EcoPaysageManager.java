@@ -1,12 +1,11 @@
 package fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.EcoPaysage;
 import fr.inrae.act.bagap.chloe.concept.ecopaysage.analyse.procedure.calculmetrics.EPPCalculMetricsFactory;
@@ -46,15 +45,19 @@ public class EcoPaysageManager {
 	
 	private String outputFolder; // dossier de sortie
 	
-	private Map<Integer, String> compoFiles, configFiles, stdFiles;
+	//private Map<Integer, String> compoFiles, configFiles;
+	private Map<Integer, String> stdFiles; // un fichier standardise de toutes les metriques par echelle 
 	
-	private String stdFile, ruptureFile, inertiaFile;
+	private Map<Integer, Map<String, String>> groupFiles; // un fichier de metriques (non standardise) par groupe par echelle
+	
+	private String stdFile, ruptureFile, divisorFile;
 	
 	//private int scale; // echelle d'analyse unique
 	
 	private int[] scales; // echelle d'analyse multiple
 	
-	private List<String> compoMetrics, configMetrics; // les metriques de compo et de config
+	//private List<String> compoMetrics, configMetrics; // les metriques de compo et de config
+	private Map<String, Set<String>> groupMetrics; // les metriques par groupe
 	
 	private int[] codes;
 	
@@ -86,7 +89,7 @@ public class EcoPaysageManager {
 	
 	private Map<String, Float> importances;
 	
-	private Map<String, Float> inerties;
+	private Map<String, Float> divisors; // un divisor specifique par groupe de metrique
 	
 	
 	public EcoPaysageManager(String treatment){
@@ -135,10 +138,11 @@ public class EcoPaysageManager {
 		//compoFile = null;
 		//configFile = null;
 		stdFile = null;
-		inertiaFile = null;
-		compoFiles = new TreeMap<Integer, String>();
-		configFiles = new TreeMap<Integer, String>();
+		divisorFile = null;
+		//compoFiles = new TreeMap<Integer, String>();
+		//configFiles = new TreeMap<Integer, String>();
 		stdFiles = new TreeMap<Integer, String>();
+		groupFiles = new TreeMap<Integer, Map<String, String>>();
 		ruptureFile = null;
 		//inputRaster = null;
 		inputRasters = new TreeSet<String>();
@@ -148,8 +152,9 @@ public class EcoPaysageManager {
 		scales = null;
 		unfilters = null;
 		codes = null;
-		compoMetrics = null;
-		configMetrics = null;
+		//compoMetrics = null;
+		//configMetrics = null;
+		groupMetrics = new TreeMap<String, Set<String>>();
 		outputFolder = null;
 		classes = null;
 		ecoFiles = new TreeMap<String, Map<Integer, String>>();
@@ -169,7 +174,7 @@ public class EcoPaysageManager {
 		importances = null;
 		codeImportanceFile = null;
 		metricImportanceFile = null;
-		inerties = new TreeMap<String, Float>();
+		divisors = new TreeMap<String, Float>();
 	}
 	
 	public EcoPaysageProcedure build(){
@@ -185,7 +190,7 @@ public class EcoPaysageManager {
 				if(codes == null){
 					initCodes();
 				}
-				initImportances(codes, scales);
+				initImportances();
 			}
 			
 			EcoPaysageProcedure gbProcedure = factory.create(this);
@@ -201,26 +206,6 @@ public class EcoPaysageManager {
 		this.force = force;
 	}
 	
-	/*
-	public void setMetricsFile(String metricsFile) {
-		Util.createAccess(metricsFile);
-		this.metricsFile = metricsFile;
-	}
-	*/
-	/*
-	public void setMetricsFile(int scale, String metricsFile) {
-		Util.createAccess(metricsFile);
-		//this.setScale(scale);
-		this.metricsFiles.put(scale, metricsFile);
-	}*/
-	
-	/*
-	public void addMetricsFile(int scale, String metricsFile) {
-		Util.createAccess(metricsFile);
-		this.metricsFiles.put(scale, metricsFile);
-	}
-	*/
-	
 	public void addMetricsFile(String carto, int scale, String metricsFile) {
 		Util.createAccess(metricsFile);
 		if(!this.metricsFiles.containsKey(carto)) {
@@ -234,19 +219,9 @@ public class EcoPaysageManager {
 		this.xyFile = xyFile;
 	}
 	
-	public void setInertiaFile(String inertiaFile) {
-		Util.createAccess(inertiaFile);
-		this.inertiaFile = inertiaFile;
-	}
-	
-	public void addCompoFile(int scale, String compoFile) {
-		Util.createAccess(compoFile);
-		this.compoFiles.put(scale, compoFile);
-	}
-	
-	public void addConfigFile(int scale, String configFile) {
-		Util.createAccess(configFile);
-		this.configFiles.put(scale, configFile);
+	public void setDivisorFile(String divisorFile) {
+		Util.createAccess(divisorFile);
+		this.divisorFile = divisorFile;
 	}
 	
 	public void setStandardizedFile(String stdFile) {
@@ -263,15 +238,6 @@ public class EcoPaysageManager {
 		Util.createAccess(stdFile);
 		this.stdFiles.put(scale, stdFile);
 	}
-	
-	/*
-	public void setInputRaster(String inputRaster) {
-		this.inputRaster = inputRaster;
-		Coverage cov = CoverageManager.getCoverage(inputRaster);
-		this.inEntete = cov.getEntete();
-		cov.dispose();
-		this.carto = new File(inputRaster).getName().replace(".tif", "").replace(".asc", "");
-	}*/
 	
 	public void addInputRaster(String inputRaster) {
 		this.inputRasters.add(inputRaster);
@@ -300,14 +266,6 @@ public class EcoPaysageManager {
 	public void setUnfilters(int[] unfilters) {
 		this.unfilters = unfilters;
 	}
-
-	public void setCodes(int[] codes){
-		this.codes = codes;
-		setCompositionMetrics(codes);
-		setConfigurationMetrics(codes);
-		setInitMetrics(true);
-		//initImportances(codes);
-	}
 	
 	private void initCodes() {
 		
@@ -322,16 +280,11 @@ public class EcoPaysageManager {
 		cov.dispose();
 	}
 	
-	private void initImportances(int[] codes, int[] scales) {
+	private void initImportances() {
 		importances = new TreeMap<String, Float>();
-		for(int scale : scales) {
-			for(int code1 : codes) {
-				importances.put("pNV_"+code1+"_"+scale+"m", 1f);
-				for(int code2 : codes) {
-					if(code1 < code2) {
-						importances.put("pNC_"+code1+"-"+code2+"_"+scale+"m", 1f);
-					}
-				}
+		for(String metric : metrics()) {
+			for(int scale : scales) {
+				importances.put(metric+"_"+scale+"m", 1f);
 			}
 		}
 	}
@@ -344,9 +297,11 @@ public class EcoPaysageManager {
 		this.initMetrics = initMetrics;
 	}
 	
+	/*
 	public boolean initMetrics() {
 		return this.initMetrics;
 	}
+	*/
 
 	public void setClasses(int[] classes){
 		this.classes = classes;
@@ -356,48 +311,65 @@ public class EcoPaysageManager {
 		this.factor = factor;
 	}
 	
-	public void addCompositionMetric(String metric) {
-		if(compoMetrics == null) {
-			compoMetrics = new ArrayList<String>();
-		}
-		compoMetrics.add(metric);
+	public void setCodes(int[] codes){
+		this.codes = codes;
+		//setCompositionMetrics(codes);
+		//setConfigurationMetrics(codes);
+		//setInitMetrics(true);
+		//initImportances(codes);
 	}
 	
-	public void addConfigurationMetric(String metric) {
-		if(configMetrics == null) {
-			configMetrics = new ArrayList<String>();
-		}
-		configMetrics.add(metric);
-	}
-	
-	public void removeCompositionMetric(String metric) {
-		if(compoMetrics != null) {
-			compoMetrics.remove(metric);
-		}
-	}
-	
-	public void removeConfigurationMetric(String metric) {
-		if(configMetrics != null) {
-			configMetrics.remove(metric);
-		}
-	}
-	
-	private void setCompositionMetrics(int[] codes){
-		compoMetrics = new ArrayList<String>();
+	public void setCompositionMetrics(){
+		TreeSet<String> metrics = new TreeSet<String>();
 		for(int c : codes) {
-			compoMetrics.add("pNV_"+c);
+			metrics.add("pNV_"+c);
 		}
+		setMetrics("composition", metrics);
 	}
-	
-	private void setConfigurationMetrics(int[] codes){
-		configMetrics = new ArrayList<String>();
+		
+	public void setConfigurationMetrics(){
+		TreeSet<String> metrics = new TreeSet<String>();
 		for(int c1 : codes) {
 			for(int c2 : codes) {
 				if(c1 < c2) {
-					configMetrics.add("pNC_"+c1+"-"+c2);
+					metrics.add("pNC_"+c1+"-"+c2);	
 				}
 			}
 		}
+		setMetrics("configuration", metrics);
+	}
+	
+	public void addMetric(String group, String metric) {
+		if(groupMetrics.get(group) == null) {
+			groupMetrics.put(group, new TreeSet<String>());
+		}
+		groupMetrics.get(group).add(metric);
+	}
+	
+	public void addCompositionMetric(String metric) {
+		addMetric("composition", metric);
+	}
+	
+	public void addConfigurationMetric(String metric) {
+		addMetric("configuration", metric);
+	}
+	
+	public void removeMetric(String group, String metric) {
+		if(groupMetrics.get(group) != null) {
+			groupMetrics.get(group).remove(metric);
+		}
+	}
+	
+	public void removeCompositionMetric(String metric) {
+		removeMetric("composition", metric);
+	}
+	
+	public void removeConfigurationMetric(String metric) {
+		removeMetric("configuration", metric);
+	}
+	
+	private void setMetrics(String group, TreeSet<String> metrics){
+		groupMetrics.put(group, metrics);
 	}
 	
 	public void setCodeImportanceFile(String codeImportanceFile) {
@@ -489,8 +461,8 @@ public class EcoPaysageManager {
 		this.distanceType = distanceType;
 	}
 	
-	public void setInertia(String group, float inertia) {
-		this.inerties.put(group, inertia);
+	public void setDivisor(String group, float divisor) {
+		this.divisors.put(group, divisor);
 	}
 	
 	// getters
@@ -499,28 +471,9 @@ public class EcoPaysageManager {
 		return force;
 	}
 	
-	/*
-	public boolean metricsFilesExist() {
-		boolean ok = true;
-		for(int scale : scales) {
-			if(!new File(metricsFile(scale)).exists()) {
-				return false;
-			}
-		}
-	}*/
-	
 	public String metricsFile() {
 		return metricsFile(cartos.get(inputRasters.iterator().next()), scales[0]);
 	}
-	
-	/*
-	public String metricsFile(int scale) {
-		if(!metricsFiles.containsKey(scale)) {
-			metricsFiles.put(scale, outputFolder()+"metrics_"+carto+"_"+scale+"m.csv");
-		}
-		return metricsFiles.get(scale);
-	}
-	*/
 	
 	public String metricsFile(int scale) {
 		String carto = cartos.get(inputRasters.iterator().next());
@@ -576,27 +529,27 @@ public class EcoPaysageManager {
 		}
 		return xyFile;
 	}
-	/*
-	public String compoFile() {
-		return compoFile(scales[0]);
-	}*/
 	
-	public String compoFile(int scale) {
-		if(!compoFiles.containsKey(scale)) {
-			compoFiles.put(scale, outputFolder()+"composition_metrics_"+carto+"_"+scale+"m.csv");
+	public String groupFile(String group, int scale) {
+		if(!groupFiles.containsKey(scale)) {
+			groupFiles.put(scale, new TreeMap<String, String>());
 		}
-		return compoFiles.get(scale);
+		if(!groupFiles.get(scale).containsKey(group)) {
+			groupFiles.get(scale).put(group,outputFolder()+group+"_metrics_"+carto+"_"+scale+"m.csv");
+		}
+		return groupFiles.get(scale).get(group);
 	}
-	/*
-	public String configFile() {
-		return configFile(scales[0]);
-	}*/
 	
-	public String configFile(int scale) {
-		if(!configFiles.containsKey(scale)) {
-			configFiles.put(scale, outputFolder()+"configuration_metrics_"+carto+"_"+scale+"m.csv");
+	public Map<String, String> groupFiles(int scale) {
+		if(!groupFiles.containsKey(scale)) {
+			groupFiles.put(scale, new TreeMap<String, String>());
 		}
-		return configFiles.get(scale);
+		if(groupFiles.get(scale).size() == 0) {
+			for(String group : groupMetrics.keySet()) {
+				groupFiles.get(scale).put(group,outputFolder()+group+"_metrics_"+carto+"_"+scale+"m.csv");
+			}
+		}
+		return groupFiles.get(scale);
 	}
 	
 	public String standardizedFile() {
@@ -612,14 +565,14 @@ public class EcoPaysageManager {
 		return stdFile;
 	}
 	
-	public String inertiaFile() {
-		if(inertiaFile == null) {
+	public String divisorFile() {
+		if(divisorFile == null) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(outputFolder()+"inertia_"+carto);
+			sb.append(outputFolder()+"divisor_"+carto);
 			sb.append(".csv");
-			setInertiaFile(sb.toString());
+			setDivisorFile(sb.toString());
 		}
-		return inertiaFile;
+		return divisorFile;
 	}
 	
 	public String standardizedFile(int scale) {
@@ -641,12 +594,6 @@ public class EcoPaysageManager {
 		}
 		return ruptureFile;
 	}
-
-	/*
-	public String inputRaster() {
-		return inputRaster;
-	}
-	*/
 	
 	public Set<String> inputRasters() {
 		return inputRasters;
@@ -695,12 +642,20 @@ public class EcoPaysageManager {
 		return codes;
 	}
 	
-	public List<String> compoMetrics() {
-		return compoMetrics;
+	public Map<String, Set<String>> groupMetrics(){
+		return groupMetrics;
 	}
-
-	public List<String> configMetrics() {
-		return configMetrics;
+	
+	public Set<String> metrics(String group) {
+		return groupMetrics.get(group);
+	}
+	
+	public Set<String> metrics() {
+		TreeSet<String> metrics = new TreeSet<String>();
+		for(Entry<String, Set<String>> ms : groupMetrics.entrySet()) {
+			metrics.addAll(ms.getValue());
+		}
+		return metrics;
 	}
 	
 	public int[] classes() {
@@ -749,21 +704,6 @@ public class EcoPaysageManager {
 		return thematicDistanceFiles.get(k);
 	}
 	
-	/*
-	public String gradientFile(int k) {
-		if(!gradientFiles.containsKey(k)) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(outputFolder()+"gradient_ecopaysages_"+carto+"_"+k+"classes");
-			for(int scale : scales) {
-				sb.append("_"+scale+"m");
-			}
-			sb.append(".csv");
-			setGradientFile(k, sb.toString());
-		}
-		return gradientFiles.get(k);
-	}
-	*/
-	
 	public String gradientFile(String carto, int k) {
 		if(!gradientFiles.containsKey(carto) || !gradientFiles.get(carto).containsKey(k)) {
 			StringBuilder sb = new StringBuilder();
@@ -802,21 +742,6 @@ public class EcoPaysageManager {
 		}
 		return evoMembershipFiles.get(k);
 	}
-	
-	/*
-	public String gradientMapFile(int k, int ik) {
-		if(!gradientMapFiles.containsKey(k) || !gradientMapFiles.get(k).containsKey(ik)) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(outputFolder()+"gradient_ecopaysages_"+carto+"_"+k+"classes_ecop"+ik);
-			for(int scale : scales) {
-				sb.append("_"+scale+"m");
-			}
-			sb.append(".tif");
-			setGradientMapFile(k, ik, sb.toString());
-		}
-		return gradientMapFiles.get(k).get(ik);
-	}
-	*/
 	
 	public String gradientMapFile(String carto, int k, int ik) {
 		if(!gradientMapFiles.containsKey(carto) || !gradientMapFiles.get(carto).containsKey(k) || !gradientMapFiles.get(carto).get(k).containsKey(ik)) {
@@ -881,8 +806,188 @@ public class EcoPaysageManager {
 		return importances;
 	}
 	
-	public Map<String, Float> inerties(){
-		return inerties;
+	public Map<String, Float> divisors(){
+		return divisors;
 	}
+	
+	//public void setMetricsFile(String metricsFile) {
+	//	Util.createAccess(metricsFile);
+	//	this.metricsFile = metricsFile;
+	//}
+	
+	//public void setMetricsFile(int scale, String metricsFile) {
+	//	Util.createAccess(metricsFile);
+	//	//this.setScale(scale);
+	//	this.metricsFiles.put(scale, metricsFile);
+	//}
+	
+	//public void addMetricsFile(int scale, String metricsFile) {
+	//	Util.createAccess(metricsFile);
+	//	this.metricsFiles.put(scale, metricsFile);
+	//}
+	
+	//public void setInputRaster(String inputRaster) {
+	//	this.inputRaster = inputRaster;
+	//	Coverage cov = CoverageManager.getCoverage(inputRaster);
+	//	this.inEntete = cov.getEntete();
+	//	cov.dispose();
+	//	this.carto = new File(inputRaster).getName().replace(".tif", "").replace(".asc", "");
+	//}
+	
+	//public void addCompositionMetric(String metric) {
+	//	if(compoMetrics == null) {
+	//		compoMetrics = new ArrayList<String>();
+	//	}
+	//	compoMetrics.add(metric);
+	//}
+	
+	//public void addConfigurationMetric(String metric) {
+	//	if(configMetrics == null) {
+	//		configMetrics = new ArrayList<String>();
+	//	}
+	//	configMetrics.add(metric);
+	//}
+	
+	//public void removeCompositionMetric(String metric) {
+	//	if(compoMetrics != null) {
+	//		compoMetrics.remove(metric);
+	//	}
+	//}
+	
+	//public void removeConfigurationMetric(String metric) {
+	//	if(configMetrics != null) {
+	//		configMetrics.remove(metric);
+	//	}
+	//}
+	
+	//private void setCompositionMetrics(int[] codes){
+	//	compoMetrics = new ArrayList<String>();
+	//	for(int c : codes) {
+	//		compoMetrics.add("pNV_"+c);
+	//	}
+	//}
+	
+	//private void setConfigurationMetrics(int[] codes){
+	//	configMetrics = new ArrayList<String>();
+	//	for(int c1 : codes) {
+	//		for(int c2 : codes) {
+	//			if(c1 < c2) {
+	//				configMetrics.add("pNC_"+c1+"-"+c2);
+	//			}
+	//		}
+	//	}
+	//}
+	
+	//public String compoFile() {
+	//	return compoFile(scales[0]);
+	//}
+		
+	//public String compoFile(int scale) {
+	//	if(!compoFiles.containsKey(scale)) {
+	//		compoFiles.put(scale, outputFolder()+"composition_metrics_"+carto+"_"+scale+"m.csv");
+	//	}
+	//	return compoFiles.get(scale);
+	//}
+		
+	//public String configFile() {
+	//	return configFile(scales[0]);
+	//}
+		
+	//public String configFile(int scale) {
+	//	if(!configFiles.containsKey(scale)) {
+	//		configFiles.put(scale, outputFolder()+"configuration_metrics_"+carto+"_"+scale+"m.csv");
+	//	}
+	//	return configFiles.get(scale);
+	//}	
+	
+	//public String gradientMapFile(int k, int ik) {
+	//	if(!gradientMapFiles.containsKey(k) || !gradientMapFiles.get(k).containsKey(ik)) {
+	//		StringBuilder sb = new StringBuilder();
+	//		sb.append(outputFolder()+"gradient_ecopaysages_"+carto+"_"+k+"classes_ecop"+ik);
+	//		for(int scale : scales) {
+	//			sb.append("_"+scale+"m");
+	//		}
+	//		sb.append(".tif");
+	//		setGradientMapFile(k, ik, sb.toString());
+	//	}
+	//	return gradientMapFiles.get(k).get(ik);
+	//}
+	
+	//public String gradientFile(int k) {
+	//		if(!gradientFiles.containsKey(k)) {
+	//		StringBuilder sb = new StringBuilder();
+	//		sb.append(outputFolder()+"gradient_ecopaysages_"+carto+"_"+k+"classes");
+	//		for(int scale : scales) {
+	//			sb.append("_"+scale+"m");
+	//		}
+	//		sb.append(".csv");
+	//		setGradientFile(k, sb.toString());
+	//	}
+	//	return gradientFiles.get(k);
+	//}
+	
+	//public List<String> compoMetrics() {
+	//	return compoMetrics;
+	//}
+
+	//public List<String> configMetrics() {
+	//	return configMetrics;
+	//}
+	
+	//public boolean metricsFilesExist() {
+	//	boolean ok = true;
+	//	for(int scale : scales) {
+	//		if(!new File(metricsFile(scale)).exists()) {
+	//			return false;
+	//		}
+	//	}
+	//}
+	
+	//public String metricsFile(int scale) {
+	//	if(!metricsFiles.containsKey(scale)) {
+	//		metricsFiles.put(scale, outputFolder()+"metrics_"+carto+"_"+scale+"m.csv");
+	//	}
+	//	return metricsFiles.get(scale);
+	//}
+	
+	//public void addCompoFile(int scale, String compoFile) {
+	//	Util.createAccess(compoFile);
+	//	this.compoFiles.put(scale, compoFile);
+	//}
+	
+	//public void addConfigFile(int scale, String configFile) {
+	//	Util.createAccess(configFile);
+	//	this.configFiles.put(scale, configFile);
+	//}
+	
+	//private void setCompositionMetrics(int[] codes){
+	//	TreeSet<String> metrics = new TreeSet<String>();
+	//	for(int c : codes) {
+	//		metrics.add("pNV_"+c);
+	//	}
+	//	setMetrics("composition", metrics);
+	//}
+	
+	//private void setConfigurationMetrics(int[] codes){
+	//		TreeSet<String> metrics = new TreeSet<String>();
+	//	for(int c : codes) {
+	//		metrics.add("pNV_"+c);
+	//	}
+	//	setMetrics("configuration", metrics);
+	//}
+	
+	//private void initImportances(int[] codes, int[] scales) {
+	//	importances = new TreeMap<String, Float>();
+	//	for(int scale : scales) {
+	//		for(int code1 : codes) {
+	//			importances.put("pNV_"+code1+"_"+scale+"m", 1f);
+	//			for(int code2 : codes) {
+	//				if(code1 < code2) {
+	//					importances.put("pNC_"+code1+"-"+code2+"_"+scale+"m", 1f);
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 	
 }

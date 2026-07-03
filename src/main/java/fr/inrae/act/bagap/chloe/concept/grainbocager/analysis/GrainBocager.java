@@ -115,6 +115,8 @@ public class GrainBocager {
 	
 	public static Coverage recuperationZoneArrachage(String arrachage, EnteteRaster entete) {
 		
+		//System.out.println("entete d'arrachage "+entete);
+		
 		Coverage covZoneArrachage = ShapeFile2CoverageConverter.getSurfaceCoverage(arrachage, entete, 0, entete.noDataValue());
 		
 		return covZoneArrachage;

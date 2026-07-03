@@ -17,8 +17,42 @@ public class ScriptCortege {
 	public static void main(String[] args) {
 		
 		//rasterizeOccsolTest();
-		analyseMetrics();
+		retileSousZone("occsolTest", 3);
+		retileSousZone("occsolTest", 5);
+		retileSousZone("occsol_2019", 3);
+		retileSousZone("occsol_2019", 5);
+		retileSousZone("occsol_2020", 3);
+		retileSousZone("occsol_2020", 5);
+		retileSousZone("occsol_2021", 3);
+		retileSousZone("occsol_2021", 5);
 		
+		//analyseMetrics();
+		
+	}
+
+	private static void retileSousZone(String name, int size) {
+		
+		String path = "C:/Data/projet/cortege/atelier_03-06-26/data/dataParametersModele/";
+		
+		Envelope env = null;
+		if(size == 3) {
+			env = new Envelope(634175.0, 637175.0, 6795850.0, 6798850.0); // 3x3 km
+		}else {
+			env = new Envelope(634175.0, 639175.0, 6793850.0, 6798850.0); // 5x5 km
+		}
+		
+		Coverage cov = CoverageManager.getCoverage(path+name+".tif");
+		EnteteRaster entete = cov.getEntete();
+		float[] data = cov.getData(EnteteRaster.getROI(entete, env));
+		cov.dispose();
+		
+		System.out.println(entete);
+		
+		if(size == 3) {
+			CoverageManager.write(path+name+"_3x3km.tif", data, EnteteRaster.getEntete(entete, env));
+		}else {
+			CoverageManager.write(path+name+"_5x5km.tif", data, EnteteRaster.getEntete(entete, env));
+		}
 	}
 
 	private static void rasterizeOccsolTest() {

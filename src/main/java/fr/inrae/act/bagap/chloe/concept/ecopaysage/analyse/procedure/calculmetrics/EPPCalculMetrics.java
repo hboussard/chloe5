@@ -24,12 +24,12 @@ public class EPPCalculMetrics extends EcoPaysageProcedure {
 			scale = manager().scale();
 		}
 		
-		if(!manager().initMetrics()) {
+		//if(!manager().initMetrics()) {
 			
 			//System.out.println("lecture des codes de la carte "+manager().inputRaster());
 			
 			//manager().setCodes(EcoPaysage.getCodes(manager().inputRaster()));
-		}
+		//}
 	}
 
 	@Override
@@ -41,11 +41,13 @@ public class EPPCalculMetrics extends EcoPaysageProcedure {
 			
 			System.out.println("analyse de la carto "+inputRaster);
 			
-			EcoPaysage.calculateCompoMetrics(manager().metricsFile(manager().carto(inputRaster), scale), inputRaster, scale, manager().codes(), manager().compoMetrics(), manager().windowDistanceType(), manager().displacement(), manager().unfilters());
+			//EcoPaysage.calculateCompoMetrics(manager().metricsFile(manager().carto(inputRaster), scale), inputRaster, scale, manager().codes(), manager().compoMetrics(), manager().windowDistanceType(), manager().displacement(), manager().unfilters());
 			
 			//EcoPaysage.calculateConfigMetrics(manager().metricsFile(manager().carto(inputRaster), scale), inputRaster, scale, manager().codes(), manager().configMetrics(), manager().windowDistanceType(), manager().displacement(), manager().unfilters());
 			
 			//EcoPaysage.calculateCompoConfigMetrics(manager().metricsFile(manager().carto(inputRaster), scale), inputRaster, scale, manager().codes(), manager().compoMetrics(), manager().configMetrics(), manager().windowDistanceType(), manager().displacement(), manager().unfilters());
+			
+			EcoPaysage.calculateMetrics(manager().metricsFile(manager().carto(inputRaster), scale), inputRaster, scale, manager().codes(), manager().metrics(), manager().windowDistanceType(), manager().displacement(), manager().unfilters());
 		}
 		
 	}

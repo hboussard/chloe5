@@ -58,6 +58,32 @@ public class EcoPaysage {
 	}
 	*/
 	
+	public static void calculateMetrics(String metricsFile, String inputRaster, int radius, int[] values, Set<String> metrics, WindowDistanceType distanceType, int displacement, int[] unfilters) {
+		
+		Coverage cov = CoverageManager.getCoverage(inputRaster);
+		EnteteRaster entete = cov.getEntete();
+		
+		int ws = ((int) ((radius*2)/entete.cellsize()))+1;
+		//System.out.println(ws);
+		
+		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
+		builder.setWindowDistanceType(distanceType);
+		builder.setCoverage(cov);
+		builder.setValues(values);
+		for(String m : metrics) {
+			builder.addMetric(m);
+		}
+		builder.addWindowSize(ws);
+		builder.setDisplacement(displacement);
+		builder.setUnfilters(unfilters);
+		builder.addCsvOutput(metricsFile);
+		
+		LandscapeMetricAnalysis analysis = builder.build();
+		analysis.allRun();
+		
+		cov.dispose();
+	}
+	
 	public static void calculateCompoMetrics(String metricsFile, String inputRaster, int radius, int[] values, List<String> compoMetrics, WindowDistanceType distanceType, int displacement, int[] unfilters) {
 		
 		Coverage cov = CoverageManager.getCoverage(inputRaster);
@@ -238,6 +264,86 @@ public class EcoPaysage {
 		}
 	}
 	
+	public static int splitGroups(Set<String> dataFiles, String xyFile, Map<String, String> groupFiles, Map<String, Set<String>> groupMetrics) {
+		
+		try {
+			
+			Map<String, CsvWriter> groupWriters = new TreeMap<String, CsvWriter>();
+			
+			for(Entry<String, String> groupFile : groupFiles.entrySet()) {
+				CsvWriter writer = new CsvWriter(groupFile.getValue());
+				writer.setDelimiter(';');
+				for(String m : groupMetrics.get(groupFile.getKey())) {
+					writer.write(m);
+				}
+				writer.endRecord();
+				
+				groupWriters.put(groupFile.getKey(), writer);
+			}
+			
+			int count = 0;
+			for(String dataFile : dataFiles) {
+				
+				CsvReader cr = new CsvReader(dataFile);
+				cr.setDelimiter(';');
+				cr.readHeaders();
+				
+				CsvReader crm = new CsvReader(xyFile);
+				crm.setDelimiter(';');
+				crm.readHeaders();
+			
+				crm.readRecord();
+				double mX = Double.parseDouble(crm.get("X"));
+				double mY = Double.parseDouble(crm.get("Y"));
+				double tolerance = 30;
+				while(cr.readRecord()) {
+					double X = Double.parseDouble(cr.get("X"));
+					double Y = Double.parseDouble(cr.get("Y"));
+					
+					//System.out.println(X+" "+mX);
+					
+					if(Math.abs(X-mX) < tolerance && Math.abs(Y-mY) < tolerance) {
+						
+						for(Entry<String, Set<String>> groupMetric : groupMetrics.entrySet()) {
+							
+							for(String m : groupMetric.getValue()) {
+								
+								groupWriters.get(groupMetric.getKey()).write(cr.get(m));
+							}
+							
+							groupWriters.get(groupMetric.getKey()).endRecord();
+						}
+						
+						count++;
+						
+						if(crm.readRecord()) {
+							mX = Double.parseDouble(crm.get("X"));
+							mY = Double.parseDouble(crm.get("Y"));
+						}else {
+							break;
+						}
+					}
+				}
+				cr.close();
+				crm.close();
+			}
+			
+			for(CsvWriter writer : groupWriters.values()) {
+				
+				writer.close();
+			}
+			
+			return count;
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return -1;
+	}
+	
 	public static int splitCompoConfig(Set<String> dataFiles, String xyFile, String compoFile, String configFile, List<String> compoMetrics, List<String> configMetrics) {
 		
 		try {
@@ -320,6 +426,63 @@ public class EcoPaysage {
 			//cwConfig.close();
 			
 			return count;
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return -1;
+	}
+	
+	public static float standardize(String groupFile, int count, Set<String> groupMetrics, Map<String, Float> importances, int scale) {
+		try {
+			CsvReader cr = new CsvReader(groupFile);
+			cr.setDelimiter(';');
+			cr.readHeaders();
+			
+			float[][] dGroup = new float[count][];
+			
+			float[] group;
+			int index;
+			int indexCount = 0;
+			while(cr.readRecord()) {
+				group = new float[groupMetrics.size()];
+				index = 0;
+				for(String gm : groupMetrics) {
+					group[index++] = importances.get(gm+"_"+scale+"m") * Float.parseFloat(cr.get(gm));
+					//group[index++] = importances.get(gm) * Float.parseFloat(cr.get(gm));
+				}
+				
+				dGroup[indexCount++] = group;
+			}
+			cr.close();
+			
+			float divisor = divisor(dGroup, groupMetrics.size());
+			//System.out.println("divisor "+divisor);
+			
+			CsvWriter cwNormGroup = new CsvWriter(groupFile);
+			cwNormGroup.setDelimiter(';');
+			for(String gm : groupMetrics) {
+				cwNormGroup.write(gm);
+			}
+			cwNormGroup.endRecord();
+			
+			for(float[] d : dGroup) {
+				for(index = 0; index<d.length; index++) {
+					
+					float v = d[index];
+					float nv = v/divisor;
+					
+					cwNormGroup.write(nv+"");
+				}
+				cwNormGroup.endRecord();
+			}
+			
+			cwNormGroup.close();
+			
+			return divisor;
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -1720,28 +1883,28 @@ public class EcoPaysage {
 		return null;
 	}
 
-	public static void exportInertia(String inertiaFile, Map<String, Float> inerties) {
+	public static void exportDivisor(String divisorFile, Map<String, Float> divisors) {
 		
 		try {
 		
-			File file = new File(inertiaFile);
+			File file = new File(divisorFile);
 		
 			if(file.exists()) {
-				CsvReader cr = new CsvReader(inertiaFile);
+				CsvReader cr = new CsvReader(divisorFile);
 				cr.setDelimiter(';');
 				cr.readHeaders();
 				while(cr.readRecord()) {
-					inerties.put(cr.get("group"), Float.valueOf(cr.get("inertia")));
+					divisors.put(cr.get("group"), Float.valueOf(cr.get("divisor")));
 				}
 				cr.close();
 			}
 		
-			CsvWriter cw = new CsvWriter(inertiaFile);
+			CsvWriter cw = new CsvWriter(divisorFile);
 			cw.setDelimiter(';');
 			cw.write("group");
-			cw.write("inertia");
+			cw.write("divisor");
 			cw.endRecord();
-			for(Entry<String, Float> e : inerties.entrySet()) {
+			for(Entry<String, Float> e : divisors.entrySet()) {
 				cw.write(e.getKey());
 				cw.write(e.getValue()+"");
 				cw.endRecord();
