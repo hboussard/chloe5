@@ -43,7 +43,7 @@ public class ScriptMotiver {
 		//cleanFrance(2004);
 		//cleanFrance(2005);
 		//cleanFrance(2006);
-		analyseFranceDynamics();
+		//analyseFranceDynamics();
 		
 	}
 	

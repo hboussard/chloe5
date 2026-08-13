@@ -27,24 +27,43 @@ public class ERDataInitialization extends ErosionProcedure {
 		
 		Erosion.bvRasterization(manager().territory(), manager().elevationFolders(), manager().territoryShape(), manager().territoryIDAttribute(), manager().territoryIDValues());
 		
+		Coverage bvCov = CoverageManager.getCoverage(manager().territory());
+		EnteteRaster bvEntete = bvCov.getEntete();
+		bvCov.dispose();
+		
 		System.out.println("recuperation de l'altitude (RGE_alti, IGN)");
 		
 		Erosion.elevationConstruction(manager().elevation(), manager().territory(), manager().elevationFolders());
 		
-		System.out.println("recuperation de l'occupation des sols (OSO, Theia)");
+		System.out.println("recuperation de l'occupation des sols (ex : OSO, Theia)");
 		
-		Erosion.osRecovery(manager().os(), manager().territory(), manager().osSource(), 2);
+		Coverage baseOsCov = CoverageManager.getCoverage(manager().osSource());
+		EnteteRaster baseOsEntete = baseOsCov.getEntete();
 		
+		if(bvEntete.cellsize() == baseOsEntete.cellsize()) {
+			
+			float[] baseOsData = baseOsCov.getData();
+			CoverageManager.write(manager().os(), baseOsData, baseOsEntete);
+			baseOsCov.dispose();
+			
+		}else if(bvEntete.cellsize() < baseOsEntete.cellsize()) {
+			
+			baseOsCov.dispose();
+			Erosion.osRecovery(manager().os(), manager().territory(), manager().osSource(), ((int) (baseOsEntete.cellsize() / bvEntete.cellsize())));
+		
+		}else {
+		
+			throw new IllegalArgumentException("os cellsize can not be finer than elevation cellsize.");
+		}
 		
 		// test prairies permanentes - bas leon
-		Coverage osCov = CoverageManager.getCoverage(manager().os());
-		EnteteRaster osEntete = osCov.getEntete();
-		float[] osData = osCov.getData();
-		osCov.dispose();
+		//Coverage osCov = CoverageManager.getCoverage(manager().os());
+		//EnteteRaster osEntete = osCov.getEntete();
+		//float[] osData = osCov.getData();
+		//osCov.dispose();
 		
-		System.out.println(osEntete);
-		
-		System.out.println(osEntete.getEnvelope());
+		//System.out.println(osEntete);
+		//System.out.println(osEntete.getEnvelope());
 		
 		//Coverage cgtvCov = CoverageManager.getCoverage("F:/data/sig/CGTV/cgtv.tif");
 		//EnteteRaster entete = cgtvCov.getEntete();
@@ -68,9 +87,8 @@ public class ERDataInitialization extends ErosionProcedure {
 		//	}
 		//}
 		
-		CoverageManager.write(manager().os(), osData, osEntete);
+		//CoverageManager.write(manager().os(), osData, osEntete);
 		// fin test prairies permanentes - bas leon
-		
 		
 		System.out.println("recuperation des boisements surfaciques (bd_topo, Zone de vegetation, IGN)");
 		
@@ -81,19 +99,19 @@ public class ERDataInitialization extends ErosionProcedure {
 		System.out.println("recuperation des boisements lineaires (bd_topo, Haie, IGN)");
 		
 		for(String lws : manager().linearWoodShapes()) {
-			Erosion.linearWoodRasterization(manager().os(), lws, manager().linearWoodCode());
+			Erosion.linearWoodRasterization(manager().os(), lws, manager().linearWoodCode(), ((float) (bvEntete.cellsize()/2.0)));
 		}
 		
 		System.out.println("recuperation des routes lineaires (bd_topo, troncon de route, IGN)");
 		
 		for(String lrs : manager().linearRoadShapes()) {
-			Erosion.linearRoadRasterization(manager().os(), lrs, manager().linearRoadAttribute(), manager().linearRoadCodes());
+			Erosion.linearRoadRasterization(manager().os(), lrs, manager().linearRoadAttribute(), manager().linearRoadCodes(), ((float) (bvEntete.cellsize()/2.0)));
 		}
 		
 		System.out.println("recuperation des voies ferrees (bd_topo, troncon de voie ferree, IGN)");
 		
 		for(String lts : manager().linearTrainShapes()) {
-			Erosion.linearTrainRasterization(manager().os(), lts, manager().linearTrainCode());
+			Erosion.linearTrainRasterization(manager().os(), lts, manager().linearTrainCode(), ((float) (bvEntete.cellsize()/2.0)));
 		}
 		
 		System.out.println("recuperation des surfaces hydrographiques (bd_topo, surface hydrographique, IGN)");
@@ -105,7 +123,7 @@ public class ERDataInitialization extends ErosionProcedure {
 		System.out.println("recuperation des troncons hydrographiques (bd_topo, troncon hydrographique, IGN)");
 		
 		for(String lws : manager().linearWaterShapes()) {
-			Erosion.linearWaterRasterization(manager().os(), lws, manager().linearWaterCode());
+			Erosion.linearWaterRasterization(manager().os(), lws, manager().linearWaterCode(), ((float) (bvEntete.cellsize()/2.0)));
 		}
 		
 	}

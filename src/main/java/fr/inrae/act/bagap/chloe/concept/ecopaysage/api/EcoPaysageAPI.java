@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import fr.inrae.act.bagap.chloe.analysis.ChloeAnalysisBuilder;
@@ -68,13 +70,47 @@ public class EcoPaysageAPI {
 			importOutputFolder(manager, properties);
 			importDisplacement(manager, properties);
 			importFactor(manager, properties);
+			importComposition(manager, properties);
+			importConfiguration(manager, properties);
+			importMetrics(manager, properties);
 		
 		} catch (NoParameterException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private static void importUnfilters(EcoPaysageManager builder, Properties properties) throws NoParameterException {
+	private static void importComposition(EcoPaysageManager builder, Properties properties) {
+		if(properties.containsKey("composition")){
+			String prop = properties.getProperty("composition");
+			if(prop.equalsIgnoreCase("true")) {
+				builder.setCompositionMetrics();
+			}
+		}
+	}
+	
+	private static void importConfiguration(EcoPaysageManager builder, Properties properties) {
+		if(properties.containsKey("configuration")){
+			String prop = properties.getProperty("configuration");
+			if(prop.equalsIgnoreCase("true")) {
+				builder.setConfigurationMetrics();
+			}
+		}
+	}
+	
+	private static void importMetrics(EcoPaysageManager builder, Properties properties) {
+		if(properties.containsKey("metrics")){
+			String prop = properties.getProperty("metrics").replace("{", "").replace("}", "");
+			String[] cc = prop.split(";");
+			String[] vv;
+			for(String c : cc){
+				c = c.replace("(", "").replace(")", "");
+				vv = c.split(",");
+				builder.addMetric(vv[0], vv[1]);
+			}
+		}
+	}
+
+	private static void importUnfilters(EcoPaysageManager builder, Properties properties) {
 		if(properties.containsKey("unfilters")){
 			String prop = properties.getProperty("unfilters");
 			prop = prop.replace("{", "").replace("}", "").replace(" ", "");

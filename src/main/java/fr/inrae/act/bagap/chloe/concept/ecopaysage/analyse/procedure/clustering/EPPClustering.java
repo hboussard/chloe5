@@ -36,7 +36,7 @@ public class EPPClustering extends EcoPaysageProcedure {
 			
 			if(manager().hasMultipleScales()) {
 				
-				EcoPaysage.compileFiles(manager().standardizedFile(), dataXY.length, manager().standardizedFiles());
+				EcoPaysage.compileFiles(manager().standardizedFile(), (manager().inputRasters().size()*dataXY.length), manager().standardizedFiles());
 				
 			}else {
 				

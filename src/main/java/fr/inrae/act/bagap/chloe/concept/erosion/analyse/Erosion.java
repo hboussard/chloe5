@@ -130,7 +130,7 @@ public class Erosion {
 		CoverageManager.write(os, osData, osEntete);
 	}
 	
-	public static void linearWoodRasterization(String os, String linearWoodShape, int linearWoodCode){
+	public static void linearWoodRasterization(String os, String linearWoodShape, int linearWoodCode, float cellSize){
 		
 		Coverage osCov = CoverageManager.getCoverage(os);
 		EnteteRaster osEntete = osCov.getEntete();
@@ -143,7 +143,7 @@ public class Erosion {
 		CoverageManager.write(os, osData, osEntete);
 	}
 	
-	public static void linearRoadRasterization(String os, String linearRoadShape, String linearRoadAttribute, Map<String, Integer> linearRoadCodes){
+	public static void linearRoadRasterization(String os, String linearRoadShape, String linearRoadAttribute, Map<String, Integer> linearRoadCodes, float cellSize){
 		
 		Coverage osCov = CoverageManager.getCoverage(os);
 		EnteteRaster osEntete = osCov.getEntete();
@@ -156,7 +156,7 @@ public class Erosion {
 		CoverageManager.write(os, osData, osEntete);
 	}
 	
-	public static void linearTrainRasterization(String os, String linearTrainShape, int linearTrainCode){
+	public static void linearTrainRasterization(String os, String linearTrainShape, int linearTrainCode, float cellSize){
 		
 		Coverage osCov = CoverageManager.getCoverage(os);
 		EnteteRaster osEntete = osCov.getEntete();
@@ -182,7 +182,7 @@ public class Erosion {
 		CoverageManager.write(os, osData, osEntete);
 	}
 
-	public static void linearWaterRasterization(String os, String linearWaterShape, int linearWaterCode){
+	public static void linearWaterRasterization(String os, String linearWaterShape, int linearWaterCode, float cellSize){
 	
 		Coverage osCov = CoverageManager.getCoverage(os);
 		EnteteRaster osEntete = osCov.getEntete();
@@ -195,6 +195,7 @@ public class Erosion {
 		CoverageManager.write(os, osData, osEntete);
 	}
 	
+	/*
 	public static void sectionHydroRasterization(String os, String sectionHydroShape){
 		
 		Coverage osCov = CoverageManager.getCoverage(os);
@@ -208,6 +209,7 @@ public class Erosion {
 		
 		CoverageManager.write(os, data, osEntete);
 	}
+	*/
 	/*
 	public static void surfaceHydroRasterization(String os, String surfaceHydroShape){
 		

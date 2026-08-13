@@ -56,7 +56,7 @@ public class ScriptCapHaie {
 		
 		//ecolandscapeFrance2(20, 5000);
 		
-		analyseEntite();
+		//analyseEntite();
 		//analyseGrille();
 	}
 	

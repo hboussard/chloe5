@@ -134,7 +134,31 @@ public class Util {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;		
+	}
+	
+	public static Map<String, Integer> importDataString2Int(String dataFile, String code, String value){
+		
+		try {
+			CsvReader cr = new CsvReader(dataFile);
+			cr.setDelimiter(';');
+			cr.readHeaders();
+			
+			Map<String, Integer> sarMap = new HashMap<String, Integer>();
+			while(cr.readRecord()) {
+				sarMap.put(cr.get(code), Integer.parseInt(cr.get(value)));
+			}
+			
+			cr.close();
+			
+			return sarMap;
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
