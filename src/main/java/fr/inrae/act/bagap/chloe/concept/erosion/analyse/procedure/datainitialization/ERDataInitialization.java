@@ -42,8 +42,9 @@ public class ERDataInitialization extends ErosionProcedure {
 		
 		if(bvEntete.cellsize() == baseOsEntete.cellsize()) {
 			
-			float[] baseOsData = baseOsCov.getData();
-			CoverageManager.write(manager().os(), baseOsData, baseOsEntete);
+			//float[] baseOsData = baseOsCov.getData();
+			float[] baseOsData = baseOsCov.getData(EnteteRaster.getROI(baseOsEntete, bvEntete.getEnvelope()));
+			CoverageManager.write(manager().os(), baseOsData, bvEntete);
 			baseOsCov.dispose();
 			
 		}else if(bvEntete.cellsize() < baseOsEntete.cellsize()) {

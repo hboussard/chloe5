@@ -137,7 +137,7 @@ public class Erosion {
 		float[] osData = osCov.getData();
 		osCov.dispose();
 		
-		Coverage cov = ShapeFile2CoverageConverter.getLinearCoverage(osData, osEntete, linearWoodShape, linearWoodCode, 2.5);
+		Coverage cov = ShapeFile2CoverageConverter.getLinearCoverage(osData, osEntete, linearWoodShape, linearWoodCode, cellSize/2.0);
 		cov.dispose();
 		
 		CoverageManager.write(os, osData, osEntete);
@@ -150,7 +150,7 @@ public class Erosion {
 		float[] osData = osCov.getData();
 		osCov.dispose();
 		
-		Coverage cov = ShapeFile2CoverageConverter.getLinearCoverage(osData, osEntete, linearRoadShape, linearRoadAttribute, linearRoadCodes, 2.5);
+		Coverage cov = ShapeFile2CoverageConverter.getLinearCoverage(osData, osEntete, linearRoadShape, linearRoadAttribute, linearRoadCodes, cellSize/2.0);
 		cov.dispose();
 		
 		CoverageManager.write(os, osData, osEntete);
@@ -163,7 +163,7 @@ public class Erosion {
 		float[] osData = osCov.getData();
 		osCov.dispose();
 		
-		Coverage cov = ShapeFile2CoverageConverter.getLinearCoverage(osData, osEntete, linearTrainShape, linearTrainCode, 2.5);
+		Coverage cov = ShapeFile2CoverageConverter.getLinearCoverage(osData, osEntete, linearTrainShape, linearTrainCode, cellSize/2.0);
 		cov.dispose();
 		
 		CoverageManager.write(os, osData, osEntete);
@@ -189,7 +189,7 @@ public class Erosion {
 		float[] osData = osCov.getData();
 		osCov.dispose();
 	
-		Coverage cov = ShapeFile2CoverageConverter.getLinearCoverage(osData, osEntete, linearWaterShape, linearWaterCode, 2.5);
+		Coverage cov = ShapeFile2CoverageConverter.getLinearCoverage(osData, osEntete, linearWaterShape, linearWaterCode, cellSize/2.0);
 		cov.dispose();
 	
 		CoverageManager.write(os, osData, osEntete);
@@ -384,7 +384,7 @@ public class Erosion {
 		CoverageManager.write(erodibility, data, osEntete);
 	}
 	
-	public static void waterMassCumulation(String cumulWaterMass, String initialWaterMass, String altitude, String infltration, String slopeIntensity, int displacement, int windowSize) {
+	public static void waterMassCumulation(String cumulWaterMass, String initialWaterMass, String altitude, String infiltration, String slopeIntensity, int displacement, int windowSize) {
 		
 		Coverage massInitCov = CoverageManager.getCoverage(initialWaterMass);
 		EnteteRaster entete = massInitCov.getEntete();
@@ -395,7 +395,7 @@ public class Erosion {
 		float[] altData = altCov.getData();
 		altCov.dispose();
 		
-		Coverage infilCov = CoverageManager.getCoverage(infltration);
+		Coverage infilCov = CoverageManager.getCoverage(infiltration);
 		float[] infilData = infilCov.getData();
 		infilCov.dispose();
 		

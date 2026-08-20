@@ -5,6 +5,7 @@ import fr.inrae.act.bagap.chloe.concept.erosion.analyse.procedure.ErosionProcedu
 
 public class ScriptByTerritory {
 	
+	private static final String rge_alti_09 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D009_2023-10-04/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D009_2023-10-04/RGEALTI/1_DONNEES_LIVRAISON_2023-10-00126/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D009/";
 	private static final String rge_alti_11 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D011_2021-05-12/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D011_2021-05-12/RGEALTI/1_DONNEES_LIVRAISON_2021-10-00009/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D011/";
 	private static final String rge_alti_24 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D024_2019-10-17/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D024_2019-10-17/RGEALTI/1_DONNEES_LIVRAISON_2023-01-00223/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D024/";
 	private static final String rge_alti_31 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D031_2021-05-12/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D031_2021-05-12/RGEALTI/1_DONNEES_LIVRAISON_2021-10-00009/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D031/";
@@ -17,6 +18,7 @@ public class ScriptByTerritory {
 	private static final String rge_alti_82 = "D:/sig/rge_alti/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D082_2019-10-30/RGEALTI_2-0_5M_ASC_LAMB93-IGN69_D082_2019-10-30/RGEALTI/1_DONNEES_LIVRAISON_2021-10-00009/RGEALTI_MNT_5M_ASC_LAMB93_IGN69_D082/";
 	
 	
+	private static final String bd_topo_09 = "D:/sig/bd_topo/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D009_2024-03-15/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D009_2024-03-15/BDTOPO/1_DONNEES_LIVRAISON_2024-04-00042/BDT_3-3_SHP_LAMB93_D009-ED2024-03-15/";
 	private static final String bd_topo_11 = "D:/sig/bd_topo/BDTOPO_3-4_TOUSTHEMES_SHP_LAMB93_D011_2024-09-15/BDTOPO_3-4_TOUSTHEMES_SHP_LAMB93_D011_2024-09-15/BDTOPO/1_DONNEES_LIVRAISON_2024-09-00147/BDT_3-4_SHP_LAMB93_D011-ED2024-09-15/";
 	private static final String bd_topo_24 = "D:/sig/bd_topo/BDTOPO_3-4_TOUSTHEMES_SHP_LAMB93_D024_2024-09-15/BDTOPO_3-4_TOUSTHEMES_SHP_LAMB93_D024_2024-09-15/BDTOPO/1_DONNEES_LIVRAISON_2024-09-00147/BDT_3-4_SHP_LAMB93_D024-ED2024-09-15/";
 	private static final String bd_topo_31 = "D:/sig/bd_topo/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D031_2023-03-15/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D031_2023-03-15/BDTOPO/1_DONNEES_LIVRAISON_2023-03-00212/BDT_3-3_SHP_LAMB93_D031-ED2023-03-15/";
@@ -169,21 +171,46 @@ public class ScriptByTerritory {
 		rge_altis = new String[] {rge_alti_29};
 		bd_topos = new String[] {bd_topo_29};
 		*/
+		/*
+		// saves
+		outputFolder = "C:/Data/temp/saves/erosion/";
+		bvShape = "C:/Data/temp/saves/data/territoire_save_L93.shp";
+		bvAttribute = "Abreviatio";
+		bvCode = "Saves";	
+		rge_altis = new String[] {rge_alti_32, rge_alti_31};
+		bd_topos = new String[] {bd_topo_32, bd_topo_31};
+		*/
+		/*
+		// rieux_volvestre
+		outputFolder = "C:/Data/temp/dangla/erosion/";
+		bvShape = "C:/Data/temp/dangla/data/zone_rieux_volvestre.shp";
+		bvAttribute = "code";
+		bvCode = "rieux_volvestre";	
+		rge_altis = new String[] {rge_alti_09, rge_alti_31};
+		bd_topos = new String[] {bd_topo_09, bd_topo_31};
+		*/
+		
+		// auterive_cintagebelle
+		outputFolder = "C:/Data/temp/dangla/erosion/";
+		bvShape = "C:/Data/temp/dangla/data/zone_auterive_cintagebelle.shp";
+		bvAttribute = "code";
+		bvCode = "auterive_cintagebell";	
+		rge_altis = new String[] {rge_alti_09, rge_alti_31};
+		bd_topos = new String[] {bd_topo_09, bd_topo_31};
+		
 		//initialisation(bvShape, bvCode, rge_altis, bd_topos);
 		//procedure(bvCode);
 		
 		//wholeProcedure(outputFolder, bvShape, bvAttribute, bvCode, rge_altis, bd_topos, "SOFT");
 		//wholeProcedure(outputFolder, bvShape, bvAttribute, bvCode, rge_altis, bd_topos, "MEDIUM");
-		//wholeProcedure(outputFolder, bvShape, bvAttribute, bvCode, rge_altis, bd_topos, "HARD");
+		wholeProcedure(outputFolder, bvShape, bvAttribute, bvCode, rge_altis, bd_topos, "HARD");
 		
 	}
 
 	private static void wholeProcedure(String outputFolder, String bvShape, String bvAttribute, String bvCode, String[] rge_altis, String[] bd_topos, String eventType) {
 		
 		ErosionManager manager = new ErosionManager("erosion_calculation");
-		
-		//manager.setTerritoryShape("D:/sig/bd_carthage/ZoneHydro_FXX-shp/ZoneHydro_FXX.shp");
-		//manager.setTerritoryIDAttribute("CdZoneHydr");
+	
 		manager.setTerritoryShape(bvShape);
 		manager.setTerritoryIDAttribute(bvAttribute);
 		manager.setTerritoryIDValues(bvCode);
@@ -249,11 +276,16 @@ public class ScriptByTerritory {
 		
 		//manager.setDisplacement(10); // 50m
 		
-		manager.setOutputFolder(outputFolder+"erosion_prairie_"+bvCode+"/");
 		manager.setOutputPrefix(bvCode);
+		
+		manager.setOutputFolder(outputFolder+"erosion_"+bvCode+"/");
+		manager.setInfiltrationMapFile(outputFolder+"erosion_"+bvCode+"/infiltration_map.txt");
+		manager.setErodibilityMapFile(outputFolder+"erosion_"+bvCode+"/erodibility_map.txt");
+		/*
+		manager.setOutputFolder(outputFolder+"erosion_prairie_"+bvCode+"/");
 		manager.setInfiltrationMapFile(outputFolder+"erosion_prairie_"+bvCode+"/infiltration_map.txt");
 		manager.setErodibilityMapFile(outputFolder+"erosion_prairie_"+bvCode+"/erodibility_map.txt");
-		
+		*/
 		ErosionProcedure procedure = manager.build();
 		
 		procedure.run();
