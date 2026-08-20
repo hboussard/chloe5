@@ -100,19 +100,19 @@ public class ERDataInitialization extends ErosionProcedure {
 		System.out.println("recuperation des boisements lineaires (bd_topo, Haie, IGN)");
 		
 		for(String lws : manager().linearWoodShapes()) {
-			Erosion.linearWoodRasterization(manager().os(), lws, manager().linearWoodCode(), ((float) (bvEntete.cellsize()/2.0)));
+			Erosion.linearWoodRasterization(manager().os(), lws, manager().linearWoodCode(), bvEntete.cellsize());
 		}
 		
 		System.out.println("recuperation des routes lineaires (bd_topo, troncon de route, IGN)");
 		
 		for(String lrs : manager().linearRoadShapes()) {
-			Erosion.linearRoadRasterization(manager().os(), lrs, manager().linearRoadAttribute(), manager().linearRoadCodes(), ((float) (bvEntete.cellsize()/2.0)));
+			Erosion.linearRoadRasterization(manager().os(), lrs, manager().linearRoadAttribute(), manager().linearRoadCodes(), bvEntete.cellsize());
 		}
 		
 		System.out.println("recuperation des voies ferrees (bd_topo, troncon de voie ferree, IGN)");
 		
 		for(String lts : manager().linearTrainShapes()) {
-			Erosion.linearTrainRasterization(manager().os(), lts, manager().linearTrainCode(), ((float) (bvEntete.cellsize()/2.0)));
+			Erosion.linearTrainRasterization(manager().os(), lts, manager().linearTrainCode(), bvEntete.cellsize());
 		}
 		
 		System.out.println("recuperation des surfaces hydrographiques (bd_topo, surface hydrographique, IGN)");
@@ -124,7 +124,7 @@ public class ERDataInitialization extends ErosionProcedure {
 		System.out.println("recuperation des troncons hydrographiques (bd_topo, troncon hydrographique, IGN)");
 		
 		for(String lws : manager().linearWaterShapes()) {
-			Erosion.linearWaterRasterization(manager().os(), lws, manager().linearWaterCode(), ((float) (bvEntete.cellsize()/2.0)));
+			Erosion.linearWaterRasterization(manager().os(), lws, manager().linearWaterCode(), bvEntete.cellsize());
 		}
 		
 	}

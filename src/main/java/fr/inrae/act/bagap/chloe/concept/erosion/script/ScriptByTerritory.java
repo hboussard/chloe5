@@ -189,7 +189,7 @@ public class ScriptByTerritory {
 		rge_altis = new String[] {rge_alti_09, rge_alti_31};
 		bd_topos = new String[] {bd_topo_09, bd_topo_31};
 		*/
-		
+		/*
 		// auterive_cintagebelle
 		outputFolder = "C:/Data/temp/dangla/erosion/";
 		bvShape = "C:/Data/temp/dangla/data/zone_auterive_cintagebelle.shp";
@@ -197,6 +197,15 @@ public class ScriptByTerritory {
 		bvCode = "auterive_cintagebell";	
 		rge_altis = new String[] {rge_alti_09, rge_alti_31};
 		bd_topos = new String[] {bd_topo_09, bd_topo_31};
+		*/
+		
+		// test Saves : 32418
+		outputFolder = "C:/Data/temp/saves/erosion_test/";
+		bvShape = "D:/sig/commune/CommunesL93.shp";
+		bvAttribute = "DCOE_C_COD";
+		bvCode = "32418";	
+		rge_altis = new String[] {rge_alti_32};
+		bd_topos = new String[] {bd_topo_32};
 		
 		//initialisation(bvShape, bvCode, rge_altis, bd_topos);
 		//procedure(bvCode);
@@ -278,7 +287,7 @@ public class ScriptByTerritory {
 		
 		manager.setOutputPrefix(bvCode);
 		
-		manager.setOutputFolder(outputFolder+"erosion_"+bvCode+"/");
+		manager.setOutputFolder(outputFolder+"erosion3_"+bvCode+"/");
 		manager.setInfiltrationMapFile(outputFolder+"erosion_"+bvCode+"/infiltration_map.txt");
 		manager.setErodibilityMapFile(outputFolder+"erosion_"+bvCode+"/erodibility_map.txt");
 		/*

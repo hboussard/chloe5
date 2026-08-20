@@ -42,7 +42,7 @@ public class ERWaterMassCumulation extends ErosionProcedure {
 		
 		System.out.println("cumul des masses d'eau");
 		
-		Erosion.waterMassCumulation(manager().cumulWaterMass(), manager().initialWaterMass(), manager().elevation(), manager().infiltration(), manager().slopeIntensity(), manager().displacement(), 201);
+		Erosion.waterMassCumulation(manager().cumulWaterMass(), manager().initialWaterMass(), manager().elevation(), manager().infiltration(), manager().slopeIntensity(), manager().displacement(), 500);
 		
 	}
 

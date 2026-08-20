@@ -42,7 +42,7 @@ public class ERErosionCalculation extends ErosionProcedure {
 	
 		System.out.println("calcul des sources et des depots d'erosion");
 		
-		Erosion.erosionCalculation(manager().sourceErosionIntensity(), manager().depositionErosionIntensity(), manager().elevation(), manager().infiltration(), manager().slopeIntensity(), manager().erodibilityIntensity(), manager().displacement(), 201);
+		Erosion.erosionCalculation(manager().sourceErosionIntensity(), manager().depositionErosionIntensity(), manager().elevation(), manager().infiltration(), manager().slopeIntensity(), manager().erodibilityIntensity(), manager().displacement(), 500);
 	}
 
 }

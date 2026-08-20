@@ -137,6 +137,7 @@ public class Erosion {
 		float[] osData = osCov.getData();
 		osCov.dispose();
 		
+		//Coverage cov = ShapeFile2CoverageConverter.getLinearCoverage(osData, osEntete, linearWoodShape, linearWoodCode, 2.5);
 		Coverage cov = ShapeFile2CoverageConverter.getLinearCoverage(osData, osEntete, linearWoodShape, linearWoodCode, cellSize/2.0);
 		cov.dispose();
 		
@@ -150,6 +151,7 @@ public class Erosion {
 		float[] osData = osCov.getData();
 		osCov.dispose();
 		
+		//Coverage cov = ShapeFile2CoverageConverter.getLinearCoverage(osData, osEntete, linearRoadShape, linearRoadAttribute, linearRoadCodes, 2.5);
 		Coverage cov = ShapeFile2CoverageConverter.getLinearCoverage(osData, osEntete, linearRoadShape, linearRoadAttribute, linearRoadCodes, cellSize/2.0);
 		cov.dispose();
 		
@@ -163,6 +165,7 @@ public class Erosion {
 		float[] osData = osCov.getData();
 		osCov.dispose();
 		
+		//Coverage cov = ShapeFile2CoverageConverter.getLinearCoverage(osData, osEntete, linearTrainShape, linearTrainCode, 2.5);
 		Coverage cov = ShapeFile2CoverageConverter.getLinearCoverage(osData, osEntete, linearTrainShape, linearTrainCode, cellSize/2.0);
 		cov.dispose();
 		
@@ -189,6 +192,7 @@ public class Erosion {
 		float[] osData = osCov.getData();
 		osCov.dispose();
 	
+		//Coverage cov = ShapeFile2CoverageConverter.getLinearCoverage(osData, osEntete, linearWaterShape, linearWaterCode, 2.5);
 		Coverage cov = ShapeFile2CoverageConverter.getLinearCoverage(osData, osEntete, linearWaterShape, linearWaterCode, cellSize/2.0);
 		cov.dispose();
 	
@@ -384,7 +388,7 @@ public class Erosion {
 		CoverageManager.write(erodibility, data, osEntete);
 	}
 	
-	public static void waterMassCumulation(String cumulWaterMass, String initialWaterMass, String altitude, String infiltration, String slopeIntensity, int displacement, int windowSize) {
+	public static void waterMassCumulation(String cumulWaterMass, String initialWaterMass, String altitude, String infiltration, String slopeIntensity, int displacement, int radius) {
 		
 		Coverage massInitCov = CoverageManager.getCoverage(initialWaterMass);
 		EnteteRaster entete = massInitCov.getEntete();
@@ -402,6 +406,9 @@ public class Erosion {
 		Coverage slopIntCov = CoverageManager.getCoverage(slopeIntensity);
 		float[] slopIntData = slopIntCov.getData();
 		slopIntCov.dispose();
+		
+		
+		int windowSize = ((int) (radius*2 / entete.cellsize())) + +1;
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
 		builder.setRasterTabs(massInitData, altData, infilData, slopIntData);
@@ -462,7 +469,7 @@ public class Erosion {
 		CoverageManager.write(erodibilityIntensity, data, outEntete);
 	}
 	
-	public static void erosionCalculation(String sourceErosionIntensity, String depositionErosionIntensity, String elevation, String infiltration, String slopeIntensity, String erodibilityIntensity, int displacement, int windowSize){
+	public static void erosionCalculation(String sourceErosionIntensity, String depositionErosionIntensity, String elevation, String infiltration, String slopeIntensity, String erodibilityIntensity, int displacement, int radius){
 		
 		Coverage intVersCov = CoverageManager.getCoverage(erodibilityIntensity);
 		EnteteRaster entete = intVersCov.getEntete();
@@ -480,6 +487,8 @@ public class Erosion {
 		Coverage slopIntCov = CoverageManager.getCoverage(slopeIntensity);
 		float[] slopIntData = slopIntCov.getData();
 		slopIntCov.dispose();
+		
+		int windowSize = ((int) (radius*2 / entete.cellsize())) + +1;
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
 		builder.setRasterTabs(intVersData, altData, infilData, slopIntData);
