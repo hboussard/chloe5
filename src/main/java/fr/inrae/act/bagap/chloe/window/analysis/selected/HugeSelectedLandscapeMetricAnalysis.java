@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import fr.inrae.act.bagap.apiland.raster.Pixel;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
@@ -48,27 +49,40 @@ public class HugeSelectedLandscapeMetricAnalysis extends SelectedLandscapeMetric
 		Rectangle roi;
 		int localBufferROIYMin, localBufferROIYMax, tYs;
 		
+		boolean treat;
 		for(int localROIY=roiY(); localROIY<roiY()+roiHeight(); localROIY+=LandscapeMetricAnalysis.tileYSize()){
 			
-			localBufferROIYMin = Math.min(localROIY+bufferROIYMin(), midWindowSize);
-			localBufferROIYMax = Math.min(Math.max(bufferROIYMax(), roiHeight()+bufferROIYMax()-(localROIY+LandscapeMetricAnalysis.tileYSize())), midWindowSize);
-			tYs = Math.min(LandscapeMetricAnalysis.tileYSize(), roiHeight() + roiY() - localROIY );
+			treat = false;
 			
-			// mise en place des infos pour le Kernel
-			kernel().setWidth(roiWidth() + bufferROIXMin() + bufferROIXMax());
-			kernel().setHeight(tYs + localBufferROIYMin + localBufferROIYMax);
-			kernel().setBufferROIXMin(bufferROIXMin());
-			kernel().setBufferROIXMax(bufferROIXMax());
-			kernel().setBufferROIYMin(localBufferROIYMin);
-			kernel().setBufferROIYMax(localBufferROIYMax);
+			for(Pixel p : pixels()){
+				if(p.y()>=localROIY && p.y()<localROIY+LandscapeMetricAnalysis.tileYSize()) {
+					treat = true;
+					break;
+				}
+			}
 			
-			// recuperation des donnees depuis le coverage
-			roi = new Rectangle(roiX() - bufferROIXMin(), localROIY - localBufferROIYMin, roiWidth() + bufferROIXMin() + bufferROIXMax(), tYs + localBufferROIYMin + localBufferROIYMax);
-			
-			// gestion des entrees
-			manageInDatas(roi);
-			
-			kernel().applySelectedWindow(tYs, localROIY);
+			if(treat) {
+				
+				localBufferROIYMin = Math.min(localROIY+bufferROIYMin(), midWindowSize);
+				localBufferROIYMax = Math.min(Math.max(bufferROIYMax(), roiHeight()+bufferROIYMax()-(localROIY+LandscapeMetricAnalysis.tileYSize())), midWindowSize);
+				tYs = Math.min(LandscapeMetricAnalysis.tileYSize(), roiHeight() + roiY() - localROIY );
+				
+				// mise en place des infos pour le Kernel
+				kernel().setWidth(roiWidth() + bufferROIXMin() + bufferROIXMax());
+				kernel().setHeight(tYs + localBufferROIYMin + localBufferROIYMax);
+				kernel().setBufferROIXMin(bufferROIXMin());
+				kernel().setBufferROIXMax(bufferROIXMax());
+				kernel().setBufferROIYMin(localBufferROIYMin);
+				kernel().setBufferROIYMax(localBufferROIYMax);
+				
+				// definition de l'enveloppe
+				roi = new Rectangle(roiX() - bufferROIXMin(), localROIY - localBufferROIYMin, roiWidth() + bufferROIXMin() + bufferROIXMax(), tYs + localBufferROIYMin + localBufferROIYMax);
+				
+				// recuperation des donnees depuis le coverage
+				manageInDatas(roi);
+				
+				kernel().applySelectedWindow(tYs, localROIY);
+			}
 		}
 		
 		for(Pixel p : pixels()){

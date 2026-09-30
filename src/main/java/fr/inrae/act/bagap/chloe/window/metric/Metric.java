@@ -11,6 +11,9 @@ public abstract class Metric implements Comparable<Metric> {
 	/** the name of the metric */
 	private String name;
 	
+	/** the alias name of the metric */
+	private String alias;
+	
 	/** the result value */
 	protected double value;
 	
@@ -40,8 +43,19 @@ public abstract class Metric implements Comparable<Metric> {
 		return this.name;
 	}
 	
+	public String getAlias() {
+		if(alias == null) {
+			return this.name;
+		}
+		return this.alias;
+	}
+	
 	public void setName(String name){
 		this.name = name;
+	}
+	
+	public void setAlias(String alias){
+		this.alias = alias;
 	}
 	
 	/**

@@ -121,8 +121,6 @@ public class MultipleSelectedLandscapeMetricAnalysis extends MultipleLandscapeMe
 								suffixMetrics.get(rasterFile).add("_"+ws);
 							}
 							
-							
-							
 							add(LandscapeMetricAnalysisFactory.create(builder));
 						}
 					}

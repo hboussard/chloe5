@@ -25,6 +25,7 @@ import fr.inrae.act.bagap.chloe.window.kernel.entity.EntityQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.map.MapPatchKernel;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
+import fr.inrae.act.bagap.chloe.window.metric.ThematicDistanceMetric;
 import fr.inrae.act.bagap.chloe.window.output.EntityCsvOutput;
 import fr.inrae.act.bagap.chloe.window.output.EntityDataOutput;
 import fr.inrae.act.bagap.chloe.window.output.EntityRasterOutput;
@@ -131,8 +132,8 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 				
 				tifFile = rasterFolder+sb.toString();
 				
-				EntityRasterOutput geotiffOutput = new EntityRasterOutput(tifFile, m, entityCoverage, coverage.getEntete().noDataValue());
-				observers.add(geotiffOutput);
+				EntityRasterOutput rasterOutput = new EntityRasterOutput(tifFile, m, entityCoverage, coverage.getEntete().noDataValue());
+				observers.add(rasterOutput);
 			}
 		}
 		
@@ -203,6 +204,13 @@ public abstract class EntityLandscapeMetricAnalysisFactory {
 			}
 					
 			if(MetricManager.hasOnlyQualitativeMetric(metrics)){ // qualitative
+				
+				// initialisation des metriques de distance thematique
+				for(Metric m : metrics) {
+					if(m instanceof ThematicDistanceMetric) {
+						MetricManager.initThematicDistanceMetric(builder.getThematicDistanceFile(), (ThematicDistanceMetric) m, values);
+					}
+				}
 				
 				// recuperation des couples
 				float[] couples = null;

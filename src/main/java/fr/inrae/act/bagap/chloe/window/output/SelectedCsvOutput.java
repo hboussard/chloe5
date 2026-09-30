@@ -45,7 +45,8 @@ public class SelectedCsvOutput implements CountingObserver{
 			bw.write("X;");
 			bw.write("Y");
 			for(Metric m : metrics) {
-				bw.write(";"+m.getName());
+				//bw.write(";"+m.getName());
+				bw.write(";"+m.getAlias());
 			}
 			bw.newLine();
 		} catch (IOException e) {

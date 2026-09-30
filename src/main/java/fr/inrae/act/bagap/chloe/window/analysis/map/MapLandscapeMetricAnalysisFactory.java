@@ -24,6 +24,7 @@ import fr.inrae.act.bagap.chloe.window.kernel.map.MapPatchKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.map.MapQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
+import fr.inrae.act.bagap.chloe.window.metric.ThematicDistanceMetric;
 import fr.inrae.act.bagap.chloe.window.output.MapCsvOutput;
 import fr.inrae.act.bagap.chloe.window.output.MapDataOutput;
 import fr.inrae.act.bagap.apiland.raster.Coverage;
@@ -116,6 +117,13 @@ public abstract class MapLandscapeMetricAnalysisFactory {
 			}
 
 			if(MetricManager.hasOnlyQualitativeMetric(metrics)){ // qualitative
+				
+				// initialisation des metriques de distance thematique
+				for(Metric m : metrics) {
+					if(m instanceof ThematicDistanceMetric) {
+						MetricManager.initThematicDistanceMetric(builder.getThematicDistanceFile(), (ThematicDistanceMetric) m, values);
+					}
+				}
 				
 				// recuperation des couples
 				float[] couples = null;

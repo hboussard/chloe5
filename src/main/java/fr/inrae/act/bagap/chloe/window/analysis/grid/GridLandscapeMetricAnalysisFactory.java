@@ -24,6 +24,7 @@ import fr.inrae.act.bagap.chloe.window.kernel.grid.GridPatchKernel;
 import fr.inrae.act.bagap.chloe.window.kernel.grid.GridQuantitativeKernel;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
+import fr.inrae.act.bagap.chloe.window.metric.ThematicDistanceMetric;
 import fr.inrae.act.bagap.chloe.window.output.AsciiGridOutput;
 import fr.inrae.act.bagap.chloe.window.output.CsvOutput;
 import fr.inrae.act.bagap.chloe.window.output.GeoTiffOutput;
@@ -215,6 +216,13 @@ public abstract class GridLandscapeMetricAnalysisFactory {
 			
 			if(MetricManager.hasOnlyQualitativeMetric(metrics)){ 
 					
+				// initialisation des metriques de distance thematique
+				for(Metric m : metrics) {
+					if(m instanceof ThematicDistanceMetric) {
+						MetricManager.initThematicDistanceMetric(builder.getThematicDistanceFile(), (ThematicDistanceMetric) m, values);
+					}
+				}
+				
 				// recuperation des couples
 				float[] couples = null;
 				if(MetricManager.hasCoupleMetric(metrics)){

@@ -175,6 +175,10 @@ public abstract class ChloeAnalysisBuilder {
 		throw new UnsupportedOperationException();
 	}
 	
+	public void addMetric(String name, String metric){
+		throw new UnsupportedOperationException();
+	}
+	
 	public void addMetric(String metric){
 		throw new UnsupportedOperationException();
 	}

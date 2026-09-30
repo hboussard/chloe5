@@ -287,7 +287,7 @@ public class ScriptByTerritory {
 		
 		manager.setOutputPrefix(bvCode);
 		
-		manager.setOutputFolder(outputFolder+"erosion3_"+bvCode+"/");
+		manager.setOutputFolder(outputFolder+"erosion_"+bvCode+"/");
 		manager.setInfiltrationMapFile(outputFolder+"erosion_"+bvCode+"/infiltration_map.txt");
 		manager.setErodibilityMapFile(outputFolder+"erosion_"+bvCode+"/erodibility_map.txt");
 		/*

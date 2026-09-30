@@ -36,6 +36,7 @@ import fr.inrae.act.bagap.chloe.window.kernel.selected.functional.SelectedFuncti
 import fr.inrae.act.bagap.chloe.window.kernel.selected.grainbocager.GrainBocagerSelectedDistanceBocageKernel;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
+import fr.inrae.act.bagap.chloe.window.metric.ThematicDistanceMetric;
 import fr.inrae.act.bagap.chloe.window.output.SelectedCsvOutput;
 import fr.inrae.act.bagap.apiland.raster.Coverage;
 import fr.inrae.act.bagap.apiland.raster.CoverageManager;
@@ -138,7 +139,8 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 			pixels = CoordinateManager.initWithPixels(builder.getPixelsFilter());
 			builder.setPixelsFilter(pixels);
 		}else if(builder.getRefPoints() != null){
-			throw new IllegalArgumentException();
+			pixels = CoordinateManager.initWithRefPoints(builder.getRefPoints(), coverage.getEntete());
+			builder.setPixelsFilter(pixels);
 		}else{
 			pixels = CoordinateManager.initWithPoints(builder.getPointsFilter(), coverage.getEntete());
 			builder.setPixelsFilter(pixels);
@@ -261,6 +263,13 @@ public abstract class SelectedLandscapeMetricAnalysisFactory {
 			}
 			
 			if(MetricManager.hasOnlyQualitativeMetric(metrics)){ // qualitative
+				
+				// initialisation des metriques de distance thematique
+				for(Metric m : metrics) {
+					if(m instanceof ThematicDistanceMetric) {
+						MetricManager.initThematicDistanceMetric(builder.getThematicDistanceFile(), (ThematicDistanceMetric) m, values);
+					}
+				}
 				
 				// recuperation des couples
 				float[] couples = null;

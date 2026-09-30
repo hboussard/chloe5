@@ -1,6 +1,5 @@
 package fr.inrae.act.bagap.chloe.window.metric.couple;
 
-import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 

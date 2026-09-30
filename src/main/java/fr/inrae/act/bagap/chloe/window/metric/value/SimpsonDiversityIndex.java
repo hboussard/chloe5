@@ -16,7 +16,7 @@ public class SimpsonDiversityIndex extends Metric implements ValueMetric {
 			value = 0;
 			double p;
 			for(int v : co.values()){
-				p = co.countValue(v) / (double)co.validValues();
+				p = co.countValue(v) / co.validValues();
 				value += p*p;
 			}
 			value = 1 - value;

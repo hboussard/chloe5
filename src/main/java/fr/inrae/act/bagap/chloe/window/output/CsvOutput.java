@@ -53,7 +53,8 @@ public class CsvOutput implements CountingObserver{
 			bw = new BufferedWriter(new FileWriter(csv));
 			bw.write("X;Y");
 			for(Metric m : metrics) {
-				bw.write(";"+m.getName());
+				//bw.write(";"+m.getName());
+				bw.write(";"+m.getAlias());
 			}
 			bw.newLine();
 		} catch (IOException e) {

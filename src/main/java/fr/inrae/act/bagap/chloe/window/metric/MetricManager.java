@@ -134,6 +134,11 @@ public class MetricManager {
 	}
 	
 	public static Metric get(String m) throws NotExistingMetricException {
+		
+		return get(m, m);
+	}
+	
+	public static Metric get(String m, String alias) throws NotExistingMetricException {
 		try {
 			
 			if(isProcessCoupleMetric(m)){
@@ -155,7 +160,7 @@ public class MetricManager {
 				Class<?> c = Class.forName(metrics.get(metric));
 				metric = m.replace(metric+"_", "");
 				
-				if(metric.contains("-")){
+				/*if(metric.contains("-")){
 					String[] s = metric.split("-");
 					short[] v = new short[s.length];
 					int i=0;
@@ -163,7 +168,23 @@ public class MetricManager {
 						v[i++] = Short.parseShort(ss);
 					}
 					return (Metric) c.getConstructor(short[].class).newInstance(v);
-				}if(metric.contains("&")){
+				}*/
+				if(metric.contains("-")){
+					String[] s = metric.split("-");
+					short[][] v = new short[s.length][];
+					int i=0;
+					for(String ss : s){
+						String[] sss = ss.split("&");
+						short[] vv = new short[sss.length];
+						int ii=0;
+						for(String ssss : sss){
+							vv[ii++] = Short.parseShort(ssss);
+						}
+						v[i++] = vv;
+					}
+					return (Metric) c.getConstructor(String.class, short[][].class).newInstance(alias, v);
+				}
+				if(metric.contains("&")){
 					String[] s = metric.split("&");
 					short[] v = new short[s.length];
 					int i=0;
@@ -406,6 +427,7 @@ public class MetricManager {
 	public static Set<Integer> getCoherences(Set<Metric> metrics){
 		Set<Integer> cIndex = new TreeSet<Integer>();
 		for(Metric m : metrics){
+			//System.out.println(m);
 			cIndex.add(coherences.get(m.getName().split("_")[0]));
 		}
 		return cIndex;

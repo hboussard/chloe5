@@ -351,6 +351,16 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 	}
 	
 	@Override
+	public void addMetric(String metric, String alias){
+		//System.out.println(metric);
+		if(MetricManager.hasMetric(metric)){
+			this.metrics.add(MetricManager.get(metric, alias));
+		}else{
+			System.out.println("metric '"+metric+"' does not exist");
+		}
+	}
+	
+	@Override
 	public void addMetric(String metric){
 		//System.out.println(metric);
 		if(MetricManager.hasMetric(metric)){
@@ -941,8 +951,5 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		}
 		return analysis;
 	}
-
-	
-
 	
 }

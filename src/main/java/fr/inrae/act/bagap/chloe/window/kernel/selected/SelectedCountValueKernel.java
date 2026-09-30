@@ -56,7 +56,6 @@ public class SelectedCountValueKernel extends SelectedLandscapeMetricKernel {
 				}
 			}
 		}
-		
 	}
 	
 	@Override
