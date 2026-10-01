@@ -44,8 +44,9 @@ public class ERDataInitialization extends ErosionProcedure {
 			
 			//float[] baseOsData = baseOsCov.getData();
 			float[] baseOsData = baseOsCov.getData(EnteteRaster.getROI(baseOsEntete, bvEntete.getEnvelope()));
-			CoverageManager.write(manager().os(), baseOsData, bvEntete);
 			baseOsCov.dispose();
+			
+			CoverageManager.write(manager().os(), baseOsData, bvEntete);
 			
 		}else if(bvEntete.cellsize() < baseOsEntete.cellsize()) {
 			
@@ -126,6 +127,21 @@ public class ERDataInitialization extends ErosionProcedure {
 		for(String lws : manager().linearWaterShapes()) {
 			Erosion.linearWaterRasterization(manager().os(), lws, manager().linearWaterCode(), bvEntete.cellsize());
 		}
+		
+		bvCov = CoverageManager.getCoverage(manager().territory());
+		float[] bvData = bvCov.getData();
+		bvCov.dispose();
+		
+		Coverage osCov = CoverageManager.getCoverage(manager().os());
+		float[] osData = osCov.getData();
+		osCov.dispose();
+		
+		for(int i=0; i<bvData.length; i++) {
+			if(bvData[i] == bvEntete.noDataValue()) {
+				osData[i] = bvEntete.noDataValue();
+			}
+		}
+		CoverageManager.write(manager().os(), osData, bvEntete);
 		
 	}
 		

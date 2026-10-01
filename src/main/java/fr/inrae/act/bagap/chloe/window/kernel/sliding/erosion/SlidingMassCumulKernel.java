@@ -177,6 +177,8 @@ public class SlidingMassCumulKernel extends SlidingLandscapeMetricKernel {
 	
 	protected float[] getLocalData(int covIndex, int x, int y, int mid){
 		
+		//System.out.println(inDatas(covIndex).length+" "+windowSize()+" "+(windowSize()*windowSize()+" "+width()+" "+height()));
+		
 		float[] data = new float[windowSize()*windowSize()];
 		Arrays.fill(data, noDataValue());
 		int ic;
@@ -184,7 +186,7 @@ public class SlidingMassCumulKernel extends SlidingLandscapeMetricKernel {
 			if(((y + dy) >= 0) && ((y + dy) < height())){
 				for (int dx = -mid; dx <= mid; dx += 1) {
 					if(((x + dx) >= 0) && ((x + dx) < width())){
-						ic = ((dy+mid) * windowSize()) + (dx+mid);
+						ic = ((dy+mid) * windowSize()) + (dx+mid);						
 						data[ic] = inDatas(covIndex)[((y + dy) * width()) + (x + dx)];
 					}
 				}

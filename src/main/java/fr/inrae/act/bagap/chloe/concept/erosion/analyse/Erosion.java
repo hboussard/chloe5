@@ -408,7 +408,7 @@ public class Erosion {
 		slopIntCov.dispose();
 		
 		
-		int windowSize = ((int) (radius*2 / entete.cellsize())) + 1;
+		int windowSize = ((int) (radius / entete.cellsize()))*2 + 1;
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
 		builder.setRasterTabs(massInitData, altData, infilData, slopIntData);
@@ -488,7 +488,7 @@ public class Erosion {
 		float[] slopIntData = slopIntCov.getData();
 		slopIntCov.dispose();
 		
-		int windowSize = ((int) (radius*2 / entete.cellsize())) + 1;
+		int windowSize = ((int) (radius / entete.cellsize()))*2 + 1;
 		
 		LandscapeMetricAnalysisBuilder builder = new LandscapeMetricAnalysisBuilder();
 		builder.setRasterTabs(intVersData, altData, infilData, slopIntData);
