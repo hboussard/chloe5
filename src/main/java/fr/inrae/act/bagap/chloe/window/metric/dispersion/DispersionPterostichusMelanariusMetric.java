@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class DispersionPterostichusMelanariusMetric extends Metric implements DispersalMetric {
 
-	public DispersionPterostichusMelanariusMetric() {
-		super("dispersionPterostichusMelanarius");
+	public DispersionPterostichusMelanariusMetric(String name, String alias) {
+		super(name, alias);
+		//super("dispersionPterostichusMelanarius");
 	}
 
 	@Override

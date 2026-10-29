@@ -2,14 +2,14 @@ package fr.inrae.act.bagap.chloe.window.metric.patch;
 
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
-import fr.inrae.act.bagap.chloe.window.metric.value.ValueMetric;
 
 public class EffectiveMeshSizeClassMetric extends Metric implements PatchMetric {
 	
 	private int classMetric;
 	
-	public EffectiveMeshSizeClassMetric(short cm){
-		super("EMS-class_"+cm);
+	public EffectiveMeshSizeClassMetric(String name, String alias, short cm){
+		super(name, alias);
+		//super("EMS-class_"+cm);
 		classMetric = cm;
 	}
 	

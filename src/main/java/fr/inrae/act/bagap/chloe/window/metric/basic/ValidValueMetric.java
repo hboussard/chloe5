@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class ValidValueMetric extends Metric implements BasicMetric {
 
-	public ValidValueMetric() {
-		super("N-valid");
+	public ValidValueMetric(String name, String alias) {
+		super(name, alias);
+		//super("N-valid");
 	}
 	
 	@Override

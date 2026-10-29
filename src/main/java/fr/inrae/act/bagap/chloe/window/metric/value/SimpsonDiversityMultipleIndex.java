@@ -7,26 +7,28 @@ public class SimpsonDiversityMultipleIndex extends Metric implements ValueMetric
 
 	private short[][] v;
 	
-	public SimpsonDiversityMultipleIndex(String alias, short[]... v) {
-		this(v);
-		setAlias(alias);
+	public SimpsonDiversityMultipleIndex(String name, String alias, short[]... v) {
+		super(name, alias);
+		this.v = v;
 	}
 	
+	/*
 	public SimpsonDiversityMultipleIndex(short[]... v) {
 		super();
 		StringBuffer name = new StringBuffer("SIDIm_");
 		for(short[] vv : v){
 			for(short vvv : vv){
 				name.append(vvv);
-				name.append('&');
+				name.append('+');
 			}
 			name.deleteCharAt(name.length()-1);
-			name.append('-');
+			name.append(',');
 		}
 		name.deleteCharAt(name.length()-1);
 		setName(name.toString());
 		this.v = v;
 	}
+	*/
 
 	@Override
 	protected void doCalculate(Counting co) {

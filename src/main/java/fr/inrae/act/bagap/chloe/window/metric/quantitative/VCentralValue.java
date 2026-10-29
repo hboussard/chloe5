@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class VCentralValue extends Metric implements QuantitativeMetric {
 
-	public VCentralValue() {
-		super("vCentral");
+	public VCentralValue(String name, String alias) {
+		super(name, alias);
+		//super("vCentral");
 	}
 
 	@Override

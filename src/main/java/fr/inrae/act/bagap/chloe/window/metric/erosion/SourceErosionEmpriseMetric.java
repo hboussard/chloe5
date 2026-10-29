@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class SourceErosionEmpriseMetric extends Metric implements SourceErosionMetric {
 
-	public SourceErosionEmpriseMetric() {
-		super("source-erosion-emprise");
+	public SourceErosionEmpriseMetric(String name, String alias) {
+		super(name, alias);
+		//super("source-erosion-emprise");
 	}
 
 	@Override

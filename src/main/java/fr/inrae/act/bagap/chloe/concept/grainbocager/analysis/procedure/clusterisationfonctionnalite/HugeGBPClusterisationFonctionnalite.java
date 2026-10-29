@@ -17,7 +17,8 @@ public class HugeGBPClusterisationFonctionnalite extends GrainBocagerProcedure {
 	@Override
 	public void doInit() {
 		
-		if(manager().force() || !new File(manager().grainBocager()).exists()){
+		if(manager().force() 
+				|| new File(manager().grainBocager()).list().length == 0){
 			
 			factory().parentFactory().create(manager()).run();
 			

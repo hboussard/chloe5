@@ -1,16 +1,17 @@
 package fr.inrae.act.bagap.chloe.window.metric.couple;
 
-import fr.inrae.act.bagap.chloe.util.Couple;
 import fr.inrae.act.bagap.chloe.window.counting.Counting;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
-public class CountMultipleCoupleMetric extends Metric implements CoupleMetric {
+public class CountCoupleMultipleMetric extends Metric implements CoupleMetric {
 
 	private float[] c;
 	
-	public CountMultipleCoupleMetric(short[] v1, short[] v2) {
-		super();
+	public CountCoupleMultipleMetric(String name, String alias, short[] v1, short[] v2) {
+		super(name, alias);
+		//super();
 		c = new float[v1.length * v2.length];
+		/*
 		int index = 0;
 		StringBuffer name = new StringBuffer("NMC_");
 		for(short vv1 : v1){
@@ -28,6 +29,7 @@ public class CountMultipleCoupleMetric extends Metric implements CoupleMetric {
 		}
 		name.deleteCharAt(name.length()-1);
 		setName(name.toString());
+		*/
 	}
 
 	@Override

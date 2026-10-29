@@ -8,8 +8,9 @@ public class RaoQIndex extends Metric implements ValueMetric, ThematicDistanceMe
 
 	private float[][] distance;
 	
-	public RaoQIndex() {
-		super("RaoQ");
+	public RaoQIndex(String name, String alias) {
+		super(name, alias);
+		//super("RaoQ");
 	}
 
 	@Override

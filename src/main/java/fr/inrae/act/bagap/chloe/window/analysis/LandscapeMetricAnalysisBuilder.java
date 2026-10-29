@@ -345,9 +345,16 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		this.filters = filters;
 	}
 	
+	/*
 	@Override
 	public void addMetric(Metric metric){
 		this.metrics.add(metric);
+	}
+	*/
+	
+	@Override
+	public void addMetric(String metric){
+		addMetric(metric, metric);
 	}
 	
 	@Override
@@ -360,20 +367,12 @@ public class LandscapeMetricAnalysisBuilder extends ChloeAnalysisBuilder /*imple
 		}
 	}
 	
-	@Override
-	public void addMetric(String metric){
-		//System.out.println(metric);
-		if(MetricManager.hasMetric(metric)){
-			this.metrics.add(MetricManager.get(metric));
-		}else{
-			System.out.println("metric '"+metric+"' does not exist");
-		}
-	}
-	
+	/*
 	@Override
 	public void setMetrics(Set<Metric> metrics) {
 		this.metrics = metrics;
 	}
+	*/
 	
 	public void setThematicDistanceFile(String thematicDistanceFile) {
 		this.thematicDistanceFile = thematicDistanceFile;

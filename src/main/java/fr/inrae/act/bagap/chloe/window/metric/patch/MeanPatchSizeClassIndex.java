@@ -7,8 +7,9 @@ public class MeanPatchSizeClassIndex extends Metric implements PatchMetric {
 
 	private int classMetric;
 	
-	public MeanPatchSizeClassIndex(short cm) {
-		super("MPS-class_"+cm);
+	public MeanPatchSizeClassIndex(String name, String alias, short cm) {
+		super(name, alias);
+		//super("MPS-class_"+cm);
 		classMetric = cm;
 	}
 

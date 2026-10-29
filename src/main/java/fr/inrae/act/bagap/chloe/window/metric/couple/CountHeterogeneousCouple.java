@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class CountHeterogeneousCouple extends Metric implements CoupleMetric {
 
-	public CountHeterogeneousCouple(){
-		super("NC-hete");
+	public CountHeterogeneousCouple(String name, String alias){
+		super(name, alias);
+		//super("NC-hete");
 	}
 	
 	@Override

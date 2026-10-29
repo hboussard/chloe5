@@ -10,8 +10,10 @@ public class AggregationIndexMultiple2 extends Metric implements ValueMetric, Co
 	
 	private short[] v;
 	
-	public AggregationIndexMultiple2(short[] v){
-		super();
+	public AggregationIndexMultiple2(String name, String alias, short[] v){
+		super(name, alias);
+		//super();
+		/*
 		StringBuffer name = new StringBuffer("AI2m_");
 		for(short vv : v){
 			name.append(vv);
@@ -19,6 +21,7 @@ public class AggregationIndexMultiple2 extends Metric implements ValueMetric, Co
 		}
 		name.deleteCharAt(name.length()-1);
 		setName(name.toString());
+		*/
 		this.v = v;
 	}
 	

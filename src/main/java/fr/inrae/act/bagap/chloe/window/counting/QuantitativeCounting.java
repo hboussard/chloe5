@@ -26,12 +26,11 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 		squareSum = counts[5];
 		minimum = counts[6];
 		maximum = counts[7];
-		
 	}
 
 	@Override
 	public double average() {
-		return (float) (sum / validValues());
+		return sum / validValues();
 	}
 
 	@Override
@@ -49,7 +48,7 @@ public class QuantitativeCounting extends Counting implements QuantitativeCounti
 		if(((squareSum / validValues()) - Math.pow(sum / validValues(), 2)) < 0){
 			return 0;
 		}
-		return (float) Math.sqrt((squareSum / validValues()) - Math.pow(sum / validValues(), 2));
+		return Math.sqrt((squareSum / validValues()) - Math.pow(sum / validValues(), 2));
 	}
 	
 	@Override

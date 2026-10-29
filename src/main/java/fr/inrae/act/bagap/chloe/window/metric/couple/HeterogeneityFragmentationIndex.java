@@ -6,8 +6,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class HeterogeneityFragmentationIndex extends Metric implements CoupleMetric {
 
-	public HeterogeneityFragmentationIndex() {
-		super("HET-frag");
+	public HeterogeneityFragmentationIndex(String name, String alias) {
+		super(name, alias);
+		//super("HET-frag");
 	}
 
 	@Override

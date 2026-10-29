@@ -7,8 +7,9 @@ public class CountInterfaceMetric extends Metric implements CoupleMetric {
 
 	private short v;
 	
-	public CountInterfaceMetric(short v) {
-		super("Interface_"+v);
+	public CountInterfaceMetric(String name, String alias, short v) {
+		super(name, alias);
+		//super("Interface_"+v);
 		this.v = v;
 	}
 

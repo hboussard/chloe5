@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class ProportionMetric extends Metric implements QuantitativeMetric {
 
-	public ProportionMetric() {
-		super("prop");
+	public ProportionMetric(String name, String alias) {
+		super(name, alias);
+		//super("prop");
 	}
 
 	@Override

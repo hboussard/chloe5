@@ -10,8 +10,10 @@ public class AggregationIndexMultiple extends Metric implements ValueMetric, Cou
 	
 	private short[] v;
 	
-	public AggregationIndexMultiple(short[] v){
-		super();
+	public AggregationIndexMultiple(String name, String alias, short[] v){
+		super(name, alias);
+		//super();
+		/*
 		StringBuffer name = new StringBuffer("AIm_");
 		for(short vv : v){
 			name.append(vv);
@@ -19,6 +21,7 @@ public class AggregationIndexMultiple extends Metric implements ValueMetric, Cou
 		}
 		name.deleteCharAt(name.length()-1);
 		setName(name.toString());
+		*/
 		this.v = v;
 	}
 	

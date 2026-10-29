@@ -12,7 +12,9 @@ public class GBPCalculGrainBocagerFactory extends GrainBocagerProcedureFactory {
 	@Override
 	public boolean check(GrainBocagerManager manager) {
 		
-		if(!manager.force() && new File(manager.influenceDistance()).exists()){
+		if(!manager.force() && 
+				((!manager.hugeMode() && new File(manager.influenceDistance()).exists())
+						|| (manager.hugeMode() && new File(manager.influenceDistance()).list().length != 0))){
 			
 			return true;
 			

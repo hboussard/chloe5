@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class ShannonEvennessIndex extends Metric implements ValueMetric {
 
-	public ShannonEvennessIndex() {
-		super("SHEI");
+	public ShannonEvennessIndex(String name, String alias) {
+		super(name, alias);
+		//super("SHEI");
 	}
 
 	@Override

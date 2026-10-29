@@ -88,6 +88,8 @@ public class GrainBocagerManager {
 	
 	//private String attributSecteur;		// attribut des secteurs
 	
+	private boolean exportGrainBocager4Classes;
+	
 	public GrainBocagerManager(String treatment){
 		setTreatment(treatment);
 		init();
@@ -166,6 +168,7 @@ public class GrainBocagerManager {
 		functionalGrainBocagerClustering = null;
 		functionalGrainBocagerProportion = null;
 		functionalGrainBocagerFragmentation = null;
+		exportGrainBocager4Classes = true;
 	}
 	
 	private boolean initEntete(){
@@ -262,6 +265,10 @@ public class GrainBocagerManager {
 	public void setTile(String tileDir){
 		this.tile = Tile.getTile(tileDir);
 	}
+	
+	public void setTile(Tile tile){
+		this.tile = tile;
+	}
 
 	public void setBocage(String bocage) {
 		this.bocage = bocage;
@@ -289,6 +296,10 @@ public class GrainBocagerManager {
 	public void setGrainBocager4Classes(String grainBocager4Classes){
 		Util.createAccess(grainBocager4Classes);
 		this.grainBocager4Classes = grainBocager4Classes;
+	}
+	
+	public void setExportGrainBocager4Classes(boolean export) {
+		this.exportGrainBocager4Classes = export;
 	}
 	
 	public void setFunctionalGrainBocager(String functionalGrainBocager){
@@ -499,6 +510,10 @@ public class GrainBocagerManager {
 			}
 		}
 		return grainBocager4Classes;
+	}
+	
+	public boolean exportGrainBcoager4Classes() {
+		return this.exportGrainBocager4Classes;
 	}
 	
 	public String functionalGrainBocager() {

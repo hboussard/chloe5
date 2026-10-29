@@ -28,10 +28,10 @@ public class SelectedQuantitativeKernel extends SelectedLandscapeMetricKernel {
 		final int mid = windowSize() / 2;
 		int ic;
 		float v, coeff;
-		float nb_nodata = 0;
-		float nb = 0;
-		float sum = 0;
-		float square_sum = 0;
+		float nb_nodata = 0f;
+		float nb = 0f;
+		float sum = 0f;
+		float square_sum = 0f;
 		float min = Float.MAX_VALUE;
 		float max = Float.MIN_VALUE;
 					
@@ -45,6 +45,7 @@ public class SelectedQuantitativeKernel extends SelectedLandscapeMetricKernel {
 							coeff = coeff()[ic];
 							if(coeff > 0){
 								v = inDatas()[((y + dy) * width()) + (x + dx)];
+									
 								nb += coeff;
 								if(v == noDataValue()) {
 									nb_nodata += coeff;
@@ -75,6 +76,7 @@ public class SelectedQuantitativeKernel extends SelectedLandscapeMetricKernel {
 							coeff = coeff()[ic];
 							if(coeff > 0){
 								v = inDatas()[((y + dy) * width()) + (x + dx)];
+					
 								nb += coeff;
 								if(v == noDataValue()) {
 									nb_nodata += coeff;

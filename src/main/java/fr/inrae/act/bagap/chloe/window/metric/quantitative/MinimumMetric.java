@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class MinimumMetric extends Metric implements QuantitativeMetric {
 
-	public MinimumMetric() {
-		super("minimum");
+	public MinimumMetric(String name, String alias) {
+		super(name, alias);
+		//super("minimum");
 	}
 
 	@Override

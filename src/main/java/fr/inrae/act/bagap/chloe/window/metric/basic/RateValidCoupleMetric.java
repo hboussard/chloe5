@@ -6,8 +6,9 @@ import fr.inrae.act.bagap.chloe.window.metric.couple.CoupleMetric;
 
 public class RateValidCoupleMetric extends Metric implements CoupleMetric {
 
-	public RateValidCoupleMetric() {
-		super("pNC-valid");
+	public RateValidCoupleMetric(String name, String alias) {
+		super(name, alias);
+		//super("pNC-valid");
 	}
 	
 	@Override

@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class SumMetric extends Metric implements QuantitativeMetric {
 
-	public SumMetric() {
-		super("sum");
+	public SumMetric(String name, String alias) {
+		super(name, alias);
+		//super("sum");
 	}
 
 	@Override

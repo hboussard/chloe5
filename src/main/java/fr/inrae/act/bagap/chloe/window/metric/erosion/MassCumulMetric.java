@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class MassCumulMetric extends Metric implements DegatErosionMetric {
 
-	public MassCumulMetric() {
-		super("mass-cumul");
+	public MassCumulMetric(String name, String alias) {
+		super(name, alias);
+		//super("mass-cumul");
 	}
 
 	@Override

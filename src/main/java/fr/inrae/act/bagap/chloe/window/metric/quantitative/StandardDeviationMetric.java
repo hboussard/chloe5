@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class StandardDeviationMetric extends Metric implements QuantitativeMetric {
 
-	public StandardDeviationMetric() {
-		super("standard-deviation");
+	public StandardDeviationMetric(String name, String alias) {
+		super(name, alias);
+		//super("standard-deviation");
 	}
 
 	@Override

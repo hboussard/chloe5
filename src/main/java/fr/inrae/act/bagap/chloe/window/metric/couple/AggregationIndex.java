@@ -8,8 +8,9 @@ import fr.inrae.act.bagap.chloe.window.metric.value.ValueMetric;
 
 public class AggregationIndex extends Metric implements ValueMetric, CoupleMetric {
 	
-	public AggregationIndex(){
-		super("AI");
+	public AggregationIndex(String name, String alias){
+		super(name, alias);
+		//super("AI");
 	}
 	
 	@Override

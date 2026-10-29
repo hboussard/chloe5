@@ -6,8 +6,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class RateCentralValue extends Metric implements ValueMetric {
 
-	public RateCentralValue() {
-		super("pCentral");
+	public RateCentralValue(String name, String alias) {
+		super(name, alias);
+		//super("pCentral");
 	}
 
 	@Override

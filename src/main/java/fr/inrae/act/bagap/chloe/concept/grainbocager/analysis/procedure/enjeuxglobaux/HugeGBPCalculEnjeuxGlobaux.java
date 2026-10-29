@@ -18,10 +18,10 @@ public class HugeGBPCalculEnjeuxGlobaux extends GrainBocagerProcedure {
 	@Override
 	public void doInit() {
 	
-		if(manager().force() || !new File(manager().functionalGrainBocagerClustering()).exists()){
+		if(manager().force() 
+				|| new File(manager().functionalGrainBocagerClustering()).list().length == 0){
 			
 			factory().parentFactory().create(manager()).run();
-			
 		}	
 	}
 	

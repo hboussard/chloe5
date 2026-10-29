@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class SourceErosionIntensityMetric extends Metric implements SourceErosionMetric {
 
-	public SourceErosionIntensityMetric() {
-		super("source-erosion-intensity");
+	public SourceErosionIntensityMetric(String name, String alias) {
+		super(name, alias);
+		//super("source-erosion-intensity");
 	}
 
 	@Override

@@ -37,18 +37,24 @@ public class HugeGBPCalculGrainBocager extends GrainBocagerProcedure {
 		Coverage covGrainBocager = HugeGrainBocager.calculGrainBocager(manager().grainBocager(), covDistanceInfluenceBoisement, manager().entete(), manager().grainBocagerWindowRadius(), manager().grainBocagerCellSize(), manager().tile(), manager().fastMode());
 		//Coverage covGrainBocager = CoverageManager.getCoverage(manager().grainBocager());
 		
-		System.out.println("calcul des seuils du grain bocager");
+		covDistanceInfluenceBoisement.dispose();
+		
+		if(manager().exportGrainBcoager4Classes()) {
 			
-		Coverage covGrainBocager4Classes = HugeGrainBocager.runClassificationNClasses(manager().grainBocager4Classes(), covGrainBocager, manager().entete().noDataValue(),  manager().thresholds());
-		//Coverage covGrainBocager4Classes = GrainBocager.runClassificationNClasses(manager().grainBocager(), manager().entete().noDataValue(),  manager().thresholds());
+			System.out.println("calcul des seuils du grain bocager");
+			
+			Coverage covGrainBocager4Classes = HugeGrainBocager.runClassificationNClasses(manager().grainBocager4Classes(), covGrainBocager, manager().entete().noDataValue(),  manager().thresholds());
+			//Coverage covGrainBocager4Classes = GrainBocager.runClassificationNClasses(manager().grainBocager(), manager().entete().noDataValue(),  manager().thresholds());
+			
+			//float[] data = covGrainBocager4Classes.getData();
+			//EnteteRaster entete = covGrainBocager4Classes.getEntete();
+			//covGrainBocager4Classes.dispose();
+			//CoverageManager.write(manager().grainBocager4Classes(), data, entete);
+			
+			covGrainBocager4Classes.dispose();
+		}
 		
-		//float[] data = covGrainBocager4Classes.getData();
-		//EnteteRaster entete = covGrainBocager4Classes.getEntete();
-		//covGrainBocager4Classes.dispose();
-		//CoverageManager.write(manager().grainBocager4Classes(), data, entete);
-		
-		covGrainBocager4Classes.dispose();
-		
+		covGrainBocager.dispose();
 	}
 
 }

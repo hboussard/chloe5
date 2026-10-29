@@ -37,6 +37,8 @@ public class GBPCalculGrainBocager extends GrainBocagerProcedure {
 		
 		Coverage covGrainBocager = GrainBocager.calculGrainBocager(covDistanceInfluenceBoisement, manager().grainBocagerWindowRadius(), manager().grainBocagerCellSize(), manager().fastMode());
 		
+		covDistanceInfluenceBoisement.dispose();
+		
 		CoverageManager.write(manager().grainBocager(), covGrainBocager.getData(), covGrainBocager.getEntete());
 			
 		try {
@@ -45,22 +47,24 @@ public class GBPCalculGrainBocager extends GrainBocagerProcedure {
 			e.printStackTrace();
 		}
 		
-		System.out.println("calcul des seuils du grain bocager");
+		if(manager().exportGrainBcoager4Classes()) {
 			
-		Coverage covGrainBocager4Classes = GrainBocager.runClassificationNClasses(covGrainBocager, manager().entete().noDataValue(), manager().thresholds());
+			System.out.println("calcul des seuils du grain bocager");
 			
-		covGrainBocager.dispose();
-		
-		CoverageManager.write(manager().grainBocager4Classes(), covGrainBocager4Classes.getData(), covGrainBocager4Classes.getEntete());
+			Coverage covGrainBocager4Classes = GrainBocager.runClassificationNClasses(covGrainBocager, manager().entete().noDataValue(), manager().thresholds());
+				
+			CoverageManager.write(manager().grainBocager4Classes(), covGrainBocager4Classes.getData(), covGrainBocager4Classes.getEntete());
+				
+			covGrainBocager4Classes.dispose();
 			
-		try {
-			Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_grain_bocager_4classes.qml"), Tool.deleteExtension(manager().grainBocager4Classes())+".qml");
-		} catch (IOException e) {
-			e.printStackTrace();
+			try {
+				Tool.copy(GrainBocagerManager.class.getResourceAsStream("style_grain_bocager_4classes.qml"), Tool.deleteExtension(manager().grainBocager4Classes())+".qml");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}	
 		}
-			
-		covGrainBocager4Classes.dispose();
-			
+		
+		covGrainBocager.dispose();
 	}
 
 }

@@ -12,7 +12,9 @@ public class GBPDetectionTypeBoisementFactory extends GrainBocagerProcedureFacto
 	@Override
 	public boolean check(GrainBocagerManager manager) {
 		
-		if(!manager.force() && new File(manager.woodHeight()).exists()){
+		if(!manager.force() && 
+				((!manager.hugeMode() && new File(manager.woodHeight()).exists())
+						|| (manager.hugeMode() && new File(manager.woodHeight()).list().length != 0))){	
 			
 			return true;
 			

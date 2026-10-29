@@ -6,8 +6,9 @@ import fr.inrae.act.bagap.chloe.window.metric.value.ValueMetric;
 
 public class CentralValue extends Metric implements BasicMetric {
 
-	public CentralValue() {
-		super("Central");
+	public CentralValue(String name, String alias) {
+		super(name, alias);
+		//super("Central");
 	}
 
 	@Override

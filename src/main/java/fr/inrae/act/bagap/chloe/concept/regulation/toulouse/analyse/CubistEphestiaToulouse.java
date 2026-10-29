@@ -13,6 +13,7 @@ import fr.inrae.act.bagap.chloe.concept.regulation.toulouse.cubist.CubistModel;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysis;
 import fr.inrae.act.bagap.chloe.window.analysis.LandscapeMetricAnalysisBuilder;
 import fr.inrae.act.bagap.chloe.window.metric.Metric;
+import fr.inrae.act.bagap.chloe.window.metric.MetricManager;
 import fr.inrae.act.bagap.chloe.window.metric.basic.CentralValue;
 import fr.inrae.act.bagap.chloe.window.metric.basic.RateValidCoupleMetric;
 import fr.inrae.act.bagap.chloe.window.metric.couple.CountCoupleMetric;
@@ -58,13 +59,15 @@ public class CubistEphestiaToulouse {
 				
 			for(String v2 : snh_surf){
 				tab = new float[outWidth*outHeight];
-				Metric metric = new RateCoupleMetric(Short.parseShort(v), Short.parseShort(v2));
+				Metric metric = MetricManager.get("pNC_"+v+"-"+v2);
+				//Metric metric = new RateCoupleMetric(Short.parseShort(v), Short.parseShort(v2));
 				builder.addMetric(metric);
 				builder.addTabOutput(metric.getName(), tab);
 				tabs.put(metric.getName(), tab);
 				
 				tab = new float[outWidth*outHeight];
-				metric = new CountCoupleMetric(Short.parseShort(v), Short.parseShort(v2));
+				metric = MetricManager.get("NC_"+v+"-"+v2);
+				//metric = new CountCoupleMetric(Short.parseShort(v), Short.parseShort(v2));
 				builder.addMetric(metric);
 				builder.addTabOutput(metric.getName(), tab);
 				tabs.put(metric.getName(), tab);
@@ -72,13 +75,15 @@ public class CubistEphestiaToulouse {
 				
 			for(String v2 : snh_lin){
 				tab = new float[outWidth*outHeight];
-				Metric metric = new RateCoupleMetric(Short.parseShort(v), Short.parseShort(v2));
+				Metric metric = MetricManager.get("pNC_"+v+"-"+v2);
+				//Metric metric = new RateCoupleMetric(Short.parseShort(v), Short.parseShort(v2));
 				builder.addMetric(metric);
 				builder.addTabOutput(metric.getName(), tab);
 				tabs.put(metric.getName(), tab);
 				
 				tab = new float[outWidth*outHeight];
-				metric = new CountCoupleMetric(Short.parseShort(v), Short.parseShort(v2));
+				metric = MetricManager.get("NC_"+v+"-"+v2);
+				//metric = new CountCoupleMetric(Short.parseShort(v), Short.parseShort(v2));
 				builder.addMetric(metric);
 				builder.addTabOutput(metric.getName(), tab);
 				tabs.put(metric.getName(), tab);
@@ -86,37 +91,49 @@ public class CubistEphestiaToulouse {
 		}
 		for(String v : snh_surf){
 			tab = new float[outWidth*outHeight];
-			builder.addMetric(new RateValueMetric(Short.parseShort(v)));
+			Metric metric = MetricManager.get("pNV_"+v);
+			builder.addMetric(metric);
+			//builder.addMetric(new RateValueMetric(Short.parseShort(v)));
 			builder.addTabOutput("pNV_"+v, tab);
 			tabs.put("pNV_"+v, tab);
 		}
 		for(String v : snh_lin){
 			tab = new float[outWidth*outHeight];
-			builder.addMetric(new RateValueMetric(Short.parseShort(v)));
+			Metric metric = MetricManager.get("pNV_"+v);
+			builder.addMetric(metric);
+			//builder.addMetric(new RateValueMetric(Short.parseShort(v)));
 			builder.addTabOutput("pNV_"+v, tab);
 			tabs.put("pNV_"+v, tab);
 		}
 		// SHDI comb
 		tab = new float[outWidth*outHeight];
-		builder.addMetric(new ShannonDiversityIndex());
+		Metric metric = MetricManager.get("SHDI");
+		builder.addMetric(metric);
+		//builder.addMetric(new ShannonDiversityIndex());
 		builder.addTabOutput("SHDI", tab);
 		tabs.put("shannon_comb_1000m", tab);
 			
 		// proportion culture centrale
 		tab = new float[outWidth*outHeight];
-		builder.addMetric(new RateCentralValue());
+		metric = MetricManager.get("pCentral");
+		builder.addMetric(metric);
+		//builder.addMetric(new RateCentralValue());
 		builder.addTabOutput("pCentral", tab);
 		tabs.put("os_cult_hote_1000m", tab);
 			
 		// culture centrale
 		tab = new float[outWidth*outHeight];
-		builder.addMetric(new CentralValue());
+		metric = MetricManager.get("Central");
+		builder.addMetric(metric);
+		//builder.addMetric(new CentralValue());
 		builder.addTabOutput("Central", tab);
 		tabs.put("Central", tab);
 		
 		// nombre de couples valides
 		tab = new float[outWidth*outHeight];
-		builder.addMetric(new RateValidCoupleMetric());
+		metric = MetricManager.get("pNC-valid");
+		builder.addMetric(metric);
+		//builder.addMetric(new RateValidCoupleMetric());
 		builder.addTabOutput("pNC-valid", tab);
 		tabs.put("couples_valides", tab);
 			
@@ -265,12 +282,16 @@ public class CubistEphestiaToulouse {
 		builder.setWindowSize(windowSize);
 		
 		tab = new float[outWidth*outHeight];
-		builder.addMetric(new ShannonDiversityIndex());
+		metric = MetricManager.get("SHDI");
+		builder.addMetric(metric);
+		//builder.addMetric(new ShannonDiversityIndex());
 		builder.addTabOutput("SHDI", tab);
 		tabs.put("shannon_cult_1000m", tab);
 		
 		tab = new float[outWidth*outHeight];
-		builder.addMetric(new CountClassMetric());
+		metric = MetricManager.get("Nclass");
+		builder.addMetric(metric);
+		//builder.addMetric(new CountClassMetric());
 		builder.addTabOutput("Nclass", tab);
 		tabs.put("nb_cult_1000m", tab);
 		
@@ -303,12 +324,16 @@ public class CubistEphestiaToulouse {
 		builder.setWindowSize(windowSize);
 		
 		tab = new float[outWidth*outHeight];
-		builder.addMetric(new AverageMetric());
+		metric = MetricManager.get("average");
+		builder.addMetric(metric);
+		//builder.addMetric(new AverageMetric());
 		builder.addTabOutput("average", tab);
 		tabs.put("ift_paysager_2018_snh_inclus1000m", tab);
 		
 		tab = new float[outWidth*outHeight];
-		builder.addMetric(new VCentralValue());
+		metric = MetricManager.get("vCentral");
+		builder.addMetric(metric);
+		//builder.addMetric(new VCentralValue());
 		builder.addTabOutput("VCentral", tab);
 		tabs.put("ift_xtot", tab);
 		
@@ -339,7 +364,9 @@ public class CubistEphestiaToulouse {
 		builder.setWindowSize(windowSize);
 		
 		tab = new float[outWidth*outHeight];
-		builder.addMetric(new AverageMetric());
+		metric = MetricManager.get("average");
+		builder.addMetric(metric);
+		//builder.addMetric(new AverageMetric());
 		builder.addTabOutput("average", tab);
 		tabs.put("ift_paysager_2018_1000m", tab);
 		
@@ -355,7 +382,9 @@ public class CubistEphestiaToulouse {
 		builder.setWindowSize(windowSize);
 		
 		tab = new float[outWidth*outHeight];
-		builder.addMetric(new RateValueMetric(Short.parseShort("3")));
+		metric = MetricManager.get("pNV_3");
+		builder.addMetric(metric);
+		//builder.addMetric(new RateValueMetric(Short.parseShort("3")));
 		builder.addTabOutput("pNV_3", tab);
 		tabs.put("os_bio2018_1000m", tab);
 		

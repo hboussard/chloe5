@@ -7,8 +7,9 @@ public class CountValueMetric extends Metric implements ValueMetric {
 
 	private short v;
 	
-	public CountValueMetric(short v) {
-		super("NV_"+v);
+	public CountValueMetric(String name, String alias, short v) {
+		super(name, alias);
+		//super("NV_"+v);
 		this.v = v;
 	}
 

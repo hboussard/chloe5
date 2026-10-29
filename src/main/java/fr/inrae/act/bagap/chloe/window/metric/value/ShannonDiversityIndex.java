@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class ShannonDiversityIndex extends Metric implements ValueMetric {
 
-	public ShannonDiversityIndex() {
-		super("SHDI");
+	public ShannonDiversityIndex(String name, String alias) {
+		super(name, alias);
+		//super("SHDI");
 	}
 
 	@Override

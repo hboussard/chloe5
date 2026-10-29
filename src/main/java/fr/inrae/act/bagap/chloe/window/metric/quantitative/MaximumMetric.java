@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class MaximumMetric extends Metric implements QuantitativeMetric {
 
-	public MaximumMetric() {
-		super("maximum");
+	public MaximumMetric(String name, String alias) {
+		super(name, alias);
+		//super("maximum");
 	}
 
 	@Override

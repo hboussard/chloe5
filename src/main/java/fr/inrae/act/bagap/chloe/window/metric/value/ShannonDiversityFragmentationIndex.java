@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class ShannonDiversityFragmentationIndex extends Metric implements ValueMetric {
 
-	public ShannonDiversityFragmentationIndex() {
-		super("SHDI-frag");
+	public ShannonDiversityFragmentationIndex(String name, String alias) {
+		super(name, alias);
+		//super("SHDI-frag");
 	}
 
 	@Override

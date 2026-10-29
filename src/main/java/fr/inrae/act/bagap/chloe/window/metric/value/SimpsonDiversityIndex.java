@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class SimpsonDiversityIndex extends Metric implements ValueMetric {
 
-	public SimpsonDiversityIndex() {
-		super("SIDI");
+	public SimpsonDiversityIndex(String name, String alias) {
+		super(name, alias);
+		//super("SIDI");
 	}
 
 	@Override

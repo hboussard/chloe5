@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class MinCoverMetric extends Metric implements ValueMetric {
 
-	public MinCoverMetric() {
-		super("minCover");
+	public MinCoverMetric(String name, String alias) {
+		super(name, alias);
+		//super("minCover");
 	}
 
 	@Override

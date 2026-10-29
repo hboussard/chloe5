@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class PatchNumberIndex extends Metric implements PatchMetric {
 
-	public PatchNumberIndex() {
-		super("NP");
+	public PatchNumberIndex(String name, String alias) {
+		super(name, alias);
+		//super("NP");
 	}
 
 	@Override

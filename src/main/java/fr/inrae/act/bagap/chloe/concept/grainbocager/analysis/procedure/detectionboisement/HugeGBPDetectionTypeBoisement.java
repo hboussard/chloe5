@@ -18,10 +18,10 @@ public class HugeGBPDetectionTypeBoisement extends GrainBocagerProcedure {
 	@Override
 	public void doInit() {
 		
-		if(manager().force() || !new File(manager().woodHeight()).exists()){
+		if(manager().force() 
+				|| new File(manager().woodHeight()).list().length == 0){
 			
-			factory().parentFactory().create(manager()).run();
-			
+			factory().parentFactory().create(manager()).run();	
 		}
 	}
 	

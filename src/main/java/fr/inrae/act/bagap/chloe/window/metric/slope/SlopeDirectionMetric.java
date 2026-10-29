@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class SlopeDirectionMetric extends Metric implements SlopeMetric {
 
-	public SlopeDirectionMetric() {
-		super("slope-direction");
+	public SlopeDirectionMetric(String name, String alias) {
+		super(name, alias);
+		//super("slope-direction");
 	}
 
 	@Override

@@ -6,8 +6,9 @@ import fr.inrae.act.bagap.chloe.window.metric.couple.CoupleMetric;
 
 public class ValidCoupleMetric extends Metric implements CoupleMetric {
 
-	public ValidCoupleMetric() {
-		super("NC-valid");
+	public ValidCoupleMetric(String name, String alias) {
+		super(name, alias);
+		//super("NC-valid");
 	}
 	
 	@Override

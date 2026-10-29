@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class MajorityClassMetric extends Metric implements ValueMetric {
 
-	public MajorityClassMetric() {
-		super("Majority");
+	public MajorityClassMetric(String name, String alias) {
+		super(name, alias);
+		//super("Majority");
 	}
 
 	@Override

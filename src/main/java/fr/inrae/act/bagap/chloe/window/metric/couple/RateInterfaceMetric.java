@@ -7,8 +7,9 @@ public class RateInterfaceMetric extends Metric implements CoupleMetric {
 
 	private short v;
 	
-	public RateInterfaceMetric(short v) {
-		super("pInterface_"+v);
+	public RateInterfaceMetric(String name, String alias, short v) {
+		super(name, alias);
+		//super("pInterface_"+v);
 		this.v = v;
 	}
 

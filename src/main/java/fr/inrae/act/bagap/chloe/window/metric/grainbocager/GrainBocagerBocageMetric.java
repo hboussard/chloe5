@@ -6,8 +6,9 @@ import fr.inrae.act.bagap.chloe.window.metric.quantitative.QuantitativeMetric;
 
 public class GrainBocagerBocageMetric extends Metric implements QuantitativeMetric {
 
-	public GrainBocagerBocageMetric() {
-		super("GBBocage");
+	public GrainBocagerBocageMetric(String name, String alias) {
+		super(name, alias);
+		//super("GBBocage");
 	}
 
 	@Override

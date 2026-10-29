@@ -7,8 +7,9 @@ public class PatchNumberClassIndex extends Metric implements PatchMetric {
 
 	private int classMetric;
 	
-	public PatchNumberClassIndex(short cm) {
-		super("NP-class_"+cm);
+	public PatchNumberClassIndex(String name, String alias, short cm) {
+		super(name, alias);
+		//super("NP-class_"+cm);
 		classMetric = cm;
 	}
 

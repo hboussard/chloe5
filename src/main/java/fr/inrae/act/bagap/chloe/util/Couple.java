@@ -1,10 +1,12 @@
 package fr.inrae.act.bagap.chloe.util;
 
+import fr.inrae.act.bagap.apiland.raster.Raster;
+
 public class Couple {
 	
 	public static float getCouple(short v1, short v2) {
-		if(v1 == -1 || v2 == -1) {
-			return -1;
+		if(v1 == Raster.getNoDataValue() || v2 == Raster.getNoDataValue()) {
+			return Raster.getNoDataValue();
 		}
 		if(v1 == 0 || v2 == 0) {
 			return 0;
@@ -17,8 +19,8 @@ public class Couple {
 	}
 	
 	public static float getCouple(int v1, int v2) {
-		if(v1 == -1 || v2 == -1) {
-			return -1;
+		if(v1 == Raster.getNoDataValue() || v2 == Raster.getNoDataValue()) {
+			return Raster.getNoDataValue();
 		}
 		if(v1 == 0 || v2 == 0) {
 			return 0;

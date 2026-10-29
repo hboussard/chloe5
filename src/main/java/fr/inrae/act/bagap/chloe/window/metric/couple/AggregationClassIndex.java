@@ -9,8 +9,9 @@ public class AggregationClassIndex extends Metric implements ValueMetric, Couple
 
 	private int classMetric;
 	
-	public AggregationClassIndex(short cm){
-		super("AI-class_"+cm);
+	public AggregationClassIndex(String name, String alias, short cm){
+		super(name, alias);
+		//super("AI-class_"+cm);
 		classMetric = cm;
 	}
 	

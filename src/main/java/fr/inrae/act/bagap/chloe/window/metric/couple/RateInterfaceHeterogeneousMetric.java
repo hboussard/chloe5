@@ -7,8 +7,9 @@ public class RateInterfaceHeterogeneousMetric extends Metric implements CoupleMe
 
 	private short v;
 	
-	public RateInterfaceHeterogeneousMetric(short v) {
-		super("pInterfaceHete_"+v);
+	public RateInterfaceHeterogeneousMetric(String name, String alias, short v) {
+		super(name, alias);
+		//super("pInterfaceHete_"+v);
 		this.v = v;
 	}
 

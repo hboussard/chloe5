@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class CountValuesMetric extends Metric implements ValueMetric {
 
-	public CountValuesMetric() {
-		super("N-values");
+	public CountValuesMetric(String name, String alias) {
+		super(name, alias);
+		//super("N-values");
 	}
 	
 	@Override

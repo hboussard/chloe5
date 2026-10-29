@@ -12,7 +12,9 @@ public class GBPClusterisationFonctionnaliteFactory extends GrainBocagerProcedur
 	@Override
 	public boolean check(GrainBocagerManager manager) {
 		
-		if(!manager.force() && new File(manager.grainBocager()).exists()){
+		if(!manager.force() && 
+				((!manager.hugeMode() && new File(manager.grainBocager()).exists())
+						|| (manager.hugeMode() && new File(manager.grainBocager()).list().length != 0))){	
 			
 			return true;
 			

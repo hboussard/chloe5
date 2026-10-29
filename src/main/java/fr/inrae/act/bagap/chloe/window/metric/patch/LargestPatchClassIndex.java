@@ -7,8 +7,9 @@ public class LargestPatchClassIndex extends Metric implements PatchMetric {
 
 	private int classMetric;
 	
-	public LargestPatchClassIndex(short cm) {
-		super("LPI-class_"+cm);
+	public LargestPatchClassIndex(String name, String alias, short cm) {
+		super(name, alias);
+		//super("LPI-class_"+cm);
 		classMetric = cm;
 	}
 

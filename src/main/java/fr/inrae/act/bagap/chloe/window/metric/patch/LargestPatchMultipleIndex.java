@@ -7,8 +7,10 @@ public class LargestPatchMultipleIndex extends Metric implements PatchMetric {
 
 	private short[] v;
 	
-	public LargestPatchMultipleIndex(short[] v){
-		super();
+	public LargestPatchMultipleIndex(String name, String alias, short[] v){
+		super(name, alias);
+		//super();
+		/*
 		StringBuffer name = new StringBuffer("LPIm_");
 		for(short vv : v){
 			name.append(vv);
@@ -16,6 +18,7 @@ public class LargestPatchMultipleIndex extends Metric implements PatchMetric {
 		}
 		name.deleteCharAt(name.length()-1);
 		setName(name.toString());
+		*/
 		this.v = v;
 	}
 	

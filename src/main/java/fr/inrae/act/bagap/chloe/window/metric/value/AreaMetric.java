@@ -10,8 +10,9 @@ public class AreaMetric extends Metric implements ValueMetric {
 	
 	private float surface;
 	
-	public AreaMetric(short v) {
-		super("area_"+v);
+	public AreaMetric(String name, String alias, short v) {
+		super(name, alias);
+		//super("area_"+v);
 		this.v = v;
 		this.surface = (float) Math.pow(Raster.getCellSize(), 2);
 	}

@@ -19,7 +19,7 @@ SIDIm;value;value;fr.inrae.act.bagap.chloe.window.metric.value.SimpsonDiversityM
 RaoQ;value;other;fr.inrae.act.bagap.chloe.window.metric.value.RaoQIndex;1
 NC;couple;couple;fr.inrae.act.bagap.chloe.window.metric.couple.CountCoupleMetric;1
 pNC;couple;couple;fr.inrae.act.bagap.chloe.window.metric.couple.RateCoupleMetric;1
-NMC;couple;couple;fr.inrae.act.bagap.chloe.window.metric.couple.CountMultipleCoupleMetric;1
+NCm;couple;couple;fr.inrae.act.bagap.chloe.window.metric.couple.CountCoupleMultipleMetric;1
 Interface;couple;value;fr.inrae.act.bagap.chloe.window.metric.couple.CountInterfaceMetric;1
 pInterface;couple;value;fr.inrae.act.bagap.chloe.window.metric.couple.RateInterfaceMetric;1
 pInterfaceHete;couple;value;fr.inrae.act.bagap.chloe.window.metric.couple.RateInterfaceHeterogeneousMetric;1
@@ -27,6 +27,7 @@ NC-hete;couple;other;fr.inrae.act.bagap.chloe.window.metric.couple.CountHeteroge
 pNC-hete;couple;other;fr.inrae.act.bagap.chloe.window.metric.couple.RateHeterogeneousCouple;1
 HET;couple;other;fr.inrae.act.bagap.chloe.window.metric.couple.HeterogeneityIndex;1
 HET-frag;couple;other;fr.inrae.act.bagap.chloe.window.metric.couple.HeterogeneityFragmentationIndex;1
+HETm-frag;couple;couple;fr.inrae.act.bagap.chloe.window.metric.couple.HeterogeneityFragmentationMultipleIndex;1
 HET-config;couple;other;fr.inrae.act.bagap.chloe.window.metric.couple.HeterogeneityConfigurationIndex;1
 minCover;value;other;fr.inrae.act.bagap.chloe.window.metric.value.MinCoverMetric;1
 average;quantitative;other;fr.inrae.act.bagap.chloe.window.metric.quantitative.AverageMetric;3

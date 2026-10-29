@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class VolumeMovementMetric extends Metric implements ContinuityMetric {
 
-	public VolumeMovementMetric() {
-		super("volume");
+	public VolumeMovementMetric(String name, String alias) {
+		super(name, alias);
+		//super("volume");
 	}
 
 	@Override

@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class HeterogeneityIndex extends Metric implements CoupleMetric {
 
-	public HeterogeneityIndex() {
-		super("HET");
+	public HeterogeneityIndex(String name, String alias) {
+		super(name, alias);
+		//super("HET");
 	}
 
 	@Override

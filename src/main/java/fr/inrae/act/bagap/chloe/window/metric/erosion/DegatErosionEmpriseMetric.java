@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class DegatErosionEmpriseMetric extends Metric implements DegatErosionMetric {
 
-	public DegatErosionEmpriseMetric() {
-		super("degat-erosion-emprise");
+	public DegatErosionEmpriseMetric(String name, String alias) {
+		super(name, alias);
+		//super("degat-erosion-emprise");
 	}
 
 	@Override

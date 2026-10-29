@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class CountClassMetric extends Metric implements ValueMetric {
 
-	public CountClassMetric() {
-		super("Nclass");
+	public CountClassMetric(String name, String alias) {
+		super(name, alias);
+		//super("Nclass");
 	}
 
 	@Override

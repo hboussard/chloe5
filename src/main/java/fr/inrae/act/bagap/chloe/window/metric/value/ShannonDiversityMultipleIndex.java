@@ -7,11 +7,12 @@ public class ShannonDiversityMultipleIndex extends Metric implements ValueMetric
 	
 	private short[][] v;
 	
-	public ShannonDiversityMultipleIndex(String alias, short[]... v) {
-		this(v);
-		setAlias(alias);
+	public ShannonDiversityMultipleIndex(String name, String alias, short[]... v) {
+		super(name, alias);
+		this.v = v;
 	}
 	
+	/*
 	public ShannonDiversityMultipleIndex(short[]... v) {
 		super();
 		StringBuffer name = new StringBuffer("SHDIm_");
@@ -21,12 +22,13 @@ public class ShannonDiversityMultipleIndex extends Metric implements ValueMetric
 				name.append('&');
 			}
 			name.deleteCharAt(name.length()-1);
-			name.append('-');
+			name.append(',');
 		}
 		name.deleteCharAt(name.length()-1);
 		setName(name.toString());
 		this.v = v;
 	}
+	*/
 
 	@Override
 	protected void doCalculate(Counting co) {

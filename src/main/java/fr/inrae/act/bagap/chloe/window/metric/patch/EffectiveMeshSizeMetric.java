@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class EffectiveMeshSizeMetric extends Metric implements PatchMetric {
 	
-	public EffectiveMeshSizeMetric(){
-		super("EMS");
+	public EffectiveMeshSizeMetric(String name, String alias){
+		super(name, alias);
+		//super("EMS");
 	}
 	
 	@Override

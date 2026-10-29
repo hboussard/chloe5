@@ -20,13 +20,22 @@ public abstract class Metric implements Comparable<Metric> {
 	/**
 	 * constructor
 	 */
+	/*
 	public Metric(){
 		//this.observers = new HashSet<MetricObserver>();
 	}
+	*/
 	
+	/*
 	public Metric(String name) {
 		this();
 		this.name = name;		
+	}
+	*/
+	
+	public Metric(String name, String alias) {
+		this.name = name;
+		this.alias = alias;
 	}
 	
 	@Override
@@ -50,6 +59,7 @@ public abstract class Metric implements Comparable<Metric> {
 		return this.alias;
 	}
 	
+	/*
 	public void setName(String name){
 		this.name = name;
 	}
@@ -57,6 +67,7 @@ public abstract class Metric implements Comparable<Metric> {
 	public void setAlias(String alias){
 		this.alias = alias;
 	}
+	*/
 	
 	/**
 	 * to add an observer

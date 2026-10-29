@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class SurfaceIndex extends Metric implements PatchMetric {
 
-	public SurfaceIndex() {
-		super("AREA");
+	public SurfaceIndex(String name, String alias) {
+		super(name, alias);
+		//super("AREA");
 	}
 
 	@Override

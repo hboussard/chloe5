@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class RateHeterogeneousCouple extends Metric implements CoupleMetric {
 
-	public RateHeterogeneousCouple(){
-		super("pNC-hete");
+	public RateHeterogeneousCouple(String name, String alias){
+		super(name, alias);
+		//super("pNC-hete");
 	}
 	
 	@Override

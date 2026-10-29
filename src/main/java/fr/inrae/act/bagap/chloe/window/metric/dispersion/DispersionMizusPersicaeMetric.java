@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class DispersionMizusPersicaeMetric extends Metric implements DispersalMetric {
 
-	public DispersionMizusPersicaeMetric() {
-		super("dispersionMizusPersicae");
+	public DispersionMizusPersicaeMetric(String name, String alias) {
+		super(name, alias);
+		//super("dispersionMizusPersicae");
 	}
 
 	@Override

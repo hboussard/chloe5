@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class RateValuesMetric extends Metric implements ValueMetric {
 
-	public RateValuesMetric() {
-		super("pN-values");
+	public RateValuesMetric(String name, String alias) {
+		super(name, alias);
+		//super("pN-values");
 	}
 	
 	@Override

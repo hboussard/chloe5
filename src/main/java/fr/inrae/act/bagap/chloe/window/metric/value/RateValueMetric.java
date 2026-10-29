@@ -7,10 +7,18 @@ public class RateValueMetric extends Metric implements ValueMetric {
 
 	private short v;
 	
+	public RateValueMetric(String name, String alias, short v) {
+		super(name, alias);
+		//super("pNV_"+v);
+		this.v = v;
+	}
+	
+	/*
 	public RateValueMetric(short v) {
 		super("pNV_"+v);
 		this.v = v;
 	}
+	*/
 
 	@Override
 	protected void doCalculate(Counting co) {

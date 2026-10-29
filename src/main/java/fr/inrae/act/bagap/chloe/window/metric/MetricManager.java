@@ -138,39 +138,28 @@ public class MetricManager {
 		return get(m, m);
 	}
 	
-	public static Metric get(String m, String alias) throws NotExistingMetricException {
+	public static Metric get(String name, String alias) throws NotExistingMetricException {
 		try {
 			
-			if(isProcessCoupleMetric(m)){
+			if(isProcessCoupleMetric(name)){
 				
-				String metric = getProcessCoupleMetric(m);
-				Class<?> c = Class.forName(metrics.get(metric));
-				metric = m.replace(metric+"_", "");
-				StringTokenizer st = new StringTokenizer(metric, "-");
-				short c1 = Short.parseShort(st.nextToken());
-				short c2 = Short.parseShort(st.nextToken());
-				return (Metric) c.getConstructor(short.class, short.class).newInstance(c1, c2);
-				
-			}else if(isProcessValueMetric(m)){
-				
-				String metric = getProcessValueMetric(m);
-				
-				//System.out.println(metric+" "+m);
+				String metric = getProcessCoupleMetric(name);
 				
 				Class<?> c = Class.forName(metrics.get(metric));
-				metric = m.replace(metric+"_", "");
+				metric = name.replace(metric+"_", "");
 				
-				/*if(metric.contains("-")){
-					String[] s = metric.split("-");
-					short[] v = new short[s.length];
-					int i=0;
-					for(String ss : s){
-						v[i++] = Short.parseShort(ss);
-					}
-					return (Metric) c.getConstructor(short[].class).newInstance(v);
-				}*/
 				if(metric.contains("-")){
-					String[] s = metric.split("-");
+					
+					StringTokenizer st = new StringTokenizer(metric, "-");
+					short c1 = Short.parseShort(st.nextToken());
+					short c2 = Short.parseShort(st.nextToken());
+					
+					return (Metric) c.getConstructor(String.class, String.class, short.class, short.class).newInstance(name, alias, c1, c2);
+				}
+				
+				if(metric.contains(",")){
+					
+					String[] s = metric.split(",");
 					short[][] v = new short[s.length][];
 					int i=0;
 					for(String ss : s){
@@ -182,25 +171,64 @@ public class MetricManager {
 						}
 						v[i++] = vv;
 					}
-					return (Metric) c.getConstructor(String.class, short[][].class).newInstance(alias, v);
+					
+					return (Metric) c.getConstructor(String.class, String.class, short[][].class).newInstance(name, alias, v);
 				}
-				if(metric.contains("&")){
-					String[] s = metric.split("&");
+				
+			}else if(isProcessValueMetric(name)){
+				
+				String metric = getProcessValueMetric(name);
+				
+				//System.out.println(metric+" "+m);
+				
+				Class<?> c = Class.forName(metrics.get(metric));
+				metric = name.replace(metric+"_", "");
+				
+				/*if(metric.contains("-")){
+					String[] s = metric.split("-");
 					short[] v = new short[s.length];
 					int i=0;
 					for(String ss : s){
 						v[i++] = Short.parseShort(ss);
 					}
 					return (Metric) c.getConstructor(short[].class).newInstance(v);
-				}else{
-					short v = Short.parseShort(metric);
-					return (Metric) c.getConstructor(short.class).newInstance(v);
+				}*/
+				if(metric.contains(",")){
+					String[] s = metric.split(",");
+					short[][] v = new short[s.length][];
+					int i=0;
+					for(String ss : s){
+						String[] sss = ss.split("&");
+						short[] vv = new short[sss.length];
+						int ii=0;
+						for(String ssss : sss){
+							vv[ii++] = Short.parseShort(ssss);
+						}
+						v[i++] = vv;
+					}
+					return (Metric) c.getConstructor(String.class, String.class, short[][].class).newInstance(name, alias, v);
 				}
 				
+				if(metric.contains("&")){
+					
+					String[] s = metric.split("&");
+					short[] v = new short[s.length];
+					int i=0;
+					for(String ss : s){
+						v[i++] = Short.parseShort(ss);
+					}
+					
+					return (Metric) c.getConstructor(String.class, String.class, short[].class).newInstance(name, alias, v);
+					
+				}else{
+					
+					short v = Short.parseShort(metric);
+					return (Metric) c.getConstructor(String.class, String.class, short.class).newInstance(name, alias, v);
+				}
 			}else{
 				
-				Class<?> c = Class.forName(metrics.get(m));
-				return (Metric) c.getConstructor().newInstance();
+				Class<?> c = Class.forName(metrics.get(name));
+				return (Metric) c.getConstructor(String.class, String.class).newInstance(name, alias);
 				
 			}
 		} catch (ClassNotFoundException e) {

@@ -5,8 +5,9 @@ import fr.inrae.act.bagap.chloe.window.metric.Metric;
 
 public class TotalValueMetric extends Metric implements BasicMetric {
 
-	public TotalValueMetric() {
-		super("N-total");
+	public TotalValueMetric(String name, String alias) {
+		super(name, alias);
+		//super("N-total");
 	}
 	
 	@Override

@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -34,10 +35,11 @@ public class Util {
 	}
 	
 	public static String format(double v){
-		int f = new Double(Math.floor(v)).intValue();
+		int f = (int) Math.floor(v);
 		if(v == f){
 			return f+"";
 		}
+	
 		return format.format(v);
 	}
 	
@@ -130,6 +132,74 @@ public class Util {
 			cr.close();
 			
 			return sarMap;
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return null;		
+	}
+	
+	public static Map<Float, Set<Float>> importDataGroupByValues(String dataFile, String code, String value){
+		
+		try {
+			CsvReader cr = new CsvReader(dataFile);
+			cr.setDelimiter(';');
+			cr.readHeaders();
+			
+			Map<Float, Set<Float>> sarMap = new TreeMap<Float, Set<Float>>();
+			float fValue;
+			while(cr.readRecord()) {
+				
+				fValue = Float.parseFloat(cr.get(value));
+				
+				if(!sarMap.containsKey(fValue)) {
+					
+					sarMap.put(fValue, new TreeSet<Float>());
+				}
+				
+				sarMap.get(fValue).add(Float.parseFloat(cr.get(code)));
+			}
+			
+			cr.close();
+			
+			return sarMap;
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return null;		
+	}
+	
+	public static Set<Float> importDataSelected(String dataFile, String codeName, String valueName, String... selectedCodes){
+		
+		try {
+			CsvReader cr = new CsvReader(dataFile);
+			cr.setDelimiter(';');
+			cr.readHeaders();
+			
+			Set<Float> set = new HashSet<Float>();
+			String value;
+			while(cr.readRecord()) {
+				
+				value = cr.get(valueName);
+				for(String sc : selectedCodes) {
+					if(value.equalsIgnoreCase(sc)){
+						
+						set.add(Float.parseFloat(cr.get(codeName)));
+						break;
+					}
+				}
+			}
+			
+			cr.close();
+			
+			return set;
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
